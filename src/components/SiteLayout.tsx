@@ -22,7 +22,7 @@ export function SiteLayout() {
       <div className="min-h-screen">
         {!isHomePage && <Navbar />}
         <ScrollToTop />
-        <main className={isHomePage ? "" : "pt-16"}>
+        <main className={isHomePage ? "" : "pt-16 sm:pt-20 md:pt-24"}>
           <AnimatePresence mode="wait">
             <PageTransition key={location.pathname}>
               <Outlet />

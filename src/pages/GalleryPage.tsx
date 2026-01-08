@@ -24,23 +24,23 @@ export function GalleryPage() {
       <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-black via-black/90 via-black/60 to-transparent pointer-events-none z-20" />
       
       {/* Content Layer */}
-      <div className="container-max py-14 relative z-10">
+      <div className="container-max py-8 sm:py-12 md:py-14 relative z-10 px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="text-sm font-semibold tracking-[0.25em] text-yatra-300">GALLERY</div>
-          <div className="mt-3 font-display text-4xl font-semibold tracking-[-0.02em]">
+          <div className="text-xs sm:text-sm font-semibold tracking-[0.2em] sm:tracking-[0.25em] text-yatra-300">GALLERY</div>
+          <div className="mt-2 sm:mt-3 font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-[-0.02em]">
             Moments from Yatra
           </div>
-          <div className="mt-2 max-w-2xl text-sm text-white/70">
+          <div className="mt-2 max-w-2xl text-xs sm:text-sm text-white/70">
             Relive the memories and experiences from previous editions
           </div>
         </motion.div>
 
         {/* Masonry Gallery */}
-        <div className="mt-12 min-h-[800px]">
+        <div className="mt-8 sm:mt-10 md:mt-12 min-h-[400px] sm:min-h-[600px] md:min-h-[800px]">
           <Masonry
             items={GALLERY_ITEMS}
             ease="power3.out"
@@ -59,10 +59,10 @@ export function GalleryPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.6 }}
-          className="mt-16 text-center"
+          className="mt-10 sm:mt-14 md:mt-16 text-center"
         >
-          <div className="inline-block rounded-xl border border-yatra-400/30 bg-yatra-500/10 px-6 py-3">
-            <p className="text-sm text-white/70 font-medium">
+          <div className="inline-block rounded-xl border border-yatra-400/30 bg-yatra-500/10 px-4 sm:px-6 py-2.5 sm:py-3">
+            <p className="text-xs sm:text-sm text-white/70 font-medium">
               Gallery content will be updated soon
             </p>
           </div>

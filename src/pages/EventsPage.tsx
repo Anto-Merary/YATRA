@@ -194,11 +194,11 @@ export function EventsPage() {
       </div>
 
       {/* Content Layer */}
-      <div className="container-max py-8 md:py-14 relative z-10">
+      <div className="container-max py-6 sm:py-8 md:py-14 relative z-10 px-4">
         {/* Header Section */}
-        <div className="mb-8 md:mb-12">
-          <div className="text-sm font-semibold tracking-[0.25em] text-yatra-300">EVENTS</div>
-          <div className="mt-3 font-display text-3xl font-semibold tracking-[-0.02em] md:text-4xl">
+        <div className="mb-6 sm:mb-8 md:mb-12">
+          <div className="text-xs sm:text-sm font-semibold tracking-[0.2em] sm:tracking-[0.25em] text-yatra-300">EVENTS</div>
+          <div className="mt-2 sm:mt-3 font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-[-0.02em]">
             <AnimatePresence mode="wait">
               {showKorean ? (
                 <motion.div
@@ -244,7 +244,7 @@ export function EventsPage() {
               )}
             </AnimatePresence>
           </div>
-          <div className="mt-2 flex items-center gap-2 text-sm">
+          <div className="mt-2 flex items-center gap-2 text-xs sm:text-sm flex-wrap">
             <span className="text-white/50">
               {filtered.length} {filtered.length === 1 ? "event" : "events"}
             </span>
@@ -257,7 +257,7 @@ export function EventsPage() {
         </div>
 
         {/* Event Statistics */}
-        <div className="mb-6 grid grid-cols-3 gap-4">
+        <div className="mb-4 sm:mb-6 grid grid-cols-3 gap-2 sm:gap-4">
           {[
             { label: "전체 이벤트", value: EVENTS.length, korean: "Total Events" },
             { label: "1일차", value: EVENTS.filter(e => e.day === "day1").length, korean: "Day 1" },
@@ -268,10 +268,10 @@ export function EventsPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="rounded-xl border border-pink-500/20 bg-pink-500/5 p-4 text-center backdrop-blur-sm"
+              className="rounded-xl border border-pink-500/20 bg-pink-500/5 p-2 sm:p-3 md:p-4 text-center backdrop-blur-sm"
             >
-              <div className="text-2xl font-bold text-pink-400">{stat.value}</div>
-              <div className="mt-1 text-xs text-white/60">
+              <div className="text-lg sm:text-xl md:text-2xl font-bold text-pink-400">{stat.value}</div>
+              <div className="mt-0.5 sm:mt-1 text-[10px] sm:text-xs text-white/60">
                 <span className="text-pink-300/80 font-korean">{stat.label}</span>
                 <span className="text-white/40 mx-1">•</span>
                 <span>{stat.korean}</span>
@@ -281,12 +281,12 @@ export function EventsPage() {
         </div>
 
         {/* Search and Filter Section */}
-        <div className="mb-8 space-y-4 md:mb-10">
+        <div className="mb-6 sm:mb-8 space-y-4 md:mb-10">
         <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-start">
           <div className="relative">
             {/* Search icon */}
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none z-10">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none z-10">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
@@ -294,7 +294,8 @@ export function EventsPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="이벤트 검색... Search events..."
-              className="h-12 w-full rounded-2xl border border-pink-500/20 bg-white/[0.04] pl-12 pr-4 text-sm text-white placeholder:text-white/40 outline-none transition-all focus:border-pink-500/40 focus:bg-white/[0.06] focus:shadow-[0_0_20px_rgba(236,72,153,0.15)]"
+              className="h-11 sm:h-12 w-full rounded-2xl border border-pink-500/20 bg-white/[0.04] pl-10 sm:pl-12 pr-3 sm:pr-4 text-sm text-white placeholder:text-white/40 outline-none transition-all focus:border-pink-500/40 focus:bg-white/[0.06] focus:shadow-[0_0_20px_rgba(236,72,153,0.15)] touch-manipulation"
+              style={{ fontSize: "16px" }}
             />
 
             {suggestions.length > 0 && (
@@ -317,7 +318,7 @@ export function EventsPage() {
             )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             {(
               [
                 { key: "all", label: "All", korean: "전체" },
@@ -330,13 +331,14 @@ export function EventsPage() {
                 type="button"
                 onClick={() => setFilter(t.key)}
                 className={[
-                  "rounded-2xl border px-4 py-2 text-sm font-medium transition-all relative overflow-hidden",
+                  "rounded-2xl border px-3 sm:px-4 py-2.5 sm:py-2 text-xs sm:text-sm font-medium transition-all relative overflow-hidden touch-manipulation",
                   filter === t.key
                     ? "border-pink-500/40 bg-pink-500/10 text-white shadow-lg shadow-pink-500/20"
                     : "border-white/10 bg-white/[0.03] text-white/70 hover:border-pink-500/20 hover:bg-pink-500/5 hover:text-white",
                 ].join(" ")}
+                style={{ minHeight: "44px" }}
               >
-                <span className="text-pink-300/80 text-xs mr-1 font-korean">{t.korean}</span>
+                <span className="text-pink-300/80 text-[10px] sm:text-xs mr-1 font-korean">{t.korean}</span>
                 {t.label}
               </button>
             ))}
@@ -367,11 +369,11 @@ export function EventsPage() {
             </div>
           </div>
         ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filtered.map((e) => (
             <SpotlightCard
               key={e.id}
-              className="group relative cursor-pointer border-white/10 bg-white/[0.04] p-5 transition-all hover:border-pink-500/30 hover:bg-white/[0.06] hover:shadow-[0_8px_32px_rgba(236,72,153,0.2)]"
+              className="group relative cursor-pointer border-white/10 bg-white/[0.04] p-4 sm:p-5 transition-all hover:border-pink-500/30 hover:bg-white/[0.06] hover:shadow-[0_8px_32px_rgba(236,72,153,0.2)] touch-manipulation"
               spotlightColor="rgba(236, 72, 153, 0.25)"
               onClick={() => setActive(e)}
             >
@@ -434,7 +436,7 @@ export function EventsPage() {
         {active && (
           <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
             {/* Left Column - Poster & Description */}
-            <div className="space-y-4">
+            <div className="space-y-4 order-2 lg:order-1">
               <div className="overflow-hidden rounded-xl border border-white/10 bg-white/[0.04]">
                 {active.posterUrl ? (
                   <img
@@ -472,7 +474,7 @@ export function EventsPage() {
             </div>
 
             {/* Right Column - Details & Actions */}
-            <div className="space-y-4">
+            <div className="space-y-4 order-1 lg:order-2">
               <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
                 <div className="text-xs font-semibold tracking-[0.25em] text-yatra-300 mb-4 flex items-center gap-2">
                   <span className="text-pink-400 font-korean">상세 정보</span>
@@ -538,7 +540,8 @@ export function EventsPage() {
                 href={active.registrationUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="group relative inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-pink-500 to-pink-600 px-6 py-3.5 text-sm font-semibold text-white transition-all hover:from-pink-600 hover:to-pink-500 hover:shadow-[0_8px_24px_rgba(236,72,153,0.4)] hover:scale-[1.02]"
+                className="group relative inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-pink-500 to-pink-600 px-6 py-4 sm:py-3.5 text-sm font-semibold text-white transition-all hover:from-pink-600 hover:to-pink-500 hover:shadow-[0_8px_24px_rgba(236,72,153,0.4)] hover:scale-[1.02] touch-manipulation"
+                style={{ minHeight: "44px" }}
               >
                 <span className="text-white font-medium font-korean">지금 등록하기</span>
                 <span className="mx-2 text-white/70">•</span>

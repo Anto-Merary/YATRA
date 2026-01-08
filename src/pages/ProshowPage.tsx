@@ -4,8 +4,8 @@ import FaultyTerminal from "@/components/FaultyTerminal";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 
-// NOTE: User-provided path. This file exists in the repo at dist/assets/artist.png.
-import artistPng from "../../dist/assets/artist.png";
+// NOTE: User-provided path. This file should be in the public folder.
+// import artistPng from "../../dist/assets/artist.png";
 
 // Text decryption effect component
 function DecryptText({ 
@@ -154,9 +154,9 @@ Blew up with his 2017 self-titled mixtape - tracks like 'Magnolia' and 'wokeupli
       </div>
 
       {/* Content Layer */}
-      <div className="container-max py-12 md:py-20 relative z-10 min-h-screen">
+      <div className="container-max py-8 sm:py-12 md:py-20 relative z-10 min-h-screen px-4">
           {/* Hero Section - Split Layout */}
-          <div className="mb-16 grid gap-8 md:grid-cols-2 md:gap-12">
+          <div className="mb-10 sm:mb-14 md:mb-16 grid gap-6 sm:gap-8 md:grid-cols-2 md:gap-12">
             {/* Left: Artist Image */}
             <motion.div
               className="relative"
@@ -183,7 +183,7 @@ Blew up with his 2017 self-titled mixtape - tracks like 'Magnolia' and 'wokeupli
                   }}
                 />
                 <motion.img
-                  src={artistPng}
+                  src="/artist.png"
                   alt={artistName}
                   draggable={false}
                   className="relative z-10 h-full w-full object-cover"
@@ -206,7 +206,7 @@ Blew up with his 2017 self-titled mixtape - tracks like 'Magnolia' and 'wokeupli
                 <div className="mb-4 font-mono text-xs tracking-widest text-pink-500/60">
                   [PROSHOW_HEADLINER]
                 </div>
-                <h1 className="font-display text-6xl font-black leading-none tracking-tight md:text-7xl font-mono">
+                <h1 className="font-display text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black leading-none tracking-tight font-mono">
                   <AnimatePresence mode="wait">
                     {showKorean ? (
                       <motion.div
@@ -268,7 +268,7 @@ Blew up with his 2017 self-titled mixtape - tracks like 'Magnolia' and 'wokeupli
 
               {/* Stats Grid */}
               <motion.div
-                className="grid grid-cols-3 gap-4"
+                className="grid grid-cols-3 gap-2 sm:gap-4"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 }}
@@ -280,14 +280,14 @@ Blew up with his 2017 self-titled mixtape - tracks like 'Magnolia' and 'wokeupli
                 ].map((stat, i) => (
                   <motion.div
                     key={stat.label}
-                    className="border border-white/10 bg-black/30 p-4 backdrop-blur-sm"
+                    className="border border-white/10 bg-black/30 p-2 sm:p-3 md:p-4 backdrop-blur-sm"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 + i * 0.1 }}
                     whileHover={{ borderColor: "rgba(236,72,153,0.5)", scale: 1.05 }}
                   >
-                    <div className="font-mono text-2xl font-bold text-pink-500">{stat.value}</div>
-                    <div className="mt-1 font-mono text-xs text-white/50">{stat.label}</div>
+                    <div className="font-mono text-lg sm:text-xl md:text-2xl font-bold text-pink-500">{stat.value}</div>
+                    <div className="mt-0.5 sm:mt-1 font-mono text-[10px] sm:text-xs text-white/50">{stat.label}</div>
                   </motion.div>
                 ))}
               </motion.div>
@@ -296,18 +296,18 @@ Blew up with his 2017 self-titled mixtape - tracks like 'Magnolia' and 'wokeupli
 
           {/* About Section */}
           <motion.div
-            className="mb-16 border border-white/10 bg-black/40 p-8 backdrop-blur-sm md:p-12"
+            className="mb-10 sm:mb-14 md:mb-16 border border-white/10 bg-black/40 p-4 sm:p-6 md:p-8 lg:p-12 backdrop-blur-sm"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
           >
-            <div className="mb-6 font-mono text-xs tracking-widest text-pink-500/60">
+            <div className="mb-4 sm:mb-6 font-mono text-[10px] sm:text-xs tracking-widest text-pink-500/60">
               [ARTIST_BIO]
             </div>
             <div className="max-w-3xl">
               <TextType
                 as="p"
-                className="font-mono text-sm leading-relaxed text-white/80 md:text-base"
+                className="font-mono text-xs sm:text-sm md:text-base leading-relaxed text-white/80"
                 text={aboutText}
                 typingSpeed={25}
                 initialDelay={1000}
@@ -320,19 +320,19 @@ Blew up with his 2017 self-titled mixtape - tracks like 'Magnolia' and 'wokeupli
 
           {/* CTA Section */}
           <motion.div
-            className="flex flex-col items-center justify-between gap-6 border border-pink-500/30 bg-black/50 p-8 backdrop-blur-sm md:flex-row md:p-12"
+            className="flex flex-col items-center justify-between gap-4 sm:gap-6 border border-pink-500/30 bg-black/50 p-4 sm:p-6 md:p-8 lg:p-12 backdrop-blur-sm md:flex-row"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
           >
             <div>
-              <div className="mb-2 font-mono text-xs tracking-widest text-pink-500/60">
+              <div className="mb-2 font-mono text-[10px] sm:text-xs tracking-widest text-pink-500/60">
                 [TICKET_ACCESS]
               </div>
-              <h2 className="font-display text-3xl font-bold text-white md:text-4xl">
+              <h2 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white">
                 <span className="text-pink-400">준비되셨나요?</span> Ready for the show?
               </h2>
-              <p className="mt-2 font-mono text-sm text-white/60">
+              <p className="mt-2 font-mono text-xs sm:text-sm text-white/60">
                 <span className="text-pink-300/80">공연</span> 티켓을 예약하세요 • Secure your spot at the most anticipated <span className="text-pink-300/80">공연</span>
               </p>
             </div>
@@ -342,7 +342,8 @@ Blew up with his 2017 self-titled mixtape - tracks like 'Magnolia' and 'wokeupli
             >
               <Link
                 to="/tickets"
-                className="group relative inline-block border border-pink-500 bg-pink-500/10 px-8 py-4 font-mono text-sm font-semibold text-white transition-all hover:bg-pink-500/20 hover:border-pink-400"
+                className="group relative inline-block border border-pink-500 bg-pink-500/10 px-6 sm:px-8 py-3 sm:py-4 font-mono text-xs sm:text-sm font-semibold text-white transition-all hover:bg-pink-500/20 hover:border-pink-400 touch-manipulation w-full sm:w-auto text-center"
+                style={{ minHeight: "44px" }}
               >
                 <span className="relative z-10">BOOK_TICKETS.exe</span>
                 <motion.div

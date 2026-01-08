@@ -22,25 +22,26 @@ export function Modal({ open, onOpenChange, title, children }: ModalProps) {
   if (!open) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[60]">
+    <div className="fixed inset-0 z-[60]" style={{ paddingTop: "env(safe-area-inset-top)", paddingBottom: "env(safe-area-inset-bottom)" }}>
       <div
         className="absolute inset-0 bg-black/70"
         onClick={() => onOpenChange(false)}
         aria-hidden="true"
       />
-      <div className="absolute inset-0 flex items-center justify-center p-4">
-        <div className="w-full max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-[#070814] shadow-2xl">
-          <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+      <div className="absolute inset-0 flex items-center justify-center p-4 overflow-y-auto">
+        <div className="w-full max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-[#070814] shadow-2xl my-4 max-h-[90vh] overflow-y-auto">
+          <div className="flex items-center justify-between border-b border-white/10 px-4 sm:px-5 py-3 sm:py-4 sticky top-0 bg-[#070814] z-10">
             <div className="text-sm font-semibold tracking-wide text-white/80">{title}</div>
             <button
               type="button"
               onClick={() => onOpenChange(false)}
-              className="rounded-md border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70 hover:text-white"
+              className="rounded-md border border-white/10 bg-white/5 px-3 py-2 sm:py-1 text-xs text-white/70 hover:text-white touch-manipulation"
+              style={{ minHeight: "44px", minWidth: "44px" }}
             >
               Close
             </button>
           </div>
-          <div className="p-5">{children}</div>
+          <div className="p-4 sm:p-5">{children}</div>
         </div>
       </div>
     </div>,

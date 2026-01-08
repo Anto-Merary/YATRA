@@ -47,12 +47,12 @@ function TwitterIcon(props: SVGProps<SVGSVGElement>) {
 
 export function Footer() {
   return (
-    <footer className="mt-20 border-t border-white/10">
-      <div className="container-max py-10">
-        <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
+    <footer className="mt-12 sm:mt-16 md:mt-20 border-t border-white/10">
+      <div className="container-max py-6 sm:py-8 md:py-10 px-4">
+        <div className="flex flex-col gap-6 sm:gap-8 md:flex-row md:items-start md:justify-between">
           <div>
-            <div className="text-lg font-semibold tracking-wide">Contact</div>
-            <div className="mt-2 space-y-1 text-sm text-white/70">
+            <div className="text-base sm:text-lg font-semibold tracking-wide">Contact</div>
+            <div className="mt-2 space-y-1 text-xs sm:text-sm text-white/70">
               <div>Rajalakshmi Institute of Technology</div>
               <div>Email: yatra@ritchennai.edu.in</div>
               <div>Phone: +91 XXXXXXXXXX</div>
@@ -60,14 +60,15 @@ export function Footer() {
           </div>
 
           <div>
-            <div className="text-lg font-semibold tracking-wide">Social</div>
-            <div className="mt-3 flex items-center gap-4">
+            <div className="text-base sm:text-lg font-semibold tracking-wide">Social</div>
+            <div className="mt-3 flex items-center gap-3 sm:gap-4">
               <a
                 href="https://instagram.com"
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-full border border-white/10 bg-white/5 p-2 text-white/80 hover:text-white"
+                className="rounded-full border border-white/10 bg-white/5 p-2 text-white/80 hover:text-white touch-manipulation"
                 aria-label="Instagram"
+                style={{ minWidth: "44px", minHeight: "44px", display: "flex", alignItems: "center", justifyContent: "center" }}
               >
                 <InstagramIcon className="h-5 w-5" />
               </a>
@@ -75,8 +76,9 @@ export function Footer() {
                 href="https://facebook.com"
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-full border border-white/10 bg-white/5 p-2 text-white/80 hover:text-white"
+                className="rounded-full border border-white/10 bg-white/5 p-2 text-white/80 hover:text-white touch-manipulation"
                 aria-label="Facebook"
+                style={{ minWidth: "44px", minHeight: "44px", display: "flex", alignItems: "center", justifyContent: "center" }}
               >
                 <FacebookIcon className="h-5 w-5" />
               </a>
@@ -84,8 +86,9 @@ export function Footer() {
                 href="https://x.com"
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-full border border-white/10 bg-white/5 p-2 text-white/80 hover:text-white"
+                className="rounded-full border border-white/10 bg-white/5 p-2 text-white/80 hover:text-white touch-manipulation"
                 aria-label="Twitter"
+                style={{ minWidth: "44px", minHeight: "44px", display: "flex", alignItems: "center", justifyContent: "center" }}
               >
                 <TwitterIcon className="h-5 w-5" />
               </a>
@@ -93,7 +96,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 text-xs text-white/40">
+        <div className="mt-6 sm:mt-8 md:mt-10 text-xs text-white/40">
           © {new Date().getFullYear()} YATRA'26
         </div>
       </div>
