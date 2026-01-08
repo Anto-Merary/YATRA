@@ -1,0 +1,33 @@
+.pixelated-tag {
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+  transform: scale(1);
+  animation: pixelate 0.1s steps(1) infinite;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.pixelated-text {
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.5px;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+@keyframes pixelate {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(0.5px, 0.5px) scale(1);
+  }
+  50% {
+    transform: translate(0, 0) scale(1);
+  }
+  75% {
+    transform: translate(-0.5px, -0.5px) scale(1);
+  }
+}
+

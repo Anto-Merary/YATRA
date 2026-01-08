@@ -1,0 +1,10 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="closingTagPattern" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
+      <text x="10" y="30" font-family="Courier New, monospace" font-size="20" font-weight="bold" fill="#6A5CFF" opacity="0.6">&lt;/&gt;</text>
+      <text x="30" y="50" font-family="Courier New, monospace" font-size="18" font-weight="bold" fill="#6A5CFF" opacity="0.5">&lt;/&gt;</text>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#closingTagPattern)" />
+</svg>
+
