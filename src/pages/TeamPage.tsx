@@ -4,10 +4,9 @@ import LetterGlitch from "@/components/LetterGlitch";
 import { AkiraText } from "@/components/AkiraText";
 import { useEffect, useRef, useState } from "react";
 import ProfileCard from "@/components/ProfileCard";
-// Images should be in the public folder
-// import christopherImage from "../../dist/assets/Christopher.jpeg?url";
-// import antoMeraryImage from "../../dist/assets/Anto Merary.jpeg?url";
-// import antoMeraryPng from "../../dist/assets/Anto Merary.png?url";
+import christopherImage from "../assets/christopher.png?url";
+import antoMeraryImage from "../assets/antomerary.png?url";
+import antoMeraryPng from "../assets/antomerary.png?url";
 import closingTagPattern from "../assets/closing-tag-pattern.svg?url";
 
 type TeamMember = {
@@ -37,15 +36,15 @@ const WEB_DEV_TEAM: TeamMember[] = [
     name: "Christopher", 
     category: "webdev",
     role: "Web Developer",
-    avatarUrl: "/Christopher.jpeg",
+    avatarUrl: christopherImage,
     handle: "ft.chrizzy"
   },
   { 
     name: "Anto Merary", 
     category: "webdev",
     role: "Web Developer",
-    avatarUrl: "/Anto Merary.jpeg",
-    miniAvatarUrl: "/Anto Merary.png",
+    avatarUrl: antoMeraryImage,
+    miniAvatarUrl: antoMeraryPng,
     handle: "antomerary.png"
   },
 ];

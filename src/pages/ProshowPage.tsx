@@ -4,8 +4,7 @@ import FaultyTerminal from "@/components/FaultyTerminal";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 
-// NOTE: User-provided path. This file should be in the public folder.
-// import artistPng from "../../dist/assets/artist.png";
+import artistPng from "../assets/artist.png?url";
 
 // Text decryption effect component
 function DecryptText({ 
@@ -183,7 +182,7 @@ Blew up with his 2017 self-titled mixtape - tracks like 'Magnolia' and 'wokeupli
                   }}
                 />
                 <motion.img
-                  src="/artist.png"
+                  src={artistPng}
                   alt={artistName}
                   draggable={false}
                   className="relative z-10 h-full w-full object-cover"

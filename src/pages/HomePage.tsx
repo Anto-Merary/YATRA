@@ -4,6 +4,7 @@ import { RevealOnScroll } from "../components/RevealOnScroll";
 import { ThreeLogo } from "../components/ThreeLogo";
 import { Navbar } from "../components/Navbar";
 import { AkiraText } from "../components/AkiraText";
+import yatraVideo from "../assets/video.mp4?url";
 import ritLogo from "../../RIT WHITE LOGO.png";
 import { motion } from "framer-motion";
 
@@ -27,7 +28,7 @@ export function HomePage() {
           loop
           playsInline
           preload="auto"
-          src="/Yatra 2025.mp4"
+          src={yatraVideo}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/55 to-black" />
         <div className="video-grain-overlay absolute inset-0 pointer-events-none" />
