@@ -18,24 +18,63 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  width: 100%;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html,
 body,
 #root {
   height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  /* Prevent horizontal scroll on mobile */
+  position: relative;
 }
 
 body {
   margin: 0;
+  padding: 0;
   background: #000000;
   color: #eaeaf2;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Apple Color Emoji",
     "Segoe UI Emoji";
+  position: relative;
+  /* Mobile optimizations */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  body {
+    font-size: 16px; /* Prevent zoom on input focus */
+  }
+  
+  /* Ensure touch targets are at least 44px */
+  button, a, input, select, textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Improve touch scrolling */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 .container-max {
-  @apply mx-auto w-full max-w-6xl px-4;
+  @apply mx-auto w-full max-w-6xl px-4 sm:px-6 md:px-8;
+}
+
+/* Mobile container padding adjustments */
+@media (max-width: 640px) {
+  .container-max {
+    @apply px-3;
+  }
 }
 
 
@@ -124,23 +163,6 @@ body {
 
 
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(168, 85, 247, 0.3);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(168, 85, 247, 0.5);
-}
 
 /* Terminal cursor animation - retro blinking block cursor */
 .terminal-cursor-border {
@@ -230,6 +252,14 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+  /* Prevent horizontal overflow */
+  * {
+    max-width: 100%;
+  }
+  img, video, canvas, svg {
+    max-width: 100%;
+    height: auto;
   }
 }
 

@@ -13,7 +13,7 @@ export function HomePage() {
     <div>
       <section className="relative h-[92vh] min-h-[500px] sm:min-h-[600px] md:min-h-[680px] overflow-hidden">
         {/* Drop shadow on top - prominent gradient */}
-        <div className="absolute top-0 left-0 right-0 h-60 bg-gradient-to-b from-black via-black/90 via-black/60 to-transparent pointer-events-none z-20" />
+        <div className="absolute top-0 left-0 right-0 h-40 sm:h-60 bg-gradient-to-b from-black via-black/90 via-black/60 to-transparent pointer-events-none z-20" />
         <video
           className="absolute inset-0 h-full w-full object-cover opacity-80 video-grain"
           style={{
@@ -32,32 +32,34 @@ export function HomePage() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/55 to-black" />
         <div className="video-grain-overlay absolute inset-0 pointer-events-none" />
-        <NoiseOverlay opacity={0.22} />
+        <NoiseOverlay opacity={0.4} />
         <Navbar variant="absolute" />
 
-        <div className="container-max relative flex h-full items-center justify-center px-4">
-          <div className="flex flex-col items-center text-center">
-            <div className="text-[10px] sm:text-xs font-semibold tracking-[0.3em] sm:tracking-[0.4em] text-white/70 my-6 sm:my-[33px] px-2">
+        <div className="container-max relative flex h-full items-center justify-center px-3 sm:px-4">
+          <div className="flex flex-col items-center justify-center text-center w-full">
+            <div className="text-[9px] xs:text-[10px] sm:text-xs font-semibold tracking-[0.2em] xs:tracking-[0.3em] sm:tracking-[0.4em] text-white/70 my-4 sm:my-6 md:my-[33px] px-2">
               RAJALAKSHMI INSTITUTE OF TECHNOLOGY
             </div>
 
-            <div className="mt-6 sm:mt-10">
-              <ThreeLogo />
+            <div className="mt-4 sm:mt-6 md:mt-10 w-full flex justify-center items-center">
+              <div className="flex justify-center items-center">
+                <ThreeLogo />
+              </div>
             </div>
           </div>
         </div>
         
-        <div className="absolute bottom-0 left-0 right-0 flex justify-center pb-4 sm:pb-8 px-4">
-          <div className="text-[10px] sm:text-xs text-white/60 text-center">Touch &amp; drag the 3D logo to interact.</div>
+        <div className="absolute bottom-16 sm:bottom-4 left-0 right-0 flex justify-center pb-2 sm:pb-4 md:pb-8 px-4">
+          <div className="text-[9px] xs:text-[10px] sm:text-xs text-white/60 text-center px-2">Touch &amp; drag the 3D logo to interact.</div>
         </div>
       </section>
 
-      <section className="relative py-12 sm:py-16 md:py-20 overflow-hidden">
+      <section className="relative py-8 sm:py-12 md:py-16 lg:py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/40" />
         <div className="video-grain-overlay absolute inset-0 pointer-events-none opacity-30" />
-        <div className="container-max relative z-10 px-4">
+        <div className="container-max relative z-10 px-3 sm:px-4">
           <RevealOnScroll>
-            <div className="relative flex flex-col items-center space-y-8 sm:space-y-10 md:space-y-12">
+            <div className="relative flex flex-col items-center space-y-6 sm:space-y-8 md:space-y-10 lg:space-y-12">
               {/* RIT Logo Badge */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8, y: 20 }}
@@ -97,8 +99,8 @@ export function HomePage() {
               <div className="flex flex-col items-center px-4">
                 <AkiraText
                   words={[
-                    { firstLetter: "A", rest: "BOUT", variant: "outline-only" },
-                    { firstLetter: "R", rest: "IT", variant: "glow" },
+                    { text: "ABOUT", variant: "outline-only" },
+                    { text: "RIT", variant: "glow" },
                   ]}
                   animationDelay={0.2}
                 />

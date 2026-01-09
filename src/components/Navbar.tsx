@@ -1,6 +1,8 @@
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
+import Dock from "./Dock";
+import { Home, Mic, Ticket, Calendar, Images, Users } from "lucide-react";
 import ritLogo from "../../RIT WHITE LOGO.png";
 import yatraLogo from "../../LOGO .png";
 
@@ -24,9 +26,9 @@ export function Navbar({ variant = "fixed" }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -71,33 +73,30 @@ export function Navbar({ variant = "fixed" }: NavbarProps) {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Close mobile menu on route change
-  useEffect(() => {
-    setIsMobileMenuOpen(false);
-  }, [location.pathname]);
-
-  // Prevent body scroll when mobile menu is open
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isMobileMenuOpen]);
 
   const positionClass = variant === "fixed" ? "fixed inset-x-0 top-0" : "absolute top-0 left-0 right-0";
 
   const navLinks = [
-    { to: "/", label: "Home", end: true },
-    { to: "/proshow", label: "Proshow" },
-    { to: "/tickets", label: "Tickets" },
-    { to: "/events", label: "Events" },
-    { to: "/gallery", label: "Gallery" },
-    { to: "/team", label: "Team" },
+    { to: "/", label: "Home", end: true, icon: Home },
+    { to: "/proshow", label: "Proshow", icon: Mic },
+    { to: "/tickets", label: "Tickets", icon: Ticket },
+    { to: "/events", label: "Events", icon: Calendar },
+    { to: "/gallery", label: "Gallery", icon: Images },
+    { to: "/team", label: "Team", icon: Users },
   ];
+
+  // Dock items for mobile navigation
+  const dockItems = navLinks.map((link) => {
+    const IconComponent = link.icon;
+    return {
+      icon: <IconComponent className="w-5 h-5 sm:w-6 sm:h-6" />,
+      label: link.label,
+      onClick: () => {
+        navigate(link.to);
+      },
+      className: location.pathname === link.to ? "dock-item-active" : "",
+    };
+  });
 
   return (
     <>
@@ -177,43 +176,8 @@ export function Navbar({ variant = "fixed" }: NavbarProps) {
             </motion.div>
           )}
 
-          {/* Right: Yatra Logo and Mobile Menu Button */}
-          <div className="flex items-center flex-1 justify-end gap-3">
-            {isMobile && (
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="relative z-[101] p-2 rounded-lg border border-white/20 bg-black/40 backdrop-blur-sm text-white hover:bg-white/10 transition-colors touch-manipulation"
-                aria-label="Toggle menu"
-                style={{ minWidth: "44px", minHeight: "44px" }}
-              >
-                <motion.div
-                  animate={isMobileMenuOpen ? "open" : "closed"}
-                  className="flex flex-col gap-1.5"
-                >
-                  <motion.span
-                    variants={{
-                      closed: { rotate: 0, y: 0 },
-                      open: { rotate: 45, y: 6 },
-                    }}
-                    className="w-5 h-0.5 bg-white rounded"
-                  />
-                  <motion.span
-                    variants={{
-                      closed: { opacity: 1 },
-                      open: { opacity: 0 },
-                    }}
-                    className="w-5 h-0.5 bg-white rounded"
-                  />
-                  <motion.span
-                    variants={{
-                      closed: { rotate: 0, y: 0 },
-                      open: { rotate: -45, y: -6 },
-                    }}
-                    className="w-5 h-0.5 bg-white rounded"
-                  />
-                </motion.div>
-              </button>
-            )}
+          {/* Right: Yatra Logo */}
+          <div className="flex items-center flex-1 justify-end">
             <img
               src={yatraLogo}
               alt="Yatra Logo"
@@ -224,71 +188,6 @@ export function Navbar({ variant = "fixed" }: NavbarProps) {
         </div>
       </motion.div>
 
-      {/* Mobile Menu Overlay */}
-      <AnimatePresence>
-        {isMobile && isMobileMenuOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[99]"
-              onClick={() => setIsMobileMenuOpen(false)}
-            />
-            {/* Menu Panel */}
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-[#070814] border-l border-white/10 shadow-2xl z-[100] overflow-y-auto"
-              style={{
-                paddingTop: "env(safe-area-inset-top)",
-                paddingBottom: "env(safe-area-inset-bottom)",
-              }}
-            >
-              <div className="flex flex-col h-full">
-                {/* Menu Header */}
-                <div className="flex items-center justify-between p-6 border-b border-white/10">
-                  <div className="text-lg font-semibold text-white">Menu</div>
-                  <button
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="p-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-colors touch-manipulation"
-                    aria-label="Close menu"
-                    style={{ minWidth: "44px", minHeight: "44px" }}
-                  >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-                {/* Navigation Links */}
-                <nav className="flex-1 py-4">
-                  {navLinks.map((link, index) => (
-                    <NavLink
-                      key={link.to}
-                      to={link.to}
-                      className={({ isActive }) => (isActive ? mobileLinkActive : mobileLinkBase)}
-                      end={link.end}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      <motion.div
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                      >
-                        {link.label}
-                      </motion.div>
-                    </NavLink>
-                  ))}
-                </nav>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
     </>
   );
 }

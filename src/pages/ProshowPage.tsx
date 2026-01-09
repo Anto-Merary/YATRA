@@ -109,14 +109,133 @@ function DecryptText({
   );
 }
 
+// Custom decryption component for AOORA with colored parts
+function DecryptAOORA({ 
+  onComplete, 
+  delay = 0 
+}: { 
+  onComplete?: () => void;
+  delay?: number;
+}) {
+  const [displayedText, setDisplayedText] = useState("");
+  const [isDecrypting, setIsDecrypting] = useState(true);
+  const charsRef = useRef<string[]>([]);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const randomChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?/가나다라마바사아자차카타파하";
+  const text = "AOORA";
+
+  useEffect(() => {
+    charsRef.current = text.split("");
+    setDisplayedText("");
+    setIsDecrypting(true);
+    
+    // Clear any existing timeouts/intervals
+    timeoutRef.current.forEach(clearTimeout);
+    timeoutRef.current = [];
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    
+    let currentIndex = 0;
+    
+    const decryptChar = (index: number) => {
+      if (index >= charsRef.current.length) {
+        setIsDecrypting(false);
+        if (onComplete) {
+          const completeTimeout = setTimeout(onComplete, 1200);
+          timeoutRef.current.push(completeTimeout);
+        }
+        return;
+      }
+
+      // Show glitch effect - cycle through random chars before revealing
+      let glitchCount = 0;
+      const maxGlitches = 3 + Math.floor(Math.random() * 3);
+      
+      intervalRef.current = setInterval(() => {
+        const randomChar = randomChars[Math.floor(Math.random() * randomChars.length)];
+        const partial = charsRef.current.slice(0, index).join("");
+        setDisplayedText(partial + randomChar);
+        
+        glitchCount++;
+        if (glitchCount >= maxGlitches) {
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+          }
+          // Reveal actual character
+          const finalPartial = charsRef.current.slice(0, index + 1).join("");
+          setDisplayedText(finalPartial);
+          
+          // Move to next character
+          currentIndex++;
+          const nextTimeout = setTimeout(() => {
+            decryptChar(currentIndex);
+          }, 60 + Math.random() * 40);
+          timeoutRef.current.push(nextTimeout);
+        }
+      }, 30 + Math.random() * 30);
+    };
+
+    const startTimeout = setTimeout(() => {
+      decryptChar(0);
+    }, delay);
+    timeoutRef.current.push(startTimeout);
+
+    return () => {
+      timeoutRef.current.forEach(clearTimeout);
+      timeoutRef.current = [];
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [onComplete, delay]);
+
+  // Split displayed text into colored parts: A (pink), OO (white), RA (pink)
+  const renderColoredText = () => {
+    if (displayedText.length === 0) return null;
+    
+    const parts = [];
+    if (displayedText.length >= 1) {
+      parts.push(<span key="a" className="text-pink-500">{displayedText[0]}</span>);
+    }
+    if (displayedText.length >= 2) {
+      const ooPart = displayedText.slice(1, 3);
+      parts.push(<span key="oo" className="text-white">{ooPart}</span>);
+    }
+    if (displayedText.length >= 4) {
+      const raPart = displayedText.slice(3);
+      parts.push(<span key="ra" className="text-pink-500">{raPart}</span>);
+    }
+    
+    return parts;
+  };
+
+  return (
+    <span className="relative">
+      {renderColoredText()}
+      {isDecrypting && (
+        <motion.span
+          animate={{ opacity: [1, 0.3, 1] }}
+          transition={{ duration: 0.4, repeat: Infinity }}
+          className="inline-block ml-1 text-pink-400"
+        >
+          ▊
+        </motion.span>
+      )}
+    </span>
+  );
+}
+
 export function ProshowPage() {
-  const artistName = "Playboi Carti";
+  const artistName = "AOORA";
   const [showKorean, setShowKorean] = useState(true);
   const [isDecryptingKorean, setIsDecryptingKorean] = useState(true);
   const [isDecryptingEnglish, setIsDecryptingEnglish] = useState(false);
   const aboutText =
-    `Real name Jordan Terrell Carter, born Sept 13, 1995 (or '96, sources be wildin') in Atlanta, GA. Dude started spittin' bars back in 2011 as $ir Cartier, uploadin' on SoundCloud, then switched to Playboi Carti in 2013. Joined Awful Records, linked up with A$AP Rocky and AWGE/Interscope in 2016.
-Blew up with his 2017 self-titled mixtape - tracks like 'Magnolia' and 'wokeuplikethis*' with Uzi were everywhere, no cap. Then Die Lit in 2018 (pure slatt vibes), Whole Lotta Red in 2020 (that one went #1 and shifted the whole sound), and this year in 2025 he dropped MUSIC which is experimental af and got a deluxe too.`;
+    `Meet AOORA (Park Min-jun), the K-Pop sensation bridging the gap between Korea and India. Debuting in 2009 with the group Double-A, Aoora went solo to pursue a unique blend of energetic EDM and pop. Known for his signature 'Indo-Korean' genre, he went viral for his K-Pop renditions of Bappi Lahiri classics like Jimmy Jimmy and Auva Auva. After winning hearts as a wild card on Bigg Boss 17, he continues to light up stages with his neon-fueled fashion and high-octane performances.`;
 
   const handleKoreanComplete = () => {
     setIsDecryptingKorean(false);
@@ -153,9 +272,9 @@ Blew up with his 2017 self-titled mixtape - tracks like 'Magnolia' and 'wokeupli
       </div>
 
       {/* Content Layer */}
-      <div className="container-max py-8 sm:py-12 md:py-20 relative z-10 min-h-screen px-4">
+      <div className="container-max py-6 sm:py-8 md:py-12 lg:py-20 relative z-10 min-h-screen px-3 sm:px-4">
           {/* Hero Section - Split Layout */}
-          <div className="mb-10 sm:mb-14 md:mb-16 grid gap-6 sm:gap-8 md:grid-cols-2 md:gap-12">
+          <div className="mb-6 sm:mb-10 md:mb-14 lg:mb-16 grid gap-4 sm:gap-6 md:gap-8 md:grid-cols-2 lg:gap-12">
             {/* Left: Artist Image */}
             <motion.div
               className="relative"
@@ -163,7 +282,7 @@ Blew up with his 2017 self-titled mixtape - tracks like 'Magnolia' and 'wokeupli
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <div className="relative aspect-[3/4] overflow-hidden rounded-lg border border-pink-500/20 bg-black/40 backdrop-blur-sm">
+              <div className="relative aspect-[3/4] overflow-hidden rounded-lg xs:rounded-xl border border-pink-500/20 bg-black/40 backdrop-blur-sm">
                 {/* Glitch overlay effect */}
                 <motion.div
                   className="absolute inset-0 bg-pink-500/10 z-10"
@@ -196,16 +315,16 @@ Blew up with his 2017 self-titled mixtape - tracks like 'Magnolia' and 'wokeupli
             </motion.div>
 
             {/* Right: Title & Info */}
-            <div className="flex flex-col justify-center space-y-8">
+            <div className="flex flex-col justify-center space-y-4 sm:space-y-6 md:space-y-8">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.8 }}
               >
-                <div className="mb-4 font-mono text-xs tracking-widest text-pink-500/60">
+                <div className="mb-2 sm:mb-3 md:mb-4 font-mono text-[10px] xs:text-xs tracking-wider xs:tracking-widest text-pink-500/60">
                   [PROSHOW_HEADLINER]
                 </div>
-                <h1 className="font-display text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black leading-none tracking-tight font-mono">
+                <h1 className="font-display text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-none tracking-tight font-mono">
                   <AnimatePresence mode="wait">
                     {showKorean ? (
                       <motion.div
@@ -218,7 +337,7 @@ Blew up with his 2017 self-titled mixtape - tracks like 'Magnolia' and 'wokeupli
                       >
                         {isDecryptingKorean ? (
                           <DecryptText 
-                            text="플레이보이 카티" 
+                            text="아우라" 
                             onComplete={handleKoreanComplete}
                             delay={500}
                           />
@@ -228,7 +347,7 @@ Blew up with his 2017 self-titled mixtape - tracks like 'Magnolia' and 'wokeupli
                             animate={{ opacity: 0 }}
                             transition={{ duration: 0.5 }}
                           >
-                            플레이보이 카티
+                            아우라
                           </motion.span>
                         )}
                       </motion.div>
@@ -239,24 +358,17 @@ Blew up with his 2017 self-titled mixtape - tracks like 'Magnolia' and 'wokeupli
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.3 }}
                       >
-                        <div className="block text-pink-500">
+                        <div className="block">
                           {isDecryptingEnglish ? (
-                            <DecryptText 
-                              text="PLAYBOI" 
+                            <DecryptAOORA 
                               delay={200}
                             />
                           ) : (
-                            "PLAYBOI"
-                          )}
-                        </div>
-                        <div className="block text-white mt-2">
-                          {isDecryptingEnglish ? (
-                            <DecryptText 
-                              text="CARTI" 
-                              delay={800}
-                            />
-                          ) : (
-                            "CARTI"
+                            <>
+                              <span className="text-pink-500">A</span>
+                              <span className="text-white">OO</span>
+                              <span className="text-pink-500">RA</span>
+                            </>
                           )}
                         </div>
                       </motion.div>
@@ -267,26 +379,27 @@ Blew up with his 2017 self-titled mixtape - tracks like 'Magnolia' and 'wokeupli
 
               {/* Stats Grid */}
               <motion.div
-                className="grid grid-cols-3 gap-2 sm:gap-4"
+                className="grid grid-cols-3 gap-1.5 xs:gap-2 sm:gap-3 md:gap-4"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 }}
               >
                 {[
-                  { label: "ALBUMS", value: "4" },
-                  { label: "BILLBOARD", value: "#67" },
-                  { label: "GENRE", value: "RAP" },
+                  { label: "DEBUT", value: "2009" },
+                  { label: "GENRE", value: "K-POP" },
+                  { label: "STYLE", value: "EDM" },
                 ].map((stat, i) => (
                   <motion.div
                     key={stat.label}
-                    className="border border-white/10 bg-black/30 p-2 sm:p-3 md:p-4 backdrop-blur-sm"
+                    className="border border-white/10 bg-black/30 p-1.5 xs:p-2 sm:p-3 md:p-4 backdrop-blur-sm"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 + i * 0.1 }}
                     whileHover={{ borderColor: "rgba(236,72,153,0.5)", scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    <div className="font-mono text-lg sm:text-xl md:text-2xl font-bold text-pink-500">{stat.value}</div>
-                    <div className="mt-0.5 sm:mt-1 font-mono text-[10px] sm:text-xs text-white/50">{stat.label}</div>
+                    <div className="font-mono text-base xs:text-lg sm:text-xl md:text-2xl font-bold text-pink-500">{stat.value}</div>
+                    <div className="mt-0.5 xs:mt-1 font-mono text-[9px] xs:text-[10px] sm:text-xs text-white/50 leading-tight">{stat.label}</div>
                   </motion.div>
                 ))}
               </motion.div>
@@ -295,18 +408,18 @@ Blew up with his 2017 self-titled mixtape - tracks like 'Magnolia' and 'wokeupli
 
           {/* About Section */}
           <motion.div
-            className="mb-10 sm:mb-14 md:mb-16 border border-white/10 bg-black/40 p-4 sm:p-6 md:p-8 lg:p-12 backdrop-blur-sm"
+            className="mb-6 sm:mb-10 md:mb-14 lg:mb-16 border border-white/10 bg-black/40 p-3 xs:p-4 sm:p-6 md:p-8 lg:p-12 backdrop-blur-sm rounded-lg xs:rounded-xl"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
           >
-            <div className="mb-4 sm:mb-6 font-mono text-[10px] sm:text-xs tracking-widest text-pink-500/60">
+            <div className="mb-3 xs:mb-4 sm:mb-6 font-mono text-[9px] xs:text-[10px] sm:text-xs tracking-wider xs:tracking-widest text-pink-500/60">
               [ARTIST_BIO]
             </div>
             <div className="max-w-3xl">
               <TextType
                 as="p"
-                className="font-mono text-xs sm:text-sm md:text-base leading-relaxed text-white/80"
+                className="font-mono text-xs xs:text-sm sm:text-sm md:text-base leading-relaxed text-white/80"
                 text={aboutText}
                 typingSpeed={25}
                 initialDelay={1000}
@@ -319,29 +432,30 @@ Blew up with his 2017 self-titled mixtape - tracks like 'Magnolia' and 'wokeupli
 
           {/* CTA Section */}
           <motion.div
-            className="flex flex-col items-center justify-between gap-4 sm:gap-6 border border-pink-500/30 bg-black/50 p-4 sm:p-6 md:p-8 lg:p-12 backdrop-blur-sm md:flex-row"
+            className="flex flex-col items-center justify-between gap-3 xs:gap-4 sm:gap-6 border border-pink-500/30 bg-black/50 p-3 xs:p-4 sm:p-6 md:p-8 lg:p-12 backdrop-blur-sm md:flex-row rounded-lg xs:rounded-xl"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
           >
-            <div>
-              <div className="mb-2 font-mono text-[10px] sm:text-xs tracking-widest text-pink-500/60">
+            <div className="w-full md:w-auto">
+              <div className="mb-1.5 xs:mb-2 font-mono text-[9px] xs:text-[10px] sm:text-xs tracking-wider xs:tracking-widest text-pink-500/60">
                 [TICKET_ACCESS]
               </div>
-              <h2 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white">
-                <span className="text-pink-400">준비되셨나요?</span> Ready for the show?
+              <h2 className="font-display text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white">
+                Ready for the show?
               </h2>
-              <p className="mt-2 font-mono text-xs sm:text-sm text-white/60">
-                <span className="text-pink-300/80">공연</span> 티켓을 예약하세요 • Secure your spot at the most anticipated <span className="text-pink-300/80">공연</span>
+              <p className="mt-1.5 xs:mt-2 font-mono text-xs sm:text-sm text-white/60">
+                Secure your spot at the most anticipated show
               </p>
             </div>
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              className="w-full md:w-auto"
             >
               <Link
                 to="/tickets"
-                className="group relative inline-block border border-pink-500 bg-pink-500/10 px-6 sm:px-8 py-3 sm:py-4 font-mono text-xs sm:text-sm font-semibold text-white transition-all hover:bg-pink-500/20 hover:border-pink-400 touch-manipulation w-full sm:w-auto text-center"
+                className="group relative inline-block border border-pink-500 bg-pink-500/10 px-4 xs:px-6 sm:px-8 py-2.5 xs:py-3 sm:py-4 font-mono text-xs sm:text-sm font-semibold text-white transition-all hover:bg-pink-500/20 hover:border-pink-400 active:bg-pink-500/30 touch-manipulation w-full sm:w-auto text-center rounded-lg xs:rounded-xl"
                 style={{ minHeight: "44px" }}
               >
                 <span className="relative z-10">BOOK_TICKETS.exe</span>

@@ -1,14 +1,52 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 import { PageTransition } from "./PageTransition";
 import { ScrollToTop } from "./ScrollToTop";
 import ClickSpark from "./ClickSpark";
+import Dock from "./Dock";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Home, Mic, Ticket, Calendar, Images, Users } from "lucide-react";
 
 export function SiteLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const isHomePage = location.pathname === "/";
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const navLinks = [
+    { to: "/", label: "Home", end: true, icon: Home },
+    { to: "/proshow", label: "Proshow", icon: Mic },
+    { to: "/tickets", label: "Tickets", icon: Ticket },
+    { to: "/events", label: "Events", icon: Calendar },
+    { to: "/gallery", label: "Gallery", icon: Images },
+    { to: "/team", label: "Team", icon: Users },
+  ];
+
+  // Dock items for mobile navigation
+  const dockItems = navLinks.map((link) => {
+    const IconComponent = link.icon;
+    return {
+      icon: <IconComponent className="w-5 h-5 sm:w-6 sm:h-6" />,
+      label: link.label,
+      onClick: () => {
+        navigate(link.to);
+      },
+      className: location.pathname === link.to ? "dock-item-active" : "",
+    };
+  });
 
   return (
     <ClickSpark
@@ -22,7 +60,7 @@ export function SiteLayout() {
       <div className="min-h-screen">
         {!isHomePage && <Navbar />}
         <ScrollToTop />
-        <main className={isHomePage ? "" : "pt-16 sm:pt-20 md:pt-24"}>
+        <main className={isHomePage ? "" : "pt-16 sm:pt-20 md:pt-24 pb-20 sm:pb-0"}>
           <AnimatePresence mode="wait">
             <PageTransition key={location.pathname}>
               <Outlet />
@@ -30,6 +68,46 @@ export function SiteLayout() {
           </AnimatePresence>
         </main>
         <Footer />
+        
+        {/* Mobile Dock Navigation - Always rendered at SiteLayout level for all pages */}
+        {isMobile && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{
+              y: 0,
+              opacity: 1,
+            }}
+            transition={{
+              duration: 0.3,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="fixed bottom-0 left-0 right-0 z-[9999] pointer-events-none"
+            style={{
+              position: "fixed",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              width: "100vw",
+              paddingBottom: "max(env(safe-area-inset-bottom), 0.5rem)",
+              paddingLeft: "0.5rem",
+              paddingRight: "0.5rem",
+              boxSizing: "border-box",
+            }}
+          >
+            <div className="pointer-events-auto w-full" style={{ width: "100%" }}>
+              <Dock
+                items={dockItems}
+                className="mobile-dock"
+                baseItemSize={44}
+                magnification={56}
+                distance={150}
+                panelHeight={64}
+                dockHeight={80}
+                spring={{ mass: 0.1, stiffness: 200, damping: 15 }}
+              />
+            </div>
+          </motion.div>
+        )}
       </div>
     </ClickSpark>
   );

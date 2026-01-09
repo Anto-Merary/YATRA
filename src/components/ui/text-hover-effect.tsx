@@ -80,7 +80,7 @@ export const TextHoverEffect = ({
   }, [isInView]);
 
   return (
-    <div ref={containerRef} className="w-full h-full overflow-visible py-8">
+    <div ref={containerRef} className="w-full h-full overflow-hidden flex items-center justify-center">
       <svg
         ref={svgRef}
         width="100%"
@@ -94,8 +94,8 @@ export const TextHoverEffect = ({
           setCursor({ x: e.clientX, y: e.clientY });
           setHovered(true);
         }}
-        className="select-none overflow-visible"
-        style={{ overflow: "visible" }}
+        className="select-none"
+        style={{ maxHeight: "100%", width: "100%" }}
       >
       <defs>
         {/* White gradient with varying brightness/opacity */}
@@ -146,7 +146,10 @@ export const TextHoverEffect = ({
         strokeWidth="1.5"
         fontSize="180"
         className="fill-transparent stroke-white font-akira font-bold tracking-wider uppercase"
-        style={{ opacity: hovered ? 0.7 : 0 }}
+        style={{ 
+          opacity: hovered ? 0.7 : 0,
+          fontSize: "clamp(120px, 18vw, 180px)"
+        }}
       >
         {text}
       </text>
@@ -158,6 +161,7 @@ export const TextHoverEffect = ({
         strokeWidth="1.5"
         fontSize="180"
         className="fill-transparent stroke-white font-akira font-bold tracking-wider uppercase"
+        style={{ fontSize: "clamp(120px, 18vw, 180px)" }}
         initial={{ strokeDashoffset: 3000, strokeDasharray: 3000 }}
         animate={isInView ? {
           strokeDashoffset: 0,
@@ -183,6 +187,7 @@ export const TextHoverEffect = ({
         fontSize="180"
         mask="url(#textMask)"
         className="fill-transparent font-akira font-bold tracking-wider uppercase"
+        style={{ fontSize: "clamp(120px, 18vw, 180px)" }}
       >
         {text}
       </text>

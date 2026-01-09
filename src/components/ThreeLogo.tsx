@@ -46,7 +46,7 @@ export function ThreeLogo() {
 
   return (
     <div
-      className="relative h-[240px] w-[240px] sm:h-[280px] sm:w-[280px] md:h-[320px] md:w-[320px] lg:h-[380px] lg:w-[380px] touch-manipulation"
+      className="relative h-[240px] w-[240px] sm:h-[280px] sm:w-[280px] md:h-[320px] md:w-[320px] lg:h-[380px] lg:w-[380px] touch-manipulation mx-auto"
       onPointerDown={() => setDragging(true)}
       style={{ touchAction: "none" }}
     >
@@ -54,9 +54,10 @@ export function ThreeLogo() {
       <div className="pointer-events-none absolute -inset-10 z-0 rounded-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.40),rgba(255,255,255,0.18)_28%,rgba(0,0,0,0)_68%)] blur-3xl" />
 
       <Canvas 
-        className="relative z-10" 
+        className="relative z-10 w-full h-full" 
         camera={{ position: [0, 0.05, 3.6], fov: 42 }} 
         dpr={typeof window !== "undefined" && window.innerWidth < 768 ? [1, 1] : [1, 1.5]}
+        style={{ display: "block", width: "100%", height: "100%" }}
       >
         <ambientLight intensity={0.35} />
         <directionalLight position={[4, 6, 3]} intensity={1.35} />

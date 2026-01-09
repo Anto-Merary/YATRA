@@ -66,23 +66,23 @@ function YouTubeIcon(props: SVGProps<SVGSVGElement>) {
 
 export function Footer() {
   return (
-    <footer id="footer" className="relative mt-20 border-t border-white/10 bg-black">
+    <footer id="footer" className="relative mt-20 border-t border-white/10 bg-black pb-24 sm:pb-0">
       {/* Film grain overlay */}
-      <NoiseOverlay opacity={0.15} />
+      <NoiseOverlay opacity={0.3} />
       
-      <div className="container-max relative py-12 md:py-16">
+      <div className="container-max relative py-8 sm:py-10 md:py-12 lg:py-16">
         {/* Main Title - Centered at top */}
-        <div className="flex justify-center mb-12 md:mb-16 overflow-visible">
-          <div className="w-full max-w-5xl h-40 md:h-52 lg:h-64 xl:h-72 overflow-visible py-6">
+        <div className="flex justify-center mb-6 xs:mb-8 sm:mb-10 md:mb-12 lg:mb-16 overflow-hidden px-2">
+          <div className="w-full max-w-5xl h-28 xs:h-32 sm:h-36 md:h-44 lg:h-56 xl:h-64 overflow-hidden py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 flex items-center justify-center">
             <TextHoverEffect text="YATRA'26" duration={0.15} />
           </div>
         </div>
 
         {/* Two Column Layout */}
-        <div className="flex flex-col md:flex-row md:justify-between gap-12 md:gap-8 mb-12">
+        <div className="flex flex-col md:flex-row md:justify-between gap-6 xs:gap-8 sm:gap-10 md:gap-8 mb-8 xs:mb-10 sm:mb-12">
           {/* Left Column - Address */}
           <div className="flex-1">
-            <div className="space-y-2 text-base md:text-lg text-white/90 leading-relaxed text-left">
+            <div className="space-y-1.5 xs:space-y-2 text-sm xs:text-base md:text-lg text-white/90 leading-relaxed text-left">
               <div className="font-semibold text-white">Rajalakshmi Institute of Technology</div>
               <div className="text-white/95">Bangalore Highway Road, Kuthambakkam,</div>
               <div className="text-white/95">Chennai, Tamil Nadu - 600124</div>
@@ -92,13 +92,14 @@ export function Footer() {
           {/* Right Column - Social Media & Contact */}
           <div className="flex-1 md:text-right">
             {/* Social Media Icons */}
-            <div className="flex md:justify-end items-center gap-3 mb-6">
+            <div className="flex md:justify-end items-center gap-2 xs:gap-3 mb-4 xs:mb-5 sm:mb-6">
               <a
                 href="https://facebook.com"
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-full border border-white/20 bg-black/50 p-2.5 text-white hover:text-white hover:border-white/40 transition-colors"
+                className="rounded-full border border-white/20 bg-black/50 p-2 xs:p-2.5 text-white hover:text-white hover:border-white/40 active:bg-white/10 transition-colors touch-manipulation"
                 aria-label="Facebook"
+                style={{ minWidth: "44px", minHeight: "44px", display: "flex", alignItems: "center", justifyContent: "center" }}
               >
                 <FacebookIcon className="h-5 w-5" />
               </a>
@@ -106,8 +107,9 @@ export function Footer() {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-full border border-white/20 bg-black/50 p-2.5 text-white hover:text-white hover:border-white/40 transition-colors"
+                className="rounded-full border border-white/20 bg-black/50 p-2 xs:p-2.5 text-white hover:text-white hover:border-white/40 active:bg-white/10 transition-colors touch-manipulation"
                 aria-label="Instagram"
+                style={{ minWidth: "44px", minHeight: "44px", display: "flex", alignItems: "center", justifyContent: "center" }}
               >
                 <InstagramIcon className="h-5 w-5" />
               </a>
@@ -115,8 +117,9 @@ export function Footer() {
                 href="https://youtube.com"
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-full border border-white/20 bg-black/50 p-2.5 text-white hover:text-white hover:border-white/40 transition-colors"
+                className="rounded-full border border-white/20 bg-black/50 p-2 xs:p-2.5 text-white hover:text-white hover:border-white/40 active:bg-white/10 transition-colors touch-manipulation"
                 aria-label="YouTube"
+                style={{ minWidth: "44px", minHeight: "44px", display: "flex", alignItems: "center", justifyContent: "center" }}
               >
                 <YouTubeIcon className="h-5 w-5" />
               </a>
@@ -124,15 +127,16 @@ export function Footer() {
                 href="https://x.com"
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-full border border-white/20 bg-black/50 p-2.5 text-white hover:text-white hover:border-white/40 transition-colors"
+                className="rounded-full border border-white/20 bg-black/50 p-2 xs:p-2.5 text-white hover:text-white hover:border-white/40 active:bg-white/10 transition-colors touch-manipulation"
                 aria-label="Twitter"
+                style={{ minWidth: "44px", minHeight: "44px", display: "flex", alignItems: "center", justifyContent: "center" }}
               >
                 <TwitterIcon className="h-5 w-5" />
               </a>
             </div>
 
             {/* Email and Phone */}
-            <div className="space-y-1 text-sm md:text-base text-white/70">
+            <div className="space-y-1 text-xs xs:text-sm md:text-base text-white/70">
               <div>yatra@ritchennai.edu.in</div>
               <div>+91 XXXXXXXXXX</div>
             </div>
@@ -140,8 +144,8 @@ export function Footer() {
         </div>
 
         {/* Copyright - Bottom Left */}
-        <div className="border-t border-white/10 pt-6">
-          <div className="text-xs text-white/40">
+        <div className="border-t border-white/10 pt-4 xs:pt-5 sm:pt-6">
+          <div className="text-[10px] xs:text-xs text-white/40">
             © {new Date().getFullYear()} YATRA'26
           </div>
         </div>

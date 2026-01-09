@@ -275,38 +275,38 @@ export function TeamPage() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center z-10 px-4">
-        <div className="container-max py-12 sm:py-16 md:py-20">
+      <section className="relative min-h-screen flex items-center justify-center z-10 px-3 sm:px-4">
+        <div className="container-max py-8 sm:py-12 md:py-16 lg:py-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="flex flex-col items-center justify-center"
           >
-            <div className="mb-8 sm:mb-10 md:mb-12 text-center">
+            <div className="mb-6 xs:mb-8 sm:mb-10 md:mb-12 text-center px-2">
               <AkiraText
                 words={[
-                  { firstLetter: "T", rest: "he", variant: "outline-only" },
-                  { firstLetter: "C", rest: "rew", variant: "outline-only" },
-                  { firstLetter: "b", rest: "ehind", variant: "outline-only" },
-                  { firstLetter: "t", rest: "he", variant: "outline-only" },
-                  { firstLetter: "m", rest: "agic", variant: "outline-only" },
-                  { firstLetter: "o", rest: "f", variant: "outline-only" },
-                  { firstLetter: "y", rest: "atra'26", variant: "outline-only" },
-                  { firstLetter: ".", rest: "", variant: "outline-only" },
+                  { text: "The", variant: "outline-only" },
+                  { text: "Crew", variant: "outline-only" },
+                  { text: "behind", variant: "outline-only" },
+                  { text: "the", variant: "outline-only" },
+                  { text: "magic", variant: "outline-only" },
+                  { text: "of", variant: "outline-only" },
+                  { text: "yatra'26", variant: "outline-only" },
+                  { text: ".", variant: "outline-only" },
                 ]}
                 className=""
               />
             </div>
 
             {/* Filter Buttons */}
-            <div className="flex flex-wrap gap-2 sm:gap-3 md:gap-4 justify-center mt-6 sm:mt-8">
+            <div className="flex flex-wrap gap-1.5 xs:gap-2 sm:gap-3 md:gap-4 justify-center mt-4 xs:mt-6 sm:mt-8 px-2">
               <button
                 onClick={() => setActiveFilter("faculty")}
-                className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg border transition-all text-sm sm:text-base touch-manipulation ${
+                className={`px-3 xs:px-4 sm:px-6 py-2 xs:py-2.5 sm:py-3 rounded-lg border transition-all text-xs xs:text-sm sm:text-base touch-manipulation active:scale-95 ${
                   activeFilter === "faculty"
                     ? "bg-yatra-500/20 border-yatra-400 text-white"
-                    : "bg-white/5 border-white/10 text-white/70 hover:border-white/20"
+                    : "bg-white/5 border-white/10 text-white/70 hover:border-white/20 active:bg-white/10"
                 }`}
                 style={{ minHeight: "44px" }}
               >
@@ -314,10 +314,10 @@ export function TeamPage() {
               </button>
               <button
                 onClick={() => setActiveFilter("student")}
-                className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg border transition-all text-sm sm:text-base touch-manipulation ${
+                className={`px-3 xs:px-4 sm:px-6 py-2 xs:py-2.5 sm:py-3 rounded-lg border transition-all text-xs xs:text-sm sm:text-base touch-manipulation active:scale-95 ${
                   activeFilter === "student"
                     ? "bg-yatra-500/20 border-yatra-400 text-white"
-                    : "bg-white/5 border-white/10 text-white/70 hover:border-white/20"
+                    : "bg-white/5 border-white/10 text-white/70 hover:border-white/20 active:bg-white/10"
                 }`}
                 style={{ minHeight: "44px" }}
               >
@@ -325,10 +325,10 @@ export function TeamPage() {
               </button>
               <button
                 onClick={() => setActiveFilter("webdev")}
-                className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg border transition-all text-sm sm:text-base touch-manipulation ${
+                className={`px-3 xs:px-4 sm:px-6 py-2 xs:py-2.5 sm:py-3 rounded-lg border transition-all text-xs xs:text-sm sm:text-base touch-manipulation active:scale-95 ${
                   activeFilter === "webdev"
                     ? "bg-yatra-500/20 border-yatra-400 text-white"
-                    : "bg-white/5 border-white/10 text-white/70 hover:border-white/20"
+                    : "bg-white/5 border-white/10 text-white/70 hover:border-white/20 active:bg-white/10"
                 }`}
                 style={{ minHeight: "44px" }}
               >
@@ -340,21 +340,21 @@ export function TeamPage() {
       </section>
 
       {/* Team Members List */}
-      <section className="relative z-10 pb-16 sm:pb-24 md:pb-32 px-4">
+      <section className="relative z-10 pb-12 xs:pb-16 sm:pb-20 md:pb-24 lg:pb-32 px-3 sm:px-4">
         <div className="container-max">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-8 sm:mb-10 md:mb-12"
+            className="text-center mb-6 xs:mb-8 sm:mb-10 md:mb-12"
           >
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-display font-semibold text-white mb-4 sm:mb-6 md:mb-8">
+            <h2 className="text-lg xs:text-xl sm:text-2xl md:text-3xl font-display font-semibold text-white mb-3 xs:mb-4 sm:mb-6 md:mb-8">
               {getSectionTitle()}
             </h2>
           </motion.div>
 
           {activeFilter === "webdev" ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xs:gap-6 sm:gap-8 max-w-5xl mx-auto">
               {getFilteredMembers().map((member, i) => (
                 <motion.div
                   key={`${member.category}-${i}`}
@@ -386,7 +386,7 @@ export function TeamPage() {
               ))}
             </div>
           ) : (
-            <div className="space-y-6 max-w-3xl mx-auto">
+            <div className="space-y-4 xs:space-y-6 max-w-3xl mx-auto">
               {getFilteredMembers().map((member, i) => (
                 <motion.div
                   key={`${member.category}-${i}`}
@@ -395,9 +395,9 @@ export function TeamPage() {
                   transition={{ delay: i * 0.05, duration: 0.5 }}
                   className="text-center"
                 >
-                  <p className="text-xl text-white font-medium">{member.name}</p>
+                  <p className="text-lg xs:text-xl text-white font-medium">{member.name}</p>
                   {member.role && (
-                    <p className="text-sm text-white/60 mt-1">{member.role}</p>
+                    <p className="text-xs xs:text-sm text-white/60 mt-0.5 xs:mt-1">{member.role}</p>
                   )}
                 </motion.div>
               ))}
