@@ -20,9 +20,10 @@ export default {
   			display: ["Space Grotesk", "Inter", "ui-sans-serif", "system-ui"],
   			script: ["Dancing Script", "Playfair Display", "cursive"],
   			serif: ["Playfair Display", "serif"],
-  			akira: ["Akira Expanded", "Impact", "Arial Black", "sans-serif"],
-  			montserrat: ["Montserrat", "sans-serif"],
-  			korean: ["Noto Sans KR", "Malgun Gothic", "sans-serif"]
+			akira: ["Akira Expanded", "Impact", "Arial Black", "sans-serif"],
+			montserrat: ["Montserrat", "sans-serif"],
+			korean: ["Noto Sans KR", "Malgun Gothic", "sans-serif"],
+			"base-neue": ["Base Neue ExtBd Obl", "Arial", "sans-serif"]
   		},
   		colors: {
   			yatra: {

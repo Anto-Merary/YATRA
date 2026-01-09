@@ -1,4 +1,6 @@
 import type { SVGProps } from "react";
+import { TextHoverEffect } from "./ui/text-hover-effect";
+import { NoiseOverlay } from "./NoiseOverlay";
 
 function InstagramIcon(props: SVGProps<SVGSVGElement>) {
   return (
@@ -45,59 +47,103 @@ function TwitterIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+function YouTubeIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
+      <path
+        d="M21.582 6.186a2.506 2.506 0 0 0-1.768-1.768C18.254 4 12 4 12 4s-6.254 0-7.814.418a2.506 2.506 0 0 0-1.768 1.768C2 7.746 2 12 2 12s0 4.254.418 5.814a2.506 2.506 0 0 0 1.768 1.768C5.746 20 12 20 12 20s6.254 0 7.814-.418a2.506 2.506 0 0 0 1.768-1.768C22 16.254 22 12 22 12s0-4.254-.418-5.814z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        fill="none"
+      />
+      <path
+        d="M9.75 12l5.75 3.27V8.73L9.75 12z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
 export function Footer() {
   return (
-    <footer className="mt-12 sm:mt-16 md:mt-20 border-t border-white/10">
-      <div className="container-max py-6 sm:py-8 md:py-10 px-4">
-        <div className="flex flex-col gap-6 sm:gap-8 md:flex-row md:items-start md:justify-between">
-          <div>
-            <div className="text-base sm:text-lg font-semibold tracking-wide">Contact</div>
-            <div className="mt-2 space-y-1 text-xs sm:text-sm text-white/70">
-              <div>Rajalakshmi Institute of Technology</div>
-              <div>Email: yatra@ritchennai.edu.in</div>
-              <div>Phone: +91 XXXXXXXXXX</div>
+    <footer id="footer" className="relative mt-20 border-t border-white/10 bg-black">
+      {/* Film grain overlay */}
+      <NoiseOverlay opacity={0.15} />
+      
+      <div className="container-max relative py-12 md:py-16">
+        {/* Main Title - Centered at top */}
+        <div className="flex justify-center mb-12 md:mb-16 overflow-visible">
+          <div className="w-full max-w-5xl h-40 md:h-52 lg:h-64 xl:h-72 overflow-visible py-6">
+            <TextHoverEffect text="YATRA'26" duration={0.15} />
+          </div>
+        </div>
+
+        {/* Two Column Layout */}
+        <div className="flex flex-col md:flex-row md:justify-between gap-12 md:gap-8 mb-12">
+          {/* Left Column - Address */}
+          <div className="flex-1">
+            <div className="space-y-2 text-base md:text-lg text-white/90 leading-relaxed text-left">
+              <div className="font-semibold text-white">Rajalakshmi Institute of Technology</div>
+              <div className="text-white/95">Bangalore Highway Road, Kuthambakkam,</div>
+              <div className="text-white/95">Chennai, Tamil Nadu - 600124</div>
             </div>
           </div>
 
-          <div>
-            <div className="text-base sm:text-lg font-semibold tracking-wide">Social</div>
-            <div className="mt-3 flex items-center gap-3 sm:gap-4">
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-full border border-white/10 bg-white/5 p-2 text-white/80 hover:text-white touch-manipulation"
-                aria-label="Instagram"
-                style={{ minWidth: "44px", minHeight: "44px", display: "flex", alignItems: "center", justifyContent: "center" }}
-              >
-                <InstagramIcon className="h-5 w-5" />
-              </a>
+          {/* Right Column - Social Media & Contact */}
+          <div className="flex-1 md:text-right">
+            {/* Social Media Icons */}
+            <div className="flex md:justify-end items-center gap-3 mb-6">
               <a
                 href="https://facebook.com"
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-full border border-white/10 bg-white/5 p-2 text-white/80 hover:text-white touch-manipulation"
+                className="rounded-full border border-white/20 bg-black/50 p-2.5 text-white hover:text-white hover:border-white/40 transition-colors"
                 aria-label="Facebook"
-                style={{ minWidth: "44px", minHeight: "44px", display: "flex", alignItems: "center", justifyContent: "center" }}
               >
                 <FacebookIcon className="h-5 w-5" />
+              </a>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full border border-white/20 bg-black/50 p-2.5 text-white hover:text-white hover:border-white/40 transition-colors"
+                aria-label="Instagram"
+              >
+                <InstagramIcon className="h-5 w-5" />
+              </a>
+              <a
+                href="https://youtube.com"
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full border border-white/20 bg-black/50 p-2.5 text-white hover:text-white hover:border-white/40 transition-colors"
+                aria-label="YouTube"
+              >
+                <YouTubeIcon className="h-5 w-5" />
               </a>
               <a
                 href="https://x.com"
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-full border border-white/10 bg-white/5 p-2 text-white/80 hover:text-white touch-manipulation"
+                className="rounded-full border border-white/20 bg-black/50 p-2.5 text-white hover:text-white hover:border-white/40 transition-colors"
                 aria-label="Twitter"
-                style={{ minWidth: "44px", minHeight: "44px", display: "flex", alignItems: "center", justifyContent: "center" }}
               >
                 <TwitterIcon className="h-5 w-5" />
               </a>
             </div>
+
+            {/* Email and Phone */}
+            <div className="space-y-1 text-sm md:text-base text-white/70">
+              <div>yatra@ritchennai.edu.in</div>
+              <div>+91 XXXXXXXXXX</div>
+            </div>
           </div>
         </div>
 
-        <div className="mt-6 sm:mt-8 md:mt-10 text-xs text-white/40">
-          © {new Date().getFullYear()} YATRA'26
+        {/* Copyright - Bottom Left */}
+        <div className="border-t border-white/10 pt-6">
+          <div className="text-xs text-white/40">
+            © {new Date().getFullYear()} YATRA'26
+          </div>
         </div>
       </div>
     </footer>
