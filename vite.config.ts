@@ -9,6 +9,15 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  preview: {
+    // Ensure preview server handles SPA routing
+    port: 4173,
+  },
+  build: {
+    // Ensure build outputs are optimized
+    outDir: "dist",
+    assetsDir: "assets",
+  },
 });
 
 
