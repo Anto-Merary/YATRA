@@ -1,9 +1,10 @@
-import { useMemo, useState, useEffect, useRef } from "react";
+import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { Modal } from "../components/Modal";
 import SpotlightCard from "@/components/reactbits/SpotlightCard";
 import PixelSnow from "../components/PixelSnow";
 import { EVENTS, type FestEvent } from "../data/events";
 import { motion } from "framer-motion";
+import { useMobile } from "../hooks/use-mobile";
 
 type Filter = "all" | "day1" | "day2";
 
@@ -11,97 +12,95 @@ function includesLoose(haystack: string, needle: string) {
   return haystack.toLowerCase().includes(needle.trim().toLowerCase());
 }
 
-// Text decryption effect component
+// Text decryption effect component - optimized for mobile
 function DecryptText({ 
   text, 
   onComplete, 
   className = "",
-  delay = 0 
+  delay = 0,
+  isMobile = false
 }: { 
   text: string; 
   onComplete?: () => void;
   className?: string;
   delay?: number;
+  isMobile?: boolean;
 }) {
   const [displayedText, setDisplayedText] = useState("");
   const [isDecrypting, setIsDecrypting] = useState(true);
   const charsRef = useRef<string[]>([]);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>[]>([]);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const frameRef = useRef<number>(0);
   const randomChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?/";
 
   useEffect(() => {
     charsRef.current = text.split("");
     setDisplayedText("");
     setIsDecrypting(true);
+    frameRef.current = 0;
     
-    // Clear any existing timeouts/intervals
-    timeoutRef.current.forEach(clearTimeout);
-    timeoutRef.current = [];
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
+    // On mobile or if reduced motion, skip animation
+    if (isMobile) {
+      setDisplayedText(text);
+      setIsDecrypting(false);
+      if (onComplete) {
+        setTimeout(onComplete, 100);
+      }
+      return;
     }
     
     let currentIndex = 0;
+    let glitchCount = 0;
+    let maxGlitches = 0;
     
-    const decryptChar = (index: number) => {
-      if (index >= charsRef.current.length) {
+    const decryptChar = () => {
+      if (currentIndex >= charsRef.current.length) {
         setIsDecrypting(false);
         if (onComplete) {
-          const completeTimeout = setTimeout(onComplete, 1200);
-          timeoutRef.current.push(completeTimeout);
+          setTimeout(onComplete, 1200);
         }
         return;
       }
 
-      // Show glitch effect - cycle through random chars before revealing
-      let glitchCount = 0;
-      const maxGlitches = 3 + Math.floor(Math.random() * 3);
+      frameRef.current++;
       
-      intervalRef.current = setInterval(() => {
-        const randomChar = randomChars[Math.floor(Math.random() * randomChars.length)];
-        const partial = charsRef.current.slice(0, index).join("");
-        setDisplayedText(partial + randomChar);
-        
-        glitchCount++;
-        if (glitchCount >= maxGlitches) {
-          if (intervalRef.current) {
-            clearInterval(intervalRef.current);
-            intervalRef.current = null;
-          }
+      // Throttle updates - only update every 2-3 frames for better performance
+      if (frameRef.current % 2 === 0) {
+        if (glitchCount < maxGlitches) {
+          const randomChar = randomChars[Math.floor(Math.random() * randomChars.length)];
+          const partial = charsRef.current.slice(0, currentIndex).join("");
+          setDisplayedText(partial + randomChar);
+          glitchCount++;
+        } else {
           // Reveal actual character
-          const finalPartial = charsRef.current.slice(0, index + 1).join("");
+          const finalPartial = charsRef.current.slice(0, currentIndex + 1).join("");
           setDisplayedText(finalPartial);
-          
-          // Move to next character
           currentIndex++;
-          const nextTimeout = setTimeout(() => {
-            decryptChar(currentIndex);
-          }, 60 + Math.random() * 40);
-          timeoutRef.current.push(nextTimeout);
+          glitchCount = 0;
+          maxGlitches = 2 + Math.floor(Math.random() * 2); // Reduced glitches
         }
-      }, 30 + Math.random() * 30);
+      }
+      
+      rafRef.current = requestAnimationFrame(decryptChar);
     };
 
     const startTimeout = setTimeout(() => {
-      decryptChar(0);
+      maxGlitches = 2 + Math.floor(Math.random() * 2);
+      rafRef.current = requestAnimationFrame(decryptChar);
     }, delay);
-    timeoutRef.current.push(startTimeout);
 
     return () => {
-      timeoutRef.current.forEach(clearTimeout);
-      timeoutRef.current = [];
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
+      clearTimeout(startTimeout);
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
       }
     };
-  }, [text, onComplete, delay]);
+  }, [text, onComplete, delay, isMobile]);
 
   return (
     <span className={`${className} relative`}>
       {displayedText}
-      {isDecrypting && (
+      {isDecrypting && !isMobile && (
         <motion.span
           animate={{ opacity: [1, 0.3, 1] }}
           transition={{ duration: 0.4, repeat: Infinity }}
@@ -119,6 +118,7 @@ export function EventsPage() {
   const [filter, setFilter] = useState<Filter>("all");
   const [active, setActive] = useState<FestEvent | null>(null);
   const [isDecryptingEnglish, setIsDecryptingEnglish] = useState(true);
+  const { isMobile, prefersReducedMotion } = useMobile();
 
   const filtered = useMemo(() => {
     const q = query.trim();
@@ -147,23 +147,25 @@ export function EventsPage() {
       {/* Drop shadow on top - prominent gradient */}
       <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-black via-black/90 via-black/60 to-transparent pointer-events-none z-20" />
       
-      {/* PixelSnow Background Effect - above radial gradient background */}
-      <div className="absolute inset-0 z-[1]">
-        <PixelSnow
-          color="#ff00b6"
-          flakeSize={0.01}
-          minFlakeSize={1.5}
-          pixelResolution={200}
-          speed={1.0}
-          depthFade={5}
-          farPlane={20}
-          brightness={2.0}
-          gamma={0.4545}
-          density={0.4}
-          variant="snowflake"
-          direction={90}
-        />
-      </div>
+      {/* PixelSnow Background Effect - above radial gradient background - optimized for mobile */}
+      {!prefersReducedMotion && (
+        <div className="absolute inset-0 z-[1]">
+          <PixelSnow
+            color="#ff00b6"
+            flakeSize={0.01}
+            minFlakeSize={isMobile ? 2.0 : 1.5}
+            pixelResolution={isMobile ? 100 : 200}
+            speed={isMobile ? 0.6 : 1.0}
+            depthFade={isMobile ? 8 : 5}
+            farPlane={isMobile ? 15 : 20}
+            brightness={isMobile ? 1.5 : 2.0}
+            gamma={0.4545}
+            density={isMobile ? 0.25 : 0.4}
+            variant="snowflake"
+            direction={90}
+          />
+        </div>
+      )}
 
       {/* Subtle Korean-inspired pattern overlay */}
       <div className="absolute inset-0 z-[1] opacity-[0.03] pointer-events-none">
@@ -184,10 +186,11 @@ export function EventsPage() {
         <div className="mb-4 sm:mb-6 md:mb-8 lg:mb-12">
           <div className="text-[10px] xs:text-xs sm:text-sm font-semibold tracking-[0.15em] xs:tracking-[0.2em] sm:tracking-[0.25em] text-yatra-300">EVENTS</div>
           <div className="mt-1.5 sm:mt-2 md:mt-3 font-display text-xl xs:text-2xl sm:text-3xl md:text-4xl font-semibold tracking-[-0.02em]">
-            {isDecryptingEnglish ? (
+            {isDecryptingEnglish && !prefersReducedMotion ? (
               <DecryptText 
                 text="Explore all events" 
                 delay={200}
+                isMobile={isMobile}
               />
             ) : (
               "Explore all events"
@@ -211,8 +214,8 @@ export function EventsPage() {
               key={stat.label}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="rounded-lg xs:rounded-xl border border-pink-500/20 bg-pink-500/5 p-1.5 xs:p-2 sm:p-3 md:p-4 text-center backdrop-blur-sm"
+              transition={{ delay: prefersReducedMotion ? 0 : 0.2 }}
+              className={`rounded-lg xs:rounded-xl border border-pink-500/20 bg-pink-500/5 p-1.5 xs:p-2 sm:p-3 md:p-4 text-center ${isMobile ? '' : 'backdrop-blur-sm'}`}
             >
               <div className="text-base xs:text-lg sm:text-xl md:text-2xl font-bold text-pink-400">{stat.value}</div>
               <div className="mt-0.5 xs:mt-1 text-[9px] xs:text-[10px] sm:text-xs text-white/60 leading-tight">
@@ -309,8 +312,8 @@ export function EventsPage() {
           {filtered.map((e) => (
             <SpotlightCard
               key={e.id}
-              className="group relative cursor-pointer border-white/10 bg-white/[0.04] p-3 xs:p-4 sm:p-5 transition-all hover:border-pink-500/30 hover:bg-white/[0.06] hover:shadow-[0_8px_32px_rgba(236,72,153,0.2)] active:scale-[0.98] touch-manipulation"
-              spotlightColor="rgba(236, 72, 153, 0.25)"
+              className={`group relative cursor-pointer border-white/10 bg-white/[0.04] p-3 xs:p-4 sm:p-5 transition-all hover:border-pink-500/30 hover:bg-white/[0.06] hover:shadow-[0_8px_32px_rgba(236,72,153,0.2)] active:scale-[0.98] touch-manipulation ${isMobile ? '' : 'backdrop-blur-sm'}`}
+              spotlightColor={isMobile ? "rgba(236, 72, 153, 0.15)" : "rgba(236, 72, 153, 0.25)"}
               onClick={() => setActive(e)}
             >
               {/* Subtle pink glow overlay on hover */}
@@ -376,7 +379,7 @@ export function EventsPage() {
                 )}
               </div>
 
-              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+              <div className={`rounded-xl border border-white/10 bg-white/[0.03] p-4 ${isMobile ? '' : 'backdrop-blur-sm'}`}>
                 <div className="text-xs font-semibold tracking-[0.25em] text-yatra-300 mb-3 flex items-center gap-2">
                   <span>ABOUT</span>
                 </div>
@@ -388,7 +391,7 @@ export function EventsPage() {
 
             {/* Right Column - Details & Actions */}
             <div className="space-y-4 order-1 lg:order-2">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+              <div className={`rounded-2xl border border-white/10 bg-white/[0.03] p-5 ${isMobile ? '' : 'backdrop-blur-sm'}`}>
                 <div className="text-xs font-semibold tracking-[0.25em] text-yatra-300 mb-4 flex items-center gap-2">
                   <span>DETAILS</span>
                 </div>

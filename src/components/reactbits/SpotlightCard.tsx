@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useCallback, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 interface Position {
@@ -22,17 +22,45 @@ const SpotlightCard: React.FC<SpotlightCardProps> = ({
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [position, setPosition] = useState<Position>({ x: 0, y: 0 });
   const [opacity, setOpacity] = useState<number>(0);
+  const rafRef = useRef<number | null>(null);
+  const lastPositionRef = useRef<Position>({ x: 0, y: 0 });
+  const isTouchDeviceRef = useRef(false);
 
-  const handleMouseMove: React.MouseEventHandler<HTMLDivElement> = e => {
-    if (!divRef.current || isFocused) return;
+  // Detect touch device
+  useEffect(() => {
+    isTouchDeviceRef.current = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  }, []);
+
+  const updatePosition = useCallback((newPosition: Position) => {
+    if (rafRef.current !== null) return;
+    
+    rafRef.current = requestAnimationFrame(() => {
+      setPosition(newPosition);
+      rafRef.current = null;
+    });
+  }, []);
+
+  const handleMouseMove: React.MouseEventHandler<HTMLDivElement> = useCallback((e) => {
+    if (!divRef.current || isFocused || isTouchDeviceRef.current) return;
 
     const rect = divRef.current.getBoundingClientRect();
-    setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-  };
+    const newPosition = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    
+    // Throttle updates - only update if position changed significantly
+    const dx = Math.abs(newPosition.x - lastPositionRef.current.x);
+    const dy = Math.abs(newPosition.y - lastPositionRef.current.y);
+    
+    if (dx > 5 || dy > 5) {
+      lastPositionRef.current = newPosition;
+      updatePosition(newPosition);
+    }
+  }, [isFocused, updatePosition]);
 
   const handleFocus = () => {
     setIsFocused(true);
-    setOpacity(0.6);
+    if (!isTouchDeviceRef.current) {
+      setOpacity(0.6);
+    }
   };
 
   const handleBlur = () => {
@@ -41,12 +69,23 @@ const SpotlightCard: React.FC<SpotlightCardProps> = ({
   };
 
   const handleMouseEnter = () => {
-    setOpacity(0.6);
+    if (!isTouchDeviceRef.current) {
+      setOpacity(0.6);
+    }
   };
 
   const handleMouseLeave = () => {
     setOpacity(0);
   };
+
+  // Cleanup RAF on unmount
+  useEffect(() => {
+    return () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div
