@@ -68,7 +68,36 @@ const registrationSchema = z.object({
     ),
   college: z.string().min(2, "Please enter your college name"),
   ticketType: z.string().optional(),
-});
+}).refine(
+  (data) => {
+    const normalizedCollege = data.college?.toLowerCase().trim() || "";
+    const normalizedEmail = data.email?.toLowerCase() || "";
+    
+    // Check if college is RIT
+    const isRITCollege = 
+      normalizedCollege === "rajalakshmi institute of technology" ||
+      normalizedCollege === "rit" ||
+      normalizedCollege === "rit chennai" ||
+      (normalizedCollege.includes("rajalakshmi") && normalizedCollege.includes("technology"));
+    
+    // If college is RIT, email must be RIT email
+    if (isRITCollege) {
+      const isRITEmail = 
+        normalizedEmail.endsWith("@ritchennai.edu.in") ||
+        VALID_RIT_DEPARTMENTS.some(dept => 
+          normalizedEmail.endsWith(`@${dept}.ritchennai.edu.in`)
+        );
+      
+      return isRITEmail;
+    }
+    
+    return true;
+  },
+  {
+    message: "Rajalakshmi Institute of Technology students must use their college email address (@ritchennai.edu.in)",
+    path: ["email"], // This will show the error on the email field
+  }
+);
 
 type RegistrationFormValues = z.infer<typeof registrationSchema>;
 
@@ -371,20 +400,47 @@ export function RegistrationForm({
             <FormField
               control={form.control}
               name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Email Address</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="email"
-                      placeholder="Enter your email (e.g., name@example.com)"
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus-visible:ring-yatra-400"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              render={({ field }) => {
+                // Check if college is RIT to show helper message
+                const normalizedCollege = college?.toLowerCase().trim() || "";
+                const currentEmail = field.value?.toLowerCase() || "";
+                const isRITCollege = 
+                  normalizedCollege === "rajalakshmi institute of technology" ||
+                  normalizedCollege === "rit" ||
+                  normalizedCollege === "rit chennai" ||
+                  (normalizedCollege.includes("rajalakshmi") && normalizedCollege.includes("technology"));
+                
+                // Check if current email is RIT email
+                const isCurrentRITEmail = 
+                  currentEmail.endsWith("@ritchennai.edu.in") ||
+                  VALID_RIT_DEPARTMENTS.some(dept => 
+                    currentEmail.endsWith(`@${dept}.ritchennai.edu.in`)
+                  );
+                
+                return (
+                  <FormItem>
+                    <FormLabel className="text-white">Email Address</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="email"
+                        placeholder={
+                          isRITCollege 
+                            ? "Enter your RIT email (e.g., name@ritchennai.edu.in)"
+                            : "Enter your email (e.g., name@example.com)"
+                        }
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus-visible:ring-yatra-400"
+                      />
+                    </FormControl>
+                    {isRITCollege && currentEmail && !isCurrentRITEmail && (
+                      <p className="text-xs text-yellow-400 mt-1">
+                        ⚠️ RIT students must use their college email address (@ritchennai.edu.in)
+                      </p>
+                    )}
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
             />
 
             <FormField
