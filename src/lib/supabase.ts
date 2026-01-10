@@ -35,7 +35,7 @@ if (import.meta.env.DEV) {
   console.log('🔧 Supabase Client initialized:', {
     url: supabaseUrl ? '✅ Set' : '❌ Missing',
     key: supabaseAnonKey ? '✅ Set' : '❌ Missing',
-    clientUrl: supabase.supabaseUrl
+    clientUrl: supabaseUrl || 'Not configured'
   });
 }
 
