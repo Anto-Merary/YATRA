@@ -14,6 +14,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useExpandableScreen } from "@/components/ui/expandable-screen";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/components/ui/use-toast";
 
 // Valid RIT Chennai department codes
 const VALID_RIT_DEPARTMENTS = ["csbs", "cse", "aiml", "aids", "bio", "cce", "mech", "vlsi"];
@@ -143,6 +145,8 @@ export function RegistrationForm({
   timerEndDate,
 }: RegistrationFormProps) {
   const { collapse } = useExpandableScreen();
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<RegistrationFormValues>({
     resolver: zodResolver(registrationSchema),
@@ -187,10 +191,117 @@ export function RegistrationForm({
   const displayPrice = isRITStudent ? ritStudentPrice : earlyBirdPrice;
 
   const onSubmit = async (data: RegistrationFormValues) => {
-    console.log("Registration data:", data);
-    // TODO: Add API call here
-    // After successful submission, you might want to close the screen
-    // collapse();
+    setIsSubmitting(true);
+    
+    try {
+      // Prepare data for Supabase
+      const registrationData = {
+        name: data.name,
+        email: data.email.toLowerCase().trim(),
+        phone: data.phone.replace(/\D/g, ""), // Store only digits
+        college: data.college.trim(),
+        ticket_type: ticketType,
+        price: displayPrice,
+        is_rit_student: isRITStudent,
+      };
+
+      // Debug: Log the Supabase client configuration
+      console.log("Supabase URL:", import.meta.env.VITE_SUPABASE_URL ? "Set" : "Missing");
+      console.log("Supabase Key:", import.meta.env.VITE_SUPABASE_ANON_KEY ? "Set" : "Missing");
+      console.log("Registration data:", registrationData);
+
+      // Insert into Supabase
+      const { data: insertedData, error } = await supabase
+        .from("registrations")
+        .insert([registrationData])
+        .select();
+
+      if (error) {
+        console.error("Supabase error details:", {
+          message: error.message,
+          code: error.code,
+          details: error.details,
+          hint: error.hint,
+          fullError: error
+        });
+        
+        // Handle duplicate email error
+        if (error.code === "23505" || error.message.includes("duplicate")) {
+          toast({
+            title: "Registration Failed",
+            description: "This email is already registered. Please use a different email address.",
+            variant: "destructive",
+          });
+        } else if (error.code === "42501" || error.message.includes("row-level security")) {
+          toast({
+            title: "Registration Failed",
+            description: "Authentication error. Please refresh the page and try again.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Registration Failed",
+            description: error.message || "An error occurred while submitting your registration. Please try again.",
+            variant: "destructive",
+          });
+        }
+        return;
+      }
+
+      // Success!
+      console.log("Registration successful:", insertedData);
+      
+      // Send confirmation email via Edge Function
+      if (insertedData && insertedData[0]) {
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+        const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+        
+        if (supabaseUrl) {
+          console.log('Attempting to send confirmation email...');
+          
+          fetch(`${supabaseUrl}/functions/v1/send-registration-email`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${supabaseAnonKey || ''}`,
+            },
+            body: JSON.stringify(insertedData[0]),
+          })
+          .then(async (response) => {
+            const result = await response.json();
+            if (response.ok) {
+              console.log('✅ Email sent successfully:', result);
+            } else {
+              console.error('❌ Email sending failed:', result);
+            }
+          })
+          .catch((err) => {
+            console.error('❌ Failed to call email function:', err);
+            // Don't show error to user - email sending is not critical
+          });
+        }
+      }
+      
+      toast({
+        title: "Registration Successful! 🎉",
+        description: `You have successfully registered for ${ticketType}. A confirmation email will be sent shortly.`,
+      });
+      
+      // Reset form and close screen
+      form.reset();
+      setTimeout(() => {
+        collapse();
+      }, 1500);
+    } catch (error) {
+      console.error("Unexpected error:", error);
+      toast({
+        title: "Registration Failed",
+        description: "An unexpected error occurred. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -330,9 +441,18 @@ export function RegistrationForm({
               </Button>
               <Button
                 type="submit"
-                className="flex-1 bg-white text-black hover:bg-white/90 font-semibold"
+                disabled={isSubmitting}
+                className="flex-1 bg-white text-black hover:bg-white/90 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <span className="text-pink-600">제출</span> Submit Registration
+                {isSubmitting ? (
+                  <>
+                    <span className="text-pink-600">제출 중...</span> Submitting...
+                  </>
+                ) : (
+                  <>
+                    <span className="text-pink-600">제출</span> Submit Registration
+                  </>
+                )}
               </Button>
             </div>
           </form>

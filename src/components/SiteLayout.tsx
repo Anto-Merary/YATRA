@@ -6,6 +6,7 @@ import { PageTransition } from "./PageTransition";
 import { ScrollToTop } from "./ScrollToTop";
 import ClickSpark from "./ClickSpark";
 import Dock from "./Dock";
+import { Toaster } from "./ui/toaster";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Home, Mic, Ticket, Calendar, Images, Users } from "lucide-react";
@@ -68,6 +69,7 @@ export function SiteLayout() {
           </AnimatePresence>
         </main>
         <Footer />
+        <Toaster />
         
         {/* Mobile Dock Navigation - Always rendered at SiteLayout level for all pages */}
         {isMobile && (

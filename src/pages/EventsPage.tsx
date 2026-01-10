@@ -5,6 +5,7 @@ import PixelSnow from "../components/PixelSnow";
 import { EVENTS, type FestEvent } from "../data/events";
 import { motion } from "framer-motion";
 import { useMobile } from "../hooks/use-mobile";
+import leafImage from "../assets/leaf.jpeg?url";
 
 type Filter = "all" | "day1" | "day2";
 
@@ -137,30 +138,66 @@ export function EventsPage() {
 
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-slate-950">
-      {/* Radial gradient circles background */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute bottom-0 left-[-20%] right-0 top-[-10%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"></div>
-        <div className="absolute bottom-0 right-[-20%] top-[-10%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"></div>
-      </div>
+    <div className={`relative min-h-screen w-full overflow-hidden ${isMobile ? 'bg-black' : 'bg-slate-950'}`}>
+      {/* Background - leaf.jpeg positioned in corners for mobile, radial gradients for desktop */}
+      {isMobile ? (
+        <>
+          {/* Top-left corner leaf decoration */}
+          <div 
+            className="absolute top-0 left-0 z-0 w-[55%] h-[45%] bg-contain bg-no-repeat bg-top-left pointer-events-none"
+            style={{
+              backgroundImage: `url(${leafImage})`,
+              opacity: 0.7,
+              filter: 'brightness(1.1) contrast(1.1)',
+            }}
+          />
+          {/* Bottom-right corner leaf decoration */}
+          <div 
+            className="absolute bottom-0 right-0 z-0 w-[55%] h-[45%] bg-contain bg-no-repeat bg-bottom-right pointer-events-none"
+            style={{
+              backgroundImage: `url(${leafImage})`,
+              opacity: 0.7,
+              filter: 'brightness(1.1) contrast(1.1)',
+            }}
+          />
+          {/* Subtle radial gradient overlay to enhance corner glow effect */}
+          <div 
+            className="absolute top-0 left-0 w-[50%] h-[40%] z-[1] pointer-events-none"
+            style={{
+              background: 'radial-gradient(circle at top left, rgba(236, 72, 153, 0.1), transparent 70%)',
+            }}
+          />
+          <div 
+            className="absolute bottom-0 right-0 w-[50%] h-[40%] z-[1] pointer-events-none"
+            style={{
+              background: 'radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.1), transparent 70%)',
+            }}
+          />
+        </>
+      ) : (
+        <div className="absolute inset-0 z-0">
+          <div className="absolute bottom-0 left-[-20%] right-0 top-[-10%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"></div>
+          <div className="absolute bottom-0 right-[-20%] top-[-10%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"></div>
+        </div>
+      )}
       
       {/* Drop shadow on top - prominent gradient */}
       <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-black via-black/90 via-black/60 to-transparent pointer-events-none z-20" />
       
-      {/* PixelSnow Background Effect - above radial gradient background - optimized for mobile */}
-      {!prefersReducedMotion && (
+      {/* PixelSnow Background Effect - above radial gradient background - disabled on mobile */}
+      {!prefersReducedMotion && !isMobile && (
         <div className="absolute inset-0 z-[1]">
           <PixelSnow
             color="#ff00b6"
             flakeSize={0.01}
-            minFlakeSize={isMobile ? 2.0 : 1.5}
-            pixelResolution={isMobile ? 100 : 200}
-            speed={isMobile ? 0.6 : 1.0}
-            depthFade={isMobile ? 8 : 5}
-            farPlane={isMobile ? 15 : 20}
-            brightness={isMobile ? 1.5 : 2.0}
+            minFlakeSize={1.5}
+            pixelResolution={200}
+            speed={1.0}
+            depthFade={5}
+            farPlane={20}
+            brightness={2.0}
             gamma={0.4545}
-            density={isMobile ? 0.25 : 0.4}
+            density={0.4}
             variant="snowflake"
             direction={90}
           />

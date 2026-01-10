@@ -5,7 +5,7 @@ import { ThreeLogo } from "../components/ThreeLogo";
 import { Navbar } from "../components/Navbar";
 import { AkiraText } from "../components/AkiraText";
 import yatraVideo from "../assets/video.mp4?url";
-import ritLogo from "../../RIT WHITE LOGO.png";
+import ritLogo from "../assets/RIT WHITE LOGO.png";
 import { motion } from "framer-motion";
 
 export function HomePage() {
