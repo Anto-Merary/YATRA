@@ -139,38 +139,23 @@ export function EventsPage() {
 
   return (
     <div className={`relative min-h-screen w-full overflow-hidden ${isMobile ? 'bg-black' : 'bg-slate-950'}`}>
-      {/* Background - leaf.jpeg positioned in corners for mobile, radial gradients for desktop */}
+      {/* Background - leaf.jpeg as wallpaper for mobile, radial gradients for desktop */}
       {isMobile ? (
         <>
-          {/* Top-left corner leaf decoration */}
+          {/* Full-screen leaf wallpaper */}
           <div 
-            className="absolute top-0 left-0 z-0 w-[55%] h-[45%] bg-contain bg-no-repeat bg-top-left pointer-events-none"
+            className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat pointer-events-none"
             style={{
               backgroundImage: `url(${leafImage})`,
-              opacity: 0.7,
-              filter: 'brightness(1.1) contrast(1.1)',
+              opacity: 0.3,
+              filter: 'brightness(0.6) contrast(1.2)',
             }}
           />
-          {/* Bottom-right corner leaf decoration */}
+          {/* Dark overlay to ensure content readability */}
           <div 
-            className="absolute bottom-0 right-0 z-0 w-[55%] h-[45%] bg-contain bg-no-repeat bg-bottom-right pointer-events-none"
+            className="absolute inset-0 z-[1] pointer-events-none"
             style={{
-              backgroundImage: `url(${leafImage})`,
-              opacity: 0.7,
-              filter: 'brightness(1.1) contrast(1.1)',
-            }}
-          />
-          {/* Subtle radial gradient overlay to enhance corner glow effect */}
-          <div 
-            className="absolute top-0 left-0 w-[50%] h-[40%] z-[1] pointer-events-none"
-            style={{
-              background: 'radial-gradient(circle at top left, rgba(236, 72, 153, 0.1), transparent 70%)',
-            }}
-          />
-          <div 
-            className="absolute bottom-0 right-0 w-[50%] h-[40%] z-[1] pointer-events-none"
-            style={{
-              background: 'radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.1), transparent 70%)',
+              background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.4) 100%)',
             }}
           />
         </>
