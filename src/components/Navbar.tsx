@@ -85,6 +85,18 @@ export function Navbar({ variant = "fixed" }: NavbarProps) {
     { to: "/team", label: "Team", icon: Users },
   ];
 
+  // Wrapper function to scroll and navigate
+  const handleNavigation = (to: string) => {
+    // Scroll immediately before navigation - force instant scroll
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    const root = document.getElementById('root');
+    if (root) root.scrollTop = 0;
+    // Then navigate
+    navigate(to);
+  };
+
   // Dock items for mobile navigation
   const dockItems = navLinks.map((link) => {
     const IconComponent = link.icon;
@@ -92,7 +104,7 @@ export function Navbar({ variant = "fixed" }: NavbarProps) {
       icon: <IconComponent className="w-5 h-5 sm:w-6 sm:h-6" />,
       label: link.label,
       onClick: () => {
-        navigate(link.to);
+        handleNavigation(link.to);
       },
       className: location.pathname === link.to ? "dock-item-active" : "",
     };

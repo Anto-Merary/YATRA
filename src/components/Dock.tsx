@@ -40,6 +40,7 @@ type DockItemProps = {
   distance: number;
   baseItemSize: number;
   magnification: number;
+  isMobile?: boolean;
 };
 
 function DockItem({
@@ -50,12 +51,15 @@ function DockItem({
   spring,
   distance,
   magnification,
-  baseItemSize
+  baseItemSize,
+  isMobile = false
 }: DockItemProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isHovered = useMotionValue(0);
+  const isTapped = useMotionValue(0);
 
   const mouseDistance = useTransform(mouseX, val => {
+    if (isMobile || val === Infinity) return Infinity;
     const rect = ref.current?.getBoundingClientRect() ?? {
       x: 0,
       width: baseItemSize
@@ -63,8 +67,36 @@ function DockItem({
     return val - rect.x - baseItemSize / 2;
   });
 
-  const targetSize = useTransform(mouseDistance, [-distance, 0, distance], [baseItemSize, magnification, baseItemSize]);
+  // For mobile, use tap motion value instead of mouse position
+  const mobileTargetSize = useTransform(isTapped, [0, 1], [baseItemSize, magnification]);
+  const desktopTargetSize = useTransform(mouseDistance, [-distance, 0, distance], [baseItemSize, magnification, baseItemSize]);
+  
+  const targetSize = isMobile ? mobileTargetSize : desktopTargetSize;
   const size = useSpring(targetSize, spring);
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    }
+  };
+
+  const handleTouchStart = () => {
+    if (isMobile) {
+      isTapped.set(1);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (isMobile) {
+      // Reset tap state immediately - spring animation will handle smooth return
+      // Use requestAnimationFrame to ensure click fires first
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          isTapped.set(0);
+        });
+      });
+    }
+  };
 
   return (
     <motion.div
@@ -73,11 +105,30 @@ function DockItem({
         width: size,
         height: size
       }}
-      onHoverStart={() => isHovered.set(1)}
-      onHoverEnd={() => isHovered.set(0)}
-      onFocus={() => isHovered.set(1)}
-      onBlur={() => isHovered.set(0)}
-      onClick={onClick}
+      onHoverStart={() => {
+        if (!isMobile) {
+          isHovered.set(1);
+        }
+      }}
+      onHoverEnd={() => {
+        if (!isMobile) {
+          isHovered.set(0);
+        }
+      }}
+      onFocus={() => {
+        if (!isMobile) {
+          isHovered.set(1);
+        }
+      }}
+      onBlur={() => {
+        if (!isMobile) {
+          isHovered.set(0);
+        }
+      }}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
+      onClick={handleClick}
       className={`dock-item ${className}`}
       tabIndex={0}
       role="button"
@@ -135,7 +186,11 @@ type DockIconProps = {
 };
 
 function DockIcon({ children, className = '' }: DockIconProps) {
-  return <div className={`dock-icon ${className}`}>{children}</div>;
+  return (
+    <div className={`dock-icon ${className}`}>
+      {children}
+    </div>
+  );
 }
 
 export default function Dock({
@@ -150,6 +205,7 @@ export default function Dock({
 }: DockProps) {
   const mouseX = useMotionValue(Infinity);
   const isHovered = useMotionValue(0);
+  const isMobile = className.includes('mobile-dock');
 
   const maxHeight = useMemo(
     () => Math.max(dockHeight, magnification + magnification / 2 + 4),
@@ -162,23 +218,16 @@ export default function Dock({
     <motion.div style={{ height, scrollbarWidth: 'none' }} className="dock-outer">
       <motion.div
         onMouseMove={({ pageX }) => {
-          isHovered.set(1);
-          mouseX.set(pageX);
-        }}
-        onMouseLeave={() => {
-          isHovered.set(0);
-          mouseX.set(Infinity);
-        }}
-        onTouchMove={(e) => {
-          const touch = e.touches[0];
-          if (touch) {
+          if (!isMobile) {
             isHovered.set(1);
-            mouseX.set(touch.pageX);
+            mouseX.set(pageX);
           }
         }}
-        onTouchEnd={() => {
-          isHovered.set(0);
-          mouseX.set(Infinity);
+        onMouseLeave={() => {
+          if (!isMobile) {
+            isHovered.set(0);
+            mouseX.set(Infinity);
+          }
         }}
         className={`dock-panel ${className}`}
         style={{ height: panelHeight }}
@@ -195,6 +244,7 @@ export default function Dock({
             distance={distance}
             magnification={magnification}
             baseItemSize={baseItemSize}
+            isMobile={isMobile}
           >
             <DockIcon>{item.icon}</DockIcon>
             <DockLabel>{item.label}</DockLabel>
