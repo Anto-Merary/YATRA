@@ -250,23 +250,23 @@ export function ProshowPage() {
       
       {/* FaultyTerminal Background - covers entire page - optimized for mobile */}
       {!prefersReducedMotion && (
-        <div className="absolute inset-0 z-0 opacity-30 w-full h-full">
+        <div className="absolute inset-0 z-0 opacity-40 w-full h-full">
           <FaultyTerminal
-            scale={isMobile ? 1.5 : 2}
-            gridMul={isMobile ? [2, 1] : [3, 2]}
-            digitSize={isMobile ? 1.0 : 1.2}
-            timeScale={isMobile ? 0.2 : 0.4}
-            scanlineIntensity={isMobile ? 0.2 : 0.4}
-            glitchAmount={isMobile ? 0.8 : 1.1}
-            flickerAmount={isMobile ? 0.5 : 0.8}
-            noiseAmp={isMobile ? 0.8 : 1.2}
-            chromaticAberration={isMobile ? 1 : 2}
+            scale={isMobile ? 2.5 : 2}
+            gridMul={isMobile ? [1.5, 1] : [3, 2]}
+            digitSize={isMobile ? 0.9 : 1.2}
+            timeScale={isMobile ? 0.15 : 0.4}
+            scanlineIntensity={isMobile ? 0.15 : 0.4}
+            glitchAmount={isMobile ? 0.4 : 1.1}
+            flickerAmount={isMobile ? 0.1 : 0.8}
+            noiseAmp={isMobile ? 0.3 : 1.2}
+            chromaticAberration={isMobile ? 0.5 : 2}
             dither={isMobile ? false : true}
-            curvature={isMobile ? 0.1 : 0.15}
+            curvature={isMobile ? 0.05 : 0.15}
             tint="#ec4899"
             mouseReact={!isMobile}
             mouseStrength={0.3}
-            brightness={isMobile ? 0.4 : 0.6}
+            brightness={isMobile ? 0.7 : 1.0}
             dpr={isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2)}
           />
         </div>

@@ -284,12 +284,12 @@ export function TeamPage() {
             className="flex flex-col items-center justify-center"
           >
             <div className="mb-6 xs:mb-8 sm:mb-10 md:mb-12 text-center px-2">
-              <NeonGlowText
-                text="The Minds Behind Yatra'26"
-                outlinedText="THE MINDS BEHIND YATRA'26"
-                scriptText="Yatra'26"
-                className=""
-              />
+              <h1 
+                className="font-base-neue text-transparent text-center text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-7xl leading-tight tracking-wide" 
+                style={{ WebkitTextStroke: "1px white" }}
+              >
+                THE MINDS BEHIND YATRA'26
+              </h1>
             </div>
 
             {/* Filter Buttons */}
