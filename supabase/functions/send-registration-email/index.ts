@@ -1,5 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 // Get email credentials from environment variables (Supabase secrets)
 const EMAIL_USER = Deno.env.get("EMAIL_USER");
 const EMAIL_PASS = Deno.env.get("EMAIL_PASS");
@@ -200,6 +200,125 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    // Initialize Supabase client for database operations
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Generate ticket and QR code
+    let ticketCode = '';
+    let ticketId = '';
+    let qrDataUrl = '';
+    let ticketGenerated = false;
+
+    try {
+      // Check if ticket already exists for this registration
+      const { data: existingTicket } = await supabase
+        .from('tickets')
+        .select('six_digit_code, qr_payload')
+        .eq('registration_id', registration.id)
+        .maybeSingle();
+
+      if (existingTicket) {
+        // Ticket already exists, use existing code
+        ticketCode = existingTicket.six_digit_code;
+        ticketId = registration.id; // Use registration ID as reference
+        
+        // Regenerate QR code URL
+        qrDataUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(existingTicket.qr_payload)}`;
+        ticketGenerated = true;
+        console.log(`Using existing ticket code ${ticketCode} for registration ${registration.id}`);
+      } else {
+        // Generate unique 6-digit code
+        let isUnique = false;
+        let attempts = 0;
+
+        while (!isUnique && attempts < 10) {
+          ticketCode = Math.floor(100000 + Math.random() * 900000).toString();
+          
+          // Check uniqueness
+          const { data: existing } = await supabase
+            .from('tickets')
+            .select('id')
+            .eq('six_digit_code', ticketCode)
+            .maybeSingle();
+            
+          if (!existing) isUnique = true;
+          attempts++;
+        }
+
+        if (!isUnique) {
+          throw new Error("Failed to generate unique ticket code after 10 attempts");
+        }
+
+        // Generate Ticket UUID
+        ticketId = crypto.randomUUID();
+
+        // Create QR payload
+        const qrPayload = JSON.stringify({
+          id: ticketId,       // ticket_uuid
+          code: ticketCode     // six_digit_code
+        });
+
+        // Generate QR code URL using public API (more reliable for emails than base64)
+        qrDataUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrPayload)}`;
+
+        // Insert ticket into database
+        const { error: insertError } = await supabase
+          .from('tickets')
+          .insert({
+            id: ticketId,
+            registration_id: registration.id,
+            email: registration.email,
+            name: registration.name,
+            college: registration.college,
+            six_digit_code: ticketCode,
+            qr_payload: qrPayload,
+            ticket_status: 'valid'
+          });
+
+        if (insertError) {
+          console.error('Failed to insert ticket:', insertError);
+          throw new Error(`Ticket creation failed: ${insertError.message}`);
+        }
+
+        // Update registration to mark ticket as generated
+        const { error: updateError } = await supabase
+          .from('registrations')
+          .update({
+            ticket_generated: true,
+            ticket_email_sent: true,
+            ticket_sent_at: new Date().toISOString()
+          })
+          .eq('id', registration.id);
+
+        if (updateError) {
+          console.error('Failed to update registration:', updateError);
+          // Don't fail the email send, but log it
+        }
+
+        ticketGenerated = true;
+        console.log(`Generated ticket ${ticketCode} for registration ${registration.id}`);
+      }
+    } catch (ticketError) {
+      console.error('Ticket generation error:', ticketError);
+      console.error('Error details:', JSON.stringify(ticketError, null, 2));
+      // Store error for debug response
+      // @ts-ignore
+      globalThis.ticketDebugError = ticketError; 
+      // Continue with email send even if ticket generation fails
+      // The email will be sent without QR code
+    }
+    
+    console.log(`Ticket generation status: ${ticketGenerated ? 'SUCCESS' : 'FAILED'}`);
+    console.log(`QR Data URL length: ${qrDataUrl ? qrDataUrl.length : 0}`);
+
+    // Capture error for debug response if failed
+    const debugError = !ticketGenerated ? 
+      // @ts-ignore
+      (globalThis.ticketDebugError ? (globalThis.ticketDebugError.message || JSON.stringify(globalThis.ticketDebugError)) : "Unknown error") 
+      : null;
+
     // Prepare email content
     const emailHtml = `
       <!DOCTYPE html>
@@ -251,6 +370,28 @@ Deno.serve(async (req: Request) => {
               </table>
             </div>
             
+            ${ticketGenerated ? `
+            <div style="background: #f0f9ff; padding: 30px; border-radius: 8px; margin: 30px 0; border: 2px solid #3b82f6; text-align: center;">
+              <h3 style="margin-top: 0; color: #1e40af; font-size: 22px; font-weight: 600; margin-bottom: 15px;">🎫 Your Entry Ticket</h3>
+              
+              <div style="background: #ffffff; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #dbeafe;">
+                <p style="margin: 0 0 12px; color: #64748b; font-size: 14px; font-weight: 500;">ENTRY CODE</p>
+                <div style="font-size: 36px; font-weight: bold; letter-spacing: 6px; color: #1e40af; margin: 10px 0;">${ticketCode}</div>
+              </div>
+
+              <div style="text-align: center; margin: 20px 0;">
+                <img src="${qrDataUrl}" alt="Ticket QR Code" style="width: 220px; height: 220px; border: 2px solid #3b82f6; border-radius: 8px; padding: 10px; background: white;" />
+                <p style="color: #64748b; font-size: 13px; margin-top: 12px; font-weight: 500;">📱 Scan this QR code at the entrance</p>
+              </div>
+
+              <div style="background: #fef3c7; padding: 15px; border-radius: 6px; margin-top: 20px; border-left: 4px solid #f59e0b;">
+                <p style="margin: 0; color: #92400e; font-size: 14px; font-weight: 500;">
+                  ⚠️ Important: Please carry a valid ID card along with this ticket for entry verification.
+                </p>
+              </div>
+            </div>
+            ` : ''}
+            
             <p style="margin-top: 30px; font-size: 16px; color: #555;">We're excited to have you join us for this amazing cultural celebration!</p>
             
             <p style="font-size: 16px; color: #555; margin-bottom: 30px;">If you have any questions or need assistance, please don't hesitate to contact us.</p>
@@ -282,7 +423,15 @@ Ticket Type: ${registration.ticket_type || "N/A"}
 Price: ${registration.price || "N/A"}
 ${registration.is_rit_student ? "Student Status: ✓ RIT Student Discount Applied\n" : ""}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${ticketGenerated ? `
+🎫 YOUR ENTRY TICKET
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ENTRY CODE: ${ticketCode}
 
+Please scan the QR code at the entrance or present this code for entry.
+Important: Please carry a valid ID card along with this ticket for verification.
+
+` : ''}
 We're excited to have you join us for this amazing cultural celebration!
 
 If you have any questions or need assistance, please don't hesitate to contact us.
@@ -310,6 +459,8 @@ This is an automated confirmation email. Please do not reply.
       JSON.stringify({
         message: "Confirmation email sent successfully",
         to: registration.email,
+        ticket_generated: ticketGenerated,
+        debug_error: debugError
       }),
       {
         status: 200,

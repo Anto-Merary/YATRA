@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "issue_tickets_batch": {
+      "verify_jwt": false
+    }
+  }
+}

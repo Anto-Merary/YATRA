@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Galaxy from "@/components/Galaxy";
 import LetterGlitch from "@/components/LetterGlitch";
-import { AkiraText } from "@/components/AkiraText";
+import { NeonGlowText } from "@/components/NeonGlowText";
 import { useEffect, useRef, useState } from "react";
 import ProfileCard from "@/components/ProfileCard";
 import christopherImage from "../assets/christopher.png?url";
@@ -284,17 +284,10 @@ export function TeamPage() {
             className="flex flex-col items-center justify-center"
           >
             <div className="mb-6 xs:mb-8 sm:mb-10 md:mb-12 text-center px-2">
-              <AkiraText
-                words={[
-                  { text: "The", variant: "outline-only" },
-                  { text: "Crew", variant: "outline-only" },
-                  { text: "behind", variant: "outline-only" },
-                  { text: "the", variant: "outline-only" },
-                  { text: "magic", variant: "outline-only" },
-                  { text: "of", variant: "outline-only" },
-                  { text: "yatra'26", variant: "outline-only" },
-                  { text: ".", variant: "outline-only" },
-                ]}
+              <NeonGlowText
+                text="The Minds Behind Yatra'26"
+                outlinedText="THE MINDS BEHIND YATRA'26"
+                scriptText="Yatra'26"
                 className=""
               />
             </div>

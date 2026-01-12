@@ -23,9 +23,13 @@ export const supabase: SupabaseClient = createClient(
   supabaseAnonKey || 'placeholder-key',
   {
     auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-      detectSessionInUrl: false
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      // Keep session alive even when tab is inactive
+      storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+      // Increase refresh buffer to prevent premature token expiration
+      flowType: 'pkce'
     }
   }
 );

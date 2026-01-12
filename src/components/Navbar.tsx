@@ -124,7 +124,7 @@ export function Navbar({ variant = "fixed" }: NavbarProps) {
         }}
         className={`${positionClass} z-[100] px-4 sm:px-6 md:px-8 pt-4 sm:pt-6`}
       >
-        <div className="container-max mx-auto flex items-center justify-between">
+        <div className="w-full mx-auto flex items-center justify-between">
           {/* Left: RIT Logo */}
           <div className="flex items-center flex-1 justify-start relative z-[101]">
             <img

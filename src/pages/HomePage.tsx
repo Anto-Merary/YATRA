@@ -1,11 +1,15 @@
-import { GuestReveal } from "../components/GuestReveal";
 import { NoiseOverlay } from "../components/NoiseOverlay";
 import { RevealOnScroll } from "../components/RevealOnScroll";
 import { ThreeLogo } from "../components/ThreeLogo";
 import { Navbar } from "../components/Navbar";
 import { AkiraText } from "../components/AkiraText";
+import { Button } from "../components/ui/button";
+import { RainbowButton } from "../components/ui/rainbow-button";
+import { Link } from "react-router-dom";
 import yatraVideo from "../assets/video.mp4?url";
 import ritLogo from "../assets/RIT WHITE LOGO.png";
+import artistPng from "../assets/artist.png?url";
+import TiltedCard from "../components/TiltedCard";
 import { motion } from "framer-motion";
 
 export function HomePage() {
@@ -45,6 +49,39 @@ export function HomePage() {
               <div className="flex justify-center items-center">
                 <ThreeLogo />
               </div>
+            </div>
+
+            <div className="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-center z-20 relative">
+               <Link to="/tickets">
+                  <RainbowButton 
+                    size="lg" 
+                    className="min-w-[160px] font-bold text-lg transition-all duration-300 font-display"
+                    style={{
+                      "--color-1": "#ec4899",
+                      "--color-2": "#ec4899",
+                      "--color-3": "#ec4899",
+                      "--color-4": "#ec4899",
+                      "--color-5": "#ec4899",
+                    } as React.CSSProperties}
+                  >
+                    Buy Tickets
+                  </RainbowButton>
+               </Link>
+               <Link to="/events">
+                  <RainbowButton 
+                    size="lg" 
+                    className="min-w-[160px] font-bold text-lg transition-all duration-300 font-display"
+                    style={{
+                      "--color-1": "#ec4899",
+                      "--color-2": "#ec4899",
+                      "--color-3": "#ec4899",
+                      "--color-4": "#ec4899",
+                      "--color-5": "#ec4899",
+                    } as React.CSSProperties}
+                  >
+                    Register Events
+                  </RainbowButton>
+               </Link>
             </div>
           </div>
         </div>
@@ -124,11 +161,85 @@ export function HomePage() {
       </section>
 
       <RevealOnScroll>
-        <GuestReveal
-          guestName="To Be Revealed"
-          description="Guest image will appear on the left when you provide a PNG. Until then, we show a silhouette placeholder and a countdown bar."
-          revealAt={new Date("2026-01-15T00:00:00")}
-        />
+        <div className="flex flex-col items-center justify-center py-10 sm:py-20 px-4 relative">
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-pink-500/10 rounded-full blur-[100px] pointer-events-none" />
+             
+             <div className="mb-8 sm:mb-12 flex flex-col items-center z-10 w-full">
+                <AkiraText
+                  words={[
+                    { text: "PRO", variant: "outline-only" },
+                    { text: "SHOWS", variant: "glow" },
+                  ]}
+                  animationDelay={0.2}
+                />
+              </div>
+
+            <div className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-20 z-10 w-full max-w-6xl">
+                {/* Text Content - Left Side */}
+                <div className="w-full lg:w-1/2 text-center lg:text-left space-y-6 order-2 lg:order-1 px-4">
+                    <motion.div
+                        initial={{ opacity: 0, x: -50 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                    >
+                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-display text-white mb-2">AOORA</h2>
+                        <h3 className="text-xl sm:text-2xl text-pink-500 font-mono tracking-widest mb-6">LIVE IN CONCERT</h3>
+                        <p className="text-gray-300 text-sm sm:text-base leading-relaxed font-sans mb-8">
+                            Get ready for an electrifying performance by the K-Pop sensation AOORA! Known for his unique blend of energetic EDM and pop, he's set to light up the stage with his neon-fueled fashion and high-octane performance. Don't miss this chance to witness the "Indo-Korean" genre pioneer live at YATRA '26!
+                        </p>
+                         <Link to="/proshow">
+                            <RainbowButton 
+                                size="lg" 
+                                className="min-w-[180px] font-bold text-lg transition-all duration-300 font-display"
+                                style={{
+                                "--color-1": "#ec4899",
+                                "--color-2": "#ec4899",
+                                "--color-3": "#ec4899",
+                                "--color-4": "#ec4899",
+                                "--color-5": "#ec4899",
+                                } as React.CSSProperties}
+                            >
+                                VIEW DETAILS
+                            </RainbowButton>
+                        </Link>
+                    </motion.div>
+                </div>
+
+                {/* Tilted Card - Right Side */}
+                <div className="w-full lg:w-1/2 flex justify-center lg:justify-end order-1 lg:order-2">
+                    <Link to="/proshow" className="cursor-pointer group relative block transform transition-transform hover:scale-105 duration-500">
+                        <div className="relative">
+                            <div className="absolute -inset-1 bg-gradient-to-r from-pink-500 to-violet-500 rounded-[20px] blur opacity-30 group-hover:opacity-100 transition duration-500" />
+                            <div className="relative bg-black rounded-[20px] p-1">
+                                <TiltedCard
+                                    imageSrc={artistPng}
+                                    altText="Pro Show Artist AOORA"
+                                    captionText="AOORA - LIVE IN CONCERT"
+                                    containerHeight="500px"
+                                    containerWidth="350px"
+                                    imageHeight="500px"
+                                    imageWidth="350px"
+                                    rotateAmplitude={12}
+                                    scaleOnHover={1.05}
+                                    showMobileWarning={false}
+                                    showTooltip={true}
+                                    displayOverlayContent={true}
+                                    overlayContent={
+                                        <div className="absolute inset-0 flex flex-col justify-end p-8 bg-gradient-to-t from-black via-black/20 to-transparent">
+                                            <div className="transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                                                <div className="inline-block border border-white/20 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full text-xs font-semibold text-white/90">
+                                                    CLICK TO VIEW
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                />
+                            </div>
+                        </div>
+                    </Link>
+                </div>
+            </div>
+        </div>
       </RevealOnScroll>
     </div>
   );
