@@ -1,7 +1,15 @@
 import { Link } from "react-router-dom";
 import TextType from "@/components/TextType";
 import FaultyTerminal from "@/components/FaultyTerminal";
-import { motion, AnimatePresence } from "framer-motion";
+import { 
+  motion, 
+  AnimatePresence, 
+  useScroll, 
+  useTransform, 
+  useSpring, 
+  useVelocity, 
+  useMotionValueEvent 
+} from "framer-motion";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useMobile } from "../hooks/use-mobile";
 
@@ -243,24 +251,43 @@ export function ProshowPage() {
     }, 500);
   };
 
+  // Scroll animations
+  const { scrollY, scrollYProgress } = useScroll();
+  const scrollVelocity = useVelocity(scrollY);
+  const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 });
+  
+  const [dynamicGlitch, setDynamicGlitch] = useState(isMobile ? 0.4 : 1.1);
+  const [dynamicChromAb, setDynamicChromAb] = useState(isMobile ? 0.5 : 2);
+  
+  useMotionValueEvent(smoothVelocity, "change", (latest) => {
+    if (prefersReducedMotion) return;
+    const velocity = Math.abs(latest);
+    const glitchBoost = Math.min(velocity / 1000, 2.0); // Cap boost
+    setDynamicGlitch((isMobile ? 0.4 : 1.1) + glitchBoost);
+    setDynamicChromAb((isMobile ? 0.5 : 2) + glitchBoost * 2);
+  });
+
+  const imageY = useTransform(scrollYProgress, [0, 1], [0, -50]);
+  const textSkew = useTransform(smoothVelocity, [-1000, 1000], [-5, 5]);
+
   return (
-    <div className="relative w-full min-h-screen bg-black">
+    <div className="relative w-full min-h-screen bg-black overflow-hidden">
       {/* Drop shadow on top - prominent gradient */}
       <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-black via-black/90 via-black/60 to-transparent pointer-events-none z-20" />
       
       {/* FaultyTerminal Background - covers entire page - optimized for mobile */}
       {!prefersReducedMotion && (
-        <div className="absolute inset-0 z-0 opacity-40 w-full h-full">
+        <div className="absolute inset-0 z-0 opacity-30 md:opacity-40 w-full h-full fixed">
           <FaultyTerminal
             scale={isMobile ? 2.5 : 2}
             gridMul={isMobile ? [1.5, 1] : [3, 2]}
             digitSize={isMobile ? 0.9 : 1.2}
             timeScale={isMobile ? 0.15 : 0.4}
             scanlineIntensity={isMobile ? 0.15 : 0.4}
-            glitchAmount={isMobile ? 0.4 : 1.1}
+            glitchAmount={dynamicGlitch}
             flickerAmount={isMobile ? 0.1 : 0.8}
             noiseAmp={isMobile ? 0.3 : 1.2}
-            chromaticAberration={isMobile ? 0.5 : 2}
+            chromaticAberration={dynamicChromAb}
             dither={isMobile ? false : true}
             curvature={isMobile ? 0.05 : 0.15}
             tint="#ec4899"
@@ -281,9 +308,11 @@ export function ProshowPage() {
               className="relative"
               initial={{ opacity: 0, x: prefersReducedMotion ? 0 : -50 }}
               animate={{ opacity: 1, x: 0 }}
+              style={{ y: imageY }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.8, ease: "easeOut" }}
+              whileHover={isMobile ? {} : { scale: 1.02, rotate: 1 }}
             >
-              <div className={`relative aspect-[3/4] overflow-hidden rounded-lg xs:rounded-xl border border-pink-500/20 bg-black/40 ${isMobile ? '' : 'backdrop-blur-sm'}`}>
+              <div className={`relative aspect-[2/3] w-full max-w-[280px] xs:max-w-[320px] md:max-w-none mx-auto md:mx-0 overflow-hidden rounded-lg xs:rounded-xl border border-pink-500/20 bg-black/40 ${isMobile ? '' : 'backdrop-blur-sm'} transition-all duration-300 hover:border-pink-500/50 hover:shadow-[0_0_30px_rgba(236,72,153,0.3)]`}>
                 {/* Glitch overlay effect - disabled on mobile */}
                 {!isMobile && !prefersReducedMotion && (
                   <motion.div
@@ -318,10 +347,11 @@ export function ProshowPage() {
             </motion.div>
 
             {/* Right: Title & Info */}
-            <div className="flex flex-col justify-center space-y-4 sm:space-y-6 md:space-y-8">
+            <div className="flex flex-col justify-center space-y-4 sm:space-y-6 md:space-y-8 items-center md:items-start text-center md:text-left">
               <motion.div
                 initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 30 }}
                 animate={{ opacity: 1, y: 0 }}
+                style={{ skewX: textSkew }}
                 transition={{ delay: prefersReducedMotion ? 0 : 0.2, duration: prefersReducedMotion ? 0 : 0.8 }}
               >
                 <div className="mb-2 sm:mb-3 md:mb-4 font-mono text-[10px] xs:text-xs tracking-wider xs:tracking-widest text-pink-500/60">
@@ -384,7 +414,7 @@ export function ProshowPage() {
 
               {/* Stats Grid */}
               <motion.div
-                className="grid grid-cols-3 gap-1.5 xs:gap-2 sm:gap-3 md:gap-4"
+                className="grid grid-cols-3 gap-1.5 xs:gap-2 sm:gap-3 md:gap-4 w-full"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 }}
@@ -396,7 +426,7 @@ export function ProshowPage() {
                 ].map((stat, i) => (
                   <motion.div
                     key={stat.label}
-                    className={`border border-white/10 bg-black/30 p-1.5 xs:p-2 sm:p-3 md:p-4 ${isMobile ? '' : 'backdrop-blur-sm'}`}
+                    className={`border border-white/10 bg-black/30 p-1.5 xs:p-2 sm:p-3 md:p-4 flex flex-col items-center justify-center text-center ${isMobile ? '' : 'backdrop-blur-sm'}`}
                     initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: prefersReducedMotion ? 0 : 0.5 + i * 0.1 }}
@@ -413,10 +443,11 @@ export function ProshowPage() {
 
           {/* About Section */}
           <motion.div
-            className={`mb-6 sm:mb-10 md:mb-14 lg:mb-16 border border-white/10 bg-black/40 p-3 xs:p-4 sm:p-6 md:p-8 lg:p-12 ${isMobile ? '' : 'backdrop-blur-sm'} rounded-lg xs:rounded-xl`}
+            className={`mb-6 sm:mb-10 md:mb-14 lg:mb-16 border border-white/10 bg-black/40 p-3 xs:p-4 sm:p-6 md:p-8 lg:p-12 ${isMobile ? '' : 'backdrop-blur-sm'} rounded-lg xs:rounded-xl hover:border-pink-500/30 transition-colors duration-300`}
             initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: prefersReducedMotion ? 0 : 0.6 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-10%" }}
+            transition={{ duration: 0.6 }}
           >
             <div className="mb-3 xs:mb-4 sm:mb-6 font-mono text-[9px] xs:text-[10px] sm:text-xs tracking-wider xs:tracking-widest text-pink-500/60">
               [ARTIST_BIO]
@@ -444,11 +475,12 @@ export function ProshowPage() {
           {/* CTA Section */}
           <motion.div
             className={`flex flex-col items-center justify-between gap-3 xs:gap-4 sm:gap-6 border border-pink-500/30 bg-black/50 p-3 xs:p-4 sm:p-6 md:p-8 lg:p-12 ${isMobile ? '' : 'backdrop-blur-sm'} md:flex-row rounded-lg xs:rounded-xl`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: prefersReducedMotion ? 0 : 0.8 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-10%" }}
+            transition={{ duration: 0.6 }}
           >
-            <div className="w-full md:w-auto">
+            <div className="w-full md:w-auto text-center md:text-left">
               <div className="mb-1.5 xs:mb-2 font-mono text-[9px] xs:text-[10px] sm:text-xs tracking-wider xs:tracking-widest text-pink-500/60">
                 [TICKET_ACCESS]
               </div>
@@ -462,6 +494,16 @@ export function ProshowPage() {
             <motion.div
               whileHover={isMobile ? {} : { scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              animate={{ 
+                boxShadow: ["0 0 0 rgba(236, 72, 153, 0)", "0 0 20px rgba(236, 72, 153, 0.3)", "0 0 0 rgba(236, 72, 153, 0)"]
+              }}
+              transition={{
+                boxShadow: {
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }
+              }}
               className="w-full md:w-auto"
             >
               <Link

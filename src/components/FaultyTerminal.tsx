@@ -275,7 +275,6 @@ export default function FaultyTerminal({
   const timeOffsetRef = useRef<number>(Math.random() * 100);
 
   const tintVec = useMemo(() => hexToRgb(tint), [tint]);
-
   const ditherValue = useMemo(() => (typeof dither === 'boolean' ? (dither ? 1 : 0) : dither), [dither]);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
@@ -287,6 +286,33 @@ export default function FaultyTerminal({
     mouseRef.current = { x, y };
   }, []);
 
+  // Update uniforms when props change without recreating program
+  useEffect(() => {
+    if (!programRef.current) return;
+    
+    const p = programRef.current;
+    p.uniforms.uScale.value = scale;
+    p.uniforms.uGridMul.value = new Float32Array(gridMul);
+    p.uniforms.uDigitSize.value = digitSize;
+    p.uniforms.uScanlineIntensity.value = scanlineIntensity;
+    p.uniforms.uGlitchAmount.value = glitchAmount;
+    p.uniforms.uFlickerAmount.value = flickerAmount;
+    p.uniforms.uNoiseAmp.value = noiseAmp;
+    p.uniforms.uChromaticAberration.value = chromaticAberration;
+    p.uniforms.uDither.value = ditherValue;
+    p.uniforms.uCurvature.value = curvature;
+    p.uniforms.uTint.value = new Color(tintVec[0], tintVec[1], tintVec[2]);
+    p.uniforms.uMouseStrength.value = mouseStrength;
+    p.uniforms.uUseMouse.value = mouseReact ? 1 : 0;
+    p.uniforms.uUsePageLoadAnimation.value = pageLoadAnimation ? 1 : 0;
+    p.uniforms.uBrightness.value = brightness;
+    
+  }, [
+    scale, gridMul, digitSize, scanlineIntensity, glitchAmount, flickerAmount, 
+    noiseAmp, chromaticAberration, ditherValue, curvature, tintVec, 
+    mouseStrength, mouseReact, pageLoadAnimation, brightness
+  ]);
+
   useEffect(() => {
     const ctn = containerRef.current;
     if (!ctn) return;
@@ -294,6 +320,8 @@ export default function FaultyTerminal({
     const renderer = new Renderer({ dpr });
     const gl = renderer.gl;
     gl.clearColor(0, 0, 0, 1);
+    
+    rendererRef.current = renderer;
 
     const geometry = new Triangle(gl);
 
@@ -306,7 +334,6 @@ export default function FaultyTerminal({
           value: new Color(gl.canvas.width, gl.canvas.height, gl.canvas.width / gl.canvas.height)
         },
         uScale: { value: scale },
-
         uGridMul: { value: new Float32Array(gridMul) },
         uDigitSize: { value: digitSize },
         uScanlineIntensity: { value: scanlineIntensity },
@@ -327,6 +354,8 @@ export default function FaultyTerminal({
         uBrightness: { value: brightness }
       }
     });
+    
+    programRef.current = program;
 
     const mesh = new Mesh(gl, { geometry, program });
 
@@ -393,28 +422,10 @@ export default function FaultyTerminal({
       gl.getExtension('WEBGL_lose_context')?.loseContext();
       loadAnimationStartRef.current = 0;
       timeOffsetRef.current = Math.random() * 100;
+      rendererRef.current = null;
+      programRef.current = null;
     };
-  }, [
-    dpr,
-    pause,
-    timeScale,
-    scale,
-    gridMul,
-    digitSize,
-    scanlineIntensity,
-    glitchAmount,
-    flickerAmount,
-    noiseAmp,
-    chromaticAberration,
-    ditherValue,
-    curvature,
-    tintVec,
-    mouseReact,
-    mouseStrength,
-    pageLoadAnimation,
-    brightness,
-    handleMouseMove
-  ]);
+  }, [dpr]); // Only re-init on dpr change (or mount)
 
   return (
     <div ref={containerRef} className={`w-full h-full relative overflow-hidden ${className}`} style={style} {...rest} />
