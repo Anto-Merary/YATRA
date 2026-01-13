@@ -87,7 +87,38 @@ export function HomePage() {
         </div>
         
         <div className="absolute bottom-16 sm:bottom-4 left-0 right-0 flex justify-center pb-2 sm:pb-4 md:pb-8 px-4">
-          <div className="text-[9px] xs:text-[10px] sm:text-xs text-white/60 text-center px-2">Touch &amp; drag the 3D logo to interact.</div>
+          <div className="text-[9px] xs:text-[10px] sm:text-xs text-white/60 text-center px-2">Touch & drag the 3D logo to interact.</div>
+        </div>
+      </section>
+
+      {/* About YATRA Section */}
+      <section className="relative py-12 sm:py-16 md:py-24 overflow-hidden">
+        <div className="container-max relative z-10 px-4 sm:px-6">
+          <RevealOnScroll>
+            <div className="flex flex-col items-center justify-center space-y-8 sm:space-y-12">
+               <div className="flex flex-col items-center">
+                 <AkiraText
+                    words={[
+                      { text: "ABOUT", variant: "outline-only" },
+                      { text: "YATRA", variant: "glow" },
+                    ]}
+                    animationDelay={0.2}
+                 />
+               </div>
+
+               <motion.div
+                 initial={{ opacity: 0, y: 20 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 viewport={{ once: true }}
+                 transition={{ duration: 0.8, delay: 0.4 }}
+                 className="w-full max-w-4xl px-4 text-center"
+               >
+                 <p className="text-white/90 leading-relaxed text-sm sm:text-base md:text-lg" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>
+                   Yatra'26 is a grand intercollege cultural fest at Rajalakshmi Institute of Technology organized by the student community with the support of Faculties, Principal and Management. Main motive of Yatra is involving or concerning the enthusiasm among students with a deep sense of humor which is also a part of Cultural heritage. This enhances the confidence level of the students thereby allowing them to perform better. In fact, students can also leverage the advantage of participating in various activities. Many chief guests are being invited to join us.
+                 </p>
+               </motion.div>
+            </div>
+          </RevealOnScroll>
         </div>
       </section>
 
@@ -152,7 +183,7 @@ export function HomePage() {
                 className="w-full max-w-4xl mt-4 sm:mt-6 px-4"
               >
                 <p className="text-white/90 leading-relaxed text-sm sm:text-base md:text-lg" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>
-                  Rajalakshmi Institute of Technology is one of the best engineering colleges in Chennai and is part of Rajalakshmi Institutions, which has been synonymous with providing excellence in higher education to students for many years. Rajalakshmi Institute of Technology was established in 2008 and is affiliated with Anna University Chennai. Ours is one among the few Colleges to receive accreditation for Under Graduate Engineering programmes from the National Board of Accreditation (NBA), New Delhi, as soon as attaining the eligibility to apply for accreditation. The College is accredited by the National Assessment and Accreditation Council (NAAC) with &apos;A++&apos; Grade.
+                  Rajalakshmi Institute of Technology is one of the best engineering colleges in Chennai and is part of Rajalakshmi Institutions, which has been synonymous with providing excellence in higher education to students for many years. Rajalakshmi Institute of Technology was established in 2008 and is affiliated with Anna University Chennai. Ours is one among the few Colleges to receive accreditation for Under Graduate Engineering programmes from the National Board of Accreditation (NBA), New Delhi, as soon as attaining the eligibility to apply for accreditation. The College is accredited by the National Assessment and Accreditation Council (NAAC) with 'A++' Grade.
                 </p>
               </motion.div>
             </div>
@@ -244,5 +275,3 @@ export function HomePage() {
     </div>
   );
 }
-
-

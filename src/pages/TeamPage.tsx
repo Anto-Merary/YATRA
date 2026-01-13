@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import Galaxy from "@/components/Galaxy";
+import { StarsBackground } from "@/components/animate-ui/components/backgrounds/stars";
 import LetterGlitch from "@/components/LetterGlitch";
 import { NeonGlowText } from "@/components/NeonGlowText";
 import { useEffect, useRef, useState } from "react";
@@ -223,7 +223,7 @@ export function TeamPage() {
       {/* Drop shadow on top - prominent gradient */}
       <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-black via-black/90 via-black/60 to-transparent pointer-events-none z-20" />
       
-      {/* Background - switches between Galaxy and LetterGlitch */}
+      {/* Background - switches between StarsBackground and LetterGlitch */}
       <div className="absolute inset-0 z-0 w-full h-full">
         <AnimatePresence mode="wait">
           {activeFilter === "webdev" ? (
@@ -246,28 +246,19 @@ export function TeamPage() {
             </motion.div>
           ) : (
             <motion.div
-              key="galaxy"
+              key="stars"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 1, ease: "easeInOut" }}
               className="absolute inset-0 w-full h-full"
             >
-              <Galaxy
-                focal={[0.5, 0.5]}
-                rotation={[1.0, 0.0]}
-                starSpeed={0.5}
-                density={1.2}
-                hueShift={260}
-                speed={0.8}
-                mouseInteraction={true}
-                glowIntensity={0.4}
-                saturation={0.3}
-                mouseRepulsion={true}
-                twinkleIntensity={0.4}
-                rotationSpeed={0.05}
-                repulsionStrength={2}
-                transparent={true}
+              <StarsBackground
+                factor={0.05}
+                speed={50}
+                starColor="#fff"
+                pointerEvents={false}
+                className="bg-black"
               />
             </motion.div>
           )}
