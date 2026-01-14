@@ -6,6 +6,7 @@ import { HomePage } from "./pages/HomePage";
 import { ProshowPage } from "./pages/ProshowPage";
 import { TicketsPage } from "./pages/TicketsPage";
 import { EventsPage } from "./pages/EventsPage";
+import { EventDetailPage } from "./pages/EventDetailPage";
 import { GalleryPage } from "./pages/GalleryPage";
 import { TeamPage } from "./pages/TeamPage";
 import { AdminPage } from "./pages/AdminPage";
@@ -181,6 +182,7 @@ export default function App() {
         <Route path="/proshow" element={<ProshowPage />} />
         <Route path="/tickets" element={<TicketsPage />} />
         <Route path="/events" element={<EventsPage />} />
+        <Route path="/events/:eventId" element={<EventDetailPage />} />
         <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/team" element={<TeamPage />} />
       </Route>

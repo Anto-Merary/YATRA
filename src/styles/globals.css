@@ -51,6 +51,11 @@ body {
 @media (max-width: 768px) {
   body {
     font-size: 16px; /* Prevent zoom on input focus */
+    /* Prevent bounce/overscroll on iOS */
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+    /* Prevent white gaps during scroll */
+    background-color: #000000;
   }
 
   /* Ensure touch targets are at least 44px */
@@ -62,6 +67,28 @@ body {
   /* Improve touch scrolling */
   * {
     -webkit-overflow-scrolling: touch;
+  }
+
+  /* Prevent bounce effect on iOS Safari */
+  html {
+    overscroll-behavior-y: none;
+    /* Prevent white gaps during overscroll */
+    background-color: #000000;
+  }
+
+  /* Fixed background images - prevent scrolling and ensure proper rendering */
+  [style*="position: fixed"][style*="z-index: -1"] {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: -1 !important;
+    /* Force hardware acceleration for smooth rendering */
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    /* Prevent background from scrolling */
+    background-attachment: fixed !important;
   }
 }
 

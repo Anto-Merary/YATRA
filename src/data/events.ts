@@ -12,6 +12,19 @@ export type FestEvent = {
   venue: string;
   organizerName: string;
   organizerPhone: string;
+  /**
+   * Optional richer details for the dedicated event page.
+   * (Safe to add gradually—UI falls back to "TBA"/default rules.)
+   */
+  date?: string;
+  time?: string;
+  contactEmail?: string;
+  rules?: string[];
+  /**
+   * Optional: force which background wallpaper the event page uses.
+   * If omitted, it will be auto-assigned (roughly 50/50 across events).
+   */
+  backgroundVariant?: "eventinfo" | "eventinfo2";
   registrationUrl: string;
 };
 

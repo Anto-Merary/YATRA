@@ -1,10 +1,10 @@
 import { useMemo, useState, useEffect, useRef } from "react";
-import { Modal } from "../components/Modal";
 import SpotlightCard from "@/components/reactbits/SpotlightCard";
 import PixelSnow from "../components/PixelSnow";
 import { EVENTS, type FestEvent, type ParticipationType } from "../data/events";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { useMobile } from "../hooks/use-mobile";
+import { useNavigate } from "react-router-dom";
 import leafImage from "../assets/leaf.jpeg?url";
 import leaf2Image from "../assets/leaf2.jpeg?url";
 
@@ -121,8 +121,8 @@ export function EventsPage() {
   const [participation, setParticipation] = useState<ParticipationType>("solo");
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
-  const [active, setActive] = useState<FestEvent | null>(null);
   const { isMobile, prefersReducedMotion } = useMobile();
+  const navigate = useNavigate();
 
   const ui =
     participation === "solo"
@@ -209,11 +209,11 @@ export function EventsPage() {
 
 
   return (
-    <div className={`relative min-h-screen w-full overflow-hidden ${isMobile ? 'bg-black' : 'bg-slate-950'}`}>
+    <div className={`relative min-h-screen w-full ${isMobile ? '' : 'bg-slate-950'}`}>
       {/* Background - leaf.jpeg for solo, leaf2.jpeg for group on mobile; radial gradients for desktop */}
       {isMobile ? (
         <>
-          {/* Full-screen leaf wallpaper - switches based on participation */}
+          {/* Fixed background container - locked to viewport, doesn't scroll */}
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={participation}
@@ -221,19 +221,41 @@ export function EventsPage() {
               animate={{ opacity: 1 }}
               exit={prefersReducedMotion ? undefined : { opacity: 0 }}
               transition={{ duration: 0.5 }}
-              className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat pointer-events-none"
+              className="fixed inset-0 pointer-events-none"
               style={{
                 backgroundImage: `url(${participation === "solo" ? leafImage : leaf2Image})`,
-                opacity: 0.3,
-                filter: 'brightness(0.6) contrast(1.2)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                backgroundAttachment: 'fixed',
+                width: '100vw',
+                height: '100vh',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: -1,
+                opacity: 0.85,
+                filter: 'brightness(0.9) contrast(1.05)',
+                WebkitTransform: 'translateZ(0)',
+                transform: 'translateZ(0)',
+                WebkitBackfaceVisibility: 'hidden',
+                backfaceVisibility: 'hidden',
               }}
             />
           </AnimatePresence>
-          {/* Dark overlay to ensure content readability */}
+          {/* Fixed subtle overlay to ensure content readability while keeping background visible */}
           <div 
-            className="absolute inset-0 z-[1] pointer-events-none"
+            className="fixed inset-0 pointer-events-none"
             style={{
-              background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.4) 100%)',
+              background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.25) 100%)',
+              width: '100vw',
+              height: '100vh',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: -1,
             }}
           />
         </>
@@ -289,7 +311,7 @@ export function EventsPage() {
         />
       </div>
 
-      {/* Content Layer */}
+      {/* Content Layer - scrollable above fixed background */}
       <div className="container-max py-6 sm:py-8 md:py-14 relative z-10 px-3 sm:px-4">
         {/* Header Section */}
         <div className="mb-4 sm:mb-6 md:mb-8 lg:mb-12">
@@ -496,10 +518,7 @@ export function EventsPage() {
                     type="button"
                     className="flex w-full items-center justify-between px-4 py-3 text-left text-sm text-white/80 transition-colors hover:bg-white/5"
                     onClick={() => {
-                      setQuery(s.name);
-                      setParticipation(s.participation);
-                      setFilter(s.day);
-                      setActive(s);
+                      navigate(`/events/${s.id}`);
                     }}
                   >
                     <span>{s.name}</span>
@@ -607,7 +626,7 @@ export function EventsPage() {
                     !isMobile ? "backdrop-blur-sm" : "",
                   ].join(" ")}
                   spotlightColor={ui.spotlightColor}
-                  onClick={() => setActive(e)}
+                  onClick={() => navigate(`/events/${e.id}`)}
                 >
                   {/* Glow overlay on hover */}
                   <div
@@ -646,131 +665,6 @@ export function EventsPage() {
             </motion.div>
           )}
         </AnimatePresence>
-
-        <Modal
-        open={!!active}
-        onOpenChange={(o) => {
-          if (!o) setActive(null);
-        }}
-        title={active ? active.name : undefined}
-      >
-        {active && (
-          <div className="grid gap-4 sm:gap-6 lg:grid-cols-[320px_1fr]">
-            {/* Left Column - Poster & Description */}
-            <div className="space-y-3 sm:space-y-4 order-2 lg:order-1">
-              <div className="overflow-hidden rounded-xl border border-white/10 bg-white/[0.04]">
-                {active.posterUrl ? (
-                  <img
-                    src={active.posterUrl}
-                    alt={`${active.name} poster`}
-                    className="h-[320px] w-full object-cover"
-                    onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).style.display = "none";
-                    }}
-                    draggable={false}
-                  />
-                ) : null}
-                {!active.posterUrl && (
-                  <div className="flex h-[320px] w-full items-center justify-center text-xs text-white/50">
-                    <div className="text-center">
-                      <div className="mb-2 text-2xl">📸</div>
-                      <div>
-                        Poster (add <span className="mx-1 font-mono text-white/70">posterUrl</span>)
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className={`rounded-xl border border-white/10 bg-white/[0.03] p-4 ${isMobile ? '' : 'backdrop-blur-sm'}`}>
-                <div className="text-xs font-semibold tracking-[0.25em] text-yatra-300 mb-3 flex items-center gap-2">
-                  <span>ABOUT</span>
-                </div>
-                <div className="text-sm leading-relaxed text-white/70">
-                  {active.description}
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column - Details & Actions */}
-            <div className="space-y-4 order-1 lg:order-2">
-              <div className={`rounded-2xl border border-white/10 bg-white/[0.03] p-5 ${isMobile ? '' : 'backdrop-blur-sm'}`}>
-                <div className="text-xs font-semibold tracking-[0.25em] text-yatra-300 mb-4 flex items-center gap-2">
-                  <span>DETAILS</span>
-                </div>
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-start gap-3">
-                    <span className="min-w-[80px] text-white/50">
-                      Venue:
-                    </span>
-                    <span className="text-white/80">{active.venue}</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <span className="min-w-[80px] text-white/50">
-                      Day:
-                    </span>
-                    <span className="text-white/80">
-                      {active.day === "day1" ? "Day 1" : "Day 2"}
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <span className="min-w-[80px] text-white/50">
-                      Type:
-                    </span>
-                    <span className="text-white/80">
-                      {active.participation === "solo" ? "Solo" : "Group"}
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <span className="min-w-[80px] text-white/50">
-                      Organizer:
-                    </span>
-                    <span className="text-white/80">{active.organizerName}</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <span className="min-w-[80px] text-white/50">
-                      Phone:
-                    </span>
-                    <a
-                      href={`tel:${active.organizerPhone}`}
-                      className={[
-                        "text-white/80 transition-colors",
-                        active.participation === "solo"
-                          ? "hover:text-pink-300"
-                          : "hover:text-cyan-200",
-                      ].join(" ")}
-                    >
-                      {active.organizerPhone}
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              <a
-                href={active.registrationUrl}
-                target="_blank"
-                rel="noreferrer"
-                className={[
-                  "group relative inline-flex w-full items-center justify-center rounded-xl px-6 py-4 sm:py-3.5 text-sm font-semibold text-white transition-all hover:scale-[1.02] touch-manipulation",
-                  active.participation === "solo"
-                    ? "bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-500 hover:shadow-[0_8px_24px_rgba(236,72,153,0.4)]"
-                    : "bg-gradient-to-r from-cyan-400 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 hover:shadow-[0_8px_24px_rgba(34,211,238,0.35)]",
-                ].join(" ")}
-                style={{ minHeight: "44px" }}
-              >
-                <span className="text-white/90">Register Now</span>
-                <motion.div
-                  className="absolute inset-0 rounded-xl bg-white/20"
-                  initial={{ scaleX: 0 }}
-                  whileHover={{ scaleX: 1 }}
-                  transition={{ duration: 0.3 }}
-                  style={{ originX: 0 }}
-                />
-              </a>
-            </div>
-          </div>
-        )}
-        </Modal>
       </div>
     </div>
   );
