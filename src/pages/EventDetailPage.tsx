@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useLayoutEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { EVENTS, type FestEvent } from "../data/events";
 import { Button } from "../components/ui/button";
@@ -50,16 +50,31 @@ export function EventDetailPage() {
   const navigate = useNavigate();
   const formRef = useRef<HTMLDivElement | null>(null);
 
+  // Resolve event synchronously on every render - useMemo ensures it updates when eventId changes
   const { event, bgVariant } = useMemo(() => {
+    if (!eventId) {
+      return { event: null as FestEvent | null, bgVariant: "eventinfo" as BgVariant };
+    }
+
     const found = EVENTS.find((e) => e.id === eventId) ?? null;
-    if (!found) return { event: null as FestEvent | null, bgVariant: "eventinfo" as BgVariant };
+    if (!found) {
+      return { event: null as FestEvent | null, bgVariant: "eventinfo" as BgVariant };
+    }
 
     // Auto-assign backgrounds ~50/50 across events (deterministic),
     // unless the event explicitly specifies a backgroundVariant.
     const idx = EVENTS.findIndex((e) => e.id === found.id);
     const auto: BgVariant = idx % 2 === 0 ? "eventinfo" : "eventinfo2";
     const chosen: BgVariant = found.backgroundVariant ?? auto;
+    
     return { event: found, bgVariant: chosen };
+  }, [eventId]);
+
+  // Ensure scroll to top when navigating to this page
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
   }, [eventId]);
 
   const bg = bgVariant === "eventinfo" ? eventInfoBg1 : eventInfoBg2;
@@ -104,7 +119,7 @@ export function EventDetailPage() {
   const rules = event.rules?.length ? event.rules : DEFAULT_RULES;
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-black">
+    <div className="relative min-h-screen w-full overflow-hidden bg-black" style={{ minHeight: '100vh', position: 'relative', zIndex: 1 }}>
       {/* Background wallpaper */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"

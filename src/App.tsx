@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useParams } from "react-router-dom";
 import { SiteLayout } from "./components/SiteLayout";
 import Loader from "./components/Loader";
 import { HomePage } from "./pages/HomePage";
@@ -171,6 +171,19 @@ export default function App() {
     };
   }, []);
 
+  // Temporary debug component to verify that the /events/:eventId route
+  // is rendering correctly and that route params are available.
+  function EventRouteDebug() {
+    const { eventId } = useParams<{ eventId: string }>();
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white">
+        <p className="text-lg font-semibold mb-2">Event route debug</p>
+        <p className="text-sm text-white/70">eventId from URL:</p>
+        <p className="mt-1 text-xl font-mono">{eventId ?? "(none)"}</p>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return <Loader />;
   }
@@ -182,12 +195,14 @@ export default function App() {
         <Route path="/proshow" element={<ProshowPage />} />
         <Route path="/tickets" element={<TicketsPage />} />
         <Route path="/events" element={<EventsPage />} />
-        <Route path="/events/:eventId" element={<EventDetailPage />} />
         <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/team" element={<TeamPage />} />
       </Route>
       {/* Admin route - separate from SiteLayout, no navigation links */}
       <Route path="/admin" element={<AdminPage />} />
+      {/* TEMP: mount the real EventDetailPage outside SiteLayout/PageTransition
+          to keep routing simple while we debug its rendering */}
+      <Route path="/events/:eventId" element={<EventDetailPage />} />
     </Routes>
   );
 }
