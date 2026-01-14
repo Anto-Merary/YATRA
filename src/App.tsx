@@ -9,32 +9,164 @@ import { EventsPage } from "./pages/EventsPage";
 import { GalleryPage } from "./pages/GalleryPage";
 import { TeamPage } from "./pages/TeamPage";
 import { AdminPage } from "./pages/AdminPage";
+import { useGLTF } from "@react-three/drei";
+// Images
+import leafImage from "./assets/leaf.jpeg?url";
+import leaf2Image from "./assets/leaf2.jpeg?url";
+import ritLogoImage from "./assets/RIT WHITE LOGO.png";
+import logoImage from "./assets/LOGO .png";
+import artistImage from "./assets/artist.png?url";
+import christopherImage from "./assets/christopher.png?url";
+import antomeraryImage from "./assets/antomerary.png?url";
+// Video
+import yatraVideo from "./assets/video.mp4?url";
+// 3D Model
+import glbModel from "../YATRA 3D ELEMENT.glb?url";
+// Font
+import fontFile from "./assets/fonts/BaseNeueTrial-ExtBdObliq.ttf";
+
+// Preload the 3D model at module level
+try {
+  useGLTF.preload(glbModel);
+} catch (e) {
+  // Silently fail if GLB preload fails (might not be available in all contexts)
+  console.warn("GLB preload failed:", e);
+}
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate initial loading time
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000); // Show loader for 2 seconds
+    // Preload all critical assets for smooth experience
+    const preloadAssets = async () => {
+      const promises: Promise<void>[] = [];
 
-    // Also hide loader when page is fully loaded
-    const handleLoad = () => {
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 500);
+      // Preload images
+      const imageUrls = [
+        leafImage,
+        leaf2Image,
+        ritLogoImage,
+        logoImage,
+        artistImage,
+        christopherImage,
+        antomeraryImage,
+      ];
+
+      imageUrls.forEach((url) => {
+        promises.push(
+          new Promise<void>((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve();
+            img.onerror = () => resolve(); // Continue even if image fails
+            img.src = url;
+          })
+        );
+      });
+
+      // Preload video (load metadata to ensure it's ready)
+      promises.push(
+        new Promise<void>((resolve) => {
+          const video = document.createElement("video");
+          video.preload = "auto";
+          video.muted = true;
+          video.onloadedmetadata = () => resolve();
+          video.onerror = () => resolve(); // Continue even if video fails
+          video.src = yatraVideo;
+        })
+      );
+
+      // Preload 3D model (GLB file) - fetch to cache it
+      promises.push(
+        new Promise<void>((resolve) => {
+          fetch(glbModel, { method: 'HEAD' })
+            .then(() => resolve())
+            .catch(() => {
+              // If HEAD fails, try full fetch
+              fetch(glbModel)
+                .then(() => resolve())
+                .catch(() => resolve()); // Continue even if GLB fails
+            });
+        })
+      );
+
+      // Preload font (font is already loaded via CSS @font-face, but we ensure it's ready)
+      promises.push(
+        new Promise<void>((resolve) => {
+          // Check if font is already loaded
+          if (document.fonts.check('1em "Base Neue ExtBd Obl"')) {
+            resolve();
+            return;
+          }
+          
+          const font = new FontFace(
+            "Base Neue ExtBd Obl",
+            `url(${fontFile})`
+          );
+          font
+            .load()
+            .then(() => {
+              document.fonts.add(font);
+              resolve();
+            })
+            .catch(() => {
+              // Font might already be loaded via CSS, check again
+              setTimeout(() => {
+                if (document.fonts.check('1em "Base Neue ExtBd Obl"')) {
+                  resolve();
+                } else {
+                  resolve(); // Continue anyway
+                }
+              }, 100);
+            });
+        })
+      );
+
+      // Wait for all assets to load (or timeout individually)
+      await Promise.allSettled(
+        promises.map((p) =>
+          Promise.race([
+            p,
+            new Promise<void>((resolve) =>
+              setTimeout(() => resolve(), 5000)
+            ), // 5s timeout per asset
+          ])
+        )
+      );
     };
 
-    if (document.readyState === 'complete') {
-      handleLoad();
-    } else {
-      window.addEventListener('load', handleLoad);
-    }
+    // Wait for both page load and asset preloading
+    const initializeApp = async () => {
+      // Wait for DOM to be ready
+      if (document.readyState !== "complete") {
+        await new Promise<void>((resolve) => {
+          const handleLoad = () => {
+            window.removeEventListener("load", handleLoad);
+            resolve();
+          };
+          window.addEventListener("load", handleLoad);
+        });
+      }
+
+      // Preload all assets
+      await preloadAssets();
+
+      // Small delay for smooth transition
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 300);
+    };
+
+    // Fallback timer in case something goes wrong
+    const fallbackTimer = setTimeout(() => {
+      setIsLoading(false);
+    }, 8000); // Max 8 seconds for all assets
+
+    initializeApp().then(() => {
+      clearTimeout(fallbackTimer);
+    });
 
     return () => {
-      clearTimeout(timer);
-      window.removeEventListener('load', handleLoad);
+      clearTimeout(fallbackTimer);
     };
   }, []);
 
