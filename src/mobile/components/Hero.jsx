@@ -65,9 +65,8 @@ function GlitchText({ koreanText, englishText, className, delay = 0, shouldStart
 }
 
 function Hero() {
-  // Single global loader (App-level) handles loading UI.
-  // Keep internal preloading logic non-blocking (no overlay + no hidden stage).
-  const TOTAL_IMAGES = 0
+  // Keep a loader visible until every <img> in this component finishes (load or error).
+  const TOTAL_IMAGES = 5
   const doneKeysRef = useRef(new Set())
   const [doneCount, setDoneCount] = useState(0)
   const [hasLoaded, setHasLoaded] = useState(false)
@@ -565,6 +564,16 @@ function Hero() {
   return (
     <>
     <section className="hero" ref={heroRef}>
+      <div
+        className={`hero-loader ${isLoading ? 'is-visible' : 'is-hidden'}`}
+        role="status"
+        aria-live="polite"
+        aria-label="Loading"
+      >
+        <div className="hero-spinner" aria-hidden="true" />
+        <div className="hero-loader-text">Loading…</div>
+      </div>
+
       {/* Full-bleed background (blurred) so the stage can keep a fixed aspect ratio */}
       <img
         src={heroBg}

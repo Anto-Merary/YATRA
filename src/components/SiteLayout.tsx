@@ -10,7 +10,13 @@ import { Toaster } from "./ui/toaster";
 import { useState, useEffect, useLayoutEffect } from "react";
 import { motion } from "framer-motion";
 import { Home, Music2, Ticket, List, UsersRound } from "lucide-react";
-import { RouteTransitionProvider } from "./RouteTransitionContext";
+import Loader from "./Loader";
+import { RouteTransitionProvider, useRouteTransition } from "./RouteTransitionContext";
+
+function RouteLoaderOverlay() {
+  const { isTransitioning } = useRouteTransition();
+  return isTransitioning ? <Loader /> : null;
+}
 
 export function SiteLayout() {
   const location = useLocation();
