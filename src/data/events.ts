@@ -1204,6 +1204,25 @@ export const EVENTS: FestEvent[] = [
       "The organizers' decision is final and binding.",
     ],
   },
+  // PRO EVENTS (shown on Pro Events page)
+  {
+    id: "dance-battle",
+    name: "Dance Battle",
+    day: "day1",
+    participation: "group",
+    description:
+      "Dance Battle is a high-energy face-off where crews and solo dancers bring style, power, and stage presence. Expect knockout rounds, iconic beats, and crowd-hype moments.",
+    venue: "TBA",
+    organizerName: "Organizer Name",
+    organizerPhone: "+91 XXXXXXXXXX",
+    registrationUrl: "https://forms.gle/replace-me",
+    rules: [
+      "Report at the venue at least 15 minutes before your slot.",
+      "Music/track submission format and timing will be shared by the coordinators.",
+      "No offensive gestures, lyrics, or unsafe stunts.",
+      "The judges’ decision is final and binding.",
+    ],
+  },
 ];
 
 

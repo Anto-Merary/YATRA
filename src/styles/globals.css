@@ -12,6 +12,26 @@
   font-display: swap;
 }
 
+/* Victory Striker font */
+@font-face {
+  font-family: "Victory Striker";
+  src: local("Victory Striker Sans Demo"),
+    url("../assets/fonts/Victory Striker Sans Demo.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Akira Expanded font (local) */
+@font-face {
+  font-family: "Akira Expanded";
+  src: local("Akira Expanded Demo"),
+    url("../assets/fonts/Akira Expanded Demo.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   color-scheme: dark;
 }
