@@ -2,7 +2,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import Dock from "./Dock";
-import { Home, Mic, Ticket, Calendar, Images, Users } from "lucide-react";
+import { Home, Mic, Ticket, Calendar, Users } from "lucide-react";
 import ritLogo from "../../RIT WHITE LOGO.png";
 import yatraLogo from "../../LOGO .png";
 
@@ -81,7 +81,6 @@ export function Navbar({ variant = "fixed" }: NavbarProps) {
     { to: "/proshow", label: "Proshow", icon: Mic },
     { to: "/tickets", label: "Tickets", icon: Ticket },
     { to: "/events", label: "Events", icon: Calendar },
-    { to: "/gallery", label: "Gallery", icon: Images },
     { to: "/team", label: "Team", icon: Users },
   ];
 

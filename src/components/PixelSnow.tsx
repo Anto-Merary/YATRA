@@ -182,6 +182,16 @@ interface PixelSnowProps {
   density?: number;
   variant?: 'square' | 'round' | 'snowflake';
   direction?: number;
+  /**
+   * Cap renderer DPR to reduce GPU/VRAM usage and avoid WebGL context loss.
+   * Defaults to min(devicePixelRatio, 1.25).
+   */
+  maxPixelRatio?: number;
+  /**
+   * Scale down the internal render resolution (framebuffer), while keeping the element sized to the container.
+   * Example: 0.75 renders at 75% width/height, ~56% pixels.
+   */
+  renderScale?: number;
   className?: string;
   style?: React.CSSProperties;
 }
@@ -199,6 +209,8 @@ export default function PixelSnow({
   density = 0.3,
   variant = 'square',
   direction = 125,
+  maxPixelRatio = 1.0,
+  renderScale = 0.75,
   className = '',
   style = {}
 }: PixelSnowProps) {
@@ -231,12 +243,14 @@ export default function PixelSnow({
       const material = materialRef.current;
       if (!container || !renderer || !material) return;
       
-      const w = container.offsetWidth;
-      const h = container.offsetHeight;
-      renderer.setSize(w, h);
+      const w = Math.max(1, Math.floor(container.offsetWidth * renderScale));
+      const h = Math.max(1, Math.floor(container.offsetHeight * renderScale));
+      renderer.setSize(w, h, false);
+      renderer.domElement.style.width = '100%';
+      renderer.domElement.style.height = '100%';
       material.uniforms.uResolution.value.set(w, h);
     }, 100);
-  }, []);
+  }, [renderScale]);
 
   // Visibility observer
   useEffect(() => {
@@ -269,19 +283,44 @@ export default function PixelSnow({
       stencil: false,
       depth: false
     });
+    // Prevent three.js dev-time shader error checking from throwing
+    // if WebGL returns null logs on some contexts.
+    (renderer as any).debug && ((renderer as any).debug.checkShaderErrors = false);
 
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(container.offsetWidth, container.offsetHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, maxPixelRatio));
+    renderer.setSize(
+      Math.max(1, Math.floor(container.offsetWidth * renderScale)),
+      Math.max(1, Math.floor(container.offsetHeight * renderScale)),
+      false
+    );
     renderer.setClearColor(0x000000, 0);
+    renderer.domElement.style.width = '100%';
+    renderer.domElement.style.height = '100%';
+    renderer.domElement.style.display = 'block';
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
+
+    const contextLostRef = { current: false };
+    const handleContextLost = (e: Event) => {
+      // Prevent default restore handling and stop the RAF loop to avoid thrashing.
+      if ((e as any).preventDefault) (e as any).preventDefault();
+      console.warn('[PixelSnow] WebGL context lost');
+      contextLostRef.current = true;
+      cancelAnimationFrame(animationRef.current);
+    };
+    renderer.domElement.addEventListener('webglcontextlost', handleContextLost as any, false);
 
     const material = new ShaderMaterial({
       vertexShader,
       fragmentShader,
       uniforms: {
         uTime: { value: 0 },
-        uResolution: { value: new Vector2(container.offsetWidth, container.offsetHeight) },
+        uResolution: {
+          value: new Vector2(
+            Math.max(1, Math.floor(container.offsetWidth * renderScale)),
+            Math.max(1, Math.floor(container.offsetHeight * renderScale))
+          ),
+        },
         uFlakeSize: { value: flakeSize },
         uMinFlakeSize: { value: minFlakeSize },
         uPixelResolution: { value: pixelResolution },
@@ -307,6 +346,7 @@ export default function PixelSnow({
     const startTime = performance.now();
     const animate = () => {
       animationRef.current = requestAnimationFrame(animate);
+      if (contextLostRef.current) return;
       
       // Only render if visible
       if (isVisibleRef.current) {
@@ -322,8 +362,16 @@ export default function PixelSnow({
       if (resizeTimeoutRef.current) {
         clearTimeout(resizeTimeoutRef.current);
       }
+      renderer.domElement.removeEventListener('webglcontextlost', handleContextLost as any);
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
+      }
+      // Aggressively release GPU resources.
+      // This helps prevent "works after reload" black screens caused by accumulated WebGL contexts.
+      try {
+        (renderer as any).forceContextLoss?.();
+      } catch {
+        // ignore
       }
       renderer.dispose();
       geometry.dispose();
@@ -331,7 +379,7 @@ export default function PixelSnow({
       rendererRef.current = null;
       materialRef.current = null;
     };
-  }, [handleResize]); // Only recreate scene when handleResize changes
+  }, [handleResize, maxPixelRatio, renderScale]); // Recreate if caps change
 
   // Update material uniforms when props change
   useEffect(() => {

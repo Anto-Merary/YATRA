@@ -12,9 +12,41 @@
   will-change: scroll-position;
 }
 
+.scroll-stack-window {
+  height: auto;
+  overflow: visible;
+  overscroll-behavior: auto;
+  scroll-behavior: auto;
+  will-change: auto;
+}
+
 .scroll-stack-inner {
   padding: 20vh 5rem 50rem;
   min-height: 100vh;
+}
+
+.scroll-stack-window .scroll-stack-inner {
+  padding: 14vh clamp(1rem, 4vw, 5rem) 24rem;
+  min-height: auto;
+}
+
+.scroll-stack-window .scroll-stack-card {
+  height: auto;
+  min-height: 20rem;
+}
+
+.scroll-stack-window .scroll-stack-end {
+  height: 40vh;
+}
+
+.scroll-stack-window .scroll-stack-card {
+  padding: clamp(1.25rem, 3vw, 3rem);
+  border-radius: clamp(20px, 3vw, 40px);
+}
+
+.scroll-stack-window .scroll-stack-inner {
+  padding-top: clamp(4rem, 12vh, 12rem);
+  padding-bottom: clamp(14rem, 22vh, 24rem);
 }
 
 .scroll-stack-card-wrapper {

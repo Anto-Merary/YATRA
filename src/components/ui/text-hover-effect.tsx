@@ -16,12 +16,11 @@ export const TextHoverEffect = ({
   const [hovered, setHovered] = useState(false);
   const [isInView, setIsInView] = useState(false);
   const [maskPosition, setMaskPosition] = useState({ cx: "50%", cy: "50%" });
+  const rafRef = useRef<number | null>(null);
 
-  // Intersection Observer to detect when footer is in view
+  // Intersection Observer to detect when component is in view
   useEffect(() => {
-    // Try to find footer element first, otherwise use container
-    const footerElement = document.getElementById("footer");
-    const targetElement = footerElement || containerRef.current;
+    const targetElement = containerRef.current;
     
     if (!targetElement) return;
 
@@ -30,12 +29,15 @@ export const TextHoverEffect = ({
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             setIsInView(true);
+          } else {
+            // Reset when out of view to prevent flickering on scroll
+            setIsInView(false);
           }
         });
       },
       {
         threshold: 0.1, // Trigger when 10% is visible
-        rootMargin: "200px 0px 0px 0px", // Start 200px before element enters viewport
+        rootMargin: "100px 0px 0px 0px", // Start 100px before element enters viewport
         root: null, // Use viewport as root
       }
     );
@@ -43,25 +45,41 @@ export const TextHoverEffect = ({
     observer.observe(targetElement);
 
     return () => {
-      observer.unobserve(targetElement);
+      observer.disconnect();
     };
   }, []);
 
   useEffect(() => {
-    if (svgRef.current && cursor.x !== null && cursor.y !== null) {
-      const svgRect = svgRef.current.getBoundingClientRect();
-      const cxPercentage = ((cursor.x - svgRect.left) / svgRect.width) * 100;
-      const cyPercentage = ((cursor.y - svgRect.top) / svgRect.height) * 100;
-      setMaskPosition({
-        cx: `${cxPercentage}%`,
-        cy: `${cyPercentage}%`,
+    if (svgRef.current && cursor.x !== null && cursor.y !== null && hovered) {
+      // Cancel any pending animation frame
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+      }
+      
+      // Use requestAnimationFrame to throttle updates
+      rafRef.current = requestAnimationFrame(() => {
+        if (svgRef.current) {
+          const svgRect = svgRef.current.getBoundingClientRect();
+          const cxPercentage = ((cursor.x - svgRect.left) / svgRect.width) * 100;
+          const cyPercentage = ((cursor.y - svgRect.top) / svgRect.height) * 100;
+          setMaskPosition({
+            cx: `${cxPercentage}%`,
+            cy: `${cyPercentage}%`,
+          });
+        }
       });
     }
-  }, [cursor]);
+    
+    return () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
+  }, [cursor, hovered]);
 
   // Auto-start animation when footer comes into view
   useEffect(() => {
-    if (isInView) {
+    if (isInView && !hovered) {
       // Start the hover effect automatically
       setHovered(true);
       
@@ -72,12 +90,13 @@ export const TextHoverEffect = ({
           const centerX = rect.left + rect.width / 2;
           const centerY = rect.top + rect.height / 2;
           setCursor({ x: centerX, y: centerY });
+          setMaskPosition({ cx: "50%", cy: "50%" });
         }
       }, 100);
 
       return () => clearTimeout(timer);
     }
-  }, [isInView]);
+  }, [isInView, hovered]);
 
   return (
     <div ref={containerRef} className="w-full h-full overflow-hidden flex items-center justify-center">
@@ -91,8 +110,8 @@ export const TextHoverEffect = ({
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         onMouseMove={(e) => {
+          if (!hovered) setHovered(true);
           setCursor({ x: e.clientX, y: e.clientY });
-          setHovered(true);
         }}
         className="select-none"
         style={{ maxHeight: "100%", width: "100%" }}
@@ -106,15 +125,11 @@ export const TextHoverEffect = ({
           cy="50%"
           r="25%"
         >
-          {hovered && (
-            <>
-              <stop offset="0%" stopColor="rgba(255, 255, 255, 0.9)" />
-              <stop offset="25%" stopColor="rgba(255, 255, 255, 1)" />
-              <stop offset="50%" stopColor="rgba(255, 255, 255, 0.95)" />
-              <stop offset="75%" stopColor="rgba(255, 255, 255, 1)" />
-              <stop offset="100%" stopColor="rgba(255, 255, 255, 0.9)" />
-            </>
-          )}
+          <stop offset="0%" stopColor="rgba(255, 255, 255, 0.9)" />
+          <stop offset="25%" stopColor="rgba(255, 255, 255, 1)" />
+          <stop offset="50%" stopColor="rgba(255, 255, 255, 0.95)" />
+          <stop offset="75%" stopColor="rgba(255, 255, 255, 1)" />
+          <stop offset="100%" stopColor="rgba(255, 255, 255, 0.9)" />
         </linearGradient>
 
         <motion.radialGradient
@@ -123,7 +138,7 @@ export const TextHoverEffect = ({
           r="20%"
           initial={{ cx: "50%", cy: "50%" }}
           animate={maskPosition}
-          transition={{ duration: duration ?? 0, ease: "easeOut" }}
+          transition={{ duration: duration ?? 0.3, ease: "easeOut", type: "tween" }}
         >
           <stop offset="0%" stopColor="white" />
           <stop offset="100%" stopColor="black" />
@@ -138,7 +153,7 @@ export const TextHoverEffect = ({
           />
         </mask>
       </defs>
-      <text
+      <motion.text
         x="500"
         y="100"
         textAnchor="middle"
@@ -146,13 +161,12 @@ export const TextHoverEffect = ({
         strokeWidth="1.5"
         fontSize="180"
         className="fill-transparent stroke-white font-akira font-bold tracking-wider uppercase"
-        style={{ 
-          opacity: hovered ? 0.7 : 0,
-          fontSize: "clamp(120px, 18vw, 180px)"
-        }}
+        style={{ fontSize: "clamp(120px, 18vw, 180px)" }}
+        animate={{ opacity: hovered ? 0.7 : 0 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
       >
         {text}
-      </text>
+      </motion.text>
       <motion.text
         x="500"
         y="100"

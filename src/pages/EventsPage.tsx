@@ -1,17 +1,17 @@
 import { useMemo, useState, useEffect, useRef } from "react";
 import SpotlightCard from "@/components/reactbits/SpotlightCard";
-import PixelSnow from "../components/PixelSnow";
 import { EVENTS, type FestEvent, type ParticipationType } from "../data/events";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { useMobile } from "../hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
-import leafImage from "../assets/leaf.jpeg?url";
-import leaf2Image from "../assets/leaf2.jpeg?url";
+import { useRouteTransition } from "../components/RouteTransitionContext";
 
 type Filter = "all" | "day1" | "day2";
 
-function includesLoose(haystack: string, needle: string) {
-  return haystack.toLowerCase().includes(needle.trim().toLowerCase());
+function includesLoose(haystack: string, needle: string | null | undefined) {
+  const n = (needle ?? "").trim().toLowerCase();
+  if (!n) return true;
+  return (haystack ?? "").toLowerCase().includes(n);
 }
 
 // Text decryption effect component - optimized for mobile
@@ -122,6 +122,7 @@ export function EventsPage() {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
   const { isMobile, prefersReducedMotion } = useMobile();
+  const { isTransitioning } = useRouteTransition();
   const navigate = useNavigate();
 
   const ui =
@@ -171,11 +172,6 @@ export function EventsPage() {
           patternColor: "rgba(34, 211, 238, 0.12)",
         };
 
-  const radialGlow =
-    participation === "solo"
-      ? "radial-gradient(circle farthest-side, rgba(255, 0, 182, 0.15), rgba(255, 255, 255, 0))"
-      : "radial-gradient(circle farthest-side, rgba(34, 211, 238, 0.14), rgba(255, 255, 255, 0))";
-
   const counts = useMemo(() => {
     let solo = 0;
     let group = 0;
@@ -188,7 +184,7 @@ export function EventsPage() {
   }, [filter]);
 
   const filtered = useMemo(() => {
-    const q = query.trim();
+    const q = (query ?? "").trim();
     return EVENTS.filter((e) => {
       const participationOk = e.participation === participation;
       const dayOk = filter === "all" ? true : e.day === filter;
@@ -198,7 +194,7 @@ export function EventsPage() {
   }, [participation, filter, query]);
 
   const suggestions = useMemo(() => {
-    const q = query.trim();
+    const q = (query ?? "").trim();
     if (!q) return [];
     return EVENTS.filter((e) => {
       const dayOk = filter === "all" ? true : e.day === filter;
@@ -209,107 +205,44 @@ export function EventsPage() {
 
 
   return (
-    <div className={`relative min-h-screen w-full ${isMobile ? '' : 'bg-slate-950'}`}>
-      {/* Background - leaf.jpeg for solo, leaf2.jpeg for group on mobile; radial gradients for desktop */}
-      {isMobile ? (
-        <>
-          {/* Fixed background container - locked to viewport, doesn't scroll */}
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={participation}
-              initial={prefersReducedMotion ? undefined : { opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              className="fixed inset-0 pointer-events-none"
-              style={{
-                backgroundImage: `url(${participation === "solo" ? leafImage : leaf2Image})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-                backgroundAttachment: 'fixed',
-                width: '100vw',
-                height: '100vh',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                zIndex: -1,
-                opacity: 0.85,
-                filter: 'brightness(0.9) contrast(1.05)',
-                WebkitTransform: 'translateZ(0)',
-                transform: 'translateZ(0)',
-                WebkitBackfaceVisibility: 'hidden',
-                backfaceVisibility: 'hidden',
-              }}
-            />
-          </AnimatePresence>
-          {/* Fixed subtle overlay to ensure content readability while keeping background visible */}
-          <div 
-            className="fixed inset-0 pointer-events-none"
-            style={{
-              background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.25) 100%)',
-              width: '100vw',
-              height: '100vh',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              zIndex: -1,
-            }}
-          />
-        </>
-      ) : (
-        <div className="absolute inset-0 z-0">
-          <div
-            className="absolute bottom-0 left-[-20%] right-0 top-[-10%] h-[500px] w-[500px] rounded-full"
-            style={{ backgroundImage: radialGlow }}
-          />
-          <div
-            className="absolute bottom-0 right-[-20%] top-[-10%] h-[500px] w-[500px] rounded-full"
-            style={{ backgroundImage: radialGlow }}
-          />
-        </div>
-      )}
-      
+    <div className="relative min-h-screen w-full bg-black">
       {/* Drop shadow on top - prominent gradient */}
       <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-black via-black/90 via-black/60 to-transparent pointer-events-none z-20" />
       
-      {/* PixelSnow Background Effect - above radial gradient background - disabled on mobile */}
-      {!prefersReducedMotion && !isMobile && (
-        <div className="absolute inset-0 z-[1]">
-          <PixelSnow
-            color={ui.pixelSnow}
-            flakeSize={0.01}
-            minFlakeSize={1.5}
-            pixelResolution={200}
-            speed={1.0}
-            depthFade={5}
-            farPlane={20}
-            brightness={2.0}
-            gamma={0.4545}
-            density={0.4}
-            variant="snowflake"
-            direction={90}
+      {/* Tickets-style background, but CSS-only (prevents WebGL context-loss routing blackouts) */}
+      {!prefersReducedMotion && (
+        <>
+          <div
+            className="absolute inset-0 z-0 opacity-40 pointer-events-none"
+            style={{
+              // Grid + two soft glows, tinted by mode (solo pink / group cyan)
+              backgroundImage:
+                participation === "solo"
+                  ? [
+                      "linear-gradient(to right, rgba(236,72,153,0.14) 1px, transparent 1px)",
+                      "linear-gradient(to bottom, rgba(236,72,153,0.14) 1px, transparent 1px)",
+                      "radial-gradient(circle at 30% 20%, rgba(236,72,153,0.35), transparent 60%)",
+                      "radial-gradient(circle at 70% 80%, rgba(236,72,153,0.18), transparent 60%)",
+                    ].join(",")
+                  : [
+                      "linear-gradient(to right, rgba(34,211,238,0.14) 1px, transparent 1px)",
+                      "linear-gradient(to bottom, rgba(34,211,238,0.14) 1px, transparent 1px)",
+                      "radial-gradient(circle at 30% 20%, rgba(34,211,238,0.32), transparent 60%)",
+                      "radial-gradient(circle at 70% 80%, rgba(34,211,238,0.16), transparent 60%)",
+                    ].join(","),
+              backgroundSize: "18px 18px, 18px 18px, 100% 100%, 100% 100%",
+              backgroundPosition: "0 0, 0 0, center, center",
+              animation: isTransitioning ? undefined : "events-bg-pan 18s linear infinite",
+            }}
           />
-        </div>
+          <style>{`
+            @keyframes events-bg-pan {
+              0% { background-position: 0 0, 0 0, 30% 20%, 70% 80%; }
+              100% { background-position: 180px 180px, 180px 180px, 32% 22%, 68% 78%; }
+            }
+          `}</style>
+        </>
       )}
-
-      {/* Subtle Korean-inspired pattern overlay */}
-      <div className="absolute inset-0 z-[1] opacity-[0.03] pointer-events-none">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `repeating-linear-gradient(
-              45deg,
-              transparent,
-              transparent 10px,
-              ${ui.patternColor} 10px,
-              ${ui.patternColor} 20px
-            )`,
-          }}
-        />
-      </div>
 
       {/* Content Layer - scrollable above fixed background */}
       <div className="container-max py-6 sm:py-8 md:py-14 relative z-10 px-3 sm:px-4">
@@ -500,7 +433,7 @@ export function EventsPage() {
             </div>
             <input
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => setQuery(e.target.value ?? "")}
               placeholder="Search events..."
               className={[
                 "h-11 xs:h-12 w-full rounded-xl xs:rounded-2xl border bg-white/[0.04] pl-9 xs:pl-10 sm:pl-12 pr-3 xs:pr-4 text-sm xs:text-base text-white placeholder:text-white/40 outline-none transition-all touch-manipulation",

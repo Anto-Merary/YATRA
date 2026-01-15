@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import SpotlightCard from "@/components/reactbits/SpotlightCard";
 import PixelBlast from "@/components/PixelBlast";
+import { useRouteTransition } from "@/components/RouteTransitionContext";
 import {
   ExpandableScreen,
   ExpandableScreenTrigger,
@@ -139,29 +140,35 @@ function AnimatedPrice({
 }
 
 export function TicketsPage() {
+  const { isTransitioning } = useRouteTransition();
   return (
     <div className="relative min-h-screen w-full bg-black">
       {/* Drop shadow on top - prominent gradient */}
       <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-black via-black/90 via-black/60 to-transparent pointer-events-none z-20" />
       
       {/* PixelBlast Background - covers entire page */}
-      <div className="absolute inset-0 z-0 opacity-40 w-full h-full">
-        <PixelBlast
-          variant="square"
-          pixelSize={4}
-          color="#ec4899"
-          patternScale={2}
-          patternDensity={0.8}
-          enableRipples={true}
-          rippleIntensityScale={0.8}
-          rippleThickness={0.15}
-          rippleSpeed={0.25}
-          pixelSizeJitter={0.1}
-          edgeFade={0.3}
-          transparent={true}
-          speed={0.3}
-        />
-      </div>
+      {!isTransitioning && (
+        <div className="absolute inset-0 z-0 opacity-40 w-full h-full">
+          <PixelBlast
+            variant="square"
+            pixelSize={4}
+            color="#ec4899"
+            patternScale={2}
+            patternDensity={0.8}
+            enableRipples={true}
+            rippleIntensityScale={0.8}
+            rippleThickness={0.15}
+            rippleSpeed={0.25}
+            pixelSizeJitter={0.1}
+            edgeFade={0.3}
+            transparent={true}
+            speed={0.3}
+            maxPixelRatio={1.0}
+            renderScale={0.75}
+            requireWebGL2
+          />
+        </div>
+      )}
 
       {/* Content Layer */}
       <div className="container-max py-6 sm:py-8 md:py-12 lg:py-14 relative z-10 px-3 sm:px-4">

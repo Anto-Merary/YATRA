@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import { Renderer, Program, Triangle, Mesh } from 'ogl';
 
 export type RaysOrigin =
+  | 'center'
   | 'top-center'
   | 'top-left'
   | 'top-right'
@@ -41,6 +42,8 @@ const getAnchorAndDir = (
 ): { anchor: [number, number]; dir: [number, number] } => {
   const outside = 0.2;
   switch (origin) {
+    case 'center':
+      return { anchor: [w * 0.5, h * 0.5], dir: [0, 1] };
     case 'top-left':
       return { anchor: [0, -outside * h], dir: [0, 1] };
     case 'top-right':

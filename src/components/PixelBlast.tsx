@@ -51,6 +51,21 @@ type PixelBlastProps = {
   transparent?: boolean;
   edgeFade?: number;
   noiseAmount?: number;
+  /**
+   * Cap renderer DPR to reduce GPU/VRAM usage and avoid WebGL context loss.
+   * Defaults to 1.0.
+   */
+  maxPixelRatio?: number;
+  /**
+   * Scale down internal render resolution (framebuffer) while keeping element at 100% size.
+   * Defaults to 0.75.
+   */
+  renderScale?: number;
+  /**
+   * PixelBlast uses GLSL3 shaders; requiring WebGL2 prevents unstable fallback to WebGL1.
+   * If WebGL2 is unavailable, the effect will not mount (safe fallback).
+   */
+  requireWebGL2?: boolean;
 };
 
 const createTouchTexture = (): TouchTexture => {
@@ -364,7 +379,10 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
   speed = 0.5,
   transparent = true,
   edgeFade = 0.5,
-  noiseAmount = 0
+  noiseAmount = 0,
+  maxPixelRatio = 1.0,
+  renderScale = 0.75,
+  requireWebGL2 = true
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const visibilityRef = useRef({ visible: true });
@@ -426,20 +444,46 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
         t.quad?.geometry.dispose();
         t.material.dispose();
         t.composer?.dispose();
+        try {
+          (t.renderer as any).forceContextLoss?.();
+        } catch {
+          // ignore
+        }
         t.renderer.dispose();
         if (t.renderer.domElement.parentElement === container) container.removeChild(t.renderer.domElement);
         threeRef.current = null;
       }
       const canvas = document.createElement('canvas');
+      const gl = requireWebGL2
+        ? (canvas.getContext('webgl2', {
+            alpha: true,
+            antialias,
+            powerPreference: 'high-performance',
+            premultipliedAlpha: false,
+            stencil: false,
+            depth: false
+          }) as WebGL2RenderingContext | null)
+        : null;
+
+      if (requireWebGL2 && !gl) {
+        console.warn('[PixelBlast] WebGL2 not available; disabling effect');
+        return;
+      }
+
       const renderer = new THREE.WebGLRenderer({
         canvas,
+        // If gl is null, three.js will pick the best available context.
+        context: (gl ?? undefined) as any,
         antialias,
         alpha: true,
         powerPreference: 'high-performance'
       });
+      // Prevent three.js dev-time shader error checking from throwing
+      // if WebGL returns null logs on some contexts.
+      (renderer as any).debug && ((renderer as any).debug.checkShaderErrors = false);
       renderer.domElement.style.width = '100%';
       renderer.domElement.style.height = '100%';
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, maxPixelRatio));
       container.appendChild(renderer.domElement);
       if (transparent) renderer.setClearAlpha(0);
       else renderer.setClearColor(0x000000, 1);
@@ -477,10 +521,22 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
       const quad = new THREE.Mesh(quadGeom, material);
       scene.add(quad);
       const clock = new THREE.Clock();
+      const contextLostRef = { current: false };
+      const handleContextLost = (e: Event) => {
+        if ((e as any).preventDefault) (e as any).preventDefault();
+        console.warn('[PixelBlast] WebGL context lost');
+        contextLostRef.current = true;
+        if (threeRef.current?.raf) cancelAnimationFrame(threeRef.current.raf);
+      };
+      renderer.domElement.addEventListener('webglcontextlost', handleContextLost as any, false);
       const setSize = () => {
         const w = container.clientWidth || 1;
         const h = container.clientHeight || 1;
-        renderer.setSize(w, h, false);
+        const sw = Math.max(1, Math.floor(w * renderScale));
+        const sh = Math.max(1, Math.floor(h * renderScale));
+        renderer.setSize(sw, sh, false);
+        renderer.domElement.style.width = '100%';
+        renderer.domElement.style.height = '100%';
         uniforms.uResolution.value.set(renderer.domElement.width, renderer.domElement.height);
         if (threeRef.current?.composer)
           threeRef.current.composer.setSize(renderer.domElement.width, renderer.domElement.height);
@@ -574,6 +630,7 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
       });
       let raf = 0;
       const animate = () => {
+        if (contextLostRef.current) return;
         if (autoPauseOffscreen && !visibilityRef.current.visible) {
           raf = requestAnimationFrame(animate);
           return;
@@ -650,6 +707,11 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
       t.quad?.geometry.dispose();
       t.material.dispose();
       t.composer?.dispose();
+      try {
+        (t.renderer as any).forceContextLoss?.();
+      } catch {
+        // ignore
+      }
       t.renderer.dispose();
       if (t.renderer.domElement.parentElement === container) container.removeChild(t.renderer.domElement);
       threeRef.current = null;
@@ -674,7 +736,9 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
     autoPauseOffscreen,
     variant,
     color,
-    speed
+    speed,
+    maxPixelRatio,
+    renderScale
   ]);
 
   return (

@@ -50,6 +50,9 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
   const cardsRef = useRef<HTMLElement[]>([]);
   const lastTransformsRef = useRef(new Map<number, any>());
   const isUpdatingRef = useRef(false);
+  const debugWheelCountRef = useRef(0);
+  const debugWheelLogCountRef = useRef(0);
+  const debugUpdateLogCountRef = useRef(0);
 
   const calculateProgress = useCallback((scrollTop: number, start: number, end: number) => {
     if (scrollTop < start) return 0;
@@ -102,11 +105,69 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     const stackPositionPx = parsePercentage(stackPosition, containerHeight);
     const scaleEndPositionPx = parsePercentage(scaleEndPosition, containerHeight);
 
-    const endElement = useWindowScroll
-      ? (document.querySelector('.scroll-stack-end') as HTMLElement)
-      : (scrollerRef.current?.querySelector('.scroll-stack-end') as HTMLElement);
+    const endElement = scrollerRef.current?.querySelector('.scroll-stack-end') as HTMLElement | null;
 
     const endElementTop = endElement ? getElementOffset(endElement) : 0;
+
+    if (useWindowScroll && debugUpdateLogCountRef.current < 3) {
+      debugUpdateLogCountRef.current += 1;
+      // #region agent log SS5
+      fetch(
+        "http://127.0.0.1:7242/ingest/c6275645-33f2-4c08-84ae-0100f84f35d9",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId: "debug-session",
+            runId: "pre-fix",
+            hypothesisId: "H3",
+            location: "src/components/ScrollStack.tsx:updateCardTransforms:window",
+            message: "ScrollStack update (window mode)",
+            data: {
+              scrollTop,
+              containerHeight,
+              endElementTop,
+              wheelCount: debugWheelCountRef.current,
+              docH: document.documentElement.scrollHeight,
+              bodyOverflow: window.getComputedStyle(document.body).overflow,
+            },
+            timestamp: Date.now(),
+          }),
+        }
+      ).catch(() => {});
+      // #endregion agent log SS5
+    }
+
+    if (
+      useWindowScroll &&
+      debugWheelCountRef.current > 0 &&
+      scrollTop === 0 &&
+      debugUpdateLogCountRef.current === 3
+    ) {
+      // #region agent log SS6
+      fetch(
+        "http://127.0.0.1:7242/ingest/c6275645-33f2-4c08-84ae-0100f84f35d9",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId: "debug-session",
+            runId: "pre-fix",
+            hypothesisId: "H1",
+            location: "src/components/ScrollStack.tsx:updateCardTransforms:suspectNoScroll",
+            message: "Wheel events happened but window.scrollY stayed 0",
+            data: {
+              wheelCount: debugWheelCountRef.current,
+              scrollY: window.scrollY,
+              docH: document.documentElement.scrollHeight,
+              bodyOverflow: window.getComputedStyle(document.body).overflow,
+            },
+            timestamp: Date.now(),
+          }),
+        }
+      ).catch(() => {});
+      // #endregion agent log SS6
+    }
 
     cardsRef.current.forEach((card, i) => {
       if (!card) return;
@@ -228,6 +289,24 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
       animationFrameRef.current = requestAnimationFrame(raf);
 
       lenisRef.current = lenis;
+      // #region agent log SS3
+      fetch(
+        "http://127.0.0.1:7242/ingest/c6275645-33f2-4c08-84ae-0100f84f35d9",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId: "debug-session",
+            runId: "pre-fix",
+            hypothesisId: "H2",
+            location: "src/components/ScrollStack.tsx:setupLenis:window",
+            message: "Lenis created (window mode)",
+            data: { useWindowScroll, hasLenis: true },
+            timestamp: Date.now(),
+          }),
+        }
+      ).catch(() => {});
+      // #endregion agent log SS3
       return lenis;
     } else {
       const scroller = scrollerRef.current;
@@ -257,6 +336,24 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
       animationFrameRef.current = requestAnimationFrame(raf);
 
       lenisRef.current = lenis;
+      // #region agent log SS4
+      fetch(
+        "http://127.0.0.1:7242/ingest/c6275645-33f2-4c08-84ae-0100f84f35d9",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId: "debug-session",
+            runId: "pre-fix",
+            hypothesisId: "H2",
+            location: "src/components/ScrollStack.tsx:setupLenis:nested",
+            message: "Lenis created (nested scroller mode)",
+            data: { useWindowScroll, hasLenis: true },
+            timestamp: Date.now(),
+          }),
+        }
+      ).catch(() => {});
+      // #endregion agent log SS4
       return lenis;
     }
   }, [handleScroll, useWindowScroll]);
@@ -265,14 +362,59 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     const scroller = scrollerRef.current;
     if (!scroller) return;
 
+    // #region agent log SS1
+    fetch(
+      "http://127.0.0.1:7242/ingest/c6275645-33f2-4c08-84ae-0100f84f35d9",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: "debug-session",
+          runId: "pre-fix",
+          hypothesisId: "H3",
+          location: "src/components/ScrollStack.tsx:useLayoutEffect:enter",
+          message: "ScrollStack mounted",
+          data: {
+            useWindowScroll,
+            scrollerClientH: scroller.clientHeight,
+            scrollerScrollH: scroller.scrollHeight,
+            bodyOverflow: window.getComputedStyle(document.body).overflow,
+            scrollY: window.scrollY,
+          },
+          timestamp: Date.now(),
+        }),
+      }
+    ).catch(() => {});
+    // #endregion agent log SS1
+
     const cards = Array.from(
-      useWindowScroll
-        ? document.querySelectorAll('.scroll-stack-card')
-        : scroller.querySelectorAll('.scroll-stack-card')
+      scroller.querySelectorAll('.scroll-stack-card')
     ) as HTMLElement[];
 
     cardsRef.current = cards;
     const transformsCache = lastTransformsRef.current;
+
+    // #region agent log SS2
+    fetch(
+      "http://127.0.0.1:7242/ingest/c6275645-33f2-4c08-84ae-0100f84f35d9",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: "debug-session",
+          runId: "pre-fix",
+          hypothesisId: "H4",
+          location: "src/components/ScrollStack.tsx:useLayoutEffect:cards",
+          message: "Cards queried",
+          data: {
+            cards: cards.length,
+            endEl: !!scroller.querySelector(".scroll-stack-end"),
+          },
+          timestamp: Date.now(),
+        }),
+      }
+    ).catch(() => {});
+    // #endregion agent log SS2
 
     cards.forEach((card, i) => {
       if (i < cards.length - 1) {
@@ -291,6 +433,41 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 
     updateCardTransforms();
 
+    let removeWheelListener: (() => void) | null = null;
+    if (useWindowScroll) {
+      const onWheel = (e: WheelEvent) => {
+        debugWheelCountRef.current += 1;
+        if (debugWheelLogCountRef.current < 3) {
+          debugWheelLogCountRef.current += 1;
+          // #region agent log SS7
+          fetch(
+            "http://127.0.0.1:7242/ingest/c6275645-33f2-4c08-84ae-0100f84f35d9",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                sessionId: "debug-session",
+                runId: "pre-fix",
+                hypothesisId: "H1",
+                location: "src/components/ScrollStack.tsx:wheel",
+                message: "Wheel event observed",
+                data: {
+                  deltaY: e.deltaY,
+                  scrollY: window.scrollY,
+                  docH: document.documentElement.scrollHeight,
+                  bodyOverflow: window.getComputedStyle(document.body).overflow,
+                },
+                timestamp: Date.now(),
+              }),
+            }
+          ).catch(() => {});
+          // #endregion agent log SS7
+        }
+      };
+      window.addEventListener("wheel", onWheel, { passive: true });
+      removeWheelListener = () => window.removeEventListener("wheel", onWheel as any);
+    }
+
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
@@ -298,6 +475,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
       if (lenisRef.current) {
         lenisRef.current.destroy();
       }
+      if (removeWheelListener) removeWheelListener();
       stackCompletedRef.current = false;
       cardsRef.current = [];
       transformsCache.clear();
@@ -320,7 +498,14 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
   ]);
 
   return (
-    <div className={`scroll-stack-scroller ${className}`.trim()} ref={scrollerRef}>
+    <div
+      className={[
+        'scroll-stack-scroller',
+        useWindowScroll ? 'scroll-stack-window' : '',
+        className
+      ].filter(Boolean).join(' ')}
+      ref={scrollerRef}
+    >
       <div className="scroll-stack-inner">
         {children}
         {/* Spacer so the last pin can release cleanly */}

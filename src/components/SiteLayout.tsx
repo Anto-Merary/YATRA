@@ -9,7 +9,14 @@ import Dock from "./Dock";
 import { Toaster } from "./ui/toaster";
 import { useState, useEffect, useLayoutEffect } from "react";
 import { motion } from "framer-motion";
-import { Home, Music2, Ticket, List, GalleryVertical, UsersRound } from "lucide-react";
+import { Home, Music2, Ticket, List, UsersRound } from "lucide-react";
+import Loader from "./Loader";
+import { RouteTransitionProvider, useRouteTransition } from "./RouteTransitionContext";
+
+function RouteLoaderOverlay() {
+  const { isTransitioning } = useRouteTransition();
+  return isTransitioning ? <Loader /> : null;
+}
 
 export function SiteLayout() {
   const location = useLocation();
@@ -66,6 +73,34 @@ export function SiteLayout() {
     };
   }, [location.pathname]);
 
+  // Safety fallback: Ensure page content is visible after route change
+  // This prevents black screen if AnimatePresence gets stuck
+  useEffect(() => {
+    const safetyTimer = setTimeout(() => {
+      // Check main content area and ensure it's visible
+      const main = document.querySelector('main');
+      if (main) {
+        const mainStyle = window.getComputedStyle(main);
+        // If main is hidden, force visibility
+        if (mainStyle.opacity === '0' || parseFloat(mainStyle.opacity) < 0.01) {
+          main.style.opacity = '1';
+        }
+        
+        // Check all direct children (PageTransition motion.div elements)
+        Array.from(main.children).forEach((child) => {
+          const htmlChild = child as HTMLElement;
+          const childStyle = window.getComputedStyle(htmlChild);
+          if (childStyle.opacity === '0' || parseFloat(childStyle.opacity) < 0.01) {
+            htmlChild.style.opacity = '1';
+            htmlChild.style.transform = 'none';
+          }
+        });
+      }
+    }, 600); // After transition should complete
+
+    return () => clearTimeout(safetyTimer);
+  }, [location.pathname]);
+
   // Detect mobile screen size
   useEffect(() => {
     const checkMobile = () => {
@@ -81,7 +116,6 @@ export function SiteLayout() {
     { to: "/proshow", label: "Proshow", icon: Music2 },
     { to: "/tickets", label: "Tickets", icon: Ticket },
     { to: "/events", label: "Events", icon: List },
-    { to: "/gallery", label: "Gallery", icon: GalleryVertical },
     { to: "/team", label: "Team", icon: UsersRound },
   ];
 
@@ -111,78 +145,88 @@ export function SiteLayout() {
   });
 
   return (
-    <ClickSpark
-      className="min-h-screen"
-      sparkColor="#6a5cff"
-      sparkCount={10}
-      sparkRadius={18}
-      sparkSize={12}
-      duration={520}
-    >
-      <div className="min-h-screen">
-        {!isHomePage && <Navbar />}
-        <ScrollToTop />
-        <main className={isHomePage ? "" : "pt-16 sm:pt-20 md:pt-24 pb-20 sm:pb-0"}>
-          <AnimatePresence 
-            mode="wait"
-            onExitComplete={() => {
-              // Ensure scroll after exit animation completes - force instant scroll
-              window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-              document.documentElement.scrollTop = 0;
-              document.body.scrollTop = 0;
-              const root = document.getElementById('root');
-              if (root) root.scrollTop = 0;
-            }}
-          >
-            <PageTransition key={location.pathname}>
-              <Outlet />
-            </PageTransition>
-          </AnimatePresence>
-        </main>
-        <Footer />
-        <Toaster />
-        
-        {/* Mobile Dock Navigation - Always rendered at SiteLayout level for all pages */}
-        {isMobile && (
-          <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{
-              y: 0,
-              opacity: 1,
-            }}
-            transition={{
-              duration: 0.3,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            className="fixed bottom-0 left-0 right-0 z-[9999] pointer-events-none"
-            style={{
-              position: "fixed",
-              bottom: 0,
-              left: 0,
-              right: 0,
-              width: "100vw",
-              paddingBottom: "max(env(safe-area-inset-bottom), 0.5rem)",
-              paddingLeft: "0.5rem",
-              paddingRight: "0.5rem",
-              boxSizing: "border-box",
-            }}
-          >
-            <div className="pointer-events-auto w-full" style={{ width: "100%" }}>
-              <Dock
-                items={dockItems}
-                className="mobile-dock"
-                baseItemSize={44}
-                magnification={56}
-                distance={150}
-                panelHeight={64}
-                dockHeight={80}
-                spring={{ mass: 0.1, stiffness: 200, damping: 15 }}
-              />
-            </div>
-          </motion.div>
-        )}
-      </div>
-    </ClickSpark>
+    <RouteTransitionProvider durationMs={450}>
+      <ClickSpark
+        className="min-h-screen"
+        sparkColor="#6a5cff"
+        sparkCount={10}
+        sparkRadius={18}
+        sparkSize={12}
+        duration={520}
+      >
+        <div className="min-h-screen">
+          {/* RouteLoaderOverlay removed - PageTransition handles visual transitions */}
+          {!isHomePage && <Navbar />}
+          <ScrollToTop />
+          <main className={isHomePage ? "" : "pt-16 sm:pt-20 md:pt-24 pb-20 sm:pb-0 min-h-screen"}>
+            <AnimatePresence 
+              // Keep AnimatePresence configuration stable across routes.
+              // Switching `mode` dynamically can cause exit/enter to get "stuck"
+              // (URL updates but previous screen remains or a blank screen appears).
+              mode="wait"
+              initial={false}
+              onExitComplete={() => {
+                // Ensure scroll after exit animation completes - force instant scroll
+                window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+                document.documentElement.scrollTop = 0;
+                document.body.scrollTop = 0;
+                const root = document.getElementById('root');
+                if (root) root.scrollTop = 0;
+              }}
+            >
+              {/* Use pathname as key for deterministic transitions */}
+              <PageTransition key={location.pathname}>
+                <div className="w-full">
+                  <Outlet />
+                </div>
+              </PageTransition>
+            </AnimatePresence>
+          </main>
+          <Footer />
+          <Toaster />
+          
+          {/* Mobile Dock Navigation - Always rendered at SiteLayout level for all pages */}
+          {isMobile && (
+            <motion.div
+              initial={{ y: 100, opacity: 0 }}
+              animate={{
+                y: 0,
+                opacity: 1,
+              }}
+              transition={{
+                duration: 0.4,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className="fixed bottom-0 left-0 right-0 z-[9999] pointer-events-none"
+              style={{
+                position: "fixed",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                width: "100vw",
+                paddingBottom: "max(env(safe-area-inset-bottom), 0.5rem)",
+                paddingLeft: "0.5rem",
+                paddingRight: "0.5rem",
+                boxSizing: "border-box",
+              }}
+            >
+              <div className="pointer-events-auto w-full" style={{ width: "100%" }}>
+                <Dock
+                  items={dockItems}
+                  className="mobile-dock"
+                  baseItemSize={44}
+                  magnification={56}
+                  distance={150}
+                  panelHeight={64}
+                  dockHeight={80}
+                  spring={{ mass: 0.1, stiffness: 200, damping: 15 }}
+                />
+              </div>
+            </motion.div>
+          )}
+        </div>
+      </ClickSpark>
+    </RouteTransitionProvider>
   );
 }
 
