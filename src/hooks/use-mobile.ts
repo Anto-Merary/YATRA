@@ -6,6 +6,8 @@ import { useState, useEffect } from 'react';
  */
 export function useMobile() {
   const [isMobile, setIsMobile] = useState(false);
+  const [isMobileOnly, setIsMobileOnly] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
@@ -15,8 +17,16 @@ export function useMobile() {
       const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
         userAgent.toLowerCase()
       );
-      const isSmallScreen = window.innerWidth <= 768;
+      const width = window.innerWidth;
+      
+      const isSmallScreen = width <= 768;
       setIsMobile(isMobileDevice || isSmallScreen);
+      
+      // Strict mobile check for layout switching (< 768px)
+      setIsMobileOnly(width < 768);
+      
+      // Tablet check (>= 768px and < 1024px)
+      setIsTablet(width >= 768 && width < 1024);
     };
 
     // Check for reduced motion preference
@@ -42,5 +52,5 @@ export function useMobile() {
     };
   }, []);
 
-  return { isMobile, prefersReducedMotion };
+  return { isMobile, isMobileOnly, isTablet, prefersReducedMotion };
 }

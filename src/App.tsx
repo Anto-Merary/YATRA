@@ -16,8 +16,6 @@ import { AdminPage } from "./pages/AdminPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { useGLTF } from "@react-three/drei";
 // Images
-import leafImage from "./assets/leaf.jpeg?url";
-import leaf2Image from "./assets/leaf2.jpeg?url";
 import ritLogoImage from "./assets/RIT WHITE LOGO.png";
 import logoImage from "./assets/LOGO .png";
 import artistImage from "./assets/artist.png?url";
@@ -48,8 +46,6 @@ export default function App() {
 
       // Preload images
       const imageUrls = [
-        leafImage,
-        leaf2Image,
         ritLogoImage,
         logoImage,
         artistImage,

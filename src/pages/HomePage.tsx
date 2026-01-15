@@ -24,6 +24,7 @@ import { ChevronDown } from "lucide-react";
 import ColorBends from "@/components/ColorBends";
 import { useMobile } from "../hooks/use-mobile";
 import { useRouteTransition } from "../components/RouteTransitionContext";
+import { MobileHomePage } from "../components/MobileHomePage";
 
 const EASE_IN_OUT: [number, number, number, number] = [0.65, 0, 0.35, 1];
 
@@ -138,7 +139,7 @@ function ScrollInOut({
 
 export function HomePage() {
   const location = useLocation();
-  const { isMobile } = useMobile();
+  const { isMobile, isMobileOnly } = useMobile();
   const { isTransitioning } = useRouteTransition();
   const videoRef = useRef<HTMLVideoElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
@@ -229,6 +230,11 @@ export function HomePage() {
       clearTimeout(timer3);
     };
   }, [location.key]); // Use location.key which changes on every navigation
+
+  // Render mobile UI for screens < 768px
+  if (isMobileOnly) {
+    return <MobileHomePage />;
+  }
 
   return (
     <div key={`home-page-${location.key}`} className="relative min-h-screen w-full overflow-hidden">
