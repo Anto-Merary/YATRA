@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unknown-property */
-import { useRef, useState, useEffect, forwardRef } from 'react';
+import React, { useRef, useState, useEffect, forwardRef } from 'react';
 import { Canvas, useFrame, useThree, ThreeEvent } from '@react-three/fiber';
 import { EffectComposer, wrapEffect } from '@react-three/postprocessing';
 import { Effect } from 'postprocessing';
@@ -156,10 +156,33 @@ class RetroEffectImpl extends Effect {
   }
 }
 
+// Wrap the effect outside the component to avoid type issues
+const WrappedRetroEffect = wrapEffect(RetroEffectImpl) as React.ForwardRefExoticComponent<
+  React.RefAttributes<RetroEffectImpl>
+>;
+
 const RetroEffect = forwardRef<RetroEffectImpl, { colorNum: number; pixelSize: number }>((props, ref) => {
   const { colorNum, pixelSize } = props;
-  const WrappedRetroEffect = wrapEffect(RetroEffectImpl);
-  return <WrappedRetroEffect ref={ref} colorNum={colorNum} pixelSize={pixelSize} />;
+  const internalRef = useRef<RetroEffectImpl>(null);
+
+  // Combine external ref with internal ref
+  useEffect(() => {
+    if (typeof ref === 'function') {
+      ref(internalRef.current);
+    } else if (ref) {
+      ref.current = internalRef.current;
+    }
+  }, [ref]);
+
+  // Set properties when ref is available or props change
+  useEffect(() => {
+    if (internalRef.current) {
+      internalRef.current.colorNum = colorNum;
+      internalRef.current.pixelSize = pixelSize;
+    }
+  }, [colorNum, pixelSize]);
+
+  return <WrappedRetroEffect ref={internalRef} />;
 });
 
 RetroEffect.displayName = 'RetroEffect';
