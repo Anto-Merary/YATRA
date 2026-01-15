@@ -669,7 +669,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.52rem;
-  width: 36%;
+  width: auto;
   align-items: center;
   opacity: 0;
 }
@@ -682,7 +682,7 @@
 
 .hero-button {
   position: relative;
-  width: 100%;
+  width: fit-content;
   padding: 0.52rem 1.05rem;
   border: none;
   border-radius: 9999px;
@@ -692,11 +692,12 @@
   letter-spacing: 0.03em;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-family: 'Wave', var(--hero-font-family);
-  display: flex;
+  font-family: 'Akira Expanded', var(--hero-font-family);
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  white-space: nowrap;
 }
 
 /* Animated glowing border effect */
@@ -776,8 +777,9 @@
 }
 
 .hero-button-text {
-  flex: 1;
+  flex: 0 0 auto;
   text-align: center;
+  white-space: nowrap;
 }
 
 .star-icon {
@@ -786,6 +788,7 @@
   margin-left: auto;
   padding-left: 0.6rem;
   font-size: 1.4rem;
+  flex: 0 0 auto;
 }
 
 /* 4. YATRA Text (Behind Torii Gate) - Fully visible, larger, positioned higher */
@@ -905,13 +908,14 @@
 @supports (width: 1cqw) {
   .hero-buttons {
     gap: 1.8cqw;
-    width: 36cqw;
+    width: auto;
   }
 
   .hero-button {
     padding: 1.9cqw 3.6cqw;
     font-size: 4cqw;
     border-radius: 9999px;
+    width: fit-content;
   }
 
   .star-icon {
@@ -971,6 +975,7 @@
   will-change: transform;
   animation: hero-divider-scroll 25s linear infinite;
   gap: 0;
+  transform: translate3d(0, 0, 0);
 }
 
 .hero-divider-content {
@@ -1007,10 +1012,11 @@
 
 @keyframes hero-divider-scroll {
   0% {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
   100% {
-    transform: translateX(-50%);
+    /* Tiny nudge avoids right-edge seam overlap on some devices */
+    transform: translate3d(calc(-50% - 1px), 0, 0);
   }
 }
 
@@ -1020,7 +1026,7 @@
 .hero-black-section {
   width: 100%;
   /* Make this section "pinned" long enough to swap content while scrolling */
-  min-height: 135vh;
+  min-height: 110vh;
   background-image: url('../assets/black.jpg');
   background-size: cover;
   background-position: center;
@@ -1355,7 +1361,7 @@
 .blast-section {
   width: 100%;
   /* Enough scroll for 6 steps, without long dead-space after the last photo */
-  min-height: 240vh;
+  min-height: 170vh;
   background-image: url('../assets/pink2.jpeg');
   background-size: cover;
   background-position: center;
