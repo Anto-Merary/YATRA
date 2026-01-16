@@ -4,19 +4,12 @@ import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 import { PageTransition } from "./PageTransition";
 import { ScrollToTop } from "./ScrollToTop";
-import ClickSpark from "./ClickSpark";
 import Dock from "./Dock";
 import { Toaster } from "./ui/toaster";
-import { useState, useEffect, useLayoutEffect } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Home, Music2, Ticket, List, UsersRound } from "lucide-react";
-import Loader from "./Loader";
-import { RouteTransitionProvider, useRouteTransition } from "./RouteTransitionContext";
-
-function RouteLoaderOverlay() {
-  const { isTransitioning } = useRouteTransition();
-  return isTransitioning ? <Loader /> : null;
-}
+import { RouteTransitionProvider } from "./RouteTransitionContext";
 
 export function SiteLayout() {
   const location = useLocation();
@@ -24,53 +17,23 @@ export function SiteLayout() {
   const isHomePage = location.pathname === "/";
   const [isMobile, setIsMobile] = useState(false);
 
-  // Scroll to top on route change - use useLayoutEffect for synchronous execution
+  // Track previous pathname to only scroll on actual route changes
+  const prevPathnameRef = useRef<string | null>(null);
+  
+  // Scroll to top only on route change (not on initial mount or when pathname hasn't changed)
   useLayoutEffect(() => {
-    // Immediate synchronous scroll before paint - force instant scroll
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-    
-    // Also try scrolling the root element if it's scrollable
-    const root = document.getElementById('root');
-    if (root) {
-      root.scrollTop = 0;
-    }
-  }, [location.pathname]);
-
-  // Also use useEffect for additional scroll attempts
-  useEffect(() => {
-    const scrollToTop = () => {
+    // Only scroll if pathname actually changed (not initial mount)
+    if (prevPathnameRef.current !== null && prevPathnameRef.current !== location.pathname) {
       window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       document.documentElement.scrollTop = 0;
       document.body.scrollTop = 0;
+      
       const root = document.getElementById('root');
-      if (root) root.scrollTop = 0;
-    };
-    
-    // Immediate scroll
-    scrollToTop();
-    
-    // Use requestAnimationFrame for reliable timing
-    const raf1 = requestAnimationFrame(() => {
-      scrollToTop();
-      const raf2 = requestAnimationFrame(() => {
-        scrollToTop();
-      });
-      return () => cancelAnimationFrame(raf2);
-    });
-    
-    // Also scroll after delays
-    const timeout1 = setTimeout(scrollToTop, 50);
-    const timeout2 = setTimeout(scrollToTop, 200);
-    const timeout3 = setTimeout(scrollToTop, 500);
-    
-    return () => {
-      cancelAnimationFrame(raf1);
-      clearTimeout(timeout1);
-      clearTimeout(timeout2);
-      clearTimeout(timeout3);
-    };
+      if (root) {
+        root.scrollTop = 0;
+      }
+    }
+    prevPathnameRef.current = location.pathname;
   }, [location.pathname]);
 
   // Safety fallback: Ensure page content is visible after route change
@@ -146,15 +109,7 @@ export function SiteLayout() {
 
   return (
     <RouteTransitionProvider durationMs={450}>
-      <ClickSpark
-        className="min-h-screen"
-        sparkColor="#6a5cff"
-        sparkCount={10}
-        sparkRadius={18}
-        sparkSize={12}
-        duration={520}
-      >
-        <div className="min-h-screen">
+      <div className="min-h-screen">
           {/* RouteLoaderOverlay removed - PageTransition handles visual transitions */}
           {!isHomePage && <Navbar />}
           <ScrollToTop />
@@ -166,12 +121,13 @@ export function SiteLayout() {
               mode="wait"
               initial={false}
               onExitComplete={() => {
-                // Ensure scroll after exit animation completes - force instant scroll
-                window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-                document.documentElement.scrollTop = 0;
-                document.body.scrollTop = 0;
-                const root = document.getElementById('root');
-                if (root) root.scrollTop = 0;
+                // Only scroll to top if we're not already at the top
+                // This prevents interfering with user's scroll position
+                if (window.scrollY > 10 || document.documentElement.scrollTop > 10) {
+                  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+                  document.documentElement.scrollTop = 0;
+                  document.body.scrollTop = 0;
+                }
               }}
             >
               {/* Use pathname as key for deterministic transitions */}
@@ -224,8 +180,7 @@ export function SiteLayout() {
               </div>
             </motion.div>
           )}
-        </div>
-      </ClickSpark>
+      </div>
     </RouteTransitionProvider>
   );
 }

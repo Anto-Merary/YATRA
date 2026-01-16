@@ -628,15 +628,17 @@ export function MobileHomePage() {
   return (
     <>
     <section className="hero" ref={heroRef}>
-      <div
-        className={`hero-loader ${isLoading ? 'is-visible' : 'is-hidden'}`}
-        role="status"
-        aria-live="polite"
-        aria-label="Loading"
-      >
-        <div className="hero-spinner" aria-hidden="true" />
-        <div className="hero-loader-text">Loading…</div>
-      </div>
+      {isLoading && (
+        <div
+          className="hero-loader"
+          role="status"
+          aria-live="polite"
+          aria-label="Loading"
+        >
+          <div className="hero-spinner" aria-hidden="true" />
+          <div className="hero-loader-text">Loading…</div>
+        </div>
+      )}
 
       {/* Full-bleed background (blurred) so the stage can keep a fixed aspect ratio */}
       <img
