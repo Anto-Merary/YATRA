@@ -120,9 +120,9 @@ export function Navbar({ variant = "fixed" }: NavbarProps) {
         }}
         className={`${positionClass} z-[100] px-4 sm:px-6 md:px-8 pt-4 sm:pt-6`}
       >
-        <div className="w-full mx-auto flex items-center justify-between">
+        <div className={`w-full mx-auto flex items-center ${(location.pathname.startsWith("/events") || location.pathname.startsWith("/yatraevents") || location.pathname.startsWith("/proevents")) ? "justify-center" : "justify-between"}`}>
           {/* Left: RIT Logo */}
-          <div className="flex items-center flex-1 justify-start relative z-[101]">
+          <div className={`flex items-center flex-1 justify-start relative z-[101] ${(location.pathname.startsWith("/events") || location.pathname.startsWith("/yatraevents") || location.pathname.startsWith("/proevents")) ? "hidden" : ""}`}>
             <img
               src={ritLogo}
               alt="RIT Logo"
@@ -185,7 +185,7 @@ export function Navbar({ variant = "fixed" }: NavbarProps) {
           )}
 
           {/* Right: Yatra Logo */}
-          <div className="flex items-center flex-1 justify-end">
+          <div className={`flex items-center flex-1 justify-end ${(location.pathname.startsWith("/events") || location.pathname.startsWith("/yatraevents") || location.pathname.startsWith("/proevents")) ? "hidden" : ""}`}>
             <img
               src={yatraLogo}
               alt="Yatra Logo"

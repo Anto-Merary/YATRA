@@ -785,8 +785,10 @@
                 </div>
                 <div class="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl opacity-85 relative flex justify-center mb-6 sm:mb-8 md:mb-12 lg:mb-16 xl:mb-20">
 
-                    <p class="word-reveal-p pl-0 max-w-4xl xl:max-w-5xl mx-auto leading-[1.7] sm:leading-relaxed px-2 sm:px-4 md:px-6">
-                        Yatra'25 is a grand intercollege cultural fest at Rajalakshmi Institute of Technology organized by the student community with the support of Faculties, Principal and Management. Main motive of Yatra is involving or concerning the enthusiasm among students with a deep sense of humor which is also a part of Cultural heritage. This enhance the confidence level of the students thereby allowing them to perform better.In fact, students can also leverage the advantage of participating in various activities. Many chief guests are being invited to join us .
+                    <p class="word-reveal-p pl-0 max-w-4xl xl:max-w-5xl mx-auto leading-[1.7] sm:leading-relaxed px-2 sm:px-4 md:px-6" style="text-align: justify;">
+                        YATRA 2026 is a grand intercollegiate cultural fest of Rajalakshmi Institutions, organized by the students with the support of the faculty, principal, and management. It stands as a vibrant platform that celebrates culture, creativity, and youthful energy.
+                        Rooted in cultural heritage and artistic expression, YATRA brings together students to showcase their talents through music, dance, art, and a wide range of cultural events. The fest aims to inspire confidence, encourage participation, and create a space where passion meets performance.
+                        With the presence of distinguished guests and an atmosphere filled with enthusiasm and celebration, YATRA 2026 promises an unforgettable cultural journey that unites tradition, talent, and togetherness.
                     </p>
                 </div>
                 <div class="mt-6 sm:mt-8 md:mt-12 lg:mt-16 xl:mt-20 flex justify-center items-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 xl:gap-12 flex-wrap relative px-2" style="z-index: 100;">
@@ -863,7 +865,7 @@
         <div class="max-w-7xl mx-auto">
             <div class="rounded-3xl border border-white/10 bg-white/[0.05] backdrop-blur-md p-12 sm:p-16 md:p-20 lg:p-24 text-center">
                 <h2 class="font-akira text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold uppercase tracking-wider mb-6 text-white">
-                    to be revealed soon
+                    guest will be revealed soon
                 </h2>
             </div>
         </div>
@@ -873,8 +875,8 @@
     <div class="py-8 sm:py-10 md:py-12 bg-[var(--color-accent)] text-black rotate-1 scale-105 z-10 relative">
         <div class="marquee-container">
             <div class="marquee-content reverse text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-black uppercase">
-                &nbsp;Workshops • Battle of Bands • Ramp Walk • Short Film • Hackathons • Yatra '26 •
-                &nbsp;Workshops • Battle of Bands • Ramp Walk • Short Film • Hackathons • Yatra '26 •
+                &nbsp;Battle of Bands • Short Film • Yatra '26 •
+                &nbsp;Battle of Bands • Short Film • Yatra '26 •
             </div>
         </div>
     </div>
@@ -1008,7 +1010,10 @@
                 <div class="space-y-3 sm:space-y-4 font-mono text-sm sm:text-base md:text-lg mb-5 sm:mb-6 md:mb-8 text-left md:text-right w-full">
                     <div>
                         <p class="font-bold uppercase mb-1 sm:mb-2 text-xs sm:text-sm md:text-base">Phone</p>
-                        <a href="tel:04437181600" class="opacity-80 hover:opacity-100 hover:underline transition-opacity text-xs sm:text-sm md:text-base">044 3718 1600</a>
+                        <div class="space-y-2">
+                            <a href="tel:+919843656238" class="block opacity-80 hover:opacity-100 hover:underline transition-opacity text-xs sm:text-sm md:text-base">+91 98436 56238</a>
+                            <a href="tel:+919080850106" class="block opacity-80 hover:opacity-100 hover:underline transition-opacity text-xs sm:text-sm md:text-base">+91 90808 50106</a>
+                        </div>
                     </div>
                 </div>
                 <div class="flex gap-3 sm:gap-4">
@@ -1324,8 +1329,10 @@
                 y: 100, opacity: 0, duration: 1.2, ease: "power4.out"
             });
 
-            // Horizontal Gallery Scroll Trigger
+            // Horizontal Gallery Scroll Trigger with Snap Scrolling
             const galleryTrack = document.getElementById('gallery-track');
+            const galleryItems = galleryTrack.querySelectorAll('.gallery-item');
+            const numSlides = galleryItems.length;
             
             // Calculate total width to scroll
             // We use a function for 'end' to recalculate on resize automatically via invalidateOnRefresh
@@ -1346,6 +1353,21 @@
                 pin: true,
                 animation: tween,
                 scrub: 1,
+                snap: {
+                    snapTo: (progress) => {
+                        // Calculate which slide we're closest to based on progress (0 to 1)
+                        // Each slide takes up 1/numSlides of the total progress
+                        const slideProgress = 1 / (numSlides - 1);
+                        const currentSlide = Math.round(progress / slideProgress);
+                        // Clamp to valid slide index
+                        const targetSlide = Math.max(0, Math.min(numSlides - 1, currentSlide));
+                        // Return the exact progress for that slide
+                        return targetSlide * slideProgress;
+                    },
+                    duration: { min: 0.3, max: 0.8 },
+                    ease: "power2.inOut",
+                    inertia: false,
+                },
                 invalidateOnRefresh: true, // Recalculate values on resize
             });
         };

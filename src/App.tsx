@@ -34,9 +34,19 @@ try {
 }
 
 export default function App() {
-  const [isLoading, setIsLoading] = useState(true);
+  // Check if this is the first load in this session
+  const [isInitialLoad, setIsInitialLoad] = useState(() => {
+    const hasLoadedBefore = sessionStorage.getItem('yatra-initial-load-complete');
+    return !hasLoadedBefore;
+  });
+  const [isLoading, setIsLoading] = useState(isInitialLoad);
 
   useEffect(() => {
+    // Only show loading screen on initial site load
+    if (!isInitialLoad) {
+      return;
+    }
+
     // Preload all critical assets for smooth experience
     const preloadAssets = async () => {
       const promises: Promise<void>[] = [];
@@ -151,12 +161,15 @@ export default function App() {
       // Small delay for smooth transition
       setTimeout(() => {
         setIsLoading(false);
+        // Mark that initial load is complete for this session
+        sessionStorage.setItem('yatra-initial-load-complete', 'true');
       }, 300);
     };
 
     // Fallback timer in case something goes wrong
     const fallbackTimer = setTimeout(() => {
       setIsLoading(false);
+      sessionStorage.setItem('yatra-initial-load-complete', 'true');
     }, 8000); // Max 8 seconds for all assets
 
     initializeApp().then(() => {
@@ -166,9 +179,10 @@ export default function App() {
     return () => {
       clearTimeout(fallbackTimer);
     };
-  }, []);
+  }, [isInitialLoad]);
 
-  if (isLoading) {
+  // Show loading screen only on initial site load
+  if (isLoading && isInitialLoad) {
     return <Loader />;
   }
 
