@@ -4,4 +4,7 @@ dist
 
 *.log
 
+# TypeScript build info (should not be committed)
+*.tsbuildinfo
+
 
