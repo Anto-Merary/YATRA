@@ -1,4 +1,4 @@
-import { useMemo, useLayoutEffect } from "react";
+import { useMemo, useRef, useLayoutEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { EVENTS, type FestEvent } from "../data/events";
 import { Button } from "../components/ui/button";
@@ -46,6 +46,7 @@ const DEFAULT_RULES: string[] = [
 export function EventDetailPage() {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
+  const formRef = useRef<HTMLDivElement | null>(null);
 
   // Resolve event synchronously on every render - useMemo ensures it updates when eventId changes
   const { event, bgVariant } = useMemo(() => {
@@ -220,25 +221,19 @@ export function EventDetailPage() {
                 </div>
               </div>
 
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <a
-                  href={event.registrationUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={`inline-flex h-11 items-center justify-center rounded-xl px-5 text-sm font-semibold text-white ${accents.cta}`}
-                >
-                  Register for this event
-                </a>
-
-                <a
-                  href={`tel:${event.organizerPhone}`}
-                  className={[
-                    "inline-flex h-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] px-5 text-sm font-semibold text-white/85 backdrop-blur-sm transition-colors hover:bg-white/[0.06]",
-                    accents.link,
-                  ].join(" ")}
-                >
-                  Call Event Incharge
-                </a>
+              {/* Rules & Regulations */}
+              <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-5">
+                <div className="text-xs font-semibold tracking-[0.25em] text-yatra-300">
+                  RULES & REGULATIONS
+                </div>
+                <ul className="mt-4 space-y-2 text-sm text-white/75">
+                  {rules.map((r, idx) => (
+                    <li key={idx} className="flex gap-3">
+                      <span className="mt-[6px] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-white/40" />
+                      <span>{r}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
 
@@ -309,36 +304,26 @@ export function EventDetailPage() {
                   )}
                 </div>
               </div>
+
+              {/* Register Now Button */}
+              <div 
+                ref={formRef}
+                className="mt-4"
+              >
+                <a
+                  href="https://formbuilder.ccavenue.com/live/icici-bank/rajalakshmi-institue-of-technology-2/yatra-2026-reg-fees-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block w-full"
+                >
+                  <Button
+                    className={`w-full h-10 rounded-xl text-sm font-semibold text-white ${accents.cta}`}
+                  >
+                    Register Now
+                  </Button>
+                </a>
+              </div>
             </div>
-          </div>
-        </div>
-
-        {/* Body */}
-        <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_0.9fr]">
-          <div className="space-y-6">
-            <section className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm">
-              <div className="text-xs font-semibold tracking-[0.25em] text-yatra-300">
-                RULES & REGULATIONS
-              </div>
-              <ul className="mt-4 space-y-2 text-sm text-white/75">
-                {rules.map((r, idx) => (
-                  <li key={idx} className="flex gap-3">
-                    <span className="mt-[6px] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-white/40" />
-                    <span>{r}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-
-            <section className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm">
-              <div className="text-xs font-semibold tracking-[0.25em] text-yatra-300">
-                WHAT YOU’LL NEED
-              </div>
-              <div className="mt-3 text-sm leading-relaxed text-white/70">
-                This section is a template placeholder. Add event-specific requirements
-                like props, dress code, devices, file formats, or team size rules.
-              </div>
-            </section>
           </div>
         </div>
       </div>

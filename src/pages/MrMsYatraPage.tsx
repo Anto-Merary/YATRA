@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import { Modal } from "../components/Modal";
-import { ExpandableScreen } from "../components/ui/expandable-screen";
 import { Button } from "../components/ui/button";
 import { useMobile } from "../hooks/use-mobile";
 
@@ -28,12 +27,7 @@ export function MrMsYatraPage() {
   );
 
   return (
-    <ExpandableScreen
-      layoutId="mr-ms-yatra-registration"
-      triggerRadius="24px"
-      contentRadius="24px"
-    >
-      <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-b from-[#070814] via-black to-black">
+    <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-b from-[#070814] via-black to-black">
         {/* Premium background */}
         {!prefersReducedMotion && (
           <div
@@ -214,6 +208,6 @@ export function MrMsYatraPage() {
           </div>
         </Modal>
       </div>
-    </ExpandableScreen>
+    </div>
   );
 }

@@ -63,7 +63,7 @@ export function ProEventsPage() {
             transition={{ duration: 0.5 }}
           >
             <SpotlightCard
-              className="group relative cursor-pointer overflow-hidden border-purple-500/30 bg-gradient-to-br from-purple-500/10 via-white/[0.04] to-transparent p-6 sm:p-8 transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/20 active:scale-[0.98] touch-manipulation backdrop-blur-sm"
+              className="group relative cursor-pointer overflow-hidden border-purple-500/30 bg-gradient-to-br from-purple-500/10 via-white/[0.04] to-transparent p-6 sm:p-8 transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/20 hover:opacity-20 active:scale-[0.98] touch-manipulation backdrop-blur-sm hover:backdrop-blur-none"
               spotlightColor={isMobile ? "rgba(168, 85, 247, 0.15)" : "rgba(168, 85, 247, 0.25)"}
               onClick={() => navigate("/events/mr-ms-yatra")}
             >
@@ -121,7 +121,7 @@ export function ProEventsPage() {
             transition={{ duration: 0.5, delay: 0.1 }}
           >
             <SpotlightCard
-              className="group relative cursor-pointer overflow-hidden border-purple-500/30 bg-gradient-to-br from-purple-500/10 via-white/[0.04] to-transparent p-6 sm:p-8 transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/20 active:scale-[0.98] touch-manipulation backdrop-blur-sm"
+              className="group relative cursor-pointer overflow-hidden border-purple-500/30 bg-gradient-to-br from-purple-500/10 via-white/[0.04] to-transparent p-6 sm:p-8 transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/20 hover:opacity-20 active:scale-[0.98] touch-manipulation backdrop-blur-sm hover:backdrop-blur-none"
               spotlightColor={isMobile ? "rgba(168, 85, 247, 0.15)" : "rgba(168, 85, 247, 0.25)"}
               onClick={() => navigate("/pro-dance-battle")}
             >
