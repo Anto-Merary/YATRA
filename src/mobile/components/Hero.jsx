@@ -138,7 +138,8 @@ function Hero() {
 
   const blastImages = useMemo(() => {
     // Use only web-safe formats (HEIC isn't reliably supported in browsers).
-    const modules = import.meta.glob('../assets/gal/*.{jpg,jpeg,png,webp,gif}', {
+    // Include both lowercase and uppercase extensions to catch files like syn.JPG
+    const modules = import.meta.glob('../assets/gal/*.{jpg,JPG,jpeg,JPEG,png,PNG,webp,WEBP,gif,GIF}', {
       eager: true,
       import: 'default',
     })
