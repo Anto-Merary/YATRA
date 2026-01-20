@@ -564,12 +564,11 @@ export function YatraEventsPage() {
                 <SpotlightCard
                   key={e.id}
                   className={[
-                    "group relative cursor-pointer border-white/10 bg-white/[0.04] p-3 xs:p-4 sm:p-5 transition-all active:scale-[0.98] touch-manipulation",
+                    "group relative border-white/10 bg-white/[0.04] p-3 xs:p-4 sm:p-5 transition-all active:scale-[0.98] touch-manipulation flex flex-col cursor-default hover:opacity-20",
                     ui.cardHover,
-                    !isMobile ? "backdrop-blur-sm" : "",
+                    !isMobile ? "backdrop-blur-sm hover:backdrop-blur-none" : "",
                   ].join(" ")}
                   spotlightColor={ui.spotlightColor}
-                  onClick={() => navigate(`/events/${e.id}`)}
                 >
                   {/* Glow overlay on hover */}
                   <div
@@ -579,7 +578,7 @@ export function YatraEventsPage() {
                     ].join(" ")}
                   />
 
-                  <div className="relative z-10 pointer-events-none">
+                  <div className="relative z-10 flex-1">
                     <div className="flex items-start justify-between gap-2 xs:gap-3 mb-2 xs:mb-3">
                       <div className="flex-1 min-w-0">
                         <div className="text-sm xs:text-base font-semibold leading-tight text-white group-hover:text-white/90 line-clamp-2">
@@ -599,9 +598,20 @@ export function YatraEventsPage() {
                     <div className="mb-2 xs:mb-3 text-xs xs:text-sm text-white/70 line-clamp-1">
                       {e.venue}
                     </div>
-                    <div className="text-[10px] xs:text-xs text-white/40 group-hover:text-white/50">
-                      Tap for details →
-                    </div>
+                  </div>
+
+                  {/* See More Button */}
+                  <div className="relative z-10 mt-3 pt-3 border-t border-white/10">
+                    <button
+                      onClick={() => navigate(`/events/${e.id}`)}
+                      className={`w-full h-9 xs:h-10 rounded-lg xs:rounded-xl text-xs xs:text-sm font-semibold text-white transition-all hover:opacity-90 ${
+                        e.day === "day1"
+                          ? "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500"
+                          : "bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400"
+                      }`}
+                    >
+                      See More
+                    </button>
                   </div>
                 </SpotlightCard>
               ))}

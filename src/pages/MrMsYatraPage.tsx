@@ -1,12 +1,6 @@
 import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import { Modal } from "../components/Modal";
-import {
-  ExpandableScreen,
-  ExpandableScreenContent,
-  ExpandableScreenTrigger,
-} from "../components/ui/expandable-screen";
-import { RegistrationForm } from "../components/RegistrationForm";
 import { Button } from "../components/ui/button";
 import { useMobile } from "../hooks/use-mobile";
 
@@ -33,12 +27,7 @@ export function MrMsYatraPage() {
   );
 
   return (
-    <ExpandableScreen
-      layoutId="mr-ms-yatra-registration"
-      triggerRadius="24px"
-      contentRadius="24px"
-    >
-      <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-b from-[#070814] via-black to-black">
+    <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-b from-[#070814] via-black to-black">
         {/* Premium background */}
         {!prefersReducedMotion && (
           <div
@@ -165,13 +154,18 @@ export function MrMsYatraPage() {
 
                 {/* CTAs */}
                 <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <ExpandableScreenTrigger className="w-full sm:w-auto">
+                  <a
+                    href="https://formbuilder.ccavenue.com/live/icici-bank/rajalakshmi-institue-of-technology-2/yatra-2026-reg-fees-link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto"
+                  >
                     <Button
                       className="w-full sm:w-auto h-12 rounded-2xl px-6 text-sm sm:text-base font-semibold text-white bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-400 hover:to-purple-400 shadow-[0_18px_60px_rgba(236,72,153,0.25)]"
                     >
                       REGISTER NOW
                     </Button>
-                  </ExpandableScreenTrigger>
+                  </a>
 
                   <Button
                     type="button"
@@ -213,18 +207,6 @@ export function MrMsYatraPage() {
             </a>
           </div>
         </Modal>
-
-        {/* Registration Form (Expandable Screen Content) */}
-        <ExpandableScreenContent className="bg-black">
-          <RegistrationForm
-            ticketType={EVENT_NAME}
-            originalPrice="₹300"
-            earlyBirdPrice="₹300"
-            ritStudentPrice="₹300"
-            showTimer={false}
-          />
-        </ExpandableScreenContent>
-      </div>
-    </ExpandableScreen>
+    </div>
   );
 }

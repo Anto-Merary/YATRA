@@ -202,6 +202,83 @@ export function ProDanceBattlePage() {
                 </div>
               </motion.div>
             </div>
+
+            {/* Experience The Past Section */}
+            <motion.div
+              initial={prefersReducedMotion ? undefined : { opacity: 0, y: 20 }}
+              animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.25 }}
+              className="mt-16 sm:mt-20 md:mt-24"
+            >
+              <div className="text-center mb-8 sm:mb-12">
+                <div className="text-[11px] font-semibold tracking-[0.22em] text-white/65 mb-2">
+                  THE LEGACY
+                </div>
+                <h2 className="font-victory-striker text-4xl sm:text-5xl md:text-6xl text-white uppercase">
+                  Experience The Past
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+                {/* 2024 Slide */}
+                <motion.div
+                  initial={prefersReducedMotion ? undefined : { opacity: 0, x: -20 }}
+                  animate={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-sm shadow-[0_25px_70px_rgba(0,0,0,0.6)]"
+                >
+                  <div className="absolute inset-0 bg-black/40 z-10 group-hover:bg-black/20 transition-colors duration-500" />
+                  <img
+                    src="/2024.JPG"
+                    alt="YATRA 2024"
+                    className="w-full h-[400px] sm:h-[500px] md:h-[600px] object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700 scale-100 group-hover:scale-110"
+                    draggable={false}
+                  />
+                  <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 sm:p-8 md:p-10">
+                    <div className="text-6xl sm:text-7xl md:text-8xl font-victory-striker font-black text-white/20 group-hover:text-white/10 transition-colors duration-500 mb-4">
+                      2024
+                    </div>
+                    <div className="translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-100">
+                      <h3 className="text-2xl sm:text-3xl font-victory-striker font-bold text-white mb-2">
+                        YATRA 2024
+                      </h3>
+                      <p className="text-white/80 text-sm sm:text-base">
+                        A memorable year of celebration and excellence.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* 2025 Slide */}
+                <motion.div
+                  initial={prefersReducedMotion ? undefined : { opacity: 0, x: 20 }}
+                  animate={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: 0.35 }}
+                  className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-sm shadow-[0_25px_70px_rgba(0,0,0,0.6)]"
+                >
+                  <div className="absolute inset-0 bg-black/40 z-10 group-hover:bg-black/20 transition-colors duration-500" />
+                  <img
+                    src="/2025.JPG"
+                    alt="YATRA 2025"
+                    className="w-full h-[400px] sm:h-[500px] md:h-[600px] object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700 scale-100 group-hover:scale-110"
+                    draggable={false}
+                  />
+                  <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 sm:p-8 md:p-10">
+                    <div className="text-6xl sm:text-7xl md:text-8xl font-victory-striker font-black text-white/20 group-hover:text-white/10 transition-colors duration-500 mb-4">
+                      2025
+                    </div>
+                    <div className="translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-100">
+                      <h3 className="text-2xl sm:text-3xl font-victory-striker font-bold text-white mb-2">
+                        YATRA 2025
+                      </h3>
+                      <p className="text-white/80 text-sm sm:text-base">
+                        Continuing the legacy with innovation and passion.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </motion.div>
           </div>
         </div>
 
