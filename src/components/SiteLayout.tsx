@@ -67,7 +67,8 @@ export function SiteLayout() {
   // Detect mobile screen size
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      // Phone-only breakpoint (iPad mini size and larger should use desktop)
+      setIsMobile(window.innerWidth <= 743);
     };
     checkMobile();
     window.addEventListener("resize", checkMobile);

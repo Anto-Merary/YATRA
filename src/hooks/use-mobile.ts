@@ -13,20 +13,26 @@ export function useMobile() {
   useEffect(() => {
     // Check if mobile device
     const checkMobile = () => {
-      const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
-      const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
-        userAgent.toLowerCase()
-      );
+      // PHONE-only detection.
+      // Requirement: iPad mini size and larger should use desktop/PC layout.
+      const MOBILE_MAX_WIDTH = 743; // iPad mini (portrait) is 744px CSS width
+      const userAgent = (navigator.userAgent || navigator.vendor || (window as any).opera || '').toLowerCase();
       const width = window.innerWidth;
-      
-      const isSmallScreen = width <= 768;
-      setIsMobile(isMobileDevice || isSmallScreen);
-      
-      // Strict mobile check for layout switching (< 768px)
-      setIsMobileOnly(width < 768);
-      
-      // Tablet check (>= 768px and < 1024px)
-      setIsTablet(width >= 768 && width < 1024);
+
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const isPhoneSized = width <= MOBILE_MAX_WIDTH;
+      const isIPhoneOrIPod = /iphone|ipod/i.test(userAgent);
+      const isAndroidPhone = /android/i.test(userAgent) && /mobile/i.test(userAgent);
+      const isOtherPhone = /webos|blackberry|iemobile|opera mini/i.test(userAgent);
+      const isPhone = isTouchDevice && isPhoneSized && (isIPhoneOrIPod || isAndroidPhone || isOtherPhone);
+
+      setIsMobile(isPhone);
+
+      // Strict phone check for layout switching (≤ 743px)
+      setIsMobileOnly(isPhoneSized);
+
+      // Tablet check (>= 744px and < 1024px)
+      setIsTablet(width >= MOBILE_MAX_WIDTH + 1 && width < 1024);
     };
 
     // Check for reduced motion preference
