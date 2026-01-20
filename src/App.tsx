@@ -10,7 +10,6 @@ import { EventDetailPage } from "./pages/EventDetailPage";
 import { ProDanceBattlePage } from "./pages/ProDanceBattlePage";
 import { AdminPage } from "./pages/AdminPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
-import { useGLTF } from "@react-three/drei";
 // Images
 import ritLogoImage from "./assets/RIT WHITE LOGO.png";
 import logoImage from "./assets/LOGO .png";
@@ -19,18 +18,8 @@ import christopherImage from "./assets/christopher.png?url";
 import antomeraryImage from "./assets/antomerary.png?url";
 // Video
 import yatraVideo from "./assets/video.mp4?url";
-// 3D Model
-import glbModel from "../YATRA 3D ELEMENT.glb?url";
 // Font
 import fontFile from "./assets/fonts/BaseNeueTrial-ExtBdObliq.ttf";
-
-// Preload the 3D model at module level
-try {
-  useGLTF.preload(glbModel);
-} catch (e) {
-  // Silently fail if GLB preload fails (might not be available in all contexts)
-  console.warn("GLB preload failed:", e);
-}
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -69,20 +58,6 @@ export default function App() {
           video.onloadedmetadata = () => resolve();
           video.onerror = () => resolve(); // Continue even if video fails
           video.src = yatraVideo;
-        })
-      );
-
-      // Preload 3D model (GLB file) - fetch to cache it
-      promises.push(
-        new Promise<void>((resolve) => {
-          fetch(glbModel, { method: 'HEAD' })
-            .then(() => resolve())
-            .catch(() => {
-              // If HEAD fails, try full fetch
-              fetch(glbModel)
-                .then(() => resolve())
-                .catch(() => resolve()); // Continue even if GLB fails
-            });
         })
       );
 

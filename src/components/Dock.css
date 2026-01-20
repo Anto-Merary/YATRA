@@ -47,18 +47,18 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 0.75rem;
-  background-color: rgba(6, 0, 16, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(22, 0, 24, 0.35);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(155, 23, 153, 0.2);
   border-radius: 1.5rem 1.5rem 0 0;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 -4px 30px rgba(22, 0, 24, 0.5), 0 0 20px rgba(155, 23, 153, 0.1);
   margin: 0;
 }
 
 .mobile-dock .dock-item {
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(22, 0, 24, 0.4);
+  border: 1px solid rgba(155, 23, 153, 0.15);
   transition: all 0.2s ease;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
@@ -66,17 +66,20 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .mobile-dock .dock-item-active {
-  background-color: rgba(106, 92, 255, 0.2);
-  border-color: rgba(106, 92, 255, 0.4);
-  box-shadow: 0 0 12px rgba(106, 92, 255, 0.3);
+  background-color: rgba(155, 23, 153, 0.3);
+  border-color: rgba(155, 23, 153, 0.5);
+  box-shadow: 0 0 16px rgba(155, 23, 153, 0.4), 0 0 24px rgba(155, 23, 153, 0.2);
 }
 
 .mobile-dock .dock-item:active {
   transform: scale(0.95);
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(155, 23, 153, 0.25);
+  border-color: rgba(155, 23, 153, 0.4);
 }
 
 .mobile-dock .dock-icon {
@@ -102,7 +105,8 @@
 }
 
 .mobile-dock .dock-item-active .dock-icon {
-  color: rgba(106, 92, 255, 1);
+  color: rgba(255, 184, 107, 1);
+  filter: drop-shadow(0 0 4px rgba(155, 23, 153, 0.6));
 }
 
 .mobile-dock .dock-label {

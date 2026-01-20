@@ -7,7 +7,7 @@ import yearText from '../assets/2026txt.png'
 import videoSrc from '../assets/video.mp4'
 import purpleBg from '../assets/purple.jpeg'
 import eventImage from '../assets/event.jpeg'
-import performanceImage from '../assets/performance.jpeg'
+import performanceImage from '../assets/performance.JPG'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -836,30 +836,8 @@ function Hero() {
         </h2>
 
         <div className="mobile-passes-grid">
-          {/* Pass 1 */}
-          <div className="mobile-pass-card">
-            <div className="mobile-pass-card-header">
-              <h3 className="mobile-pass-card-title">YATRA EVENTS</h3>
-            </div>
-            <div className="mobile-pass-divider" aria-hidden="true" />
-            <ul className="mobile-pass-card-list">
-              <li>• Event entry pass</li>
-              <li>• Select your specific Events</li>
-              <li>• Only access to events</li>
-            </ul>
-            <a
-              href="https://formbuilder.ccavenue.com/live/icici-bank/rajalakshmi-institue-of-technology-2/yatra-2026-reg-fees-link"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mobile-pass-cta mobile-pass-cta--outline"
-            >
-              Register Now
-            </a>
-          </div>
-
-          {/* Pass 2 (Featured) */}
+          {/* YATRA ENTRY PASS */}
           <div className="mobile-pass-card mobile-pass-card--featured">
-            <div className="mobile-pass-badge">Mandatory</div>
             <div className="mobile-pass-card-header">
               <h3 className="mobile-pass-card-title mobile-pass-card-title--accent">
                 YATRA ENTRY PASS
@@ -879,24 +857,6 @@ function Hero() {
               rel="noopener noreferrer"
               className="mobile-pass-cta mobile-pass-cta--accent"
             >
-              Register Now
-            </a>
-          </div>
-
-          {/* Pass 3 */}
-          <div className="mobile-pass-card">
-            <div className="mobile-pass-card-header">
-              <h3 className="mobile-pass-card-title">DANCE BATTLE</h3>
-              <p className="mobile-pass-price">₹800</p>
-            </div>
-            <div className="mobile-pass-divider" aria-hidden="true" />
-            <p className="mobile-pass-description">
-              DANCE BATTLE is a premium spotlight event designed to celebrate
-              confidence, charisma, and stage presence. Come prepared to
-              introduce yourself, show your personality, and own the stage — in
-              front of an energetic crowd.
-            </p>
-            <a href="/pro-dance-battle" className="mobile-pass-cta mobile-pass-cta--secondary">
               Register Now
             </a>
           </div>

@@ -396,7 +396,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 5;
-  width: 63%;
+  width: 68%;
   aspect-ratio: 16 / 9;
   will-change: transform, opacity, top, filter;
   transition:
@@ -413,29 +413,7 @@
   transition: filter 900ms ease;
 }
 
-/* Smooth flicker/glow animation for video after loading */
-.hero-stage.is-loaded .hero-video-container {
-  animation: hero-video-glow 3.5s ease-in-out infinite;
-}
-
-@keyframes hero-video-glow {
-  0%, 100% {
-    filter: drop-shadow(0 0 8px rgba(255, 140, 190, 0.3)) drop-shadow(0 0 16px rgba(255, 210, 140, 0.2));
-    transform: translate(-50%, -50%) scale(1);
-  }
-  25% {
-    filter: drop-shadow(0 0 12px rgba(255, 140, 190, 0.5)) drop-shadow(0 0 24px rgba(255, 210, 140, 0.35));
-    transform: translate(-50%, -50%) scale(1.01);
-  }
-  50% {
-    filter: drop-shadow(0 0 16px rgba(255, 140, 190, 0.6)) drop-shadow(0 0 32px rgba(255, 210, 140, 0.4));
-    transform: translate(-50%, -50%) scale(1.02);
-  }
-  75% {
-    filter: drop-shadow(0 0 12px rgba(255, 140, 190, 0.5)) drop-shadow(0 0 24px rgba(255, 210, 140, 0.35));
-    transform: translate(-50%, -50%) scale(1.01);
-  }
-}
+/* Video container - glow animation removed, keeping video constant */
 
 /* 3. "2026" Text - Behind Torii gate, positioned below top beam */
 .hero-year-text {
@@ -1107,25 +1085,25 @@
     transform: translate3d(0, 0, 0);
   }
   12% {
-    transform: translate3d(-15px, -12px, 0);
+    transform: translate3d(0, -18px, 0);
   }
   25% {
-    transform: translate3d(-8px, -6px, 0);
+    transform: translate3d(0, -10px, 0);
   }
   38% {
-    transform: translate3d(-20px, -18px, 0);
+    transform: translate3d(0, -22px, 0);
   }
   50% {
-    transform: translate3d(-12px, -10px, 0);
+    transform: translate3d(0, -15px, 0);
   }
   62% {
-    transform: translate3d(-18px, -15px, 0);
+    transform: translate3d(0, -20px, 0);
   }
   75% {
-    transform: translate3d(-5px, -4px, 0);
+    transform: translate3d(0, -8px, 0);
   }
   87% {
-    transform: translate3d(-16px, -14px, 0);
+    transform: translate3d(0, -19px, 0);
   }
   100% {
     transform: translate3d(0, 0, 0);
@@ -1397,10 +1375,18 @@
 
 .blast-title-prefix {
   color: #FFFFFF;
+  text-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.5),
+    0 4px 16px rgba(0, 0, 0, 0.4),
+    0 6px 24px rgba(0, 0, 0, 0.3);
 }
 
 .blast-title-highlight {
   color: #000000;
+  text-shadow: 
+    0 2px 8px rgba(255, 255, 255, 0.4),
+    0 4px 16px rgba(255, 184, 107, 0.3),
+    0 6px 24px rgba(155, 23, 153, 0.2);
 }
 
 .blast-section .features-title {
@@ -1451,7 +1437,7 @@
   background: #0a0a0a;
   position: relative;
   overflow: hidden;
-  padding: 3.25rem 1.25rem calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  padding: 2rem 1.25rem calc(5.5rem + env(safe-area-inset-bottom, 0px));
 }
 
 .mobile-passes-section::before {
@@ -1481,7 +1467,7 @@
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  margin: 0 0 1.5rem;
+  margin: 0 0 2rem;
   line-height: 1.05;
   color: #ffffff;
   text-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
@@ -1500,31 +1486,178 @@
 .mobile-pass-card {
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.16);
+  /* Korean textured ticket: hanji paper feel with traditional patterns */
   background:
-    linear-gradient(180deg, rgba(28, 28, 28, 0.96) 0%, rgba(10, 10, 10, 0.96) 100%);
-  border-radius: 18px;
+    /* Korean geometric pattern overlay (subtle) */
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 2px,
+      rgba(155, 23, 153, 0.03) 2px,
+      rgba(155, 23, 153, 0.03) 4px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 184, 107, 0.02) 2px,
+      rgba(255, 184, 107, 0.02) 4px
+    ),
+    /* Traditional Korean paper texture (hanji-like) */
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(0, 0, 0, 0.3) 0%, transparent 50%),
+    /* Base gradients with Korean color palette */
+    radial-gradient(120% 90% at 20% 0%, rgba(155, 23, 153, 0.15) 0%, transparent 55%),
+    radial-gradient(120% 90% at 85% 110%, rgba(255, 184, 107, 0.08) 0%, transparent 55%),
+    linear-gradient(180deg, rgba(22, 18, 24, 0.98) 0%, rgba(12, 8, 14, 0.99) 100%);
+  border-radius: 22px;
   padding: 1.1rem 1.1rem 1.05rem;
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
   box-shadow:
     0 18px 45px rgba(0, 0, 0, 0.55),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    0 0 0 1px rgba(0, 0, 0, 0.55) inset,
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
   overflow: hidden;
   isolation: isolate;
   --ticket-notch-size: 18px;
+  --ticket-accent: #9b1799;
+  --ticket-accent-warm: #FFB86B;
+}
+
+.mobile-pass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* Korean-inspired texture overlay: hanji paper grain + traditional patterns */
+  background:
+    /* Fine paper grain texture */
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.02) 0px,
+      transparent 1px,
+      transparent 2px,
+      rgba(255, 255, 255, 0.015) 3px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.02) 0px,
+      transparent 1px,
+      transparent 2px,
+      rgba(255, 255, 255, 0.015) 3px
+    ),
+    /* Korean border pattern inspiration (subtle) */
+    linear-gradient(90deg, 
+      transparent 0%,
+      rgba(155, 23, 153, 0.04) 8%,
+      transparent 16%,
+      rgba(255, 184, 107, 0.03) 24%,
+      transparent 32%,
+      rgba(155, 23, 153, 0.04) 40%,
+      transparent 48%,
+      rgba(255, 184, 107, 0.03) 56%,
+      transparent 64%,
+      rgba(155, 23, 153, 0.04) 72%,
+      transparent 80%,
+      rgba(255, 184, 107, 0.03) 88%,
+      transparent 100%
+    ),
+    /* Vignette and depth */
+    linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 38%, rgba(255, 255, 255, 0.02) 72%, rgba(255, 255, 255, 0) 100%),
+    radial-gradient(120% 80% at 50% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 55%),
+    radial-gradient(120% 110% at 50% 120%, rgba(0, 0, 0, 0.45) 0%, transparent 55%);
+  opacity: 0.85;
+  background-size: 100% 100%, 100% 100%, 200% 100%, 100% 100%, 100% 100%, 100% 100%;
+}
+
+.mobile-pass-card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .mobile-pass-card-header {
   display: flex;
   flex-direction: column;
   gap: 0.28rem;
-  padding-right: 3.2rem; /* keeps text clear of the badge area */
 }
 
 .mobile-pass-card--featured {
-  border: 2px solid #9b1799;
-  box-shadow: 0 0 30px rgba(155, 23, 153, 0.14);
+  border: none;
+  box-shadow:
+    0 22px 55px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(155, 23, 153, 0.35) inset,
+    0 0 38px rgba(155, 23, 153, 0.18),
+    /* Korean-inspired inner glow */
+    inset 0 0 20px rgba(155, 23, 153, 0.08),
+    inset 0 0 40px rgba(255, 184, 107, 0.04);
+  transform: translateZ(0);
+  animation: mobile-ticket-float 6.5s ease-in-out infinite;
+}
+
+/* Gradient border outline that follows ticket shape - notches will cover it */
+.mobile-pass-card--featured::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 22px;
+  /* Korean-inspired border gradient pattern - creates the outline */
+  background: linear-gradient(
+    90deg,
+    rgba(155, 23, 153, 0.85) 0%,
+    rgba(255, 184, 107, 0.6) 25%,
+    rgba(155, 23, 153, 0.85) 50%,
+    rgba(255, 184, 107, 0.6) 75%,
+    rgba(155, 23, 153, 0.85) 100%
+  );
+  /* The notches (::before and ::after on divider) will cover this border at their positions to create ticket shape */
+}
+
+/* Extend notches to cover the border, creating the ticket shape */
+.mobile-pass-divider::before,
+.mobile-pass-divider::after {
+  /* Extend notch outward to cover the 2px border */
+  width: calc(var(--ticket-notch-size) + 4px);
+  height: calc(var(--ticket-notch-size) + 4px);
+  box-shadow: 0 0 0 2px #0a0a0a;
+  z-index: 3;
+}
+
+.mobile-pass-card--featured::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  z-index: 0;
+  pointer-events: none;
+  /* Korean-inspired shimmer: traditional silk/paper texture sweep */
+  background:
+    /* Korean pattern-inspired shimmer */
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 8px,
+      rgba(255, 255, 255, 0.03) 8px,
+      rgba(255, 255, 255, 0.03) 10px
+    ),
+    linear-gradient(
+      110deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.05) 15%,
+      rgba(255, 184, 107, 0.10) 30%,
+      rgba(155, 23, 153, 0.14) 45%,
+      rgba(255, 184, 107, 0.10) 60%,
+      rgba(255, 255, 255, 0.06) 75%,
+      transparent 90%
+    );
+  transform: translateX(-60%) skewX(-12deg);
+  opacity: 0.85;
+  filter: blur(0.3px);
+  animation: mobile-ticket-shimmer 3.8s linear infinite;
+  mix-blend-mode: screen;
 }
 
 /* Ticket side notches (cut-outs) aligned to the perforation line */
@@ -1554,8 +1687,8 @@
   position: absolute;
   top: 0.75rem;
   right: 0.75rem;
-  background: #9b1799;
-  color: #000;
+  background: linear-gradient(180deg, rgba(255, 184, 107, 1) 0%, rgba(248, 168, 93, 1) 100%);
+  color: #2B0A4A;
   font-size: 0.62rem;
   font-weight: 800;
   padding: 0.25rem 0.55rem;
@@ -1563,6 +1696,9 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-family: 'Poppins', var(--hero-font-family);
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(0, 0, 0, 0.25) inset;
 }
 
 .mobile-pass-card-title {
@@ -1576,7 +1712,10 @@
 }
 
 .mobile-pass-card-title--accent {
-  color: #9b1799;
+  color: rgba(255, 184, 107, 0.98);
+  text-shadow:
+    0 2px 10px rgba(0, 0, 0, 0.55),
+    0 0 18px rgba(155, 23, 153, 0.25);
 }
 
 .mobile-pass-price {
@@ -1600,15 +1739,29 @@
   position: relative;
   margin: 0.2rem -1.15rem 0.05rem;
   height: 1px;
-  background: repeating-linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0.22) 0,
-    rgba(255, 255, 255, 0.22) 8px,
-    rgba(255, 255, 255, 0.06) 8px,
-    rgba(255, 255, 255, 0.06) 14px
-  );
+  /* Korean-inspired perforation: traditional pattern with color accents */
+  background:
+    linear-gradient(
+      to right,
+      rgba(155, 23, 153, 0.2) 0%,
+      rgba(255, 184, 107, 0.15) 25%,
+      rgba(155, 23, 153, 0.2) 50%,
+      rgba(255, 184, 107, 0.15) 75%,
+      rgba(155, 23, 153, 0.2) 100%
+    ),
+    repeating-linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.26) 0,
+      rgba(255, 255, 255, 0.26) 6px,
+      rgba(255, 255, 255, 0.05) 6px,
+      rgba(255, 255, 255, 0.05) 12px
+    );
   opacity: 0.95;
   z-index: 1;
+  /* Korean pattern accent glow */
+  box-shadow: 
+    0 0 2px rgba(155, 23, 153, 0.1),
+    0 0 4px rgba(255, 184, 107, 0.08);
 }
 
 .mobile-pass-card-list {
@@ -1676,14 +1829,51 @@
 }
 
 .mobile-pass-cta--accent {
-  background: #9b1799;
-  border: 1px solid #9b1799;
-  color: #000;
+  background: linear-gradient(180deg, rgba(155, 23, 153, 1) 0%, rgba(112, 18, 110, 1) 100%);
+  border: 1px solid rgba(255, 184, 107, 0.25);
+  color: #0a0a0a;
+  box-shadow:
+    0 16px 30px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(155, 23, 153, 0.35) inset,
+    0 0 22px rgba(155, 23, 153, 0.18);
 }
 
 .mobile-pass-cta--accent:hover {
   background: #ffffff;
   border-color: #ffffff;
+}
+
+@keyframes mobile-ticket-shimmer {
+  0% {
+    transform: translateX(-70%) skewX(-12deg);
+    opacity: 0.65;
+  }
+  50% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateX(70%) skewX(-12deg);
+    opacity: 0.65;
+  }
+}
+
+@keyframes mobile-ticket-float {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -6px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-pass-card--featured {
+    animation: none;
+  }
+  .mobile-pass-card--featured::after {
+    animation: none;
+    opacity: 0.5;
+  }
 }
 
 .mobile-pass-cta--secondary {
