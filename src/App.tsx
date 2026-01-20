@@ -3,15 +3,12 @@ import { Route, Routes } from "react-router-dom";
 import { SiteLayout } from "./components/SiteLayout";
 import Loader from "./components/Loader";
 import { HomePage } from "./pages/HomePage";
-import { ProshowPage } from "./pages/ProshowPage";
-import { TicketsPage } from "./pages/TicketsPage";
 import { EventsPage } from "./pages/EventsPage";
 import { ProEventsPage } from "./pages/ProEventsPage";
 import { YatraEventsPage } from "./pages/YatraEventsPage";
 import { EventDetailPage } from "./pages/EventDetailPage";
 import { MrMsYatraPage } from "./pages/MrMsYatraPage";
 import { ProDanceBattlePage } from "./pages/ProDanceBattlePage";
-import { TeamPage } from "./pages/TeamPage";
 import { AdminPage } from "./pages/AdminPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { useGLTF } from "@react-three/drei";
@@ -179,15 +176,12 @@ export default function App() {
     <Routes>
       <Route element={<SiteLayout />}>
         <Route path="/" element={<HomePage />} />
-        <Route path="/proshow" element={<ProshowPage />} />
-        <Route path="/tickets" element={<TicketsPage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/proevents" element={<ProEventsPage />} />
         <Route path="/yatraevents" element={<YatraEventsPage />} />
         <Route path="/events/mr-ms-yatra" element={<MrMsYatraPage />} />
         <Route path="/pro-dance-battle" element={<ProDanceBattlePage />} />
         <Route path="/events/:eventId" element={<EventDetailPage />} />
-        <Route path="/team" element={<TeamPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
       {/* Admin route - separate from SiteLayout, no navigation links */}

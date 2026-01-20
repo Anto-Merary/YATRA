@@ -2,7 +2,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import Dock from "./Dock";
-import { Home, Mic, Ticket, Calendar, Users } from "lucide-react";
+import { Home, Calendar } from "lucide-react";
 import ritLogo from "../../RIT WHITE LOGO.png";
 import yatraLogo from "../../LOGO .png";
 
@@ -78,10 +78,7 @@ export function Navbar({ variant = "fixed" }: NavbarProps) {
 
   const navLinks = [
     { to: "/", label: "Home", end: true, icon: Home },
-    { to: "/proshow", label: "Proshow", icon: Mic },
-    { to: "/tickets", label: "Tickets", icon: Ticket },
     { to: "/events", label: "Events", icon: Calendar },
-    { to: "/team", label: "Team", icon: Users },
   ];
 
   // Wrapper function to scroll and navigate

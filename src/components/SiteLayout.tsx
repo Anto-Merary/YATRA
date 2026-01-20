@@ -8,7 +8,7 @@ import Dock from "./Dock";
 import { Toaster } from "./ui/toaster";
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { Home, Music2, Ticket, List, UsersRound } from "lucide-react";
+import { Home, List } from "lucide-react";
 import { RouteTransitionProvider } from "./RouteTransitionContext";
 
 export function SiteLayout() {
@@ -76,10 +76,7 @@ export function SiteLayout() {
 
   const navLinks = [
     { to: "/", label: "Home", end: true, icon: Home },
-    { to: "/proshow", label: "Proshow", icon: Music2 },
-    { to: "/tickets", label: "Tickets", icon: Ticket },
     { to: "/events", label: "Events", icon: List },
-    { to: "/team", label: "Team", icon: UsersRound },
   ];
 
   // Wrapper function to scroll and navigate

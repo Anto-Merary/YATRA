@@ -4,6 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YATRA'26 | The Cultural Phenomenon</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/webp" href="/Fav-icon.webp">
+    <link rel="shortcut icon" type="image/webp" href="/Fav-icon.webp">
+    <link rel="apple-touch-icon" href="/Fav-icon.webp">
+    
+    <!-- Early Mobile Redirect - Runs before page loads -->
+    <script>
+        (function() {
+            // Check if user wants desktop version
+            const urlParams = new URLSearchParams(window.location.search);
+            const forceDesktop = urlParams.get('desktop') === 'true' || sessionStorage.getItem('desktopVersion') === 'true';
+            
+            if (forceDesktop) return;
+            
+            // Mobile detection
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            const isMobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
+            const isSmallScreen = window.innerWidth <= 768;
+            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            const isMobile = isMobileUA || (isSmallScreen && isTouchDevice);
+            
+            if (isMobile) {
+                const currentPath = window.location.pathname;
+                // Don't redirect if already on mobile version or React app
+                if (currentPath.includes('mobile') || currentPath.includes('index.html') || currentPath === '/') {
+                    return;
+                }
+                
+                // Redirect to mobile version (src/mobile)
+                // The mobile app is served via mobile.html which loads /src/mobile/main.jsx
+                const baseUrl = window.location.origin;
+                const currentSearch = window.location.search;
+                const currentHash = window.location.hash;
+                
+                // Redirect to mobile.html which serves the mobile app from src/mobile
+                window.location.replace(baseUrl + '/mobile.html' + currentSearch + currentHash);
+            }
+        })();
+    </script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,6 +73,12 @@
             overflow-x: hidden;
             cursor: none;
             transition: background-color 0.5s ease, color 0.5s ease;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                cursor: auto;
+            }
         }
 
         /* Animated Noise Overlay */
@@ -66,6 +113,30 @@
             display: flex;
             flex-direction: column;
             pointer-events: none;
+        }
+        
+        /* Generic Mobile Loader - Simpler version */
+        #mobile-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--color-bg);
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            /* Hide HTML loader on mobile, show generic loader */
+            #loader {
+                display: none;
+            }
+            
+            #mobile-loader {
+                display: flex;
+            }
         }
 
         .loader-panel {
@@ -166,6 +237,41 @@
         }
         .reveal-img.active { clip-path: inset(0 0 0 0); }
 
+        /* Blur Reveal Effect */
+        .blur-reveal {
+            filter: blur(20px);
+            opacity: 0;
+            transform: scale(0.9);
+            transition: filter 1s cubic-bezier(0.4, 0, 0.2, 1), 
+                        opacity 1s cubic-bezier(0.4, 0, 0.2, 1),
+                        transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 100;
+        }
+        .blur-reveal.active {
+            filter: blur(0px);
+            opacity: 1;
+            transform: scale(1);
+        }
+        .logo-container {
+            position: relative;
+            z-index: 100;
+            mix-blend-mode: normal;
+        }
+        .logo-container img {
+            position: relative;
+            z-index: 101;
+            mix-blend-mode: normal;
+        }
+        
+        /* Ensure pink color persists in about section */
+        #about .word-reveal span[style*="#9b1799"] {
+            color: #9b1799 !important;
+            position: relative;
+            z-index: 10;
+            isolation: isolate;
+        }
+
         /* Word Reveal */
         .word-reveal span { display: inline-block; opacity: 0; transform: translateY(20px); }
 
@@ -216,7 +322,244 @@
         @media (max-width: 768px) {
             .lineup-accordion {
                 flex-direction: column;
-                height: 150vh;
+                height: auto;
+                min-height: auto;
+                gap: 1rem;
+            }
+            
+            .lineup-panel {
+                min-height: 300px;
+                flex: 1;
+            }
+            
+            /* Mobile Navigation */
+            nav {
+                padding: 0.75rem 1rem;
+            }
+            
+            /* Mobile Hero - Better sizing */
+            .hero-parallax h1 {
+                font-size: 18vw;
+                line-height: 0.9;
+            }
+            
+            #hero-title-container {
+                padding: 0 1rem;
+            }
+            
+            #hero-title-container p {
+                font-size: 0.65rem;
+                letter-spacing: 0.2em;
+                line-height: 1.4;
+            }
+            
+            /* Mobile About Section */
+            #about {
+                padding: 2.5rem 1rem;
+            }
+            
+            #about .word-reveal {
+                font-size: 2rem;
+                line-height: 1.1;
+                margin-bottom: 1.5rem;
+            }
+            
+            #about .word-reveal-p {
+                font-size: 0.95rem;
+                line-height: 1.7;
+                padding: 0;
+            }
+            
+            /* Mobile Gallery */
+            .gallery-year {
+                font-size: 20vw;
+            }
+            
+            .gallery-item {
+                padding: 1rem;
+            }
+            
+            /* Mobile Lineup */
+            .lineup-title {
+                font-size: 1.75rem;
+                line-height: 1.1;
+            }
+            
+            .lineup-info {
+                font-size: 0.9rem;
+            }
+            
+            /* Mobile Events */
+            #events {
+                padding: 2.5rem 1rem;
+            }
+            
+            #events h2 {
+                font-size: 2rem;
+                line-height: 1.1;
+                margin-bottom: 1.5rem;
+            }
+            
+            #events ul {
+                gap: 1.5rem;
+            }
+            
+            #events li span {
+                font-size: 1.5rem;
+            }
+            
+            /* Mobile Registration */
+            #registration {
+                padding: 2.5rem 1rem;
+            }
+            
+            #registration h2 {
+                font-size: 2rem;
+                line-height: 1.1;
+                margin-bottom: 1.5rem;
+            }
+            
+            /* Mobile Footer */
+            footer {
+                padding: 2.5rem 1rem;
+            }
+            
+            footer h2 {
+                font-size: 2.5rem;
+                line-height: 1.1;
+                margin-bottom: 1.5rem;
+            }
+            
+            /* Mobile Marquee */
+            .marquee-content {
+                font-size: 1.5rem;
+            }
+            
+            /* Mobile Buttons - Better touch targets */
+            button {
+                min-height: 44px;
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
+            }
+            
+            /* Mobile Cards */
+            .magnetic-content {
+                padding: 1.25rem;
+            }
+            
+            /* Mobile Logos */
+            .logo-container img {
+                height: 2.5rem;
+                max-width: 100%;
+            }
+            
+            /* Better spacing for mobile */
+            section {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            
+            /* Prevent horizontal scroll */
+            body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+            
+            html {
+                overflow-x: hidden;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Extra small devices - Refined sizes */
+            .hero-parallax h1 {
+                font-size: 20vw;
+                line-height: 0.9;
+            }
+            
+            #hero-title-container p {
+                font-size: 0.6rem;
+                letter-spacing: 0.15em;
+            }
+            
+            #about {
+                padding: 2rem 0.75rem;
+            }
+            
+            #about .word-reveal {
+                font-size: 1.75rem;
+                margin-bottom: 1.25rem;
+            }
+            
+            #about .word-reveal-p {
+                font-size: 0.875rem;
+                line-height: 1.6;
+            }
+            
+            nav {
+                padding: 0.5rem 0.75rem;
+            }
+            
+            nav img {
+                height: 2.25rem;
+            }
+            
+            .magnetic-content {
+                padding: 1rem;
+            }
+            
+            #registration h2 {
+                font-size: 1.75rem;
+            }
+            
+            footer h2 {
+                font-size: 2rem;
+            }
+            
+            .lineup-title {
+                font-size: 1.5rem;
+            }
+            
+            #events h2 {
+                font-size: 1.75rem;
+            }
+            
+            .marquee-content {
+                font-size: 1.25rem;
+            }
+            
+            /* Better logo sizing on very small screens */
+            .logo-container img {
+                height: 2rem;
+            }
+            
+            /* Prevent horizontal scroll */
+            html, body {
+                max-width: 100vw;
+                overflow-x: hidden;
+                position: relative;
+            }
+            
+            * {
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+            
+            /* Better button sizing */
+            button {
+                font-size: 0.8rem;
+                padding: 0.625rem 0.875rem;
+            }
+        }
+        
+        /* Tablet optimizations */
+        @media (min-width: 481px) and (max-width: 1024px) {
+            #about .word-reveal {
+                font-size: 3.5rem !important;
+            }
+            
+            .hero-parallax h1 {
+                font-size: 14vw !important;
             }
         }
 
@@ -264,13 +607,24 @@
             inset: 0;
             z-index: 10;
         }
+        
+        /* Gradient Button Animation */
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .gradient-button {
+            animation: gradient-shift 3s ease infinite;
+        }
     </style>
 </head>
 <body class="antialiased selection:bg-pink-400 selection:text-black">
 
     <div class="noise-overlay"></div>
 
-    <!-- Split Shutter Loader -->
+    <!-- Split Shutter Loader - Desktop -->
     <div id="loader">
         <div class="loader-panel top"><div class="loader-text-bg">YATRA</div></div>
         <div class="loader-panel bottom"><div class="loader-text-bg">2026</div></div>
@@ -280,16 +634,31 @@
         </div>
     </div>
 
+    <!-- Generic Mobile Loader -->
+    <div id="mobile-loader">
+        <div style="text-align: center; color: var(--color-text);">
+            <div style="font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; margin-bottom: 1rem; color: var(--color-accent);">
+                YATRA'26
+            </div>
+            <div style="font-family: 'Space Grotesk', monospace; font-size: 0.875rem; letter-spacing: 0.2em; opacity: 0.7;">
+                Loading...
+            </div>
+            <div id="mobile-loader-percent" style="font-family: 'Space Grotesk', monospace; font-size: 1.5rem; margin-top: 1rem; color: var(--color-accent);">
+                0%
+            </div>
+        </div>
+    </div>
+
     <!-- Custom Cursor -->
     <div class="cursor-dot hidden md:block"></div>
     <div class="cursor-outline hidden md:block"></div>
 
     <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 mix-blend-difference px-6 py-6 flex justify-between items-center pointer-events-none text-white">
-        <!-- Left Logo: RIT -->
-        <div class="magnetic-wrap pointer-events-auto flex-shrink-0">
-            <div class="magnetic-content">
-                <img src="RIT WHITE LOGO.png" alt="RIT Logo" class="h-12 md:h-20 w-auto object-contain">
+    <nav class="fixed top-0 w-full z-50 mix-blend-difference px-4 md:px-6 py-4 md:py-6 flex justify-between items-center pointer-events-none text-white">
+        <!-- Logo: Yatra -->
+        <div class="magnetic-wrap pointer-events-auto flex-shrink-0" style="z-index: 1000; position: relative; isolation: isolate; mix-blend-mode: normal;">
+            <div class="magnetic-content" style="z-index: 1001; position: relative; mix-blend-mode: normal;">
+                <img src="LOGO .png" alt="Yatra Logo" class="h-10 sm:h-12 md:h-20 w-auto object-contain" style="z-index: 1002; position: relative; mix-blend-mode: normal; isolation: isolate;">
             </div>
         </div>
 
@@ -300,17 +669,10 @@
             <a href="#events" class="hacker-text hover:text-[var(--color-accent)] transition-colors" data-original="Events">Events</a>
             <a href="#registration" class="hacker-text hover:text-[var(--color-accent)] transition-colors" data-original="Passes">Passes</a>
         </div>
-
-        <!-- Right Logo: Yatra -->
-        <div class="magnetic-wrap pointer-events-auto flex-shrink-0">
-            <div class="magnetic-content">
-                <img src="LOGO .png" alt="Yatra Logo" class="h-12 md:h-20 w-auto object-contain">
-            </div>
-        </div>
     </nav>
 
     <!-- Hero Section -->
-    <header class="relative min-h-screen flex flex-col justify-center items-center pt-20 overflow-hidden bg-black perspective-1000">
+    <header class="relative min-h-screen flex flex-col justify-center items-center pt-16 sm:pt-20 overflow-hidden bg-black perspective-1000">
         <!-- Background Video -->
         <div class="absolute inset-0 z-0">
             <video autoplay muted loop playsinline class="w-full h-full object-cover opacity-80">
@@ -318,30 +680,30 @@
             </video>
         </div>
 
-        <div id="hero-title-container" class="z-10 text-center px-4 mix-blend-difference text-white will-change-transform">
-            <p class="uppercase tracking-[0.5em] mb-4 text-sm md:text-base font-bold animate-fade-in-up">
+        <div id="hero-title-container" class="z-10 text-center px-4 sm:px-6 mix-blend-difference text-white will-change-transform w-full">
+            <p class="uppercase tracking-[0.2em] sm:tracking-[0.3em] md:tracking-[0.5em] mb-3 sm:mb-4 text-[0.65rem] sm:text-xs md:text-sm lg:text-base font-bold animate-fade-in-up px-2 leading-relaxed">
                 Two Days • 40+ Epic Events+  • Infinite Vibes
             </p>
             <div class="hero-parallax">
-                <h1 class="text-[15vw] leading-[0.8] font-display font-extrabold uppercase tracking-tighter">
+                <h1 class="text-[18vw] sm:text-[16vw] md:text-[15vw] leading-[0.85] sm:leading-[0.8] font-display font-extrabold uppercase tracking-tighter">
                     Yatra
                 </h1>
-                <h1 class="text-[15vw] leading-[0.8] font-display font-extrabold uppercase tracking-tighter relative bottom-4 md:bottom-8">
+                <h1 class="text-[18vw] sm:text-[16vw] md:text-[15vw] leading-[0.85] sm:leading-[0.8] font-display font-extrabold uppercase tracking-tighter relative bottom-2 sm:bottom-4 md:bottom-8">
                     '26
                 </h1>
             </div>
-            <div class="mt-8 md:mt-12 animate-fade-in-up mix-blend-normal">
+            <div class="mt-6 sm:mt-8 md:mt-12 animate-fade-in-up mix-blend-normal">
                 <a href="#registration" class="magnetic-wrap inline-block">
-                    <div class="magnetic-content bg-[var(--color-secondary)] text-black px-8 py-4 md:px-12 md:py-5 rounded-lg uppercase font-bold text-sm md:text-base tracking-widest hover:bg-[var(--color-accent)] hover:text-black transition-all duration-300 shadow-lg" style="mix-blend-mode: normal;">
+                    <div class="magnetic-content gradient-button bg-gradient-to-r from-[var(--color-secondary)] via-[var(--color-accent)] to-[var(--color-secondary)] text-black px-5 py-2.5 sm:px-6 sm:py-3 md:px-8 md:py-4 lg:px-12 lg:py-5 rounded-lg uppercase font-bold text-[0.75rem] sm:text-xs md:text-sm lg:text-base tracking-widest hover:from-[var(--color-accent)] hover:via-[var(--color-secondary)] hover:to-[var(--color-accent)] transition-all duration-300 shadow-lg" style="mix-blend-mode: normal; min-height: 44px; display: flex; align-items: center; justify-content: center; background-size: 200% 100%;">
                         BUY PASSES
                     </div>
                 </a>
             </div>
         </div>
 
-        <div class="absolute bottom-10 left-0 w-full z-20 rotate-[-2deg] scale-110">
-            <div class="bg-[var(--color-accent)] text-black py-3 marquee-container border-y-4 border-black">
-                <div class="marquee-content text-4xl font-display font-black uppercase">
+        <div class="absolute bottom-4 sm:bottom-6 md:bottom-8 lg:bottom-10 left-0 w-full z-20 rotate-[-1.5deg] sm:rotate-[-2deg] scale-[1.02] sm:scale-105 md:scale-110 overflow-hidden">
+            <div class="bg-[var(--color-accent)] text-black py-1.5 sm:py-2 md:py-3 marquee-container border-y-2 sm:border-y-3 md:border-y-4 border-black">
+                <div class="marquee-content text-lg sm:text-2xl md:text-3xl lg:text-4xl font-display font-black uppercase leading-tight">
                     &nbsp;Cultural Fest • Pro Shows • FEB 13 & 14 • Yatra '26 • Join the Vibe •
                     &nbsp;Cultural Fest • Pro Shows • FEB 13 & 14 • Yatra '26 • Join the Vibe •
                 </div>
@@ -350,29 +712,29 @@
     </header>
 
     <!-- Intro / About -->
-    <section id="about" class="py-24 md:py-40 px-6 max-w-7xl mx-auto relative" data-theme="light">
-        <div class="grid md:grid-cols-12 gap-12 items-start">
-            <div class="md:col-span-4">
-                <h2 class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-4 sticky top-32">About Us</h2>
-            </div>
-            <div class="md:col-span-8">
-                <div class="text-3xl md:text-6xl font-display font-bold leading-tight mb-12 word-reveal">
-                    About <span class="text-[var(--color-accent)]">Rajalakshmi</span> Institute of Technology
+    <section id="about" class="py-10 sm:py-14 md:py-20 lg:py-40 px-4 sm:px-6 max-w-8xl xl:max-w-9xl mx-auto relative" data-theme="light">
+        <div class="flex flex-col items-center justify-center text-center">
+
+            <div class="w-full max-w-full">
+                <div class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-display font-extrabold uppercase tracking-tighter leading-[1.1] sm:leading-tight mb-6 sm:mb-8 md:mb-12 lg:mb-16 xl:mb-20 word-reveal px-2" style="position: relative; z-index: 10; isolation: isolate;">
+                    About &nbsp; YATRA
                 </div>
-                <div class="grid md:grid-cols-2 gap-8 text-lg opacity-80 relative">
-                    <p class="word-reveal-p pr-8 md:border-r md:border-gray-700">
-                        Rajalakshmi Institute of Technology is one of the best engineering colleges in Chennai, part of Rajalakshmi Institutions. Established in 2008 and affiliated with Anna University, RIT is NBA accredited and holds NAAC 'A++' Grade, exemplifying excellence in higher education.
-                    </p>
-                    <p class="word-reveal-p pl-8">
-                        YATRA'25 is a grand intercollege cultural fest organized by the student community with support from Faculties, Principal, and Management. It enhances student confidence through various activities, competitive events, and performances, bringing together enthusiasm and cultural heritage. Join us for an unforgettable celebration.
+                <div class="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl opacity-85 relative flex justify-center mb-6 sm:mb-8 md:mb-12 lg:mb-16 xl:mb-20">
+
+                    <p class="word-reveal-p pl-0 max-w-4xl xl:max-w-5xl mx-auto leading-[1.7] sm:leading-relaxed px-2 sm:px-4 md:px-6">
+                        Yatra'25 is a grand intercollege cultural fest at Rajalakshmi Institute of Technology organized by the student community with the support of Faculties, Principal and Management. Main motive of Yatra is involving or concerning the enthusiasm among students with a deep sense of humor which is also a part of Cultural heritage. This enhance the confidence level of the students thereby allowing them to perform better.In fact, students can also leverage the advantage of participating in various activities. Many chief guests are being invited to join us .
                     </p>
                 </div>
-                <div class="mt-12">
-                    <a href="#" class="magnetic-wrap inline-block">
-                        <div class="magnetic-content border border-current px-8 py-4 rounded-full uppercase font-bold hover:bg-[var(--color-accent)] hover:border-[var(--color-accent)] hover:text-black transition-all duration-300">
-                            Download Brochure
-                        </div>
-                    </a>
+                <div class="mt-6 sm:mt-8 md:mt-12 lg:mt-16 xl:mt-20 flex justify-center items-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 xl:gap-12 flex-wrap relative px-2" style="z-index: 100;">
+                    <div class="blur-reveal logo-container flex-shrink-0">
+                        <img src="RIT WHITE LOGO.png" alt="RIT Logo" class="h-10 sm:h-12 md:h-14 lg:h-16 xl:h-24 w-auto transition-all duration-300 max-w-[120px] sm:max-w-none">
+                    </div>
+                    <div class="blur-reveal logo-container flex-shrink-0">
+                        <img src="RMC COLLEGE LOGO.png" alt="RMC College Logo" class="h-10 sm:h-12 md:h-14 lg:h-16 xl:h-24 w-auto transition-all duration-300 max-w-[120px] sm:max-w-none">
+                    </div>
+                    <div class="blur-reveal logo-container flex-shrink-0">
+                        <img src="RSB Logo.png" alt="RSB Logo" class="h-10 sm:h-12 md:h-14 lg:h-16 xl:h-24 w-auto transition-all duration-300 max-w-[120px] sm:max-w-none">
+                    </div>
                 </div>
             </div>
         </div>
@@ -444,13 +806,13 @@
     </section>
 
     <!-- Lineup / Voices -->
-    <section id="lineup" class="py-24 px-6 border-b border-gray-800">
+    <section id="lineup" class="py-10 sm:py-14 md:py-20 lg:py-24 px-4 sm:px-6 border-b border-gray-800">
         <div class="max-w-7xl mx-auto">
-            <div class="flex justify-between items-end mb-20">
-                <h2 class="text-6xl md:text-8xl font-display font-black uppercase text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-700">
+            <div class="flex justify-between items-end mb-6 sm:mb-8 md:mb-12 lg:mb-20">
+                <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-8xl font-display font-black uppercase text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-700 leading-[1.1]">
                     The <br>Lineup
                 </h2>
-                <span class="hidden md:block text-[var(--color-accent)] font-mono text-xl">2026 Headliners</span>
+                <span class="hidden md:block text-[var(--color-accent)] font-mono text-lg lg:text-xl">2026 Headliners</span>
             </div>
 
             <!-- Interactive Accordion -->
@@ -459,12 +821,12 @@
                 <div class="lineup-panel group">
                     <div class="lineup-overlay"></div>
                     <img src="/Gallery/Vijay Sethupathi.jpeg" alt="Star Night">
-                    <div class="absolute bottom-0 left-0 w-full p-8 z-20 flex flex-col justify-end h-full">
-                        <span class="block text-xs uppercase tracking-[0.2em] mb-2 font-bold text-gray-400 group-hover:text-white transition-colors">Day 1 • Oct 23</span>
-                        <h3 class="lineup-title text-4xl md:text-6xl font-display font-black uppercase leading-none mb-2 transition-colors duration-300">Star Night</h3>
+                    <div class="absolute bottom-0 left-0 w-full p-4 sm:p-6 md:p-8 z-20 flex flex-col justify-end h-full">
+                        <span class="block text-[0.65rem] sm:text-xs uppercase tracking-[0.15em] sm:tracking-[0.2em] mb-1 sm:mb-2 font-bold text-gray-400 group-hover:text-white transition-colors">Day 1 • Oct 23</span>
+                        <h3 class="lineup-title text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-6xl font-display font-black uppercase leading-[1.1] sm:leading-none mb-1 sm:mb-2 transition-colors duration-300">Star Night</h3>
                         <div class="lineup-info opacity-0 transform translate-y-4 transition-all duration-500 ease-out delay-75">
-                            <p class="text-lg text-gray-300 mb-4 font-bold">Featuring Top Playback Singer</p>
-                            <button class="bg-[var(--color-accent)] text-black px-6 py-2 rounded-full font-bold uppercase text-xs tracking-widest hover:bg-white transition-colors">
+                            <p class="text-sm sm:text-base md:text-lg text-gray-300 mb-3 sm:mb-4 font-bold">Featuring Top Playback Singer</p>
+                            <button class="bg-[var(--color-accent)] text-black px-4 sm:px-5 md:px-6 py-1.5 sm:py-2 rounded-full font-bold uppercase text-[0.7rem] sm:text-xs tracking-widest hover:bg-white transition-colors min-h-[36px] sm:min-h-[44px]">
                                 View Artist
                             </button>
                         </div>
@@ -479,8 +841,8 @@
                         <span class="block text-xs uppercase tracking-[0.2em] mb-2 font-bold text-gray-400 group-hover:text-white transition-colors">Day 2 • Oct 24</span>
                         <h3 class="lineup-title text-4xl md:text-6xl font-display font-black uppercase leading-none mb-2 transition-colors duration-300">Pro Show</h3>
                         <div class="lineup-info opacity-0 transform translate-y-4 transition-all duration-500 ease-out delay-75">
-                            <p class="text-lg text-gray-300 mb-4 font-bold">International DJ Set • Sunburn Campus</p>
-                            <button class="bg-[var(--color-secondary)] text-black px-6 py-2 rounded-full font-bold uppercase text-xs tracking-widest hover:bg-[var(--color-accent)] hover:text-white transition-colors">
+                            <p class="text-sm sm:text-base md:text-lg text-gray-300 mb-3 sm:mb-4 font-bold">International DJ Set • Sunburn Campus</p>
+                            <button class="bg-[var(--color-secondary)] text-black px-4 sm:px-5 md:px-6 py-1.5 sm:py-2 rounded-full font-bold uppercase text-[0.7rem] sm:text-xs tracking-widest hover:bg-[var(--color-accent)] hover:text-white transition-colors min-h-[36px] sm:min-h-[44px]">
                                 Listen
                             </button>
                         </div>
@@ -495,8 +857,8 @@
                         <span class="block text-xs uppercase tracking-[0.2em] mb-2 font-bold text-gray-400 group-hover:text-white transition-colors">Competition</span>
                         <h3 class="lineup-title text-4xl md:text-6xl font-display font-black uppercase leading-none mb-2 transition-colors duration-300">Battle of Bands</h3>
                         <div class="lineup-info opacity-0 transform translate-y-4 transition-all duration-500 ease-out delay-75">
-                            <p class="text-lg text-gray-300 mb-4 font-bold">The Ultimate Music Face-off</p>
-                            <button class="border border-white text-white px-6 py-2 rounded-full font-bold uppercase text-xs tracking-widest hover:bg-white hover:text-black transition-colors">
+                            <p class="text-sm sm:text-base md:text-lg text-gray-300 mb-3 sm:mb-4 font-bold">The Ultimate Music Face-off</p>
+                            <button class="border border-white text-white px-4 sm:px-5 md:px-6 py-1.5 sm:py-2 rounded-full font-bold uppercase text-[0.7rem] sm:text-xs tracking-widest hover:bg-white hover:text-black transition-colors min-h-[36px] sm:min-h-[44px]">
                                 Register Band
                             </button>
                         </div>
@@ -515,9 +877,9 @@
     </section>
 
     <!-- Marquee Separator -->
-    <div class="py-12 bg-[var(--color-accent)] text-black rotate-1 scale-105 z-10 relative">
+    <div class="py-8 sm:py-10 md:py-12 bg-[var(--color-accent)] text-black rotate-1 scale-105 z-10 relative">
         <div class="marquee-container">
-            <div class="marquee-content reverse text-6xl font-display font-black uppercase">
+            <div class="marquee-content reverse text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-black uppercase">
                 &nbsp;Workshops • Battle of Bands • Ramp Walk • Short Film • Hackathons • Yatra '26 •
                 &nbsp;Workshops • Battle of Bands • Ramp Walk • Short Film • Hackathons • Yatra '26 •
             </div>
@@ -525,38 +887,38 @@
     </div>
 
     <!-- Events -->
-    <section id="events" class="py-24 px-6 bg-[#0f0f0f]">
+    <section id="events" class="py-10 sm:py-14 md:py-20 lg:py-24 px-4 sm:px-6 bg-[#0f0f0f]">
         <div class="max-w-7xl mx-auto">
-            <div class="grid md:grid-cols-2 gap-16 items-start">
+            <div class="grid md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 lg:gap-16 items-start">
                 <!-- Sticky Image -->
-                <div class="order-2 md:order-1 relative sticky top-24">
+                <div class="order-2 md:order-1 relative md:sticky md:top-24 mb-6 md:mb-0">
                     <div class="absolute -top-10 -left-10 w-full h-full border-2 border-[var(--color-secondary)] z-0 hidden md:block"></div>
-                    <div class="w-full aspect-[4/3] overflow-hidden rounded-2xl shadow-2xl relative reveal-img">
+                    <div class="w-full aspect-[4/3] overflow-hidden rounded-lg md:rounded-xl lg:rounded-2xl shadow-2xl relative reveal-img">
                         <img src="/Gallery/yatraevents.jpeg" alt="Yatra Events" class="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">
                     </div>
                 </div>
                 <div class="order-1 md:order-2">
-                    <h2 class="text-5xl md:text-7xl font-display font-bold mb-8 uppercase leading-none">
+                    <h2 class="text-2.5xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-display font-bold mb-5 sm:mb-6 md:mb-8 uppercase leading-[1.1]">
                         Event <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-accent)]">Categories</span>
                     </h2>
-                    <p class="text-xl text-gray-400 mb-8 word-reveal-p">
+                    <p class="text-base sm:text-lg md:text-xl text-gray-400 mb-6 sm:mb-8 word-reveal-p leading-relaxed">
                         Compete across 50+ epic events over two days. Win massive cash prizes. Showcase your talent on the biggest stage.
                     </p>
-                    <ul class="space-y-12 border-l-2 border-gray-800 pl-6 py-4">
-                        <li class="flex flex-col group cursor-pointer hover:pl-4 transition-all duration-300">
-                            <span class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-sm mb-1">Technical</span>
-                            <span class="text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors">Gaming & Digital Arts</span>
-                            <p class="text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-24 transition-all duration-500">Esports tournaments, Photography, Short Film, Poster Design, Brain Teasers, Quizzes, Drone Challenge, and Product Marketing.</p>
+                    <ul class="space-y-8 sm:space-y-10 md:space-y-12 border-l-2 border-gray-800 pl-4 sm:pl-5 md:pl-6 py-2 sm:py-3 md:py-4">
+                        <li class="flex flex-col group cursor-pointer hover:pl-2 sm:hover:pl-4 transition-all duration-300">
+                            <span class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-xs sm:text-sm mb-1">Technical</span>
+                            <span class="text-xl sm:text-2xl md:text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors leading-tight">Gaming & Digital Arts</span>
+                            <p class="text-xs sm:text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-24 transition-all duration-500 leading-relaxed">Esports tournaments, Photography, Short Film, Poster Design, Brain Teasers, Quizzes, Drone Challenge, and Product Marketing.</p>
                         </li>
-                        <li class="flex flex-col group cursor-pointer hover:pl-4 transition-all duration-300">
-                            <span class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-sm mb-1">Cultural</span>
-                            <span class="text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors">Dance, Music & Arts</span>
-                             <p class="text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-24 transition-all duration-500">Dance battles, Singing competitions, Beat Box, Music challenges, Traditional arts, Oratory, Comedy, Sports, Games, and Food contests.</p>
+                        <li class="flex flex-col group cursor-pointer hover:pl-2 sm:hover:pl-4 transition-all duration-300">
+                            <span class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-xs sm:text-sm mb-1">Cultural</span>
+                            <span class="text-xl sm:text-2xl md:text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors leading-tight">Dance, Music & Arts</span>
+                             <p class="text-xs sm:text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-24 transition-all duration-500 leading-relaxed">Dance battles, Singing competitions, Beat Box, Music challenges, Traditional arts, Oratory, Comedy, Sports, Games, and Food contests.</p>
                         </li>
-                        <li class="flex flex-col group cursor-pointer hover:pl-4 transition-all duration-300">
-                            <span class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-sm mb-1">On-Stage</span>
-                            <span class="text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors">Performance & Theatre</span>
-                             <p class="text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-20 transition-all duration-500">Mime, Mono Acting, Mock Parliament, K-Cosplay, and Face Fiesta competitions.</p>
+                        <li class="flex flex-col group cursor-pointer hover:pl-2 sm:hover:pl-4 transition-all duration-300">
+                            <span class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-xs sm:text-sm mb-1">On-Stage</span>
+                            <span class="text-xl sm:text-2xl md:text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors leading-tight">Performance & Theatre</span>
+                             <p class="text-xs sm:text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-20 transition-all duration-500 leading-relaxed">Mime, Mono Acting, Mock Parliament, K-Cosplay, and Face Fiesta competitions.</p>
                         </li>
                     </ul>
                     <div class="mt-12">
@@ -572,24 +934,24 @@
     </section>
 
     <!-- Registration -->
-    <section id="registration" class="py-24 px-6 relative overflow-hidden">
+    <section id="registration" class="py-10 sm:py-14 md:py-20 lg:py-24 px-4 sm:px-6 relative overflow-hidden">
         <div class="max-w-7xl mx-auto relative z-10">
-            <h2 class="text-center text-5xl md:text-8xl font-display font-black uppercase mb-16">Get <span class="text-[var(--color-accent)]">Passes</span></h2>
+            <h2 class="text-center text-2.5xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-8xl font-display font-black uppercase mb-6 sm:mb-8 md:mb-12 lg:mb-16 leading-[1.1]">Get <span class="text-[var(--color-accent)]">Passes</span></h2>
             
-            <div class="grid md:grid-cols-3 gap-8">
+            <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-8">
                 <!-- Pass 1 -->
                 <div class="magnetic-wrap w-full">
-                    <div class="magnetic-content border border-gray-700 bg-[#111] p-8 flex flex-col hover:border-[var(--color-accent)] transition-colors duration-300 group h-full">
+                    <div class="magnetic-content border border-gray-700 bg-[#111] p-4 sm:p-6 md:p-8 flex flex-col hover:border-[var(--color-accent)] transition-colors duration-300 group h-full">
                         <div class="mb-4">
-                            <h3 class="text-2xl font-display font-bold uppercase text-gray-400 group-hover:text-white">General</h3>
-                            <p class="text-4xl font-black mt-2">₹300</p>
+                            <h3 class="text-xl sm:text-2xl font-display font-bold uppercase text-gray-400 group-hover:text-white">Events Pass</h3>
+                            
                         </div>
-                        <ul class="flex-grow space-y-3 text-sm text-gray-400 mb-8">
-                            <li>• Entry for 1 Day</li>
-                            <li>• Access to all Technical Events</li>
-                            <li>• Workshop Discounts</li>
+                        <ul class="flex-grow space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-400 mb-6 sm:mb-8">
+                            <li>• Yatra entry Pass Mandatory</li>
+                            <li>• Access to Specific Events</li>
+                            <li>• Rules and Regulations applied </li>
                         </ul>
-                        <button class="w-full py-4 border border-white uppercase font-bold text-sm tracking-widest hover:bg-[var(--color-accent)] hover:border-[var(--color-accent)] hover:text-black transition-all">
+                        <button class="w-full py-3 sm:py-4 border border-white uppercase font-bold text-xs sm:text-sm tracking-widest hover:bg-[var(--color-accent)] hover:border-[var(--color-accent)] hover:text-black transition-all min-h-[44px]">
                             Register Now
                         </button>
                     </div>
@@ -597,19 +959,19 @@
 
                 <!-- Pass 2 (Featured) -->
                 <div class="magnetic-wrap w-full md:-translate-y-4">
-                    <div class="magnetic-content border-2 border-[var(--color-accent)] bg-[#111] p-8 flex flex-col shadow-[0_0_30px_rgba(155,23,153,0.1)] h-full relative">
-                        <div class="absolute top-0 right-0 bg-[var(--color-accent)] text-black text-xs font-bold px-3 py-1 uppercase">Recommended</div>
+                    <div class="magnetic-content border-2 border-[var(--color-accent)] bg-[#111] p-4 sm:p-6 md:p-8 flex flex-col shadow-[0_0_30px_rgba(155,23,153,0.1)] h-full relative">
+                        <div class="absolute top-0 right-0 bg-[var(--color-accent)] text-black text-xs font-bold px-2 sm:px-3 py-1 uppercase">Recommended</div>
                         <div class="mb-4">
-                            <h3 class="text-2xl font-display font-bold uppercase text-[var(--color-accent)]">All Access</h3>
-                            <p class="text-4xl font-black mt-2">₹500</p>
+                            <h3 class="text-xl sm:text-2xl font-display font-bold uppercase text-[var(--color-accent)]">All Access</h3>
+                            <p class="text-3xl sm:text-4xl font-black mt-2">₹500</p>
                         </div>
-                        <ul class="flex-grow space-y-3 text-sm text-gray-300 mb-8">
+                        <ul class="flex-grow space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-300 mb-6 sm:mb-8">
                             <li>• Entry for Both Days</li>
                             <li>• Pro Show Access</li>
                             <li>• Participate in 5+ Events</li>
                             <li>• Festival Kit</li>
                         </ul>
-                        <button class="w-full py-4 bg-[var(--color-accent)] text-black uppercase font-bold text-sm tracking-widest hover:bg-white transition-all">
+                        <button class="w-full py-3 sm:py-4 bg-[var(--color-accent)] text-black uppercase font-bold text-xs sm:text-sm tracking-widest hover:bg-white transition-all min-h-[44px]">
                             Register Now
                         </button>
                     </div>
@@ -617,18 +979,18 @@
 
                 <!-- Pass 3 -->
                 <div class="magnetic-wrap w-full">
-                    <div class="magnetic-content border border-gray-700 bg-[#111] p-8 flex flex-col hover:border-[var(--color-secondary)] transition-colors duration-300 group h-full">
+                    <div class="magnetic-content border border-gray-700 bg-[#111] p-4 sm:p-6 md:p-8 flex flex-col hover:border-[var(--color-secondary)] transition-colors duration-300 group h-full">
                         <div class="mb-4">
-                            <h3 class="text-2xl font-display font-bold uppercase text-gray-400 group-hover:text-white">VIP</h3>
-                            <p class="text-4xl font-black mt-2">₹1000</p>
+                            <h3 class="text-xl sm:text-2xl font-display font-bold uppercase text-gray-400 group-hover:text-white">VIP</h3>
+                            <p class="text-3xl sm:text-4xl font-black mt-2">₹1000</p>
                         </div>
-                        <ul class="flex-grow space-y-3 text-sm text-gray-400 mb-8">
+                        <ul class="flex-grow space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-400 mb-6 sm:mb-8">
                             <li>• Front Row for Pro Shows</li>
                             <li>• Meet & Greet</li>
                             <li>• Free Workshops</li>
                             <li>• Food Coupons</li>
                         </ul>
-                        <button class="w-full py-4 border border-white uppercase font-bold text-sm tracking-widest hover:bg-[var(--color-secondary)] hover:border-[var(--color-secondary)] hover:text-black transition-all">
+                        <button class="w-full py-3 sm:py-4 border border-white uppercase font-bold text-xs sm:text-sm tracking-widest hover:bg-[var(--color-secondary)] hover:border-[var(--color-secondary)] hover:text-black transition-all min-h-[44px]">
                             Register Now
                         </button>
                     </div>
@@ -638,37 +1000,105 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-[var(--color-accent)] text-black py-20 px-6 overflow-hidden">
-        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12">
+    <footer class="bg-[var(--color-accent)] text-black py-10 sm:py-14 md:py-16 lg:py-20 px-4 sm:px-6 overflow-hidden">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-12">
             <div>
-                <h2 class="text-7xl font-display font-black uppercase tracking-tighter mb-6 hover:skew-x-6 transition-transform cursor-default">YATRA'26</h2>
-                <div class="space-y-4 font-mono text-sm">
+                <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-display font-black uppercase tracking-tighter mb-4 sm:mb-5 md:mb-6 leading-[1.1] hover:skew-x-6 transition-transform cursor-default">YATRA'26</h2>
+                <div class="space-y-3 sm:space-y-4 font-mono text-sm sm:text-base md:text-lg">
                     <div>
-                        <p class="font-bold uppercase mb-2">Address</p>
-                        <p class="opacity-80">Kuthambakkam, Chennai, Tamil Nadu 600124</p>
+                        <p class="font-bold uppercase mb-1 sm:mb-2 text-xs sm:text-sm md:text-base">Address</p>
+                        <p class="opacity-80 text-xs sm:text-sm md:text-base leading-relaxed">Kuthambakkam, Chennai, Tamil Nadu 600124</p>
                     </div>
                     <div>
-                        <p class="font-bold uppercase mb-2">Website</p>
-                        <a href="https://www.ritchennai.org" target="_blank" class="opacity-80 hover:opacity-100 hover:underline transition-opacity">www.ritchennai.org</a>
+                        <p class="font-bold uppercase mb-1 sm:mb-2 text-xs sm:text-sm md:text-base">Website</p>
+                        <a href="https://www.ritchennai.org" target="_blank" class="opacity-80 hover:opacity-100 hover:underline transition-opacity text-xs sm:text-sm md:text-base break-all">www.ritchennai.org</a>
                     </div>
                 </div>
             </div>
-            <div class="flex flex-col justify-end items-start md:items-end">
-                <div class="space-y-4 font-mono text-sm mb-8 text-right">
+            <div class="flex flex-col justify-end items-start md:items-end mt-6 md:mt-0">
+                <div class="space-y-3 sm:space-y-4 font-mono text-sm sm:text-base md:text-lg mb-5 sm:mb-6 md:mb-8 text-left md:text-right w-full">
                     <div>
-                        <p class="font-bold uppercase mb-2">Phone</p>
-                        <a href="tel:04437181600" class="opacity-80 hover:opacity-100 hover:underline transition-opacity">044 3718 1600</a>
+                        <p class="font-bold uppercase mb-1 sm:mb-2 text-xs sm:text-sm md:text-base">Phone</p>
+                        <a href="tel:04437181600" class="opacity-80 hover:opacity-100 hover:underline transition-opacity text-xs sm:text-sm md:text-base">044 3718 1600</a>
                     </div>
                 </div>
-                <div class="flex gap-4">
-                    <a href="https://www.instagram.com/yatra_rit/?hl=en " target="_blank" class="w-10 h-10 border border-black rounded-full flex items-center justify-center hover:bg-black hover:text-[var(--color-accent)] transition-colors">IG</a>
-                    <a href="https://www.youtube.com/@rajalakshmiinstituteoftech4448" target="_blank" class="w-10 h-10 border border-black rounded-full flex items-center justify-center hover:bg-black hover:text-[var(--color-accent)] transition-colors">YT</a>
+                <div class="flex gap-3 sm:gap-4">
+                    <a href="https://www.instagram.com/yatra_rit/?hl=en" target="_blank" rel="noopener noreferrer" class="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 border border-black rounded-full flex items-center justify-center hover:bg-black hover:text-[var(--color-accent)] transition-colors min-w-[44px] min-h-[44px] group" aria-label="Instagram">
+                        <svg class="w-5 h-5 sm:w-5.5 sm:h-5.5 md:w-6 md:h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                    </a>
+                    <a href="https://www.youtube.com/@rajalakshmiinstituteoftech4448" target="_blank" rel="noopener noreferrer" class="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 border border-black rounded-full flex items-center justify-center hover:bg-black hover:text-[var(--color-accent)] transition-colors min-w-[44px] min-h-[44px] group" aria-label="YouTube">
+                        <svg class="w-5 h-5 sm:w-5.5 sm:h-5.5 md:w-6 md:h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        </svg>
+                    </a>
                 </div>
             </div>
         </div>
     </footer>
 
     <script>
+        // Mobile Detection and Routing - Run Immediately
+        (function() {
+            function isMobileDevice() {
+                // Check user agent
+                const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+                const isMobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
+                
+                // Check screen width
+                const isSmallScreen = window.innerWidth <= 768;
+                
+                // Check touch capability
+                const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+                
+                return isMobileUA || (isSmallScreen && isTouchDevice);
+            }
+            
+            // Check for desktop override first
+            const urlParams = new URLSearchParams(window.location.search);
+            const forceDesktop = urlParams.get('desktop') === 'true' || sessionStorage.getItem('desktopVersion') === 'true';
+            
+            // Redirect mobile users immediately - before page loads
+            if (isMobileDevice() && !forceDesktop) {
+                const currentPath = window.location.pathname;
+                const currentSearch = window.location.search;
+                const currentHash = window.location.hash;
+                
+                // Don't redirect if already on mobile version or React app
+                if (currentPath.includes('mobile') || currentPath.includes('index.html') || currentPath === '/') {
+                    // Stay on this page, show loader for mobile if on homepage.html
+                    if (currentPath.includes('homepage.html') && window.innerWidth <= 768) {
+                        const loader = document.getElementById('loader');
+                        if (loader) loader.style.display = 'flex';
+                    }
+                    return;
+                }
+                
+                // Redirect to mobile version (src/mobile)
+                // The mobile app is served via mobile.html which loads /src/mobile/main.jsx
+                const baseUrl = window.location.origin;
+                const redirectUrl = baseUrl + '/mobile.html' + currentSearch + currentHash;
+                
+                // Immediate redirect
+                window.location.replace(redirectUrl);
+                return;
+            }
+            
+            // Show appropriate loader based on device
+            // Desktop loader is shown by default, mobile loader is handled in initMobileLoader
+            
+            // Allow users to force desktop version
+            if (urlParams.get('desktop') === 'true') {
+                sessionStorage.setItem('desktopVersion', 'true');
+            }
+            
+            // Clear desktop preference on desktop devices
+            if (!isMobileDevice()) {
+                sessionStorage.removeItem('desktopVersion');
+            }
+        })();
+
         // 1. Initialize Smooth Scroll (Lenis)
         const lenis = new Lenis({
             duration: 1.2,
@@ -784,7 +1214,13 @@
             elements.forEach(element => {
                 const text = element.innerText;
                 const words = text.split(' ');
-                element.innerHTML = words.map(word => `<span class="inline-block mr-2">${word}</span>`).join('');
+                element.innerHTML = words.map((word, index) => {
+                    // Preserve pink color for "YATRA"
+                    if (word === 'YATRA' || word.includes('YATRA')) {
+                        return `<span class="inline-block mr-2" style="color: #9b1799 !important;">${word}</span>`;
+                    }
+                    return `<span class="inline-block mr-2">${word}</span>`;
+                }).join('');
             });
         };
 
@@ -880,6 +1316,19 @@
                 });
             });
 
+            // Blur Reveal for Logos
+            gsap.utils.toArray('.blur-reveal').forEach((logo, index) => {
+                ScrollTrigger.create({
+                    trigger: logo,
+                    start: "top 85%",
+                    onEnter: () => {
+                        setTimeout(() => {
+                            logo.classList.add('active');
+                        }, index * 150); // Stagger animation
+                    }
+                });
+            });
+
             // Lineup Stagger Animation - UPDATED for Accordion
             gsap.from(".lineup-accordion", {
                 scrollTrigger: { trigger: "#lineup", start: "top 80%" },
@@ -912,8 +1361,8 @@
             });
         };
 
-        // Loader Sequence
-        const initLoader = () => {
+        // Desktop Loader Sequence (HTML Split Shutter)
+        const initDesktopLoader = () => {
             document.body.style.overflow = 'hidden';
             const tl = gsap.timeline({
                 onComplete: () => {
@@ -927,7 +1376,12 @@
             const counter = { val: 0 };
             tl.to(counter, {
                 val: 100, duration: 2.0, ease: "power2.inOut",
-                onUpdate: () => document.getElementById('loader-percent').innerText = Math.floor(counter.val) + "%"
+                onUpdate: () => {
+                    const loaderPercent = document.getElementById('loader-percent');
+                    if (loaderPercent) {
+                        loaderPercent.innerText = Math.floor(counter.val) + "%";
+                    }
+                }
             })
             .to("#loader-center-content", { opacity: 0, scale: 0.8, duration: 0.3 })
             .to(".loader-panel.top", { yPercent: -100, duration: 1.2, ease: "power4.inOut" }, "split")
@@ -936,7 +1390,47 @@
             .to(".loader-panel.bottom .loader-text-bg", { y: -100, duration: 1.2, ease: "power4.inOut" }, "split");
         };
 
-        initLoader();
+        // Mobile Loader Sequence (Generic)
+        const initMobileLoader = () => {
+            document.body.style.overflow = 'hidden';
+            const mobileLoader = document.getElementById('mobile-loader');
+            if (!mobileLoader) {
+                initAnimations();
+                return;
+            }
+            
+            mobileLoader.style.display = 'flex';
+            
+            const tl = gsap.timeline({
+                onComplete: () => {
+                    document.body.style.overflow = '';
+                    mobileLoader.style.display = 'none';
+                    initAnimations();
+                    gsap.from(".animate-fade-in-up", { y: 30, opacity: 0, duration: 1, ease: "power3.out" });
+                }
+            });
+
+            const counter = { val: 0 };
+            tl.to(counter, {
+                val: 100, duration: 1.5, ease: "power2.inOut",
+                onUpdate: () => {
+                    const loaderPercent = document.getElementById('mobile-loader-percent');
+                    if (loaderPercent) {
+                        loaderPercent.innerText = Math.floor(counter.val) + "%";
+                    }
+                }
+            })
+            .to("#mobile-loader", { opacity: 0, duration: 0.5, ease: "power2.inOut" });
+        };
+
+        // Initialize appropriate loader based on device
+        if (window.innerWidth > 768) {
+            // Desktop - Use HTML split shutter loader
+            initDesktopLoader();
+        } else {
+            // Mobile - Use generic loader
+            initMobileLoader();
+        }
 
     </script>
 </body>
