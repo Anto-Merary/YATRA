@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import SpotlightCard from "@/components/reactbits/SpotlightCard";
 import { useMobile } from "../hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
-import mrmrsImage from "../assets/mrmrs.webp?url";
 import danceImage from "../assets/dance.webp?url";
 
 export function ProEventsPage() {
@@ -55,65 +54,7 @@ export function ProEventsPage() {
         </div>
 
         {/* PRO Events Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-4xl">
-          {/* Mr. & Ms. Yatra Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <SpotlightCard
-              className="group relative cursor-pointer overflow-hidden border-purple-500/30 bg-gradient-to-br from-purple-500/10 via-white/[0.04] to-transparent p-6 sm:p-8 transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/20 hover:opacity-20 active:scale-[0.98] touch-manipulation backdrop-blur-sm hover:backdrop-blur-none"
-              spotlightColor={isMobile ? "rgba(168, 85, 247, 0.15)" : "rgba(168, 85, 247, 0.25)"}
-              onClick={() => navigate("/events/mr-ms-yatra")}
-            >
-              {/* Right image (masked) */}
-              <div
-                className="pointer-events-none absolute inset-y-0 right-0 w-[44%] sm:w-[46%] opacity-60 sm:opacity-90"
-                aria-hidden="true"
-                style={{
-                  WebkitMaskImage:
-                    "linear-gradient(to left, rgba(0,0,0,1) 62%, rgba(0,0,0,0) 100%)",
-                  maskImage:
-                    "linear-gradient(to left, rgba(0,0,0,1) 62%, rgba(0,0,0,0) 100%)",
-                }}
-              >
-                <img
-                  src={mrmrsImage}
-                  alt=""
-                  className="h-full w-full object-cover object-center"
-                  draggable={false}
-                />
-                <div className="absolute inset-0 bg-gradient-to-l from-black/0 via-black/15 to-black/70" />
-              </div>
-
-              {/* Content */}
-              <div className="relative z-10 pr-12 sm:pr-16">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-purple-500/20 bg-purple-500/10 text-purple-300">
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-white">
-                    Mr. & Ms. Yatra
-                  </h3>
-                </div>
-                <p className="text-sm sm:text-base text-white/70 mb-4 line-clamp-2">
-                  The ultimate competition to crown the most charismatic personalities of YATRA 2026
-                </p>
-                <div className="flex items-center gap-4 text-xs sm:text-sm">
-                  <span className="text-purple-300">Prize: ₹5000</span>
-                  <span className="text-white/50">•</span>
-                  <span className="text-white/70">Entry: ₹300</span>
-                </div>
-                <div className="mt-4 text-xs text-white/50 group-hover:text-white/70 transition-colors">
-                  Tap to view details →
-                </div>
-              </div>
-            </SpotlightCard>
-          </motion.div>
-
+        <div className="grid grid-cols-1 sm:grid-cols-1 gap-4 sm:gap-6 max-w-4xl">
           {/* Dance Battle Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
