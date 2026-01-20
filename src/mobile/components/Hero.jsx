@@ -75,6 +75,7 @@ function Hero() {
   const [isScrollReady, setIsScrollReady] = useState(false)
   const stageRef = useRef(null)
   const heroRef = useRef(null)
+  const passesRef = useRef(null)
   const aboutRef = useRef(null)
   const aboutTitleRef = useRef(null)
   const aboutContentRef = useRef(null)
@@ -215,6 +216,17 @@ function Hero() {
       observer.disconnect()
     }
   }, [runAboutReveal])
+
+  const scrollToPasses = useCallback(() => {
+    const el = passesRef.current
+    if (!el) return
+    // Works with native scroll; Lenis will still keep things smooth.
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [])
+
+  const goToEvents = useCallback(() => {
+    window.location.assign('/events')
+  }, [])
 
   // Features section: trigger glitch animation when section enters view
   useEffect(() => {
@@ -606,7 +618,7 @@ function Hero() {
 
         {/* Action Buttons - Below 2026 text */}
         <div className="hero-buttons">
-          <button className="hero-button buy-tickets">
+          <button className="hero-button buy-tickets" onClick={scrollToPasses} type="button">
             <span className="hero-button-text">BUY TICKETS</span>
             <span className="star-icon" aria-hidden="true">
               ✦
@@ -750,14 +762,16 @@ function Hero() {
             50+ Events with CASH PRICE
           </div>
           <img src={eventImage} alt="Yatra Event" className="features-event-image" />
-          <button className="features-show-more-btn">SHOW MORE</button>
+          <button className="features-show-more-btn" onClick={goToEvents} type="button">
+            Register Now
+          </button>
         </div>
         <div className="features-event-media features-event-media--right">
           <div className="features-event-badge">
             ELECTRIFYING PERFORMANCES
           </div>
           <img src={performanceImage} alt="Electrifying Performance" className="features-event-image" />
-          <button className="features-show-more-btn">SHOW MORE</button>
+          <button className="features-show-more-btn">SEE LINEUP</button>
         </div>
       </div>
     </section>
@@ -804,6 +818,87 @@ function Hero() {
                 loading="lazy"
               />
             ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* BUY PASSES section (from desktop registration) */}
+    <section
+      className="mobile-passes-section"
+      aria-label="Buy Passes"
+      id="buy-passes"
+      ref={passesRef}
+    >
+      <div className="mobile-passes-container">
+        <h2 className="mobile-passes-title">
+          Get <span className="mobile-passes-title-accent">Passes</span>
+        </h2>
+
+        <div className="mobile-passes-grid">
+          {/* Pass 1 */}
+          <div className="mobile-pass-card">
+            <div className="mobile-pass-card-header">
+              <h3 className="mobile-pass-card-title">YATRA EVENTS</h3>
+            </div>
+            <div className="mobile-pass-divider" aria-hidden="true" />
+            <ul className="mobile-pass-card-list">
+              <li>• Event entry pass</li>
+              <li>• Select your specific Events</li>
+              <li>• Only access to events</li>
+            </ul>
+            <a
+              href="https://formbuilder.ccavenue.com/live/icici-bank/rajalakshmi-institue-of-technology-2/yatra-2026-reg-fees-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mobile-pass-cta mobile-pass-cta--outline"
+            >
+              Register Now
+            </a>
+          </div>
+
+          {/* Pass 2 (Featured) */}
+          <div className="mobile-pass-card mobile-pass-card--featured">
+            <div className="mobile-pass-badge">Mandatory</div>
+            <div className="mobile-pass-card-header">
+              <h3 className="mobile-pass-card-title mobile-pass-card-title--accent">
+                YATRA ENTRY PASS
+              </h3>
+              <p className="mobile-pass-price">₹500</p>
+              <p className="mobile-pass-subprice">(RIT students)</p>
+            </div>
+            <div className="mobile-pass-divider" aria-hidden="true" />
+            <ul className="mobile-pass-card-list mobile-pass-card-list--bright">
+              <li>• Access to 2 DAYS</li>
+              <li>• Proshow</li>
+              <li>• DJ Night</li>
+            </ul>
+            <a
+              href="https://formbuilder.ccavenue.com/live/icici-bank/rajalakshmi-institue-of-technology-2/yatra-2026-reg-fees-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mobile-pass-cta mobile-pass-cta--accent"
+            >
+              Register Now
+            </a>
+          </div>
+
+          {/* Pass 3 */}
+          <div className="mobile-pass-card">
+            <div className="mobile-pass-card-header">
+              <h3 className="mobile-pass-card-title">DANCE BATTLE</h3>
+              <p className="mobile-pass-price">₹800</p>
+            </div>
+            <div className="mobile-pass-divider" aria-hidden="true" />
+            <p className="mobile-pass-description">
+              DANCE BATTLE is a premium spotlight event designed to celebrate
+              confidence, charisma, and stage presence. Come prepared to
+              introduce yourself, show your personality, and own the stage — in
+              front of an energetic crowd.
+            </p>
+            <a href="/pro-dance-battle" className="mobile-pass-cta mobile-pass-cta--secondary">
+              Register Now
+            </a>
           </div>
         </div>
       </div>
