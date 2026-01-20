@@ -8,6 +8,8 @@ import videoSrc from '../assets/video.mp4'
 import purpleBg from '../assets/purple.jpeg'
 import eventImage from '../assets/event.jpeg'
 import performanceImage from '../assets/performance.jpeg'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 function GlitchText({ koreanText, englishText, className, delay = 0, shouldStart = false, variant = 'glitch' }) {
   const [isGlitching, setIsGlitching] = useState(false)
@@ -270,47 +272,34 @@ function Hero() {
     }
   }, [])
 
-  // BLAST collage: scroll-driven convergence (no timers, fully reversible).
+  // BLAST collage: no sticky/pin — simple cinematic entrance.
   useEffect(() => {
     const sectionEl = blastSectionRef.current
     const collageEl = blastCollageRef.current
     if (!sectionEl || !collageEl) return
 
-    const clamp01 = (v) => Math.min(1, Math.max(0, v))
-    const clamp = (v, min, max) => Math.min(max, Math.max(min, v))
-    const lerp = (a, b, t) => a + (b - a) * t
-    const easeInOutCubic = (t) =>
-      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+    const reduceMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    let raf = 0
-    let cachedW = 0
-    let cachedH = 0
-    let finalPositions = []
-    let startPositions = []
-    let cachedCount = 0
+    gsap.registerPlugin(ScrollTrigger)
 
-    const computeLayout = () => {
+    const els = blastPhotoElsRef.current.filter(Boolean)
+    if (els.length === 0) return
+
+    // GSAP-driven entrance: slower, smoother, more "cinematic" (no scrub).
+    let tl = null
+    let st = null
+
+    const computePositions = () => {
       const r = collageEl.getBoundingClientRect()
       const w = Math.max(1, r.width)
       const h = Math.max(1, r.height)
-      const count = blastPhotoElsRef.current.filter(Boolean).length || blastImages.length || 0
+      const count = els.length
 
-      if (
-        Math.abs(w - cachedW) < 1 &&
-        Math.abs(h - cachedH) < 1 &&
-        finalPositions.length === count &&
-        count === cachedCount
-      )
-        return
-      cachedW = w
-      cachedH = h
-      cachedCount = count
-
-      // Randomly-stacked (but evenly spread) end-state (relative to collage center).
-      // Matches the "overlapping stack" vibe from your reference.
       const s = Math.min(w, h)
       const spreadX = s * 0.33
-      // Use more of the available vertical space (especially on mobile).
       const spreadY = Math.min(h * 0.34, s * 0.52)
 
       const baseFinal = [
@@ -321,9 +310,8 @@ function Hero() {
         { x: -spreadX * 0.62, y: spreadY * 1.02 },
         { x: -spreadX * 1.02, y: spreadY * 0.42 },
       ]
-      finalPositions = baseFinal.slice(0, count)
+      const finalPositions = baseFinal.slice(0, count)
 
-      // Start positions: come in from different sides, larger travel.
       const baseDirs = [
         { x: -1, y: -0.15 },
         { x: 1, y: -0.25 },
@@ -333,69 +321,108 @@ function Hero() {
         { x: -1, y: 0.55 },
       ]
       const startDirs = baseDirs.slice(0, count)
+      const amp = s * 0.95
 
-      const amp = s * 0.9
-      startPositions = finalPositions.map((p, i) => ({
+      const startPositions = finalPositions.map((p, i) => ({
         x: p.x + (startDirs[i]?.x ?? 0) * amp,
         y: p.y + (startDirs[i]?.y ?? 0) * amp,
       }))
+
+      // Gentle rotations (deterministic) so it looks natural but stable.
+      const rotations = [ -6, 5, -3, 7, -4, 6 ].slice(0, count)
+
+      return { finalPositions, startPositions, rotations }
     }
 
-    const update = () => {
-      raf = 0
-      computeLayout()
+    const build = () => {
+      if (tl) tl.kill()
+      if (st) st.kill()
+      tl = null
+      st = null
 
-      const rect = sectionEl.getBoundingClientRect()
-      const vh = Math.max(1, window.innerHeight)
+      const { finalPositions, startPositions, rotations } = computePositions()
 
-      // Mobile-friendly gating:
-      // Start revealing just after the title is comfortably in view (not halfway down the section).
-      // This avoids "scrolling and seeing nothing" on smaller mobile viewports.
-      const gateY = vh * 0.55 // start when section top passes ~55% viewport height
-      const afterGate = Math.max(0, gateY - rect.top)
-
-      // One "step" per image. Smaller on mobile so 1 swipe/scroll ≈ 1 image.
-      const step = Math.max(90, vh * 0.12)
-
-      const els = blastPhotoElsRef.current
-      for (let i = 0; i < els.length; i += 1) {
-        const el = els[i]
-        if (!el) continue
-
-        const base = finalPositions[i] || { x: 0, y: 0 }
+      // Base state
+      els.forEach((el, i) => {
         const start = startPositions[i] || { x: 0, y: 0 }
+        gsap.set(el, {
+          x: start.x,
+          y: start.y,
+          scale: 1.6,
+          opacity: 0,
+          rotate: rotations[i] ?? 0,
+          transformOrigin: '50% 50%',
+          zIndex: 10 + i,
+          force3D: true,
+        })
+      })
 
-        // Local progress for each image: one-by-one sequence tied to scroll.
-        const t = clamp01((afterGate - i * step) / step)
-        const e = easeInOutCubic(t)
-
-        const opacity = e
-        const scale = lerp(1.55, 1.0, e) // big -> smaller
-        const x = lerp(start.x, base.x, e)
-        const y = lerp(start.y, base.y, e)
-
-        el.style.opacity = `${opacity}`
-        el.style.transform = `translate3d(-50%, -50%, 0) translate3d(${x.toFixed(2)}px, ${y.toFixed(
-          2
-        )}px, 0) scale(${scale.toFixed(4)})`
-        el.style.zIndex = `${10 + i}`
+      if (reduceMotion) {
+        els.forEach((el, i) => {
+          const base = finalPositions[i] || { x: 0, y: 0 }
+          gsap.set(el, { x: base.x, y: base.y, scale: 1, opacity: 1, rotate: 0 })
+        })
+        return
       }
+
+      tl = gsap.timeline({
+        defaults: { ease: 'power3.out' },
+      })
+      tl.pause(0)
+
+      // Slower + slightly overlapping entrances
+      els.forEach((el, i) => {
+        const base = finalPositions[i] || { x: 0, y: 0 }
+        tl.to(
+          el,
+          {
+            x: base.x,
+            y: base.y,
+            scale: 1,
+            opacity: 1,
+            rotate: 0,
+            duration: 1.65,
+          },
+          i * 0.38
+        )
+      })
+
+      // Trigger once when section enters view (and reset when scrolling back up).
+      st = ScrollTrigger.create({
+        id: 'blast-collage',
+        trigger: sectionEl,
+        start: 'top 72%',
+        onEnter: () => {
+          if (!tl) return
+          tl.timeScale(1).play()
+        },
+        onEnterBack: () => {
+          // If user scrolls back down into the section, ensure it plays forward again.
+          if (!tl) return
+          tl.timeScale(1).play()
+        },
+        onLeaveBack: () => {
+          // Reverse the collage gracefully when scrolling up out of the section.
+          if (!tl) return
+          tl.timeScale(1).reverse()
+        },
+        invalidateOnRefresh: true,
+      })
     }
 
-    const onScroll = () => {
-      if (raf) return
-      raf = window.requestAnimationFrame(update)
-    }
+    // Build once, then rebuild on refresh/resize (keeps layout crisp).
+    build()
 
-    update()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll)
+    const onRefresh = () => build()
+    ScrollTrigger.addEventListener('refreshInit', onRefresh)
+    ScrollTrigger.refresh()
+
     return () => {
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
-      if (raf) window.cancelAnimationFrame(raf)
+      ScrollTrigger.removeEventListener('refreshInit', onRefresh)
+      if (st) st.kill()
+      if (tl) tl.kill()
     }
-  }, [])
+  }, [blastImages.length])
 
 
   // Scroll-based settle interaction - continuous and proportional to scroll distance,
@@ -741,7 +768,7 @@ function Hero() {
       aria-label="Blast into Past"
       ref={blastSectionRef}
     >
-      <div className="blast-sticky">
+      <div className="blast-inner">
         <div className="features-container">
           <h2 className="features-title">
             <GlitchText
@@ -781,6 +808,59 @@ function Hero() {
         </div>
       </div>
     </section>
+
+    {/* Footer */}
+    <footer className="mobile-footer">
+      <div className="mobile-footer-container">
+        <div className="mobile-footer-left">
+          <h2 className="mobile-footer-title">YATRA'26</h2>
+          <div className="mobile-footer-info">
+            <div>
+              <p className="mobile-footer-label">Address</p>
+              <p className="mobile-footer-text">Kuthambakkam, Chennai, Tamil Nadu 600124</p>
+            </div>
+            <div>
+              <p className="mobile-footer-label">Website</p>
+              <a href="https://www.ritchennai.org" target="_blank" rel="noopener noreferrer" className="mobile-footer-link">
+                www.ritchennai.org
+              </a>
+            </div>
+          </div>
+        </div>
+        <div className="mobile-footer-right">
+          <div className="mobile-footer-contact">
+            <div>
+              <p className="mobile-footer-label">Phone</p>
+              <a href="tel:04437181600" className="mobile-footer-link">044 3718 1600</a>
+            </div>
+          </div>
+          <div className="mobile-footer-social">
+            <a
+              href="https://www.instagram.com/yatra_rit/?hl=en"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mobile-footer-social-link"
+              aria-label="Instagram"
+            >
+              <svg className="mobile-footer-social-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+            </a>
+            <a
+              href="https://www.youtube.com/@rajalakshmiinstituteoftech4448"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mobile-footer-social-link"
+              aria-label="YouTube"
+            >
+              <svg className="mobile-footer-social-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
     </>
   )
 }

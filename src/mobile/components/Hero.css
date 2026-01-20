@@ -1,5 +1,7 @@
 /* Import Poppins from Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+/* Import Space Grotesk for Footer */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 /* Make the shared fallback font stack available everywhere (not just inside `.hero`). */
 :root {
@@ -1372,15 +1374,15 @@
 
 .blast-section {
   width: 100%;
-  /* Enough scroll for 6 steps, without long dead-space after the last photo */
-  min-height: 170vh;
   background-image: url('../assets/pink2.jpeg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  padding: 0;
+  padding: 4.25rem 1.5rem clamp(6rem, 16vh, 10rem);
   display: block;
   position: relative;
+  /* Prevent collage from visually colliding with footer below */
+  isolation: isolate;
 }
 
 .blast-section::after {
@@ -1400,12 +1402,8 @@
   color: #000000;
 }
 
-.blast-sticky {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
-  min-height: 100vh;
-  padding: 5rem 1.5rem 4rem;
+.blast-inner {
+  position: relative;
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -1415,26 +1413,30 @@
 .blast-collage {
   position: relative;
   width: 100%;
-  height: clamp(560px, 74vh, 900px);
-  margin-top: 2.6rem;
+  height: clamp(360px, 48vh, 560px);
+  margin-top: 1.25rem;
   z-index: 2;
 }
 
 .blast-photo {
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 46%;
   width: clamp(170px, 60vw, 340px);
   aspect-ratio: 4 / 5;
   object-fit: cover;
   border-radius: 12px;
   opacity: 0;
-  transform: translate3d(-50%, -50%, 0) scale(1.55);
+  transform: translate3d(-50%, -50%, 0);
   will-change: transform, opacity;
-  transition: none; /* scroll-driven: no time-based easing */
+  transition: none; /* GSAP/ScrollTrigger drives motion */
   box-shadow:
     0 10px 26px rgba(0, 0, 0, 0.22),
     0 2px 10px rgba(0, 0, 0, 0.14);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
 }
 
 .features-event-image {
@@ -1814,4 +1816,138 @@
     opacity 260ms ease,
     transform 260ms ease,
     filter 260ms ease;
+}
+
+/* Mobile Footer Styles */
+.mobile-footer {
+  background-color: #8C2855;
+  color: #000000;
+  padding: 2.5rem 1.5rem;
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  z-index: 20;
+}
+
+.mobile-footer-container {
+  max-width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.mobile-footer-left {
+  width: 100%;
+}
+
+.mobile-footer-title {
+  font-family: 'Victory Striker', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  color: #000000;
+  cursor: default;
+  transition: transform 0.3s ease;
+}
+
+.mobile-footer-title:hover {
+  transform: skewX(6deg);
+}
+
+.mobile-footer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-family: 'Space Grotesk', monospace, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 0.875rem;
+}
+
+.mobile-footer-label {
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+  color: #000000;
+}
+
+.mobile-footer-text {
+  opacity: 0.8;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #000000;
+}
+
+.mobile-footer-link {
+  opacity: 0.8;
+  font-size: 0.875rem;
+  color: #000000;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+  word-break: break-all;
+}
+
+.mobile-footer-link:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.mobile-footer-right {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  margin-top: 1.5rem;
+}
+
+.mobile-footer-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-family: 'Space Grotesk', monospace, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  text-align: left;
+}
+
+.mobile-footer-social {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.mobile-footer-social-link {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid #000000;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  text-decoration: none;
+}
+
+.mobile-footer-social-link:hover {
+  background-color: #000000;
+  color: #8C2855;
+}
+
+.mobile-footer-social-icon {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  color: #000000;
+}
+
+.mobile-footer-social-link:hover .mobile-footer-social-icon {
+  color: #8C2855;
 }
