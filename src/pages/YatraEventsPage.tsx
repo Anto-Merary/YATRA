@@ -595,12 +595,9 @@ export function YatraEventsPage() {
                         {e.day === "day1" ? "DAY 1" : "DAY 2"}
                       </div>
                     </div>
-                    <div className="mb-2 xs:mb-3 text-xs xs:text-sm text-white/70 line-clamp-1">
-                      {e.venue}
-                    </div>
                   </div>
 
-                  {/* See More Button */}
+                  {/* More Info Button */}
                   <div className="relative z-10 mt-3 pt-3 border-t border-white/10">
                     <button
                       onClick={() => navigate(`/events/${e.id}`)}
@@ -610,7 +607,7 @@ export function YatraEventsPage() {
                           : "bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400"
                       }`}
                     >
-                      See More
+                      More Info
                     </button>
                   </div>
                 </SpotlightCard>
