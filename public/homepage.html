@@ -104,6 +104,7 @@
             background-size: 100px 100px;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
             animation: grain 0.5s steps(5) infinite;
+            will-change: transform;
         }
 
         @keyframes grain {
@@ -207,7 +208,10 @@
 
         /* Marquee */
         .marquee-container { overflow: hidden; white-space: nowrap; }
-        .marquee-content { display: inline-block; }
+        .marquee-content { 
+            display: inline-block; 
+            will-change: transform;
+        }
 
         /* Custom Cursor */
         .cursor-dot {
@@ -217,6 +221,7 @@
             width: var(--cursor-size); height: var(--cursor-size);
             background-color: var(--color-accent);
             transition: width 0.3s, height 0.3s, background-color 0.3s;
+            will-change: transform;
         }
         .cursor-outline {
             position: fixed; top: 0; left: 0;
@@ -225,6 +230,7 @@
             width: var(--cursor-outline-size); height: var(--cursor-outline-size);
             border: 1px solid var(--color-accent);
             transition: width 0.3s, height 0.3s, background-color 0.3s, border-color 0.3s;
+            will-change: transform;
         }
         
         /* Cursor Interactions */
@@ -241,7 +247,12 @@
             position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
             z-index: 1; border-radius: 50%;
         }
-        .magnetic-content { position: relative; z-index: 2; transition: transform 0.3s ease-out; }
+        .magnetic-content { 
+            position: relative; 
+            z-index: 2; 
+            transition: transform 0.3s ease-out; 
+            will-change: transform;
+        }
 
         /* Hacker Text Effect */
         .hacker-text { font-family: 'Space Grotesk', monospace; }
@@ -250,6 +261,7 @@
         .reveal-img {
             clip-path: inset(0 100% 0 0);
             transition: clip-path 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+            will-change: clip-path;
         }
         .reveal-img.active { clip-path: inset(0 0 0 0); }
 
@@ -263,11 +275,13 @@
                         transform 1s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             z-index: 100;
+            will-change: filter, opacity, transform;
         }
         .blur-reveal.active {
             filter: blur(0px);
             opacity: 1;
             transform: scale(1);
+            will-change: auto;
         }
         .logo-container {
             position: relative;
@@ -289,7 +303,12 @@
         }
 
         /* Word Reveal */
-        .word-reveal span { display: inline-block; opacity: 0; transform: translateY(20px); }
+        .word-reveal span { 
+            display: inline-block; 
+            opacity: 0; 
+            transform: translateY(20px); 
+            will-change: transform, opacity;
+        }
 
         /* Horizontal Gallery Styles */
         #gallery-pin {
@@ -302,6 +321,7 @@
             display: flex;
             height: 100%;
             width: max-content; /* Important for horizontal calculation */
+            will-change: transform;
         }
         .gallery-item {
             width: 100vw;
@@ -752,7 +772,7 @@
             <p class="uppercase tracking-[0.2em] sm:tracking-[0.3em] md:tracking-[0.5em] mb-3 sm:mb-4 text-[0.65rem] sm:text-xs md:text-sm lg:text-base font-bold animate-fade-in-up px-2 leading-relaxed">
                 Two Days • 40+ Epic Events+  • Infinite Vibes
             </p>
-            <div class="hero-parallax">
+            <div class="hero-parallax" style="will-change: transform;">
                 <h1 class="text-[18vw] sm:text-[16vw] md:text-[15vw] leading-[0.85] sm:leading-[0.8] font-display font-extrabold uppercase tracking-tighter">
                     Yatra
                 </h1>
@@ -901,7 +921,7 @@
                 </div>
                 <div class="order-1 md:order-2">
                     <h2 class="text-2.5xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-display font-bold mb-5 sm:mb-6 md:mb-8 uppercase leading-[1.1]">
-                        Event <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-accent)]">Categories</span>
+                        Event <br> <span class="text-[var(--color-accent)]">Categories</span>
                     </h2>
                     <p class="text-base sm:text-lg md:text-xl text-gray-400 mb-6 sm:mb-8 word-reveal-p leading-relaxed">
                         Compete across 50+ epic events over two days. Win massive cash prizes. Showcase your talent on the biggest stage.
@@ -1098,7 +1118,9 @@
             }
         })();
 
-        // 1. Initialize Smooth Scroll (Lenis)
+        // 1. Initialize Smooth Scroll (Lenis) - Optimized with GSAP ticker integration
+        gsap.registerPlugin(ScrollTrigger);
+        
         const lenis = new Lenis({
             duration: 1.2,
             easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -1110,33 +1132,47 @@
             touchMultiplier: 2,
         });
 
-        function raf(time) {
-            lenis.raf(time);
-            requestAnimationFrame(raf);
-        }
-        requestAnimationFrame(raf);
+        // Integrate Lenis with GSAP ticker for better performance
+        lenis.on('scroll', ScrollTrigger.update);
+        
+        gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
+        });
+        
+        gsap.ticker.lagSmoothing(0);
 
-        // Connect GSAP ScrollTrigger to Lenis
-        gsap.registerPlugin(ScrollTrigger);
-
-        // 2. Custom Cursor Logic
+        // 2. Custom Cursor Logic - Optimized with transform and RAF throttling
         const cursorDot = document.querySelector('.cursor-dot');
         const cursorOutline = document.querySelector('.cursor-outline');
-
-        window.addEventListener('mousemove', (e) => {
-            const posX = e.clientX;
-            const posY = e.clientY;
-
-            // Dot follows immediately
-            cursorDot.style.left = `${posX}px`;
-            cursorDot.style.top = `${posY}px`;
-
-            // Outline follows with delay
-            cursorOutline.animate({
-                left: `${posX}px`,
-                top: `${posY}px`
-            }, { duration: 500, fill: "forwards" });
-        });
+        
+        if (cursorDot && cursorOutline) {
+            let mouseX = 0, mouseY = 0;
+            let outlineX = 0, outlineY = 0;
+            let rafId = null;
+            
+            // Throttle cursor updates using requestAnimationFrame
+            const updateCursor = () => {
+                // Dot follows immediately with transform (GPU accelerated)
+                cursorDot.style.transform = `translate(calc(${mouseX}px - 50%), calc(${mouseY}px - 50%))`;
+                
+                // Smooth outline follow with lerp
+                outlineX += (mouseX - outlineX) * 0.15;
+                outlineY += (mouseY - outlineY) * 0.15;
+                cursorOutline.style.transform = `translate(calc(${outlineX}px - 50%), calc(${outlineY}px - 50%))`;
+                
+                rafId = null;
+            };
+            
+            window.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                // Only schedule RAF if not already scheduled
+                if (!rafId) {
+                    rafId = requestAnimationFrame(updateCursor);
+                }
+            }, { passive: true });
+        }
 
         // Hover detection for cursor scaling
         const hoverables = document.querySelectorAll('a, button, .card-hover, input');
@@ -1145,25 +1181,54 @@
             el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
         });
 
-        // 3. Magnetic Buttons
+        // 3. Magnetic Buttons - Optimized with throttling
         const magnets = document.querySelectorAll('.magnetic-wrap');
+        let magneticRafId = null;
+        const magneticUpdates = new Map();
+        
+        const updateMagnets = () => {
+            magneticUpdates.forEach(({ content, x, y }) => {
+                gsap.to(content, { 
+                    x: x * 0.3, 
+                    y: y * 0.3, 
+                    duration: 0.3, 
+                    ease: 'power2.out',
+                    overwrite: true
+                });
+            });
+            magneticUpdates.clear();
+            magneticRafId = null;
+        };
+        
         magnets.forEach((magnet) => {
             const content = magnet.querySelector('.magnetic-content');
+            if (!content) return;
             
             magnet.addEventListener('mousemove', (e) => {
                 const rect = magnet.getBoundingClientRect();
                 const x = e.clientX - rect.left - rect.width / 2;
                 const y = e.clientY - rect.top - rect.height / 2;
                 
-                // Move content slightly towards mouse
-                gsap.to(content, { x: x * 0.3, y: y * 0.3, duration: 0.3, ease: 'power2.out' });
+                magneticUpdates.set(magnet, { content, x, y });
+                
+                if (!magneticRafId) {
+                    magneticRafId = requestAnimationFrame(updateMagnets);
+                }
+                
                 // Move cursor outline towards element center
-                gsap.to(cursorOutline, { scale: 1.5, duration: 0.3 });
-            });
+                const cursorOutlineEl = document.querySelector('.cursor-outline');
+                if (cursorOutlineEl) {
+                    gsap.to(cursorOutlineEl, { scale: 1.5, duration: 0.3, overwrite: true });
+                }
+            }, { passive: true });
 
             magnet.addEventListener('mouseleave', () => {
+                magneticUpdates.delete(magnet);
                 gsap.to(content, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.3)' });
-                gsap.to(cursorOutline, { scale: 1, duration: 0.3 });
+                const cursorOutlineEl = document.querySelector('.cursor-outline');
+                if (cursorOutlineEl) {
+                    gsap.to(cursorOutlineEl, { scale: 1, duration: 0.3 });
+                }
             });
         });
 
@@ -1194,18 +1259,32 @@
             });
         });
 
-        // 5. Hero Parallax
+        // 5. Hero Parallax - Optimized with throttling
         const heroTitle = document.querySelector('.hero-parallax');
-        window.addEventListener('mousemove', (e) => {
-            const x = (e.clientX / window.innerWidth - 0.5) * 40;
-            const y = (e.clientY / window.innerHeight - 0.5) * 40;
-            gsap.to(heroTitle, {
-                x: x,
-                y: y,
-                duration: 1,
-                ease: 'power2.out'
-            });
-        });
+        if (heroTitle) {
+            let parallaxRafId = null;
+            let targetX = 0, targetY = 0;
+            
+            const updateParallax = () => {
+                gsap.to(heroTitle, {
+                    x: targetX,
+                    y: targetY,
+                    duration: 1,
+                    ease: 'power2.out',
+                    overwrite: true
+                });
+                parallaxRafId = null;
+            };
+            
+            window.addEventListener('mousemove', (e) => {
+                targetX = (e.clientX / window.innerWidth - 0.5) * 40;
+                targetY = (e.clientY / window.innerHeight - 0.5) * 40;
+                
+                if (!parallaxRafId) {
+                    parallaxRafId = requestAnimationFrame(updateParallax);
+                }
+            }, { passive: true });
+        }
 
         // 6. Word-by-Word Text Reveal Setup
         const splitTextIntoSpans = (selector) => {
@@ -1245,58 +1324,99 @@
                 tweens.push(t);
             });
 
+            // Optimized marquee velocity updates with throttling
+            let velocityUpdateTimer = null;
             ScrollTrigger.create({
                 onUpdate: (self) => {
-                    const velocity = self.getVelocity();
-                    const sensitivity = 1000; 
-                    const speedBoost = Math.abs(velocity) / sensitivity;
-                    const direction = self.direction;
-                    const targetScale = direction * (1 + speedBoost);
+                    // Throttle velocity updates to reduce calculations
+                    if (velocityUpdateTimer) return;
+                    
+                    velocityUpdateTimer = requestAnimationFrame(() => {
+                        const velocity = self.getVelocity();
+                        const sensitivity = 1000; 
+                        const speedBoost = Math.abs(velocity) / sensitivity;
+                        const direction = self.direction;
+                        const targetScale = direction * (1 + speedBoost);
 
-                    gsap.to(tweens, {
-                        timeScale: targetScale,
-                        duration: 0.2, overwrite: true
+                        gsap.to(tweens, {
+                            timeScale: targetScale,
+                            duration: 0.2, 
+                            overwrite: true
+                        });
+
+                        clearTimeout(self.resetTimer);
+                        self.resetTimer = setTimeout(() => {
+                            gsap.to(tweens, { timeScale: 1, duration: 0.8, ease: "power2.out" });
+                        }, 100);
+                        
+                        velocityUpdateTimer = null;
                     });
-
-                    clearTimeout(self.resetTimer);
-                    self.resetTimer = setTimeout(() => {
-                        gsap.to(tweens, { timeScale: 1, duration: 0.8, ease: "power2.out" });
-                    }, 100);
-                }
+                },
+                refreshPriority: -1 // Lower priority for performance
             });
 
-            // Theme Inverter (White Background section)
+            // Theme Inverter (White Background section) - Optimized to prevent unnecessary updates
+            let isLightTheme = false;
             ScrollTrigger.create({
                 trigger: "#about",
                 start: "top center",
                 end: "bottom center",
-                onEnter: () => gsap.to("body", { backgroundColor: "#f0f0f0", color: "#0a0a0a", duration: 0.5 }),
-                onLeave: () => gsap.to("body", { backgroundColor: "#0a0a0a", color: "#f0f0f0", duration: 0.5 }),
-                onEnterBack: () => gsap.to("body", { backgroundColor: "#f0f0f0", color: "#0a0a0a", duration: 0.5 }),
-                onLeaveBack: () => gsap.to("body", { backgroundColor: "#0a0a0a", color: "#f0f0f0", duration: 0.5 })
+                onEnter: () => {
+                    if (!isLightTheme) {
+                        isLightTheme = true;
+                        gsap.to("body", { backgroundColor: "#f0f0f0", color: "#0a0a0a", duration: 0.5 });
+                    }
+                },
+                onLeave: () => {
+                    if (isLightTheme) {
+                        isLightTheme = false;
+                        gsap.to("body", { backgroundColor: "#0a0a0a", color: "#f0f0f0", duration: 0.5 });
+                    }
+                },
+                onEnterBack: () => {
+                    if (!isLightTheme) {
+                        isLightTheme = true;
+                        gsap.to("body", { backgroundColor: "#f0f0f0", color: "#0a0a0a", duration: 0.5 });
+                    }
+                },
+                onLeaveBack: () => {
+                    if (isLightTheme) {
+                        isLightTheme = false;
+                        gsap.to("body", { backgroundColor: "#0a0a0a", color: "#f0f0f0", duration: 0.5 });
+                    }
+                }
             });
 
-            // Word Reveal Animation
-            gsap.utils.toArray('.word-reveal span').forEach((span, i) => {
-                gsap.to(span, {
+            // Word Reveal Animation - Optimized with batch processing
+            const wordRevealElements = gsap.utils.toArray('.word-reveal');
+            wordRevealElements.forEach((wordEl) => {
+                const spans = wordEl.querySelectorAll('span');
+                if (spans.length === 0) return;
+                
+                gsap.to(spans, {
                     scrollTrigger: {
-                        trigger: span.closest('.word-reveal'),
+                        trigger: wordEl,
                         start: "top 80%",
+                        toggleActions: "play none none none"
                     },
                     y: 0,
                     opacity: 1,
                     duration: 0.5,
-                    delay: i * 0.02,
+                    stagger: 0.02,
                     ease: "power3.out"
                 });
             });
             
-             // Paragraph Word Reveal
+             // Paragraph Word Reveal - Optimized
              gsap.utils.toArray('.word-reveal-p').forEach(p => {
-                gsap.to(p.querySelectorAll('.reveal-word'), {
+                const words = p.querySelectorAll('.reveal-word');
+                if (words.length === 0) return;
+                
+                gsap.to(words, {
                     scrollTrigger: {
                         trigger: p,
                         start: "top 85%",
+                        toggleActions: "play none none none"
                     },
                     y: 0,
                     opacity: 1,
@@ -1334,47 +1454,63 @@
                 y: 100, opacity: 0, duration: 1.2, ease: "power4.out"
             });
 
-            // Horizontal Gallery Scroll Trigger with Snap Scrolling
+            // Horizontal Gallery Scroll Trigger with Snap Scrolling - Optimized
             const galleryTrack = document.getElementById('gallery-track');
+            if (!galleryTrack) return;
+            
             const galleryItems = galleryTrack.querySelectorAll('.gallery-item');
             const numSlides = galleryItems.length;
             
-            // Calculate total width to scroll
-            // We use a function for 'end' to recalculate on resize automatically via invalidateOnRefresh
+            // Cache scroll amount calculation
+            let cachedScrollAmount = null;
             let getScrollAmount = () => {
-                let trackWidth = galleryTrack.scrollWidth;
-                return -(trackWidth - window.innerWidth);
+                if (cachedScrollAmount === null) {
+                    cachedScrollAmount = -(galleryTrack.scrollWidth - window.innerWidth);
+                }
+                return cachedScrollAmount;
             };
 
             const tween = gsap.to(galleryTrack, {
                 x: getScrollAmount,
                 ease: "none",
+                force3D: true // GPU acceleration
             });
 
             ScrollTrigger.create({
                 trigger: "#gallery-pin",
                 start: "top top",
-                end: () => `+=${getScrollAmount() * -1}`, // Scroll length matches track width
+                end: () => {
+                    cachedScrollAmount = null; // Reset cache on recalculation
+                    return `+=${getScrollAmount() * -1}`;
+                },
                 pin: true,
                 animation: tween,
                 scrub: 1,
                 snap: {
                     snapTo: (progress) => {
-                        // Calculate which slide we're closest to based on progress (0 to 1)
-                        // Each slide takes up 1/numSlides of the total progress
+                        if (numSlides <= 1) return 0;
                         const slideProgress = 1 / (numSlides - 1);
                         const currentSlide = Math.round(progress / slideProgress);
-                        // Clamp to valid slide index
                         const targetSlide = Math.max(0, Math.min(numSlides - 1, currentSlide));
-                        // Return the exact progress for that slide
                         return targetSlide * slideProgress;
                     },
                     duration: { min: 0.3, max: 0.8 },
                     ease: "power2.inOut",
                     inertia: false,
                 },
-                invalidateOnRefresh: true, // Recalculate values on resize
+                invalidateOnRefresh: true,
+                refreshPriority: 1 // Higher priority for gallery
             });
+            
+            // Reset cache on resize
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    cachedScrollAmount = null;
+                    ScrollTrigger.refresh();
+                }, 150);
+            }, { passive: true });
         };
 
         // Desktop Loader Sequence (HTML Split Shutter)
