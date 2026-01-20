@@ -389,13 +389,13 @@
   filter: brightness(0.85);
 }
 
-/* 2. Video Container (Center Focus) - Horizontal, smaller, above Torii gate */
+/* 2. Video Container (Center Focus) - Horizontal, smaller, behind Torii gate */
 .hero-video-container {
   position: absolute;
   top: 55%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 5;
+  z-index: 3; /* Behind Torii gate (z-index: 10) */
   width: 68%;
   aspect-ratio: 16 / 9;
   will-change: transform, opacity, top, filter;
