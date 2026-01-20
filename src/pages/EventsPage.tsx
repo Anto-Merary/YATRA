@@ -42,7 +42,7 @@ export function EventsPage() {
                 {/* PRO EVENTS Card */}
                 <motion.button
                   type="button"
-                  onClick={() => navigate("/proevents")}
+                  onClick={() => navigate("/pro-dance-battle")}
                   whileHover={prefersReducedMotion ? undefined : { scale: 1.01 }}
                   whileTap={prefersReducedMotion ? undefined : { scale: 0.99 }}
                   className="relative w-full overflow-hidden rounded-[28px] shadow-[0_18px_55px_rgba(0,0,0,0.65)] ring-1 ring-white/10 touch-manipulation"
@@ -68,8 +68,8 @@ export function EventsPage() {
                     {/* Content - tight bottom-left */}
                     <div className="absolute bottom-0 left-0 p-5 sm:p-6 text-left">
                       <h2 className="font-akira text-[30px] leading-[0.95] sm:text-[40px] font-bold text-white uppercase">
-                        PRO<br />
-                        EVENTS
+                        DANCE<br />
+                        BATTLE
                       </h2>
                       <p className="mt-2 text-[11px] sm:text-xs text-white/85 leading-snug max-w-[18rem]">
                         Flagship competitions held separately from the main cultural stage. Winners get a chance to perform on the main stage and win Cash price

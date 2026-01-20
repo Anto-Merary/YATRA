@@ -152,24 +152,24 @@ export function YatraEventsPage() {
       : {
           headline: "Group Events",
           subhead: "Bring your crew. Own the moment.",
-          cursor: "text-cyan-300",
-          inputBorder: "border-cyan-400/20",
+          cursor: "text-yellow-300",
+          inputBorder: "border-yellow-400/20",
           inputFocus:
-            "focus:border-cyan-400/40 focus:bg-white/[0.06] focus:shadow-[0_0_20px_rgba(34,211,238,0.14)]",
+            "focus:border-yellow-400/40 focus:bg-white/[0.06] focus:shadow-[0_0_20px_rgba(255,241,157,0.14)]",
           filterActive:
-            "border-cyan-400/40 bg-cyan-400/10 text-white shadow-lg shadow-cyan-400/20",
+            "border-yellow-400/40 bg-yellow-400/10 text-white shadow-lg shadow-yellow-400/20",
           filterInactive:
-            "border-white/10 bg-white/[0.03] text-white/70 hover:border-cyan-400/20 hover:bg-cyan-400/5 hover:text-white active:bg-cyan-400/10",
+            "border-white/10 bg-white/[0.03] text-white/70 hover:border-yellow-400/20 hover:bg-yellow-400/5 hover:text-white active:bg-yellow-400/10",
           cardHover:
-            "hover:border-cyan-400/30 hover:bg-white/[0.06] hover:shadow-[0_8px_32px_rgba(34,211,238,0.18)]",
+            "hover:border-yellow-400/30 hover:bg-white/[0.06] hover:shadow-[0_8px_32px_rgba(255,241,157,0.18)]",
           spotlightColor: isMobile
-            ? ("rgba(34, 211, 238, 0.15)" as const)
-            : ("rgba(34, 211, 238, 0.25)" as const),
-          pixelSnow: "#22d3ee",
-          emptyCard: "border-cyan-400/20 via-cyan-400/5",
+            ? ("rgba(255, 241, 157, 0.15)" as const)
+            : ("rgba(255, 241, 157, 0.25)" as const),
+          pixelSnow: "#fff19d",
+          emptyCard: "border-yellow-400/20 via-yellow-400/5",
           overlayHover:
-            "group-hover:from-cyan-400/5 group-hover:via-cyan-400/0 group-hover:to-cyan-400/5",
-          patternColor: "rgba(34, 211, 238, 0.12)",
+            "group-hover:from-yellow-400/5 group-hover:via-yellow-400/0 group-hover:to-yellow-400/5",
+          patternColor: "rgba(255, 241, 157, 0.12)",
         };
 
   const counts = useMemo(() => {
@@ -214,7 +214,7 @@ export function YatraEventsPage() {
           <div
             className="absolute inset-0 z-0 opacity-40 pointer-events-none"
             style={{
-              // Grid + two soft glows, tinted by mode (solo pink / group cyan)
+              // Grid + two soft glows, tinted by mode (solo pink / group yellow)
               backgroundImage:
                 participation === "solo"
                   ? [
@@ -224,10 +224,10 @@ export function YatraEventsPage() {
                       "radial-gradient(circle at 70% 80%, rgba(236,72,153,0.18), transparent 60%)",
                     ].join(",")
                   : [
-                      "linear-gradient(to right, rgba(34,211,238,0.14) 1px, transparent 1px)",
-                      "linear-gradient(to bottom, rgba(34,211,238,0.14) 1px, transparent 1px)",
-                      "radial-gradient(circle at 30% 20%, rgba(34,211,238,0.32), transparent 60%)",
-                      "radial-gradient(circle at 70% 80%, rgba(34,211,238,0.16), transparent 60%)",
+                      "linear-gradient(to right, rgba(255,241,157,0.14) 1px, transparent 1px)",
+                      "linear-gradient(to bottom, rgba(255,241,157,0.14) 1px, transparent 1px)",
+                      "radial-gradient(circle at 30% 20%, rgba(255,241,157,0.32), transparent 60%)",
+                      "radial-gradient(circle at 70% 80%, rgba(255,241,157,0.16), transparent 60%)",
                     ].join(","),
               backgroundSize: "18px 18px, 18px 18px, 100% 100%, 100% 100%",
               backgroundPosition: "0 0, 0 0, center, center",
@@ -318,13 +318,13 @@ export function YatraEventsPage() {
                         "bg-[radial-gradient(circle_at_top,rgba(236,72,153,0.28),transparent_60%)]",
                     }
                   : {
-                      borderActive: "border-cyan-400/40 shadow-cyan-400/20",
-                      borderHover: "hover:border-cyan-400/30",
-                      tint: "bg-gradient-to-br from-cyan-400/10 via-white/[0.02] to-transparent",
-                      icon: "bg-cyan-400/10 text-cyan-200",
-                      count: "text-cyan-200",
+                      borderActive: "border-yellow-400/40 shadow-yellow-400/20",
+                      borderHover: "hover:border-yellow-400/30",
+                      tint: "bg-gradient-to-br from-[#fff19d]/20 via-[#fff19d]/10 to-transparent",
+                      icon: "bg-[#fff19d]/20 text-yellow-200",
+                      count: "text-yellow-200",
                       glow:
-                        "bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.24),transparent_60%)]",
+                        "bg-[radial-gradient(circle_at_top,rgba(255,241,157,0.4),transparent_60%)]",
                     };
 
               return (
@@ -334,10 +334,10 @@ export function YatraEventsPage() {
                   onClick={() => setParticipation(m.key)}
                   whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                   className={[
-                    "relative overflow-hidden rounded-2xl border bg-white/[0.03] p-4 xs:p-5 text-left transition-all touch-manipulation",
+                    "relative overflow-hidden rounded-2xl border p-4 xs:p-5 text-left transition-all touch-manipulation",
                     isActive
-                      ? `${accents.borderActive} shadow-lg`
-                      : "border-white/10",
+                      ? `${accents.borderActive} shadow-lg ${m.key === "group" ? "bg-[#fff19d]/30" : "bg-white/[0.03]"}`
+                      : "border-white/10 bg-white/[0.03]",
                     accents.borderHover,
                     !isMobile ? "backdrop-blur-sm" : "",
                   ].join(" ")}
@@ -474,7 +474,7 @@ export function YatraEventsPage() {
                           "text-xs font-medium",
                           s.participation === "solo"
                             ? "text-pink-300"
-                            : "text-cyan-200",
+                            : "text-yellow-200",
                         ].join(" ")}
                       >
                         {s.participation.toUpperCase()}

@@ -138,7 +138,7 @@ export function SiteLayout() {
               </PageTransition>
             </AnimatePresence>
           </main>
-          <Footer />
+          {!isHomePage && <Footer />}
           <Toaster />
           
           {/* Mobile Dock Navigation - Always rendered at SiteLayout level for all pages */}
