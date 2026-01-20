@@ -649,7 +649,7 @@ function Hero() {
               <br /><br />
               Rooted in cultural heritage and artistic expression, YATRA brings together students to showcase their talents through music, dance, art, and various cultural events. The fest aims to inspire confidence, encourage participation, and create a space where passion meets performance.
               <br /><br />
-              With the presence of distinguished guests and an atmosphere filled with enthusiasm and celebration, YATRA 2026 promises an unforgettable cultural journey that unites tradition, talent, and togetherness. 🎭✨
+              With the presence of distinguished guests and an atmosphere filled with enthusiasm and celebration, YATRA 2026 promises an unforgettable cultural journey that unites tradition, talent, and togetherness.
             </p>
           </div>
         </div>
