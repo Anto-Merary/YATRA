@@ -19,6 +19,12 @@ export default defineConfig({
     // Ensure build outputs are optimized
     outDir: "dist",
     assetsDir: "assets",
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, "index.html"),
+        mobile: path.resolve(__dirname, "mobile.html"),
+      },
+    },
   },
 });
 

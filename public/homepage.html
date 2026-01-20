@@ -5,10 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YATRA'26 | The Cultural Phenomenon</title>
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/webp" href="/Fav-icon.webp">
-    <link rel="shortcut icon" type="image/webp" href="/Fav-icon.webp">
-    <link rel="apple-touch-icon" href="/Fav-icon.webp">
+    <!-- Favicon (use relative paths so sub-folder deploys work) -->
+    <link rel="icon" href="favicon.ico?v=2" sizes="any">
+    <link rel="icon" type="image/png" href="favicon-32x32.png?v=2" sizes="32x32">
+    <link rel="icon" type="image/png" href="favicon-16x16.png?v=2" sizes="16x16">
+    <!-- Your actual favicon (some browsers may ignore WebP for tab icons) -->
+    <link rel="icon" type="image/webp" href="Fav-icon.webp?v=2">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+    <link rel="manifest" href="site.webmanifest?v=2">
     
     <!-- Early Mobile Redirect - Runs before page loads -->
     <script>
@@ -39,8 +43,8 @@
                 const currentSearch = window.location.search;
                 const currentHash = window.location.hash;
                 
-                // Redirect to mobile.html which serves the mobile app from src/mobile
-                window.location.replace(baseUrl + '/mobile.html' + currentSearch + currentHash);
+                // Redirect relative so sub-folder deploys work too
+                window.location.replace('mobile.html' + currentSearch + currentHash);
             }
         })();
     </script>
@@ -959,6 +963,7 @@
                 <!-- Pass 2 (Featured) -->
                 <div class="magnetic-wrap w-full md:-translate-y-4">
                     <div class="magnetic-content border-2 border-[var(--color-accent)] bg-[#111] p-8 flex flex-col shadow-[0_0_30px_rgba(155,23,153,0.1)] h-full relative">
+                        <div class="absolute top-0 right-0 bg-[var(--color-accent)] text-black text-xs font-bold px-2 sm:px-3 py-1 uppercase">Mandatory</div>
                         <div class="mb-4">
                             <h3 class="text-2xl font-display font-bold uppercase text-[var(--color-accent)]">YATRA ENTRY PASS</h3>
                             <p class="text-4xl font-black mt-2">₹500</p>
