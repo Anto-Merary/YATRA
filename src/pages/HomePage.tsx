@@ -1,7 +1,32 @@
+import { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+
 export function HomePage() {
+  const navigate = useNavigate();
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    // Listen for navigation messages from the iframe
+    const handleMessage = (event: MessageEvent) => {
+      // Verify message origin for security (adjust if needed)
+      if (event.data && event.data.type === 'navigate') {
+        const path = event.data.path;
+        if (path && typeof path === 'string') {
+          navigate(path);
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, [navigate]);
+
   return (
     <div style={{ width: '100%', height: '100vh', overflow: 'hidden' }}>
       <iframe
+        ref={iframeRef}
         src="/homepage.html"
         style={{
           width: '100%',
