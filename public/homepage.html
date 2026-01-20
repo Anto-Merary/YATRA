@@ -634,6 +634,58 @@
         .gradient-button {
             animation: gradient-shift 3s ease infinite;
         }
+        
+        /* Yellow-Purple Gradient */
+        .yellow-purple-gradient {
+            background: linear-gradient(135deg, #fff19d 0%, #9b1799 100%);
+            background-size: 200% 100%;
+        }
+        
+        .yellow-purple-gradient-animated {
+            background: linear-gradient(135deg, #fff19d 0%, #9b1799 50%, #fff19d 100%);
+            background-size: 200% 100%;
+            animation: gradient-shift 3s ease infinite;
+        }
+        
+        /* Outline Button with Gradient Hover */
+        .outline-gradient-button {
+            border: 1px solid white;
+            background: transparent;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .outline-gradient-button:hover {
+            background: linear-gradient(135deg, #fff19d 0%, #9b1799 100%);
+            border-color: transparent;
+            color: black;
+        }
+        
+        /* Footer Grain Effect */
+        footer {
+            position: relative;
+        }
+        
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.15;
+            background-repeat: repeat;
+            background-size: 100px 100px;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            animation: grain 0.5s steps(5) infinite;
+        }
+        
+        footer > * {
+            position: relative;
+            z-index: 2;
+        }
     </style>
 </head>
 <body class="antialiased selection:bg-pink-400 selection:text-black">
@@ -710,7 +762,7 @@
             </div>
             <div class="mt-6 sm:mt-8 md:mt-12 animate-fade-in-up mix-blend-normal">
                 <a href="#registration" class="magnetic-wrap inline-block">
-                    <div class="magnetic-content gradient-button bg-gradient-to-r from-[var(--color-secondary)] via-[var(--color-accent)] to-[var(--color-secondary)] text-black px-5 py-2.5 sm:px-6 sm:py-3 md:px-8 md:py-4 lg:px-12 lg:py-5 rounded-lg uppercase font-bold text-[0.75rem] sm:text-xs md:text-sm lg:text-base tracking-widest hover:from-[var(--color-accent)] hover:via-[var(--color-secondary)] hover:to-[var(--color-accent)] transition-all duration-300 shadow-lg" style="mix-blend-mode: normal; min-height: 44px; display: flex; align-items: center; justify-content: center; background-size: 200% 100%;">
+                    <div class="magnetic-content yellow-purple-gradient-animated text-black px-5 py-2.5 sm:px-6 sm:py-3 md:px-8 md:py-4 lg:px-12 lg:py-5 rounded-lg uppercase font-bold text-[0.75rem] sm:text-xs md:text-sm lg:text-base tracking-widest transition-all duration-300 shadow-lg" style="mix-blend-mode: normal; min-height: 44px; display: flex; align-items: center; justify-content: center;">
                         BUY PASSES
                     </div>
                 </a>
@@ -873,7 +925,7 @@
                     </ul>
                     <div class="mt-12">
                         <a href="/events" class="magnetic-wrap inline-block">
-                            <div class="magnetic-content bg-[var(--color-secondary)] text-black px-8 py-4 rounded-lg uppercase font-bold text-sm tracking-widest hover:bg-[var(--color-accent)] hover:text-black transition-all duration-300 shadow-lg" style="mix-blend-mode: normal;">
+                            <div class="magnetic-content yellow-purple-gradient text-black px-8 py-4 rounded-lg uppercase font-bold text-sm tracking-widest hover:opacity-90 transition-all duration-300 shadow-lg" style="mix-blend-mode: normal;">
                                 View All Events
                             </div>
                         </a>
@@ -900,7 +952,7 @@
                             <li>• Select your specific Events</li>
                             <li>• Only access to events</li>
                         </ul>
-                        <a href="https://formbuilder.ccavenue.com/live/icici-bank/rajalakshmi-institue-of-technology-2/yatra-2026-reg-fees-link" target="_blank" rel="noopener noreferrer" class="w-full py-4 border border-white uppercase font-bold text-sm tracking-widest hover:bg-[var(--color-accent)] hover:border-[var(--color-accent)] hover:text-black transition-all text-center">
+                        <a href="https://formbuilder.ccavenue.com/live/icici-bank/rajalakshmi-institue-of-technology-2/yatra-2026-reg-fees-link" target="_blank" rel="noopener noreferrer" class="w-full py-4 outline-gradient-button uppercase font-bold text-sm tracking-widest text-center">
                             Register Now
                         </a>
                     </div>
@@ -920,7 +972,7 @@
                             <li>• Proshow</li>
                             <li>• DJ Night</li>
                         </ul>
-                        <a href="https://formbuilder.ccavenue.com/live/icici-bank/rajalakshmi-institue-of-technology-2/yatra-2026-reg-fees-link" target="_blank" rel="noopener noreferrer" class="w-full py-4 bg-[var(--color-accent)] text-black uppercase font-bold text-sm tracking-widest hover:bg-white transition-all text-center">
+                        <a href="https://formbuilder.ccavenue.com/live/icici-bank/rajalakshmi-institue-of-technology-2/yatra-2026-reg-fees-link" target="_blank" rel="noopener noreferrer" class="w-full py-4 yellow-purple-gradient text-black uppercase font-bold text-sm tracking-widest hover:opacity-90 transition-all text-center">
                             Register Now
                         </a>
                     </div>
@@ -936,7 +988,7 @@
                         <p class="text-sm text-gray-400 mb-4 leading-relaxed">
                             DANCE BATTLE is a premium spotlight event designed to celebrate confidence, charisma, and stage presence. Come prepared to introduce yourself, show your personality, and own the stage — in front of an energetic crowd.
                         </p>
-                        <a href="/pro-dance-battle" class="w-full py-4 border border-white uppercase font-bold text-sm tracking-widest hover:bg-[var(--color-secondary)] hover:border-[var(--color-secondary)] hover:text-black transition-all text-center">
+                        <a href="/pro-dance-battle" class="w-full py-4 outline-gradient-button uppercase font-bold text-sm tracking-widest text-center">
                             Register Now
                         </a>
                     </div>
@@ -946,7 +998,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-[var(--color-accent)] text-black py-10 sm:py-14 md:py-16 lg:py-20 px-4 sm:px-6 overflow-hidden">
+    <footer class="yellow-purple-gradient text-black py-10 sm:py-14 md:py-16 lg:py-20 px-4 sm:px-6 overflow-hidden">
         <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-12">
             <div>
                 <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-display font-black uppercase tracking-tighter mb-4 sm:mb-5 md:mb-6 leading-[1.1] hover:skew-x-6 transition-transform cursor-default">YATRA'26</h2>
