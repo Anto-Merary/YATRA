@@ -563,7 +563,10 @@ function Hero() {
 
   return (
     <>
-    <section className="hero" ref={heroRef}>
+    <section
+      className={`hero ${hasLoaded ? 'is-loaded' : ''} ${isLoading ? 'is-loading' : ''}`}
+      ref={heroRef}
+    >
       {isLoading && (
         <div
           className="hero-loader"
@@ -640,7 +643,6 @@ function Hero() {
               ✦
             </span>
           </button>
-          <button className="hero-button join-events">JOIN EVENTS</button>
         </div>
 
         {/* YATRA Text - Mid Layer (behind Torii gate) */}
@@ -718,12 +720,7 @@ function Hero() {
               <span className="about-title-rit">YATRA&apos;26</span>
             </h2>
             <p className="about-content reveal" ref={aboutContentRef}>
-              Yatra&apos;26 is a grand intercollege cultural fest at Rajalakshmi Institute of Technology organized by
-              the student community with the support of Faculties, Principal and Management. Main motive of Yatra is
-              involving or concerning the enthusiasm among students with a deep sense of humor which is also a part
-              of Cultural heritage. This enhance the confidence level of the students thereby allowing them to
-              perform better. In fact, students can also leverage the advantage of participating in various
-              activities. Many chief guests are being invited to join us
+              Yatra&apos;26 is a grand intercollege cultural fest at Rajalakshmi Institute of Technology organized by the student community with the support of Faculties, Principal and Management. Main motive of Yatra is involving or concerning the enthusiasm among students with a deep sense of humor which is also a part of Cultural heritage. This enhance the confidence level of the students thereby allowing them to perform better.In fact, students can also leverage the advantage of participating in various activities. Many chief guests are being invited to join us .
             </p>
           </div>
         )}

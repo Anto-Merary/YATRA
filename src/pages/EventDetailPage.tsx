@@ -1,9 +1,7 @@
-import { useMemo, useRef, useLayoutEffect, useState } from "react";
+import { useMemo, useLayoutEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { EVENTS, type FestEvent } from "../data/events";
 import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
 import eventInfoBg1 from "../assets/eventinfo.jpeg?url";
 import eventInfoBg2 from "../assets/eventinfo2.jpeg?url";
 
@@ -48,8 +46,6 @@ const DEFAULT_RULES: string[] = [
 export function EventDetailPage() {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
-  const formRef = useRef<HTMLDivElement | null>(null);
-  const [numberOfMembers, setNumberOfMembers] = useState<number>(2);
 
   // Resolve event synchronously on every render - useMemo ensures it updates when eventId changes
   const { event, bgVariant } = useMemo(() => {
@@ -225,17 +221,14 @@ export function EventDetailPage() {
               </div>
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <Button
-                  onClick={() => {
-                    formRef.current?.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                    });
-                  }}
-                  className={`h-11 rounded-xl px-5 text-sm font-semibold text-white ${accents.cta}`}
+                <a
+                  href={event.registrationUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`inline-flex h-11 items-center justify-center rounded-xl px-5 text-sm font-semibold text-white ${accents.cta}`}
                 >
                   Register for this event
-                </Button>
+                </a>
 
                 <a
                   href={`tel:${event.organizerPhone}`}
@@ -347,245 +340,6 @@ export function EventDetailPage() {
               </div>
             </section>
           </div>
-
-          {/* Registration */}
-          <section
-            ref={formRef}
-            className="rounded-3xl border border-white/10 bg-white/[0.05] p-6 backdrop-blur-sm"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <div className="text-xs font-semibold tracking-[0.25em] text-yatra-300">
-                  REGISTRATION
-                </div>
-                <div className="mt-2 text-lg font-semibold text-white/90">
-                  Register for {event.name}
-                </div>
-                <div className="mt-1 text-sm text-white/60">
-                  Form integration coming next — this is the page-ready template.
-                </div>
-              </div>
-            </div>
-
-            <form
-              className="mt-5 grid gap-4"
-              onSubmit={(e) => {
-                e.preventDefault();
-              }}
-            >
-              {event.participation === "group" ? (
-                <>
-                  {/* Team Leader Details Section */}
-                  <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
-                    <div className="text-xs font-semibold tracking-[0.2em] text-yatra-300 mb-4">
-                      TEAM LEADER DETAILS
-                    </div>
-                    <div className="grid gap-4">
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        <div className="grid gap-2">
-                          <Label htmlFor="leaderName" className="text-white/75">
-                            Team Leader Name
-                          </Label>
-                          <Input
-                            id="leaderName"
-                            placeholder="Team leader's name"
-                            className={`border-white/10 bg-white/[0.04] text-white placeholder:text-white/35 ${accents.ring}`}
-                          />
-                        </div>
-                        <div className="grid gap-2">
-                          <Label htmlFor="leaderPhone" className="text-white/75">
-                            Phone number
-                          </Label>
-                          <Input
-                            id="leaderPhone"
-                            placeholder="+91 XXXXX XXXXX"
-                            className={`border-white/10 bg-white/[0.04] text-white placeholder:text-white/35 ${accents.ring}`}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid gap-2">
-                        <Label htmlFor="leaderEmail" className="text-white/75">
-                          Email
-                        </Label>
-                        <Input
-                          id="leaderEmail"
-                          type="email"
-                          placeholder="leader@example.com"
-                          className={`border-white/10 bg-white/[0.04] text-white placeholder:text-white/35 ${accents.ring}`}
-                        />
-                      </div>
-
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        <div className="grid gap-2">
-                          <Label htmlFor="leaderCollege" className="text-white/75">
-                            College
-                          </Label>
-                          <Input
-                            id="leaderCollege"
-                            placeholder="College name"
-                            className={`border-white/10 bg-white/[0.04] text-white placeholder:text-white/35 ${accents.ring}`}
-                          />
-                        </div>
-                        <div className="grid gap-2">
-                          <Label htmlFor="leaderDept" className="text-white/75">
-                            Department
-                          </Label>
-                          <Input
-                            id="leaderDept"
-                            placeholder="Department"
-                            className={`border-white/10 bg-white/[0.04] text-white placeholder:text-white/35 ${accents.ring}`}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Number of Team Members */}
-                  <div className="grid gap-2">
-                    <Label htmlFor="numMembers" className="text-white/75">
-                      Number of Team Members
-                    </Label>
-                    <Input
-                      id="numMembers"
-                      type="number"
-                      min="2"
-                      max="20"
-                      value={numberOfMembers}
-                      onChange={(e) => {
-                        const value = parseInt(e.target.value) || 2;
-                        setNumberOfMembers(Math.max(2, Math.min(20, value)));
-                      }}
-                      placeholder="Enter number of team members"
-                      className={`border-white/10 bg-white/[0.04] text-white placeholder:text-white/35 ${accents.ring}`}
-                    />
-                  </div>
-
-                  {/* Team Members Names */}
-                  <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
-                    <div className="text-xs font-semibold tracking-[0.2em] text-yatra-300 mb-4">
-                      TEAM MEMBERS
-                    </div>
-                    <div className="grid gap-3">
-                      {Array.from({ length: numberOfMembers }, (_, i) => (
-                        <div key={i} className="grid gap-2">
-                          <Label htmlFor={`member-${i + 1}`} className="text-white/75">
-                            Member {i + 1} Name
-                          </Label>
-                          <Input
-                            id={`member-${i + 1}`}
-                            placeholder={`Enter name of member ${i + 1}`}
-                            className={`border-white/10 bg-white/[0.04] text-white placeholder:text-white/35 ${accents.ring}`}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Notes */}
-                  <div className="grid gap-2">
-                    <Label htmlFor="notes" className="text-white/75">
-                      Notes (optional)
-                    </Label>
-                    <Input
-                      id="notes"
-                      placeholder="Anything the coordinators should know"
-                      className={`border-white/10 bg-white/[0.04] text-white placeholder:text-white/35 ${accents.ring}`}
-                    />
-                  </div>
-                </>
-              ) : (
-                <>
-                  {/* Solo Event Form */}
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="grid gap-2">
-                      <Label htmlFor="fullName" className="text-white/75">
-                        Full name
-                      </Label>
-                      <Input
-                        id="fullName"
-                        placeholder="Your name"
-                        className={`border-white/10 bg-white/[0.04] text-white placeholder:text-white/35 ${accents.ring}`}
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="phone" className="text-white/75">
-                        Phone number
-                      </Label>
-                      <Input
-                        id="phone"
-                        placeholder="+91 XXXXX XXXXX"
-                        className={`border-white/10 bg-white/[0.04] text-white placeholder:text-white/35 ${accents.ring}`}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid gap-2">
-                    <Label htmlFor="email" className="text-white/75">
-                      Email
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="you@example.com"
-                      className={`border-white/10 bg-white/[0.04] text-white placeholder:text-white/35 ${accents.ring}`}
-                    />
-                  </div>
-
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="grid gap-2">
-                      <Label htmlFor="college" className="text-white/75">
-                        College
-                      </Label>
-                      <Input
-                        id="college"
-                        placeholder="College name"
-                        className={`border-white/10 bg-white/[0.04] text-white placeholder:text-white/35 ${accents.ring}`}
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="dept" className="text-white/75">
-                        Department
-                      </Label>
-                      <Input
-                        id="dept"
-                        placeholder="Department"
-                        className={`border-white/10 bg-white/[0.04] text-white placeholder:text-white/35 ${accents.ring}`}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid gap-2">
-                    <Label htmlFor="notes" className="text-white/75">
-                      Notes (optional)
-                    </Label>
-                    <Input
-                      id="notes"
-                      placeholder="Anything the coordinators should know"
-                      className={`border-white/10 bg-white/[0.04] text-white placeholder:text-white/35 ${accents.ring}`}
-                    />
-                  </div>
-                </>
-              )}
-
-              <div className="mt-1 grid gap-3">
-                <Button
-                  type="submit"
-                  className={`h-11 rounded-xl text-sm font-semibold text-white ${accents.cta}`}
-                >
-                  Submit registration
-                </Button>
-                <a
-                  href={event.registrationUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-center text-sm text-white/65 underline decoration-white/20 underline-offset-4 transition-colors hover:text-white/80"
-                >
-                  Or open the current registration link
-                </a>
-              </div>
-            </form>
-          </section>
         </div>
       </div>
     </div>
