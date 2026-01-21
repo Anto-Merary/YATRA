@@ -1,6 +1,7 @@
 import './Hero.css'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import heroBg from '../assets/herobg.jpg'
+import heroBgLq from '../assets/optimized/herobg-lq.webp'
 import yatraText from '../assets/yatratxt.png'
 import torriGate from '../assets/torrigate.png'
 import yearText from '../assets/2026txt.png'
@@ -10,6 +11,7 @@ import eventImage from '../assets/event.jpeg'
 import performanceImage from '../assets/performance.JPG'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useNetworkStatus } from '../hooks/useNetworkStatus'
 
 function GlitchText({ koreanText, englishText, className, delay = 0, shouldStart = false, variant = 'glitch' }) {
   const [isGlitching, setIsGlitching] = useState(false)
@@ -87,6 +89,12 @@ function Hero() {
   const [isFeaturesSectionVisible, setIsFeaturesSectionVisible] = useState(false)
   const [isBlastSectionVisible, setIsBlastSectionVisible] = useState(false)
   const [shimmerTrigger, setShimmerTrigger] = useState(0)
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(false)
+  const videoContainerRef = useRef(null)
+  const videoRef = useRef(null)
+
+  // Network status detection
+  const { shouldLoadVideo: networkShouldLoad, isSlowConnection } = useNetworkStatus()
 
   // Lineup teaser modal (catchy reveal-soon popup)
   const [lineupModalState, setLineupModalState] = useState('closed') // 'closed' | 'open' | 'closing'
@@ -214,6 +222,49 @@ function Hero() {
     const t = window.setTimeout(() => setIsScrollReady(true), 1200)
     return () => window.clearTimeout(t)
   }, [hasLoaded])
+
+  // Lazy load video when it enters viewport (and network allows it)
+  useEffect(() => {
+    if (!networkShouldLoad) return // Don't load video on slow connections
+
+    const containerEl = videoContainerRef.current
+    if (!containerEl) return
+
+    // Check if already in viewport
+    const rect = containerEl.getBoundingClientRect()
+    const isInViewport =
+      rect.top < window.innerHeight + 50 &&
+      rect.bottom > -50 &&
+      rect.left < window.innerWidth &&
+      rect.right > 0
+
+    if (isInViewport && hasLoaded) {
+      // Video is already visible and images have loaded
+      setShouldLoadVideo(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && hasLoaded) {
+            setShouldLoadVideo(true)
+            observer.disconnect()
+          }
+        })
+      },
+      {
+        rootMargin: '50px', // Start loading 50px before entering viewport
+        threshold: 0.1,
+      }
+    )
+
+    observer.observe(containerEl)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [networkShouldLoad, hasLoaded])
 
   const runAboutReveal = useCallback(() => {
     // Wait for React to finish mounting new elements when step changes
@@ -694,10 +745,40 @@ function Hero() {
         </div>
 
         {/* Video Container - Center Focus */}
-        <div className="hero-video-container">
-          <video className="hero-video" autoPlay loop muted playsInline>
-            <source src={videoSrc} type="video/mp4" />
-          </video>
+        <div className="hero-video-container" ref={videoContainerRef}>
+          {shouldLoadVideo ? (
+            <video
+              ref={videoRef}
+              className="hero-video"
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              poster={heroBgLq}
+              onLoadedData={() => {
+                // Auto-play when data is loaded (on fast connections only)
+                if (videoRef.current && networkShouldLoad && !isSlowConnection) {
+                  videoRef.current.play().catch(() => {
+                    // Ignore autoplay errors (browser policies)
+                  })
+                }
+              }}
+            >
+              <source src={videoSrc} type="video/mp4" />
+            </video>
+          ) : (
+            <div
+              className="hero-video-poster"
+              style={{
+                width: '100%',
+                height: '100%',
+                backgroundImage: `url(${heroBgLq})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            />
+          )}
         </div>
 
         {/* "2026" Text - Behind Torii gate */}

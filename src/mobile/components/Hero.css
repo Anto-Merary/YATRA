@@ -413,6 +413,15 @@
   transition: filter 900ms ease;
 }
 
+.hero-video-poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+  filter: blur(2px);
+  transition: opacity 300ms ease;
+}
+
 /* Video container - glow animation removed, keeping video constant */
 
 /* 3. "2026" Text - Behind Torii gate, positioned below top beam */
