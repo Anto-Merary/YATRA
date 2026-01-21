@@ -83,7 +83,7 @@ export function Footer() {
         <div className="flex flex-col md:flex-row md:justify-between gap-6 xs:gap-8 sm:gap-10 md:gap-8 mb-8 xs:mb-10 sm:mb-12">
           {/* Left Column - Address */}
           <div className="flex-1">
-            <div className="space-y-1.5 xs:space-y-2 text-sm xs:text-base md:text-lg text-white/90 leading-relaxed text-left">
+            <div className="space-y-1.5 xs:space-y-2 text-sm xs:text-base md:text-lg text-white/90 leading-relaxed text-center md:text-left">
               <div className="font-semibold text-white">Rajalakshmi Institute of Technology</div>
               <div className="text-white/95">Bangalore Highway Road, Kuthambakkam,</div>
               <div className="text-white/95">Chennai, Tamil Nadu - 600124</div>
@@ -91,18 +91,19 @@ export function Footer() {
           </div>
 
           {/* Right Column - Social Media & Contact */}
-          <div className="flex-1 md:text-right">
+          <div className="flex-1 text-center md:text-right">
             {/* Social Media Icons */}
-            <div className="flex md:justify-end items-center gap-2 xs:gap-3 mb-4 xs:mb-5 sm:mb-6">
+            <div className="flex justify-center md:justify-end items-center gap-2 xs:gap-3 mb-4 xs:mb-5 sm:mb-6">
               <a
                 href="https://www.facebook.com/ritchennai"
                 target="_blank"
                 rel="noreferrer"
                 className="rounded-full border border-white/20 bg-black/50 p-2 xs:p-2.5 text-white hover:text-white hover:border-white/40 active:bg-white/10 transition-colors touch-manipulation"
                 aria-label="Facebook"
-                style={{ minWidth: "44px", minHeight: "44px", display: "flex", alignItems: "center", justifyContent: "center" }}
+                style={{ minWidth: "44px", minHeight: "44px", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}
               >
-                <FacebookIcon className="h-5 w-5" />
+                {/* Inline width/height prevents oversized SVG if utility CSS fails to load */}
+                <FacebookIcon className="h-5 w-5" width={20} height={20} style={{ width: 20, height: 20, flex: "0 0 auto" }} />
               </a>
               <a
                 href="https://instagram.com"
@@ -110,9 +111,9 @@ export function Footer() {
                 rel="noreferrer"
                 className="rounded-full border border-white/20 bg-black/50 p-2 xs:p-2.5 text-white hover:text-white hover:border-white/40 active:bg-white/10 transition-colors touch-manipulation"
                 aria-label="Instagram"
-                style={{ minWidth: "44px", minHeight: "44px", display: "flex", alignItems: "center", justifyContent: "center" }}
+                style={{ minWidth: "44px", minHeight: "44px", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}
               >
-                <InstagramIcon className="h-5 w-5" />
+                <InstagramIcon className="h-5 w-5" width={20} height={20} style={{ width: 20, height: 20, flex: "0 0 auto" }} />
               </a>
               <a
                 href="https://youtube.com"
@@ -120,9 +121,9 @@ export function Footer() {
                 rel="noreferrer"
                 className="rounded-full border border-white/20 bg-black/50 p-2 xs:p-2.5 text-white hover:text-white hover:border-white/40 active:bg-white/10 transition-colors touch-manipulation"
                 aria-label="YouTube"
-                style={{ minWidth: "44px", minHeight: "44px", display: "flex", alignItems: "center", justifyContent: "center" }}
+                style={{ minWidth: "44px", minHeight: "44px", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}
               >
-                <YouTubeIcon className="h-5 w-5" />
+                <YouTubeIcon className="h-5 w-5" width={20} height={20} style={{ width: 20, height: 20, flex: "0 0 auto" }} />
               </a>
             </div>
 
