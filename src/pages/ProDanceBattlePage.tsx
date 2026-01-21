@@ -4,7 +4,7 @@ import { Modal } from "../components/Modal";
 import { Button } from "../components/ui/button";
 import { useMobile } from "../hooks/use-mobile";
 
-import ritLogoImage from "../assets/RIT WHITE LOGO.png?url";
+import ritLogoImage from "../assets/RIT WHITE LOGO.webp?url";
 import posterImage from "../assets/dance.webp?url";
 import rulesImage from "../assets/mrrules.webp?url";
 

@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
 import { useMobile } from "../hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
-import blackBgImage from "../assets/blackbg.jpeg?url";
-import proEventImage from "../assets/pro.jpeg?url";
-import yatraEventImage from "../assets/yatraevents.jpeg?url";
+import blackBgImage from "../assets/blackbg.webp?url";
+import proEventImage from "../assets/pro.webp?url";
+import yatraEventImage from "../assets/yatraevents.webp?url";
 
 export function EventsPage() {
   const { prefersReducedMotion } = useMobile();

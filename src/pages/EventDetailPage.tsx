@@ -2,8 +2,8 @@ import { useMemo, useRef, useLayoutEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { EVENTS, type FestEvent } from "../data/events";
 import { Button } from "../components/ui/button";
-import eventInfoBg1 from "../assets/eventinfo.jpeg?url";
-import eventInfoBg2 from "../assets/eventinfo2.jpeg?url";
+import eventInfoBg1 from "../assets/eventinfo.webp?url";
+import eventInfoBg2 from "../assets/eventinfo2.webp?url";
 
 function dayLabel(day: FestEvent["day"]) {
   return day === "day1" ? "Day 1" : "Day 2";
@@ -221,6 +221,8 @@ export function EventDetailPage() {
                     alt={`${event.name} poster`}
                     className="h-[340px] w-full object-cover sm:h-[420px]"
                     draggable={false}
+                    loading="lazy"
+                    decoding="async"
                     onError={(e) => {
                       (e.currentTarget as HTMLImageElement).style.display = "none";
                     }}

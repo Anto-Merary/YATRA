@@ -3,8 +3,8 @@ import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-
 import { useState, useEffect } from "react";
 import Dock from "./Dock";
 import { Home, Calendar } from "lucide-react";
-import ritLogo from "../../RIT WHITE LOGO.png";
-import yatraLogo from "../../LOGO .png";
+import ritLogo from "../../RIT WHITE LOGO.webp";
+import yatraLogo from "../../LOGO .webp";
 
 const linkBase =
   "text-sm tracking-wide text-white/80 hover:text-white transition-colors duration-200";

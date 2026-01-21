@@ -1,14 +1,13 @@
 import './Hero.css'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import heroBg from '../assets/herobg.jpg'
+import heroBg from '../assets/optimized/herobg-w1280.webp'
 import heroBgLq from '../assets/optimized/herobg-lq.webp'
-import yatraText from '../assets/yatratxt.png'
-import torriGate from '../assets/torrigate.png'
-import yearText from '../assets/2026txt.png'
+import yatraText from '../assets/optimized/yatratxt-w1536.webp'
+import torriGate from '../assets/optimized/torrigate-w1280.webp'
+import yearText from '../assets/optimized/2026txt-w1536.webp'
 import videoSrc from '../assets/video.mp4'
-import purpleBg from '../assets/purple.jpeg'
-import eventImage from '../assets/event.jpeg'
-import performanceImage from '../assets/performance.JPG'
+import eventImage from '../assets/optimized/event-w1024.webp'
+import performanceImage from '../assets/optimized/performance-w1280.webp'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useNetworkStatus } from '../hooks/useNetworkStatus'
@@ -69,10 +68,14 @@ function GlitchText({ koreanText, englishText, className, delay = 0, shouldStart
 }
 
 function Hero() {
-  // Keep a loader visible until every <img> in this component finishes (load or error).
-  const TOTAL_IMAGES = 5
-  const doneKeysRef = useRef(new Set())
-  const [doneCount, setDoneCount] = useState(0)
+  // Progressive loading: render immediately, then enhance as assets arrive.
+  const [loaded, setLoaded] = useState(() => ({
+    bleedBg: false,
+    bg: false,
+    year: false,
+    yatra: false,
+    torii: false,
+  }))
   const [hasLoaded, setHasLoaded] = useState(false)
   const [isScrollReady, setIsScrollReady] = useState(false)
   const stageRef = useRef(null)
@@ -179,42 +182,44 @@ function Hero() {
   // Incrementing "sequence" values let us re-trigger a one-shot CSS animation per lamp.
   const [lampSeq, setLampSeq] = useState(() => Object.fromEntries(lamps.map((l) => [l.id, 0])))
 
-  const markDone = useCallback((key) => {
-    if (doneKeysRef.current.has(key)) return
-    doneKeysRef.current.add(key)
-    setDoneCount((c) => c + 1)
+  const markLoaded = useCallback((key) => {
+    setLoaded((prev) => {
+      if (prev[key]) return prev
+      return { ...prev, [key]: true }
+    })
   }, [])
 
   const img = useMemo(() => {
     const make = (key) => ({
-      ref: (node) => {
-        // If the image is already in cache, `onLoad` may not fire reliably across all cases.
-        if (node && node.complete) markDone(key)
-      },
-      onLoad: () => markDone(key),
-      onError: () => markDone(key),
+      onLoad: () => markLoaded(key),
+      onError: () => markLoaded(key),
     })
 
     return {
-      bleedBg: make('bleed-bg'),
+      bleedBg: make('bleedBg'),
       bg: make('bg'),
       year: make('year'),
       yatra: make('yatra'),
       torii: make('torii'),
     }
-  }, [markDone])
+  }, [markLoaded])
 
-  const isLoading = doneCount < TOTAL_IMAGES
+  const isHeroReady = loaded.bg && loaded.year && loaded.yatra && loaded.torii
 
   // Trigger entrance animations exactly once, right after we finish loading.
   useEffect(() => {
-    if (hasLoaded || isLoading) return
+    if (hasLoaded) return
 
-    // Start animations AFTER the loader finishes fading out,
-    // so the motion is visible (not hidden behind the overlay).
-    const t = window.setTimeout(() => setHasLoaded(true), 260)
-    return () => window.clearTimeout(t)
-  }, [hasLoaded, isLoading])
+    // Start entrance once critical hero assets are ready,
+    // but never wait too long on slow networks.
+    if (isHeroReady) {
+      const t = window.setTimeout(() => setHasLoaded(true), 60)
+      return () => window.clearTimeout(t)
+    }
+
+    const fallback = window.setTimeout(() => setHasLoaded(true), 1200)
+    return () => window.clearTimeout(fallback)
+  }, [hasLoaded, isHeroReady])
 
   // After the entrance animation finishes, enable the scroll-based "settle" transforms.
   useEffect(() => {
@@ -601,7 +606,7 @@ function Hero() {
 
   // Random lamp blooms (random order / random timing).
   useEffect(() => {
-    if (isLoading) return
+    if (!hasLoaded) return
 
     let cancelled = false
     let timeoutId = 0
@@ -641,11 +646,11 @@ function Hero() {
       cancelled = true
       if (timeoutId) window.clearTimeout(timeoutId)
     }
-  }, [isLoading, lamps])
+  }, [hasLoaded, lamps])
 
   // Random shimmer effect for BUY TICKETS button
   useEffect(() => {
-    if (isLoading || !hasLoaded) return
+    if (!hasLoaded) return
 
     let cancelled = false
     let timeoutId = 0
@@ -680,44 +685,43 @@ function Hero() {
       cancelled = true
       if (timeoutId) window.clearTimeout(timeoutId)
     }
-  }, [isLoading, hasLoaded])
+  }, [hasLoaded])
 
   return (
     <>
     <section
-      className={`hero ${hasLoaded ? 'is-loaded' : ''} ${isLoading ? 'is-loading' : ''}`}
+      className={`hero ${hasLoaded ? 'is-loaded' : ''}`}
       ref={heroRef}
     >
-      {isLoading && (
-        <div
-          className="hero-loader"
-          role="status"
-          aria-live="polite"
-          aria-label="Loading"
-        >
-          <div className="hero-spinner" aria-hidden="true" />
-          <div className="hero-loader-text">Loading…</div>
-        </div>
-      )}
-
       {/* Full-bleed background (blurred) so the stage can keep a fixed aspect ratio */}
       <img
         src={heroBg}
         alt=""
         aria-hidden="true"
         className="hero-bleed-bg"
+        decoding="async"
+        loading="eager"
+        fetchPriority="high"
         {...img.bleedBg}
       />
 
       {/* Fixed-aspect "stage" that scales uniformly across all mobile sizes */}
       <div
         ref={stageRef}
-        className={`hero-stage ${isLoading ? 'is-loading' : ''} ${hasLoaded ? 'is-loaded' : ''} ${isScrollReady ? 'is-scroll-ready' : ''}`}
-        aria-busy={isLoading}
+        className={`hero-stage ${hasLoaded ? 'is-loaded' : ''} ${isScrollReady ? 'is-scroll-ready' : ''}`}
+        aria-busy={!hasLoaded}
       >
         {/* Background Layer - Base */}
         <div className="hero-background">
-          <img src={heroBg} alt="Hero Background" className="hero-bg-image" {...img.bg} />
+          <img
+            src={heroBg}
+            alt="Hero Background"
+            className="hero-bg-image"
+            decoding="async"
+            loading="eager"
+            fetchPriority="high"
+            {...img.bg}
+          />
         </div>
 
         {/* Lamp glow overlay (maps to the lanterns in the background image) */}

@@ -73,48 +73,6 @@
   padding-bottom: 0;
 }
 
-.hero-loader {
-  position: absolute;
-  inset: 0;
-  z-index: 20;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  background: #160018;
-  transition: opacity 300ms ease;
-}
-
-.hero-spinner {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 4px solid rgba(255, 255, 255, 0.1);
-  border-top-color: rgba(255, 255, 255, 0.9);
-  animation: hero-spin 0.8s linear infinite;
-}
-
-.hero-loader-text {
-  font-family: var(--hero-font-family);
-  font-weight: 500;
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-@keyframes hero-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-spinner {
-    animation: none;
-    border-top-color: rgba(255, 255, 255, 0.5);
-  }
-}
-
 .hero-bleed-bg {
   position: absolute;
   inset: 0;
@@ -201,10 +159,6 @@
     --yatra-settle-y: 28cqw;
     --year-settle-y: -24cqw;
   }
-}
-
-.hero-stage.is-loading {
-  opacity: 0;
 }
 
 /* Entrance animations (run once when `.is-loaded` is applied) */
@@ -1000,6 +954,11 @@
   left: 0;
   width: 100%;
   background-image: url('../assets/purple.jpeg');
+  background-image: -webkit-image-set(url('../assets/optimized/purple-w768.webp') 1x);
+  background-image: image-set(
+    url('../assets/optimized/purple-w768.webp') type('image/webp') 1x,
+    url('../assets/purple.jpeg') type('image/jpeg') 1x
+  );
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -1093,6 +1052,11 @@
   /* Make this section fit content without extra space */
   min-height: auto;
   background-image: url('../assets/black.jpg');
+  background-image: -webkit-image-set(url('../assets/optimized/black-w768.webp') 1x);
+  background-image: image-set(
+    url('../assets/optimized/black-w768.webp') type('image/webp') 1x,
+    url('../assets/black.jpg') type('image/jpeg') 1x
+  );
   background-size: cover;
   background-position: center;
   background-repeat: repeat;
@@ -1103,6 +1067,11 @@
 .features-section-divider {
   width: 100%;
   background-image: url('../assets/pink.jpeg');
+  background-image: -webkit-image-set(url('../assets/optimized/pink-w768.webp') 1x);
+  background-image: image-set(
+    url('../assets/optimized/pink-w768.webp') type('image/webp') 1x,
+    url('../assets/pink.jpeg') type('image/jpeg') 1x
+  );
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -1123,6 +1092,11 @@
   width: 100%;
   min-height: 100svh;
   background-image: url('../assets/dblue.png');
+  background-image: -webkit-image-set(url('../assets/optimized/dblue-w768.webp') 1x);
+  background-image: image-set(
+    url('../assets/optimized/dblue-w768.webp') type('image/webp') 1x,
+    url('../assets/dblue.png') type('image/png') 1x
+  );
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -1149,6 +1123,11 @@
   position: absolute;
   inset: 0;
   background-image: url('../assets/clouds.png');
+  background-image: -webkit-image-set(url('../assets/optimized/clouds-w768.webp') 1x);
+  background-image: image-set(
+    url('../assets/optimized/clouds-w768.webp') type('image/webp') 1x,
+    url('../assets/clouds.png') type('image/png') 1x
+  );
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -1224,6 +1203,11 @@
   width: 100%;
   min-height: 100svh;
   background-image: url('../assets/black.jpg');
+  background-image: -webkit-image-set(url('../assets/optimized/black-w768.webp') 1x);
+  background-image: image-set(
+    url('../assets/optimized/black-w768.webp') type('image/webp') 1x,
+    url('../assets/black.jpg') type('image/jpeg') 1x
+  );
   background-size: cover;
   background-position: center;
   background-repeat: repeat;
@@ -1432,6 +1416,11 @@
 .blast-section {
   width: 100%;
   background-image: url('../assets/pink2.jpeg');
+  background-image: -webkit-image-set(url('../assets/optimized/pink2-w768.webp') 1x);
+  background-image: image-set(
+    url('../assets/optimized/pink2-w768.webp') type('image/webp') 1x,
+    url('../assets/pink2.jpeg') type('image/jpeg') 1x
+  );
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

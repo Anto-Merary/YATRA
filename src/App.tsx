@@ -11,11 +11,11 @@ import { ProDanceBattlePage } from "./pages/ProDanceBattlePage";
 import { AdminPage } from "./pages/AdminPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 // Images
-import ritLogoImage from "./assets/RIT WHITE LOGO.png";
-import logoImage from "./assets/LOGO .png";
-import artistImage from "./assets/artist.png?url";
-import christopherImage from "./assets/christopher.png?url";
-import antomeraryImage from "./assets/antomerary.png?url";
+import ritLogoImage from "./assets/RIT WHITE LOGO.webp";
+import logoImage from "./assets/LOGO .webp";
+import artistImage from "./assets/artist.webp?url";
+import christopherImage from "./assets/christopher.webp?url";
+import antomeraryImage from "./assets/antomerary.webp?url";
 // Video
 import yatraVideo from "./assets/video.mp4?url";
 // Font
