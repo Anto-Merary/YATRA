@@ -872,7 +872,7 @@
         <div class="max-w-7xl mx-auto">
             <div class="rounded-3xl border border-white/10 bg-white/[0.05] backdrop-blur-md p-12 sm:p-16 md:p-20 lg:p-24 text-center">
                 <h2 class="font-akira text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold uppercase tracking-wider mb-6 text-white">
-                    to be revealed soon
+                    guest will be revealed soon
                 </h2>
             </div>
         </div>
@@ -1017,7 +1017,10 @@
                 <div class="space-y-3 sm:space-y-4 font-mono text-sm sm:text-base md:text-lg mb-5 sm:mb-6 md:mb-8 text-left md:text-right w-full">
                     <div>
                         <p class="font-bold uppercase mb-1 sm:mb-2 text-xs sm:text-sm md:text-base">Phone</p>
-                        <a href="tel:04437181600" class="opacity-80 hover:opacity-100 hover:underline transition-opacity text-xs sm:text-sm md:text-base">044 3718 1600</a>
+                        <div class="space-y-2">
+                            <a href="tel:+919843656238" class="block opacity-80 hover:opacity-100 hover:underline transition-opacity text-xs sm:text-sm md:text-base">+91 98436 56238</a>
+                            <a href="tel:+919080850106" class="block opacity-80 hover:opacity-100 hover:underline transition-opacity text-xs sm:text-sm md:text-base">+91 90808 50106</a>
+                        </div>
                     </div>
                 </div>
                 <div class="flex gap-3 sm:gap-4">
@@ -1331,8 +1334,10 @@
                 y: 100, opacity: 0, duration: 1.2, ease: "power4.out"
             });
 
-            // Horizontal Gallery Scroll Trigger
+            // Horizontal Gallery Scroll Trigger with Snap Scrolling
             const galleryTrack = document.getElementById('gallery-track');
+            const galleryItems = galleryTrack.querySelectorAll('.gallery-item');
+            const numSlides = galleryItems.length;
             
             // Calculate total width to scroll
             // We use a function for 'end' to recalculate on resize automatically via invalidateOnRefresh
@@ -1353,6 +1358,21 @@
                 pin: true,
                 animation: tween,
                 scrub: 1,
+                snap: {
+                    snapTo: (progress) => {
+                        // Calculate which slide we're closest to based on progress (0 to 1)
+                        // Each slide takes up 1/numSlides of the total progress
+                        const slideProgress = 1 / (numSlides - 1);
+                        const currentSlide = Math.round(progress / slideProgress);
+                        // Clamp to valid slide index
+                        const targetSlide = Math.max(0, Math.min(numSlides - 1, currentSlide));
+                        // Return the exact progress for that slide
+                        return targetSlide * slideProgress;
+                    },
+                    duration: { min: 0.3, max: 0.8 },
+                    ease: "power2.inOut",
+                    inertia: false,
+                },
                 invalidateOnRefresh: true, // Recalculate values on resize
             });
         };

@@ -138,7 +138,12 @@ export function Footer() {
             {/* Email and Phone */}
             <div className="space-y-1 text-xs xs:text-sm md:text-base text-white/70">
               <div>yatra@ritchennai.edu.in</div>
-              <div>+91 XXXXXXXXXX</div>
+              <div>
+                <a href="tel:+919843656238" className="hover:text-white transition-colors">+91 98436 56238</a>
+              </div>
+              <div>
+                <a href="tel:+919080850106" className="hover:text-white transition-colors">+91 90808 50106</a>
+              </div>
             </div>
           </div>
         </div>

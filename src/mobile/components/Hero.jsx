@@ -683,7 +683,7 @@ function Hero() {
               <span className="about-title-about">ABOUT</span>{' '}
               <span className="about-title-rit">YATRA&apos;26</span>
             </h2>
-            <p className="about-content reveal" ref={aboutContentRef}>
+            <p className="about-content reveal" ref={aboutContentRef} style={{ textAlign: 'justify' }}>
               YATRA 2026 is a grand intercollegiate cultural fest of Rajalakshmi Institute of Technology, organized by the students with the support of the Faculty, Principal, and Management. It is a vibrant platform that celebrates culture, creativity, and youthful energy.
               <br /><br />
               Rooted in cultural heritage and artistic expression, YATRA brings together students to showcase their talents through music, dance, art, and various cultural events. The fest aims to inspire confidence, encourage participation, and create a space where passion meets performance.

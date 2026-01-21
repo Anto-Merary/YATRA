@@ -196,31 +196,6 @@ export function EventDetailPage() {
                 {event.description}
               </p>
 
-              <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                  <div className="text-[11px] tracking-[0.22em] text-white/45">
-                    VENUE
-                  </div>
-                  <div className="mt-1 text-sm text-white/85">{event.venue}</div>
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                  <div className="text-[11px] tracking-[0.22em] text-white/45">
-                    DATE
-                  </div>
-                  <div className="mt-1 text-sm text-white/85">
-                    {event.date ?? "TBA"}
-                  </div>
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                  <div className="text-[11px] tracking-[0.22em] text-white/45">
-                    TIME
-                  </div>
-                  <div className="mt-1 text-sm text-white/85">
-                    {event.time ?? "TBA"}
-                  </div>
-                </div>
-              </div>
-
               {/* Rules & Regulations */}
               <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-5">
                 <div className="text-xs font-semibold tracking-[0.25em] text-yatra-300">
@@ -265,44 +240,6 @@ export function EventDetailPage() {
                     </div>
                   </div>
                 )}
-              </div>
-
-              <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm">
-                <div className="text-xs font-semibold tracking-[0.25em] text-yatra-300">
-                  CONTACT
-                </div>
-                <div className="mt-3 grid gap-3 text-sm">
-                  <div className="flex items-start justify-between gap-3">
-                    <span className="text-white/50">Event Incharge</span>
-                    <span className="text-white/85">{event.organizerName}</span>
-                  </div>
-                  <div className="flex items-start justify-between gap-3">
-                    <span className="text-white/50">Phone</span>
-                    <a
-                      href={`tel:${event.organizerPhone}`}
-                      className={[
-                        "text-white/85 underline decoration-white/20 underline-offset-4 transition-colors",
-                        accents.link,
-                      ].join(" ")}
-                    >
-                      {event.organizerPhone}
-                    </a>
-                  </div>
-                  {event.contactEmail && (
-                    <div className="flex items-start justify-between gap-3">
-                      <span className="text-white/50">Email</span>
-                      <a
-                        href={`mailto:${event.contactEmail}`}
-                        className={[
-                          "text-white/85 underline decoration-white/20 underline-offset-4 transition-colors",
-                          accents.link,
-                        ].join(" ")}
-                      >
-                        {event.contactEmail}
-                      </a>
-                    </div>
-                  )}
-                </div>
               </div>
 
               {/* Register Now Button */}
