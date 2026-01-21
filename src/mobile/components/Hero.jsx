@@ -16,7 +16,8 @@ import { useNetworkStatus } from '../hooks/useNetworkStatus'
 
 function GlitchText({ koreanText, englishText, className, delay = 0, shouldStart = false, variant = 'glitch' }) {
   const [isGlitching, setIsGlitching] = useState(false)
-  const [showEnglish, setShowEnglish] = useState(false)
+  // If there's no Korean text, render English immediately so layout doesn't collapse.
+  const [showEnglish, setShowEnglish] = useState(() => !koreanText)
 
   useEffect(() => {
     let glitchTimer = 0
@@ -25,7 +26,17 @@ function GlitchText({ koreanText, englishText, className, delay = 0, shouldStart
     // When the section leaves view, reset so the effect can replay next time.
     if (!shouldStart) {
       setIsGlitching(false)
-      setShowEnglish(false)
+      setShowEnglish(!koreanText)
+      return () => {
+        if (glitchTimer) clearTimeout(glitchTimer)
+        if (transitionTimer) clearTimeout(transitionTimer)
+      }
+    }
+
+    // No Korean line = nothing to crossfade from; keep English visible and in-flow.
+    if (!koreanText) {
+      setIsGlitching(false)
+      setShowEnglish(true)
       return () => {
         if (glitchTimer) clearTimeout(glitchTimer)
         if (transitionTimer) clearTimeout(transitionTimer)
@@ -55,7 +66,7 @@ function GlitchText({ koreanText, englishText, className, delay = 0, shouldStart
       clearTimeout(glitchTimer)
       clearTimeout(transitionTimer)
     }
-  }, [delay, shouldStart, variant])
+  }, [delay, shouldStart, variant, koreanText])
 
   return (
     <span
@@ -986,7 +997,6 @@ function Hero() {
               shouldStart={isBlastSectionVisible}
               variant="blur"
             />
-            <br />
             <GlitchText
               koreanText=""
               englishText="PAST"

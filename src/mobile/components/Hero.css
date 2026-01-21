@@ -1465,15 +1465,15 @@
   position: relative;
   z-index: 15;
   /* No scroll image behind the title — keep it clean and text-only */
-  padding: 0.25rem 0.5rem;
-  margin-bottom: 1.25rem;
+  padding: 0.15rem 0.5rem;
+  margin-bottom: 0.85rem;
   /* Stabilize layout while GlitchText swaps states (prevents layout "jump") */
-  min-height: clamp(84px, 18vw, 120px);
+  min-height: clamp(76px, 14vw, 104px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.1rem, 1vw, 0.35rem);
+  gap: clamp(0.05rem, 0.8vw, 0.22rem);
 }
 
 /* Remove the scroll/parchment image behind the Blast title */
@@ -1484,8 +1484,10 @@
 /* Tighten line spacing for the Blast title text */
 .blast-title-prefix,
 .blast-title-highlight {
-  line-height: 0.92;
-  display: inline-block;
+  line-height: 0.9;
+  display: block;
+  text-align: center;
+  margin: 0;
 }
 
 .blast-inner {
@@ -1500,8 +1502,8 @@
   position: relative;
   width: 100%;
   height: clamp(340px, 46vh, 520px);
-  /* More space below the scroll-backed title */
-  margin-top: 0.5rem;
+  /* Title is text-only now; reduce dead space before collage */
+  margin-top: 0.25rem;
   z-index: 12;
   isolation: isolate;
   border-radius: 18px;
