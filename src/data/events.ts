@@ -1,3 +1,52 @@
+// Import event images
+import lyricQuestImg from "../assets/events images/lyric quest.jpeg?url";
+import animeKoreanQuizImg from "../assets/events images/anime x korean quiz.jpeg?url";
+import rjHuntImg from "../assets/events images/rj hunt.jpeg?url";
+import mehandhiImg from "../assets/events images/mehandhi competition.jpeg?url";
+import megaOrigamiImg from "../assets/events images/mega origami.jpeg?url";
+import redLightGreenLightImg from "../assets/events images/red light green light.png?url";
+import brainTeasersImg from "../assets/events images/brain teasers.png?url";
+import cricketCommentaryImg from "../assets/events images/cricket commentry.png?url";
+import memeCreationImg from "../assets/events images/meme creation challange .jpeg?url";
+import balloonBurstingImg from "../assets/events images/ballon burrsting challenge.jpeg?url";
+import soloDanceImg from "../assets/events images/solo dance .jpeg?url";
+import kidsSoloDanceImg from "../assets/events images/kids solo dance .jpeg?url";
+import groupDanceImg from "../assets/events images/group dance .jpeg?url";
+import adaptuneSoloImg from "../assets/events images/adaptune solo battle .jpeg?url";
+import pubgImg from "../assets/events images/pubg.png?url";
+import brawlStarsImg from "../assets/events images/brawl stars.jpeg?url";
+import channelSurfingImg from "../assets/events images/channel surfing.jpeg?url";
+import laughingChallengeImg from "../assets/events images/laughing challange.jpeg?url";
+import boxCricketImg from "../assets/events images/box cricket.png?url";
+import posterDesigningImg from "../assets/events images/poster designing.png?url";
+import tugOfWarImg from "../assets/events images/tug of war.png?url";
+import ethnicFoodImg from "../assets/events images/ethnic food contest.jpeg?url";
+import shortFilmImg from "../assets/events images/short filim.jpeg?url";
+import photographyImg from "../assets/events images/photography.png?url";
+import jamImg from "../assets/events images/jam.jpeg?url";
+import singingImg from "../assets/events images/singing .jpeg?url";
+import beatBoxImg from "../assets/events images/beat box battle .jpeg?url";
+import battleOfBandsImg from "../assets/events images/battle the band instrument .jpeg?url";
+import adzapImg from "../assets/events images/adzap.jpeg?url";
+import mimeImg from "../assets/events images/mime .jpeg?url";
+import monoActingImg from "../assets/events images/mono acting.jpeg?url";
+import faceFiestaImg from "../assets/events images/face fiesta .jpeg?url";
+import oratoryImg from "../assets/events images/oratry.jpeg?url";
+import pencilArtImg from "../assets/events images/painting and pencil art .jpeg?url";
+import debateImg from "../assets/events images/deabte .png?url";
+import theOppositeImg from "../assets/events images/the opposite.png?url";
+import mockParliamentImg from "../assets/events images/mock parliment .jpeg?url";
+import classicalDanceImg from "../assets/events images/classic dance.jpeg?url";
+import freeFireImg from "../assets/events images/free fire .jpeg?url";
+import valorantImg from "../assets/events images/valorant.jpeg?url";
+import stumbleGuysImg from "../assets/events images/stumble guys .png?url";
+import fakeNewsImg from "../assets/events images/fake news or fact.jpeg?url";
+import tongueTwisterImg from "../assets/events images/tongue twister.jpeg?url";
+import bioscopeImg from "../assets/events images/bio scope.png?url";
+import towerBuildImg from "../assets/events images/tower build.png?url";
+import rangoliImg from "../assets/events images/rangoli.png?url";
+import treasureHuntImg from "../assets/events images/treasure hunt.png?url";
+
 export type EventDay = "day1" | "day2";
 
 export type ParticipationType = "solo" | "group";
@@ -41,6 +90,7 @@ export const EVENTS: FestEvent[] = [
     name: "Lyric Quest",
     day: "day1",
     participation: "solo",
+    posterUrl: lyricQuestImg,
     description: "Lyric Quest is a fun and engaging music challenge where participants test their knowledge of song lyrics across genres and languages. The event blends memory, speed, and musical intuition as contestants decode, complete, or identify lyrics in exciting rounds.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -64,6 +114,7 @@ export const EVENTS: FestEvent[] = [
     name: "K-Drama vs Anime Quiz",
     day: "day1",
     participation: "group",
+    posterUrl: animeKoreanQuizImg,
     description: "K-Drama vs Anime Quiz is a high-energy trivia event where small teams compete to prove their mastery of iconic scenes, characters, soundtracks, and storylines. The quiz blends pop-culture knowledge with speed and strategy, sparking friendly rivalry between drama and anime fans.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -86,6 +137,7 @@ export const EVENTS: FestEvent[] = [
     name: "RJ Hunt",
     day: "day1",
     participation: "solo",
+    posterUrl: rjHuntImg,
     description: "RJ Hunt is an engaging on-stage challenge where participants step into the role of a radio jockey and entertain the audience with voice, spontaneity, and wit. The event tests communication skills, presence of mind, humor, and the ability to connect instantly through voice.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -108,6 +160,7 @@ export const EVENTS: FestEvent[] = [
     name: "Mehandi",
     day: "day1",
     participation: "group",
+    posterUrl: mehandhiImg,
     description: "Mehandi is a traditional art event where participants create intricate henna designs that reflect cultural beauty and creativity. The event celebrates precision, pattern work, and artistic expression through timeless body art.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -131,6 +184,7 @@ export const EVENTS: FestEvent[] = [
     name: "Mega Origami",
     day: "day1",
     participation: "group",
+    posterUrl: megaOrigamiImg,
     description: "Mega Origami is a large-scale paper art event where teams create impressive structures or designs using origami techniques. The event emphasizes creativity, precision, and teamwork while transforming simple paper into eye-catching masterpieces.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -153,6 +207,7 @@ export const EVENTS: FestEvent[] = [
     name: "Red Light, Green Light",
     day: "day1",
     participation: "solo",
+    posterUrl: redLightGreenLightImg,
     description: "Red Light, Green Light is a fun-filled action game where participants must move and freeze instantly based on commands. The event tests reflexes, focus, and self-control while creating an exciting and energetic atmosphere.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -174,6 +229,7 @@ export const EVENTS: FestEvent[] = [
     name: "Brain Teasers Arena",
     day: "day1",
     participation: "group",
+    posterUrl: brainTeasersImg,
     description: "Brain Teasers Arena is a mind-bending challenge where participants solve logic puzzles, riddles, and quick-thinking problems under time pressure. The event sharpens reasoning skills, creativity, and mental agility in a fun, competitive atmosphere.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -197,6 +253,7 @@ export const EVENTS: FestEvent[] = [
     name: "Cricket Commentary",
     day: "day1",
     participation: "solo",
+    posterUrl: cricketCommentaryImg,
     description: "Cricket Commentary is an engaging solo performance where participants bring a match to life through voice, analysis, and excitement. The event tests clarity, spontaneity, game knowledge, and the ability to capture thrilling moments with professional-style narration.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -219,6 +276,7 @@ export const EVENTS: FestEvent[] = [
     name: "Avatar Portfolio",
     day: "day1",
     participation: "solo",
+    posterUrl: pencilArtImg, // Using pencil art as closest match for creative/art event
     description: "Avatar Portfolio is a creative showcase where participants design and present a fictional avatar that reflects their personality, skills, or imagination. The event blends storytelling, visual creativity, and self-expression as contestants bring their unique digital or conceptual avatar to life.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -241,6 +299,7 @@ export const EVENTS: FestEvent[] = [
     name: "Meme Creation Challenge",
     day: "day1",
     participation: "solo",
+    posterUrl: memeCreationImg,
     description: "Meme Creation Challenge is an individual creative event where participants transform ideas or templates into witty, relatable memes. The event highlights humor, originality, and the power of visual storytelling with minimal words.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -263,6 +322,7 @@ export const EVENTS: FestEvent[] = [
     name: "Balloon Bursting Challenge",
     day: "day1",
     participation: "solo",
+    posterUrl: balloonBurstingImg,
     description: "Balloon Bursting Challenge is a fun-filled, high-energy game where participants race against time to burst balloons using speed, strategy, and coordination. The event guarantees laughter and excitement as contestants complete quirky tasks under pressure.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -284,6 +344,7 @@ export const EVENTS: FestEvent[] = [
     name: "Solo Dance",
     day: "day1",
     participation: "solo",
+    posterUrl: soloDanceImg,
     description: "Solo Dance is a spotlight performance where a single dancer commands the stage with individuality, emotion, and style. It celebrates personal expression, confidence, and storytelling through movement, allowing performers to turn their vision into a powerful solo act.",
     venue: "Main Auditorium",
     organizerName: "Organizer Name",
@@ -308,6 +369,7 @@ export const EVENTS: FestEvent[] = [
     name: "Kids Solo Dance",
     day: "day1",
     participation: "solo",
+    posterUrl: kidsSoloDanceImg,
     description: "Kids Solo Dance is a joyful and energetic event where young dancers come together to showcase their talent, creativity, and teamwork. The performance focuses on fun, coordination, rhythm, and expressions, encouraging children to gain confidence and enjoy dancing on stage.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -334,6 +396,7 @@ export const EVENTS: FestEvent[] = [
     name: "Duo Dance",
     day: "day1",
     participation: "group",
+    posterUrl: soloDanceImg, // Using solo dance image as closest match
     description: "Team up and showcase your synchronized dance moves.",
     venue: "Main Auditorium",
     organizerName: "Organizer Name",
@@ -345,6 +408,7 @@ export const EVENTS: FestEvent[] = [
     name: "Group Dance",
     day: "day1",
     participation: "group",
+    posterUrl: groupDanceImg,
     description: "Group Dance transforms the stage into a moving canvas where rhythm, teamwork, and storytelling collide. Each performance is a powerful blend of synchronized energy and creative expression, turning collective movement into an unforgettable visual experience.",
     venue: "Main Auditorium",
     organizerName: "Organizer Name",
@@ -369,6 +433,7 @@ export const EVENTS: FestEvent[] = [
     name: "Adaptune Solo Battle",
     day: "day1",
     participation: "solo",
+    posterUrl: adaptuneSoloImg,
     description: "Adaptune Solo Battle is a high-energy face-off where solo performers compete by instantly adapting their moves to rapidly changing songs and moods. The event tests spontaneity, versatility, stage confidence, and the ability to own the moment under pressure.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -393,6 +458,7 @@ export const EVENTS: FestEvent[] = [
     name: "PUBG (Battlegrounds)",
     day: "day1",
     participation: "group",
+    posterUrl: pubgImg,
     description: "PUBG is a high-intensity battle royale gaming event where players compete using strategy, survival skills, and sharp reflexes. The event delivers esports-style excitement as participants fight to outlast opponents and claim victory on the battleground.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -416,6 +482,7 @@ export const EVENTS: FestEvent[] = [
     name: "Brawl Stars",
     day: "day1",
     participation: "group",
+    posterUrl: brawlStarsImg,
     description: "Brawl Stars is a fast-paced mobile gaming event where players compete in action-packed matches using unique brawlers and strategies. The event highlights quick decision-making, teamwork, and skill as participants battle through exciting game modes.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -439,6 +506,7 @@ export const EVENTS: FestEvent[] = [
     name: "Channel Surfing",
     day: "day1",
     participation: "group",
+    posterUrl: channelSurfingImg,
     description: "Channel Surfing is a team-based performance event where participants rapidly switch between different TV channels, genres, and shows in a single act. The event highlights creativity, coordination, and quick transitions as teams bring multiple characters and formats to life.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -462,6 +530,7 @@ export const EVENTS: FestEvent[] = [
     name: "Gonggi (Pebble Toss)",
     day: "day1",
     participation: "solo",
+    posterUrl: redLightGreenLightImg, // Using red light green light as closest match for game event
     description: "Gonggi is a traditional skill-based game where players toss and catch pebbles in quick sequences requiring focus and hand–eye coordination. The event blends nostalgia and precision, challenging participants to complete levels with speed and accuracy.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -484,6 +553,7 @@ export const EVENTS: FestEvent[] = [
     name: "Laughing Challenge (Don't Laugh)",
     day: "day1",
     participation: "solo",
+    posterUrl: laughingChallengeImg,
     description: "Laughing Challenge is a fun and entertaining event where participants must keep a straight face while others try to make them laugh. The challenge tests self-control, focus, and composure in a high-energy, laughter-filled environment.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -506,6 +576,7 @@ export const EVENTS: FestEvent[] = [
     name: "Box Cricket",
     day: "day1",
     participation: "group",
+    posterUrl: boxCricketImg,
     description: "Box Cricket is a fast-paced, modified version of cricket played in a limited indoor or enclosed space. The event focuses on quick reflexes, smart gameplay, and team coordination, making it thrilling and action-packed.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -528,6 +599,7 @@ export const EVENTS: FestEvent[] = [
     name: "Poster Designing",
     day: "day1",
     participation: "solo",
+    posterUrl: posterDesigningImg,
     description: "Poster Designing is a creative online event where participants visually communicate a message, theme, or idea through impactful digital design and artwork. The event tests creativity, clarity, and the ability to convey meaning using visuals and minimal text.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -554,6 +626,7 @@ export const EVENTS: FestEvent[] = [
     name: "Tug of War",
     day: "day1",
     participation: "group",
+    posterUrl: tugOfWarImg,
     description: "Tug of War is a classic team strength and strategy game where coordination, balance, and collective power decide victory. The event builds team spirit and excitement as teams compete to pull their opponents across the line.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -577,6 +650,7 @@ export const EVENTS: FestEvent[] = [
     name: "Ethnic Food Contest",
     day: "day1",
     participation: "group",
+    posterUrl: ethnicFoodImg,
     description: "Ethnic Food Contest is a culinary showcase where participants present traditional dishes that reflect cultural heritage and authentic flavors. The event focuses on creativity, presentation, and storytelling—without the use of fire or live cooking.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -601,6 +675,7 @@ export const EVENTS: FestEvent[] = [
     name: "Short Film",
     day: "day1",
     participation: "group",
+    posterUrl: shortFilmImg,
     description: "Short Film is a team-based creative event where participants collaborate to craft a compelling story within a short duration. The event celebrates teamwork, direction, acting, and cinematic storytelling that delivers a strong message in limited time.",
     venue: "Seminar Hall 2",
     organizerName: "Organizer Name",
@@ -624,6 +699,7 @@ export const EVENTS: FestEvent[] = [
     name: "Photography",
     day: "day1",
     participation: "solo",
+    posterUrl: photographyImg,
     description: "Photography is a creative visual art event where participants capture powerful moments, emotions, or stories through their lens. The event celebrates perspective, timing, composition, and the ability to turn ordinary scenes into impactful visuals.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -647,6 +723,7 @@ export const EVENTS: FestEvent[] = [
     name: "JAM (Just A Minute)",
     day: "day2",
     participation: "solo",
+    posterUrl: jamImg,
     description: "JAM is a fast-paced speaking challenge where participants think on their feet and speak continuously on a given topic for one minute. The event tests spontaneity, clarity of thought, confidence, and the ability to engage an audience under time pressure.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -670,6 +747,7 @@ export const EVENTS: FestEvent[] = [
     name: "Singing",
     day: "day2",
     participation: "solo",
+    posterUrl: singingImg,
     description: "Singing is a solo vocal performance event where participants showcase their voice, emotion, and musical expression on stage. The event celebrates melody, control, and individuality as performers connect with the audience through song.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -693,6 +771,7 @@ export const EVENTS: FestEvent[] = [
     name: "Beatbox Battle",
     day: "day2",
     participation: "solo",
+    posterUrl: beatBoxImg,
     description: "Beatbox Battle is a solo performance event where participants use only their voice to create beats, rhythms, and sound effects in a continuous act. The event focuses on originality, control, flow, and stage presence rather than head-to-head battles.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -717,6 +796,7 @@ export const EVENTS: FestEvent[] = [
     name: "Battle of Bands (Instruments)",
     day: "day2",
     participation: "group",
+    posterUrl: battleOfBandsImg,
     description: "Battle of Beats is a live instrumental performance event where solo artists, duos, or groups showcase their musical skills through structured rounds. Participants perform using their own instruments, focusing on rhythm, coordination, and creativity rather than head-to-head battles.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -742,6 +822,7 @@ export const EVENTS: FestEvent[] = [
     name: "AdZap (Product Marketing)",
     day: "day2",
     participation: "solo",
+    posterUrl: adzapImg,
     description: "AdZap is a creative marketing challenge where participants design and perform an advertisement to promote a product in an engaging and persuasive way. The event tests creativity, communication skills, branding sense, and the ability to sell an idea within a limited time.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -764,6 +845,7 @@ export const EVENTS: FestEvent[] = [
     name: "Mime",
     day: "day2",
     participation: "group",
+    posterUrl: mimeImg,
     description: "Mime is a silent performance art where participants communicate powerful stories using only expressions, gestures, and body movements. The event challenges performers to convey emotions and ideas without words, relying purely on imagination and physical storytelling.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -788,6 +870,7 @@ export const EVENTS: FestEvent[] = [
     name: "Mono Acting Challenge",
     day: "day2",
     participation: "solo",
+    posterUrl: monoActingImg,
     description: "Mono Acting Challenge is a powerful solo performance event where a single actor brings an entire story to life through expressions, voice modulation, and body language. The event highlights creativity, emotional depth, and the ability to captivate the audience alone on stage.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -811,6 +894,7 @@ export const EVENTS: FestEvent[] = [
     name: "Face Fiesta",
     day: "day2",
     participation: "group",
+    posterUrl: faceFiestaImg,
     description: "Face Fiesta is a team-based creative art event where participants work together to transform a face into a themed visual masterpiece. The event highlights imagination, coordination, and artistic expression through colors and designs.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -834,6 +918,7 @@ export const EVENTS: FestEvent[] = [
     name: "Oratory – English / Tamil",
     day: "day2",
     participation: "solo",
+    posterUrl: oratoryImg,
     description: "Oratory is a solo speaking event where participants deliver a powerful speech in English or Tamil on a given topic. The event highlights clarity of thought, language proficiency, confidence, and the ability to inspire or persuade an audience through words.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -857,6 +942,7 @@ export const EVENTS: FestEvent[] = [
     name: "Pencil Art / Painting",
     day: "day2",
     participation: "solo",
+    posterUrl: pencilArtImg,
     description: "Pencil Art / Painting is a creative visual arts event where participants express ideas, emotions, or themes through detailed sketches or colorful paintings. The event highlights artistic skill, imagination, and the ability to bring concepts to life on paper or canvas.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -879,6 +965,7 @@ export const EVENTS: FestEvent[] = [
     name: "Debate",
     day: "day2",
     participation: "group",
+    posterUrl: debateImg,
     description: "Debate is a thought-provoking team event where participants present structured arguments for or against a given topic. It encourages teamwork, critical thinking, and persuasive communication while respecting diverse viewpoints.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -902,6 +989,7 @@ export const EVENTS: FestEvent[] = [
     name: "The Opposite",
     day: "day2",
     participation: "solo",
+    posterUrl: theOppositeImg,
     description: "The Opposite is a fast-paced fun game where participants must do the exact opposite of what is instructed, turning simple commands into tricky challenges. The event tests presence of mind, quick thinking, and reflex control, creating lots of laughter and surprise moments.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -924,6 +1012,7 @@ export const EVENTS: FestEvent[] = [
     name: "Stand-Up Comedy",
     day: "day2",
     participation: "solo",
+    posterUrl: laughingChallengeImg, // Using laughing challenge as closest match for comedy/humor event
     description: "Stand-Up Comedy is a solo performance event where participants entertain the audience through humor, storytelling, and observational comedy. The event highlights wit, timing, originality, and the ability to connect with the crowd through laughter.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -947,6 +1036,7 @@ export const EVENTS: FestEvent[] = [
     name: "Mock Parliament",
     day: "day2",
     participation: "group",
+    posterUrl: mockParliamentImg,
     description: "Mock Parliament is an interactive role-play event where teams simulate real parliamentary sessions to debate and deliberate on contemporary issues. It promotes teamwork, leadership, public speaking, and a deeper understanding of democratic decision-making.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -970,6 +1060,7 @@ export const EVENTS: FestEvent[] = [
     name: "K-Cosplay",
     day: "day2",
     participation: "solo",
+    posterUrl: animeKoreanQuizImg, // Using anime/korean quiz as closest match for K-pop/K-drama related event
     description: "Dress up as your favorite K-pop or K-drama character.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -981,6 +1072,7 @@ export const EVENTS: FestEvent[] = [
     name: "Classical Dance",
     day: "day2",
     participation: "solo",
+    posterUrl: classicalDanceImg,
     description: "Classical Dance is a graceful solo performance that reflects tradition, discipline, and expressive storytelling rooted in Indian heritage. The event celebrates rhythm, mudras, facial expressions, and precision, allowing performers to bring timeless art forms to life on stage.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -1006,6 +1098,7 @@ export const EVENTS: FestEvent[] = [
     name: "Free Fire",
     day: "day2",
     participation: "group",
+    posterUrl: freeFireImg,
     description: "Free Fire is a competitive mobile gaming event where teams battle for survival using strategy, coordination, and quick decision-making. The event brings esports excitement to the stage, testing teamwork, reflexes, and tactical gameplay.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -1029,6 +1122,7 @@ export const EVENTS: FestEvent[] = [
     name: "Valorant",
     day: "day2",
     participation: "group",
+    posterUrl: valorantImg,
     description: "Valorant is a competitive PC esports event where teams battle using strategy, precision, and agent abilities in intense tactical gameplay. The event emphasizes teamwork, communication, and skill-based execution in a professional match setting.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -1052,6 +1146,7 @@ export const EVENTS: FestEvent[] = [
     name: "Stumble Guys",
     day: "day2",
     participation: "solo",
+    posterUrl: stumbleGuysImg,
     description: "Stumble Guys is a fun-filled individual gaming event where players race through unpredictable obstacle courses packed with chaos and surprises. The event tests quick reflexes, timing, and adaptability as participants strive to outlast others and reach the finish line.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -1074,6 +1169,7 @@ export const EVENTS: FestEvent[] = [
     name: "Fake News or Fact",
     day: "day2",
     participation: "group",
+    posterUrl: fakeNewsImg,
     description: "Fake News or Fact is an interactive awareness game where participants analyze headlines, images, or short clips to identify whether the information is true or misleading. The event sharpens critical thinking, media literacy, and decision-making in the digital age.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -1097,6 +1193,7 @@ export const EVENTS: FestEvent[] = [
     name: "Tongue Twister Tournament",
     day: "day2",
     participation: "solo",
+    posterUrl: tongueTwisterImg,
     description: "Tongue Twister Tournament is a fast-paced speaking challenge where participants race against time to pronounce tricky phrases clearly and accurately. The event tests diction, fluency, focus, and presence of mind in a fun and competitive format.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -1119,6 +1216,7 @@ export const EVENTS: FestEvent[] = [
     name: "Bioscope",
     day: "day2",
     participation: "group",
+    posterUrl: bioscopeImg,
     description: "Bioscope is a creative visual storytelling event where participants present short animated or illustrated sequences through a handcrafted viewing box. The event blends imagination, art, and narration to deliver a nostalgic and engaging storytelling experience.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -1142,6 +1240,7 @@ export const EVENTS: FestEvent[] = [
     name: "Tower Build (Chopstick + Rubber Band)",
     day: "day2",
     participation: "group",
+    posterUrl: towerBuildImg,
     description: "Tower Build is a fun engineering challenge where teams construct the tallest and most stable tower using only chopsticks and rubber bands. The event tests creativity, problem-solving, teamwork, and structural thinking under time pressure.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -1164,6 +1263,7 @@ export const EVENTS: FestEvent[] = [
     name: "Rangoli",
     day: "day2",
     participation: "group",
+    posterUrl: rangoliImg,
     description: "Rangoli is a collaborative art event where a team transforms empty space into vibrant designs using colors and patterns. The event highlights creativity, coordination, and cultural expression through detailed and visually appealing artwork.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -1186,6 +1286,7 @@ export const EVENTS: FestEvent[] = [
     name: "Treasure Hunt",
     day: "day2",
     participation: "group",
+    posterUrl: treasureHuntImg,
     description: "Treasure Hunt is an adventurous team-based game where participants solve clues, crack puzzles, and follow trails to uncover the final prize. The event combines strategy, teamwork, and quick thinking, turning the campus into an exciting quest zone.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -1210,6 +1311,7 @@ export const EVENTS: FestEvent[] = [
     name: "Dance Battle",
     day: "day1",
     participation: "group",
+    posterUrl: classicalDanceImg, // Using classical dance as closest match
     description:
       "Dance Battle is a high-energy face-off where crews and solo dancers bring style, power, and stage presence. Expect knockout rounds, iconic beats, and crowd-hype moments.",
     venue: "TBA",
