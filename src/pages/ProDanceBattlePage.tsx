@@ -5,7 +5,6 @@ import { Modal } from "../components/Modal";
 import { Button } from "../components/ui/button";
 import { useMobile } from "../hooks/use-mobile";
 
-import ritLogoImage from "../assets/RIT WHITE LOGO.webp?url";
 import posterImage from "../assets/dance.webp?url";
 import rulesImage from "../assets/mrrules.webp?url";
 
@@ -88,19 +87,8 @@ export function ProDanceBattlePage() {
               initial={prefersReducedMotion ? undefined : { opacity: 0, y: -10 }}
               animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="mt-4 flex items-center justify-between gap-4"
+              className="mt-4 flex items-center justify-end gap-4"
             >
-              <div className="flex items-center gap-3">
-                <img
-                  src={ritLogoImage}
-                  alt="RIT Logo"
-                  className="h-9 w-auto opacity-85"
-                  draggable={false}
-                />
-                <div className="hidden sm:block text-xs tracking-[0.22em] text-white/55">
-                  RAJALAKSHMI INSTITUTE OF TECHNOLOGY
-                </div>
-              </div>
               <div className="inline-flex items-center rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[11px] font-semibold tracking-[0.18em] text-emerald-200">
                 REGISTRATION OPEN
               </div>

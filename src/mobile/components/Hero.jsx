@@ -487,6 +487,10 @@ function Hero() {
       els.forEach((el, i) => {
         const start = startPositions[i] || { x: 0, y: 0 }
         gsap.set(el, {
+          // Center using GSAP-managed percent transforms so CSS centering isn't lost
+          // when GSAP updates `transform` (prevents images "dropping" to the bottom).
+          xPercent: -50,
+          yPercent: -50,
           x: start.x,
           y: start.y,
           scale: 1.35,
@@ -501,7 +505,7 @@ function Hero() {
       if (reduceMotion) {
         els.forEach((el, i) => {
           const base = finalPositions[i] || { x: 0, y: 0 }
-          gsap.set(el, { x: base.x, y: base.y, scale: 1, opacity: 1, rotate: 0 })
+          gsap.set(el, { xPercent: -50, yPercent: -50, x: base.x, y: base.y, scale: 1, opacity: 1, rotate: 0 })
         })
         return
       }

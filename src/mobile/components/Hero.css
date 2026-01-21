@@ -1550,7 +1550,6 @@
   object-fit: cover;
   border-radius: 14px;
   opacity: 0;
-  transform: translate3d(-50%, -50%, 0);
   will-change: transform, opacity;
   transition: none; /* GSAP/ScrollTrigger drives motion */
   box-shadow:
