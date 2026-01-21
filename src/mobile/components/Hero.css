@@ -1502,6 +1502,8 @@
   position: relative;
   width: 100%;
   height: clamp(340px, 46vh, 520px);
+  /* Move the photo cluster upward to use the unused top space in the collage container */
+  --blast-photo-anchor-y: 42%;
   /* Title is text-only now; reduce dead space before collage */
   margin-top: 0.25rem;
   z-index: 12;
@@ -1541,7 +1543,7 @@
 .blast-photo {
   position: absolute;
   left: 50%;
-  top: 52%;
+  top: var(--blast-photo-anchor-y, 52%);
   /* Slightly smaller cards for cleaner spacing */
   width: clamp(140px, 50vw, 280px);
   aspect-ratio: 4 / 5;

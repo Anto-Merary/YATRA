@@ -1096,9 +1096,14 @@ function Hero() {
 
         <div className="mobile-footer-section">
           <div className="mobile-footer-label">PHONE</div>
-          <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+9104437181600">
-            044 3718 1600
-          </a>
+          <div className="mobile-footer-phone-numbers">
+            <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+918825910614">
+              +91 88259 10614
+            </a>
+            <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+919884470171">
+              +91 98844 70171
+            </a>
+          </div>
         </div>
 
         <div className="mobile-footer-social" aria-label="Social links">
@@ -1109,7 +1114,7 @@ function Hero() {
             rel="noreferrer"
             aria-label="Instagram"
           >
-            <svg className="mobile-footer-social-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <svg className="mobile-footer-social-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path
                 d="M7.5 2.75h9A4.75 4.75 0 0 1 21.25 7.5v9A4.75 4.75 0 0 1 16.5 21.25h-9A4.75 4.75 0 0 1 2.75 16.5v-9A4.75 4.75 0 0 1 7.5 2.75Z"
                 stroke="currentColor"
@@ -1126,7 +1131,7 @@ function Hero() {
             rel="noreferrer"
             aria-label="YouTube"
           >
-            <svg className="mobile-footer-social-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <svg className="mobile-footer-social-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path
                 d="M21.593 7.203a2.506 2.506 0 0 0-1.762-1.766C18.265 5.007 12 5 12 5s-6.264-.007-7.831.404a2.56 2.56 0 0 0-1.766 1.778c-.413 1.566-.417 4.814-.417 4.814s-.004 3.264.406 4.814c.266.978.842 1.74 1.766 1.778 1.582.43 7.831.437 7.831.437s6.265.007 7.831-.403a2.515 2.515 0 0 0 1.767-1.776c.415-1.563.417-4.812.417-4.812s.002-3.265-.415-4.831zM9.996 15.005l-.005-6 5.207 3.005-5.202 2.995z"
                 fill="currentColor"

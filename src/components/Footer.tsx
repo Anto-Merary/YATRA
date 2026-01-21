@@ -83,9 +83,14 @@ export function Footer() {
 
           <div className="mobile-footer-section">
             <div className="mobile-footer-label">PHONE</div>
-            <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+9104437181600">
-              044 3718 1600
-            </a>
+            <div className="mobile-footer-phone-numbers">
+              <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+918825910614">
+                +91 88259 10614
+              </a>
+              <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+919884470171">
+                +91 98844 70171
+              </a>
+            </div>
           </div>
 
           <div className="mobile-footer-social" aria-label="Social links">
