@@ -2,7 +2,10 @@ import type { Config } from "tailwindcss";
 
 export default {
     darkMode: ["class"],
-    content: ["./index.html", "./src/**/*.{ts,tsx}"],
+    // Include js/jsx because the mobile home (`src/mobile/**`) is written in JSX.
+    // Without this, Tailwind utilities used in `.jsx` files won't be generated,
+    // causing the mobile homepage/footer to render unstyled.
+    content: ["./index.html", "./mobile.html", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
   	extend: {
   			fontFamily: {
