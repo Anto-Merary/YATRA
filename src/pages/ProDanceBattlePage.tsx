@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Modal } from "../components/Modal";
 import { Button } from "../components/ui/button";
@@ -14,6 +14,13 @@ export function ProDanceBattlePage() {
   const { prefersReducedMotion } = useMobile();
   const [rulesOpen, setRulesOpen] = useState(false);
   const navigate = useNavigate();
+
+  // Ensure scroll to top when navigating to this page
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, []);
 
   const handleBack = () => {
     // Prefer history back, but fall back to Events hub if user landed here directly.
@@ -133,6 +140,11 @@ export function ProDanceBattlePage() {
                     className="h-[420px] w-full object-cover sm:h-[520px] lg:h-[600px]"
                     draggable={false}
                     loading="eager"
+                    decoding="async"
+                    onError={(e) => {
+                      console.error("Failed to load poster image");
+                      (e.currentTarget as HTMLImageElement).style.display = "none";
+                    }}
                   />
                 </div>
               </motion.div>
@@ -225,6 +237,12 @@ export function ProDanceBattlePage() {
                 alt={`${EVENT_NAME} rules`}
                 className="w-full h-auto"
                 draggable={false}
+                loading="lazy"
+                decoding="async"
+                onError={(e) => {
+                  console.error("Failed to load rules image");
+                  (e.currentTarget as HTMLImageElement).style.display = "none";
+                }}
               />
             </div>
             <a

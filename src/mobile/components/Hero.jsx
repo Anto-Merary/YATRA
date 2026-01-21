@@ -446,7 +446,8 @@ function Hero() {
 
       const baseFinal = [
         { x: -spreadX * 0.85, y: -spreadY * 0.10 },
-        { x: 0, y: -spreadY * 0.78 },
+        // Top-center ("syn") photo: bring it down a bit so it never hides under the title
+        { x: 0, y: -spreadY * 0.58 },
         { x: spreadX * 0.85, y: -spreadY * 0.10 },
         { x: spreadX * 0.55, y: spreadY * 0.70 },
         { x: -spreadX * 0.55, y: spreadY * 0.76 },

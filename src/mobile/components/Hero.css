@@ -1513,10 +1513,10 @@
   width: 100%;
   /* Bigger stage so the collage fills the section better on mobile */
   height: clamp(420px, 58vh, 760px);
-  /* Move the photo cluster upward to use the unused top space in the collage container */
-  --blast-photo-anchor-y: 42%;
+  /* Nudge the photo cluster down so top images never hide under the title */
+  --blast-photo-anchor-y: 48%;
   /* Title is text-only now; reduce dead space before collage */
-  margin-top: 0.25rem;
+  margin-top: 0.9rem;
   z-index: 12;
   /* Remove the visible "container" around the images */
   background: transparent;
