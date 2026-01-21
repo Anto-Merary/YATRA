@@ -1434,6 +1434,8 @@
   /* Prevent collage from visually colliding with footer below */
   isolation: isolate;
   z-index: 10;
+  /* Extra safety: never allow animated photos to visually escape the section */
+  overflow: hidden;
 }
 
 .blast-section::after {
@@ -1493,7 +1495,8 @@
 .blast-inner {
   position: relative;
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   z-index: 11; /* above overlay */
 }
@@ -1501,43 +1504,25 @@
 .blast-collage {
   position: relative;
   width: 100%;
-  height: clamp(340px, 46vh, 520px);
+  /* Bigger stage so the collage fills the section better on mobile */
+  height: clamp(420px, 58vh, 760px);
   /* Move the photo cluster upward to use the unused top space in the collage container */
   --blast-photo-anchor-y: 42%;
   /* Title is text-only now; reduce dead space before collage */
   margin-top: 0.25rem;
   z-index: 12;
-  isolation: isolate;
-  border-radius: 18px;
-  /* Creates a little safe area so photos don't feel cramped at the edges */
-  padding: clamp(10px, 2.2vw, 16px);
+  /* Remove the visible "container" around the images */
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
   /* Critical: prevent any photo from spilling into the next section on different screens */
   overflow: hidden;
 }
 
-.blast-collage::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  /* Subtle “finished” stage behind the collage */
-  background:
-    radial-gradient(circle at 18% 25%, rgba(255, 241, 157, 0.16), transparent 55%),
-    radial-gradient(circle at 82% 75%, rgba(155, 23, 153, 0.18), transparent 60%),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.28));
-  z-index: 1;
-  pointer-events: none;
-}
-
+.blast-collage::before,
 .blast-collage::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.10);
-  z-index: 2;
-  pointer-events: none;
+  /* Remove the card-like backdrop & border */
+  content: none;
 }
 
 .blast-photo {

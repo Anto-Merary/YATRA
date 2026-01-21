@@ -440,8 +440,9 @@ function Hero() {
       const s = Math.min(w, h)
       // Keep photos strictly inside the collage box across many screen sizes.
       // Smaller spread prevents bottom photos from overflowing into the next section.
-      const spreadX = s * 0.32
-      const spreadY = Math.min(h * 0.30, s * 0.44)
+      // Slightly wider fan-out (requested): still constrained by the collage overflow.
+      const spreadX = s * 0.38
+      const spreadY = Math.min(h * 0.36, s * 0.52)
 
       const baseFinal = [
         { x: -spreadX * 0.85, y: -spreadY * 0.10 },
@@ -992,41 +993,39 @@ function Hero() {
       ref={blastSectionRef}
     >
       <div className="blast-inner">
-        <div className="features-container">
-          <h2 className="features-title">
-            <GlitchText
-              koreanText="과거 속으로 돌진하다"
-              englishText="BLAST INTO THE"
-              className="blast-title-prefix"
-              delay={0}
-              shouldStart={isBlastSectionVisible}
-              variant="blur"
-            />
-            <GlitchText
-              koreanText=""
-              englishText="PAST"
-              className="blast-title-highlight"
-              delay={500}
-              shouldStart={isBlastSectionVisible}
-              variant="blur"
-            />
-          </h2>
+        <h2 className="features-title">
+          <GlitchText
+            koreanText="과거 속으로 돌진하다"
+            englishText="BLAST INTO THE"
+            className="blast-title-prefix"
+            delay={0}
+            shouldStart={isBlastSectionVisible}
+            variant="blur"
+          />
+          <GlitchText
+            koreanText=""
+            englishText="PAST"
+            className="blast-title-highlight"
+            delay={500}
+            shouldStart={isBlastSectionVisible}
+            variant="blur"
+          />
+        </h2>
 
-          <div className="blast-collage" ref={blastCollageRef} aria-hidden="true">
-            {blastImages.map((src, idx) => (
-              <img
-                key={`${src}-${idx}`}
-                ref={(el) => {
-                  blastPhotoElsRef.current[idx] = el
-                }}
-                src={src}
-                alt=""
-                className="blast-photo"
-                draggable="false"
-                loading="lazy"
-              />
-            ))}
-          </div>
+        <div className="blast-collage" ref={blastCollageRef} aria-hidden="true">
+          {blastImages.map((src, idx) => (
+            <img
+              key={`${src}-${idx}`}
+              ref={(el) => {
+                blastPhotoElsRef.current[idx] = el
+              }}
+              src={src}
+              alt=""
+              className="blast-photo"
+              draggable="false"
+              loading="lazy"
+            />
+          ))}
         </div>
       </div>
     </section>
