@@ -1629,6 +1629,53 @@
             .to("#mobile-loader", { opacity: 0, duration: 0.5, ease: "power2.inOut" });
         };
 
+        // SPA routing bridge:
+        // When this page is embedded inside the React app (HomePage iframe),
+        // clicking internal links like "/events" should navigate the parent router
+        // so the URL updates to "/events" (instead of staying at "/").
+        (function initParentRouterBridge() {
+            const isInIframe = window.parent && window.parent !== window;
+            if (!isInIframe) return;
+
+            document.addEventListener('click', (e) => {
+                // Only left click, no modifier keys (so open-in-new-tab still works)
+                if (e.defaultPrevented) return;
+                if (e.button !== 0) return;
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+                const target = e.target;
+                if (!target || typeof target !== 'object') return;
+                const a = target.closest ? target.closest('a') : null;
+                if (!a) return;
+
+                const hrefAttr = a.getAttribute('href');
+                if (!hrefAttr) return;
+                if (hrefAttr.startsWith('#')) return; // in-page anchors
+                if (/^(mailto:|tel:)/i.test(hrefAttr)) return;
+                if (a.getAttribute('target') === '_blank') return;
+                if (a.hasAttribute('download')) return;
+
+                let url;
+                try {
+                    url = new URL(hrefAttr, window.location.href);
+                } catch {
+                    return;
+                }
+
+                // Only same-origin navigations
+                if (url.origin !== window.location.origin) return;
+
+                // Ignore direct file navigations (e.g. .html, .mp4, images)
+                if (/\.[a-z0-9]+$/i.test(url.pathname)) return;
+
+                e.preventDefault();
+                window.parent.postMessage(
+                    { type: 'navigate', path: url.pathname + url.search + url.hash },
+                    '*'
+                );
+            }, true);
+        })();
+
         // Initialize appropriate loader based on device
         if (window.innerWidth > 768) {
             // Desktop - Use HTML split shutter loader

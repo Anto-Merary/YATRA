@@ -515,12 +515,12 @@ function Hero() {
         const jy = (rand01(seed ^ 0x9e3779b9) - 0.5) * spreadY * 0.14
         // Small manual nudges for specific photos (requested):
         // - asal: move up a little
-        // - pal: move up a little more than asal
+        // - pal: move up more (increased upward movement)
         const isAsal = /(^|\/|\\)asal\./i.test(src)
         const isPal = /(^|\/|\\)pal\./i.test(src)
         // Stronger upward nudges so they sit higher along their rotated angle.
         const nudgeAsal = -Math.min(32, spreadY * 0.11)
-        const nudgePal = -Math.min(48, spreadY * 0.17)
+        const nudgePal = -Math.min(70, spreadY * 0.25) // Increased upward nudge for pal
         const nudgeY = isPal ? nudgePal : isAsal ? nudgeAsal : 0
 
         return { x: p.x + jx, y: p.y + jy + nudgeY }
@@ -566,8 +566,9 @@ function Hero() {
         const start = startPositions[i] || { x: 0, y: 0 }
         const src = String(el.currentSrc || el.src || '')
         const isPal = /(^|\/|\\)pal\./i.test(src)
-        // Make `pal` clearly larger without completely blowing up the layout.
-        const baseScale = isPal ? 2.4 : 1.35
+        const isSyn = /(^|\/|\\)syn\./i.test(src)
+        // Make `pal` and `syn` larger without completely blowing up the layout.
+        const baseScale = isPal ? 2.85 : isSyn ? 1.75 : 1.35
 
         gsap.set(el, {
           // Center using GSAP-managed percent transforms so CSS centering isn't lost
@@ -588,7 +589,18 @@ function Hero() {
       if (reduceMotion) {
         els.forEach((el, i) => {
           const base = finalPositions[i] || { x: 0, y: 0 }
-          gsap.set(el, { xPercent: -50, yPercent: -50, x: base.x, y: base.y, scale: 1, opacity: 1, rotate: 0 })
+          const src = String(el.currentSrc || el.src || '')
+          const isPal = /(^|\/|\\)pal\./i.test(src)
+          const isSyn = /(^|\/|\\)syn\./i.test(src)
+          gsap.set(el, {
+            xPercent: -50,
+            yPercent: -50,
+            x: base.x,
+            y: base.y,
+            scale: isPal ? 1.35 : isSyn ? 1.4 : 1,
+            opacity: 1,
+            rotate: 0,
+          })
         })
         return
       }
@@ -598,12 +610,13 @@ function Hero() {
       })
       tl.pause(0)
 
-      // Slower + slightly overlapping entrances
+      // Slower + slightly overlapping entrances (timeline length also controls scrub pacing)
       els.forEach((el, i) => {
         const base = finalPositions[i] || { x: 0, y: 0 }
         const src = String(el.currentSrc || el.src || '')
         const isPal = /(^|\/|\\)pal\./i.test(src)
-        const finalScale = isPal ? 1.45 : 1
+        const isSyn = /(^|\/|\\)syn\./i.test(src)
+        const finalScale = isPal ? 1.65 : isSyn ? 1.35 : 1
 
         tl.to(
           el,
@@ -613,31 +626,22 @@ function Hero() {
             scale: finalScale,
             opacity: 1,
             rotate: 0,
-            duration: 1.65,
+            duration: 2.25,
           },
-          i * 0.38
+          i * 0.55
         )
       })
 
-      // Trigger once when section enters view (and reset when scrolling back up).
+      // Tie reveal to scroll so photos don't all pop in early.
       st = ScrollTrigger.create({
         id: 'blast-collage',
         trigger: sectionEl,
-        start: 'top 72%',
-        onEnter: () => {
-          if (!tl) return
-          tl.timeScale(1).play()
-        },
-        onEnterBack: () => {
-          // If user scrolls back down into the section, ensure it plays forward again.
-          if (!tl) return
-          tl.timeScale(1).play()
-        },
-        onLeaveBack: () => {
-          // Reverse the collage gracefully when scrolling up out of the section.
-          if (!tl) return
-          tl.timeScale(1).reverse()
-        },
+        // Start later (user is actually in the section), and stretch the end so the
+        // reveal stays progressive while they explore the whole block.
+        start: 'top 62%',
+        end: 'bottom 18%',
+        scrub: 1.35,
+        animation: tl,
         invalidateOnRefresh: true,
       })
     }

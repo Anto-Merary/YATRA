@@ -23,11 +23,14 @@ export function HomePage() {
     };
   }, [navigate]);
 
+  const baseUrl = (import.meta?.env?.BASE_URL || "/").replace(/\/+$/, "");
+  const homepageSrc = `${baseUrl}/homepage.html`;
+
   return (
     <div style={{ width: '100%', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <iframe
         ref={iframeRef}
-        src="/homepage.html"
+        src={homepageSrc}
         style={{
           width: '100%',
           flex: '1',

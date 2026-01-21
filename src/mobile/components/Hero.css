@@ -1482,7 +1482,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.05rem, 0.8vw, 0.22rem);
+  gap: clamp(0.15rem, 1.2vw, 0.4rem);
 }
 
 /* Remove the scroll/parchment image behind the Blast title */
@@ -1490,10 +1490,10 @@
   content: none;
 }
 
-/* Tighten line spacing for the Blast title text */
+/* Increase line spacing for the Blast title text to prevent overlap */
 .blast-title-prefix,
 .blast-title-highlight {
-  line-height: 0.9;
+  line-height: 1.15;
   display: block;
   text-align: center;
   margin: 0;
