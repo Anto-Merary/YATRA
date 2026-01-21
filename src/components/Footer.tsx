@@ -223,7 +223,7 @@ export function Footer() {
         {/* Copyright - Bottom Left */}
         <div className="border-t border-white/10 pt-4 xs:pt-5 sm:pt-6">
           <div className="text-[10px] xs:text-xs text-white/40">
-            © {new Date().getFullYear()} YATRA'26
+            Copyright © 2026 Rajalakshmi Institutions
           </div>
         </div>
       </div>
