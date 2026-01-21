@@ -184,36 +184,8 @@ export function EventDetailPage() {
         {/* Hero */}
         <div className="mt-5 rounded-3xl border border-white/10 bg-white/[0.04] p-5 sm:p-7 backdrop-blur-sm">
           <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
-            <div className="min-w-0">
-              <div className="text-[10px] xs:text-xs font-semibold tracking-[0.25em] text-yatra-300">
-                EVENT DETAILS
-              </div>
-              <h1 className="mt-2 text-2xl sm:text-3xl md:text-4xl font-semibold tracking-[-0.02em] text-white/95">
-                {event.name}
-              </h1>
-
-              <p className="mt-3 text-sm sm:text-base leading-relaxed text-white/70">
-                {event.description}
-              </p>
-
-              {/* Rules & Regulations */}
-              <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-5">
-                <div className="text-xs font-semibold tracking-[0.25em] text-yatra-300">
-                  RULES & REGULATIONS
-                </div>
-                <ul className="mt-4 space-y-2 text-sm text-white/75">
-                  {rules.map((r, idx) => (
-                    <li key={idx} className="flex gap-3">
-                      <span className="mt-[6px] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-white/40" />
-                      <span>{r}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            {/* Poster */}
-            <div className="lg:sticky lg:top-24">
+            {/* Poster - on top for mobile, on the right for large screens */}
+            <div className="order-1 lg:order-2 lg:sticky lg:top-24">
               <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
                 {event.posterUrl ? (
                   <img
@@ -245,7 +217,7 @@ export function EventDetailPage() {
               </div>
 
               {/* Register Now Button */}
-              <div 
+              <div
                 ref={formRef}
                 className="mt-4"
               >
@@ -261,6 +233,35 @@ export function EventDetailPage() {
                     Register Now
                   </Button>
                 </a>
+              </div>
+            </div>
+
+            {/* Text content */}
+            <div className="order-2 lg:order-1 min-w-0">
+              <div className="text-[10px] xs:text-xs font-semibold tracking-[0.25em] text-yatra-300">
+                EVENT DETAILS
+              </div>
+              <h1 className="mt-2 text-2xl sm:text-3xl md:text-4xl font-semibold tracking-[-0.02em] text-white/95">
+                {event.name}
+              </h1>
+
+              <p className="mt-3 text-sm sm:text-base leading-relaxed text-white/70">
+                {event.description}
+              </p>
+
+              {/* Rules & Regulations */}
+              <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-5">
+                <div className="text-xs font-semibold tracking-[0.25em] text-yatra-300">
+                  RULES & REGULATIONS
+                </div>
+                <ul className="mt-4 space-y-2 text-sm text-white/75">
+                  {rules.map((r, idx) => (
+                    <li key={idx} className="flex gap-3">
+                      <span className="mt-[6px] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-white/40" />
+                      <span>{r}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
