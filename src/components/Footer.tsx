@@ -2,6 +2,8 @@ import type { SVGProps } from "react";
 import { TextHoverEffect } from "./ui/text-hover-effect";
 import { NoiseOverlay } from "./NoiseOverlay";
 import { useLocation } from "react-router-dom";
+import "../styles/mobile-footer.css";
+import { useEffect, useState } from "react";
 
 function InstagramIcon(props: SVGProps<SVGSVGElement>) {
   return (
@@ -51,6 +53,65 @@ function YouTubeIcon(props: SVGProps<SVGSVGElement>) {
 export function Footer() {
   const location = useLocation();
   const isEventsPage = location.pathname === "/events" || location.pathname === "/yatraevents" || location.pathname === "/pro-dance-battle";
+
+  // Match SiteLayout mobile breakpoint (phone-only)
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 743);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  if (isMobile) {
+    return (
+      <footer id="footer" className="mobile-footer" aria-label="Footer">
+        <div className="mobile-footer-container">
+          <div className="mobile-footer-title">YATRA&apos;26</div>
+
+          <div className="mobile-footer-section">
+            <div className="mobile-footer-label">ADDRESS</div>
+            <div className="mobile-footer-text">Kuthambakkam, Chennai, Tamil Nadu 600124</div>
+          </div>
+
+          <div className="mobile-footer-section">
+            <div className="mobile-footer-label">WEBSITE</div>
+            <a className="mobile-footer-link" href="https://www.ritchennai.org" target="_blank" rel="noreferrer">
+              www.ritchennai.org
+            </a>
+          </div>
+
+          <div className="mobile-footer-section">
+            <div className="mobile-footer-label">PHONE</div>
+            <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+9104437181600">
+              044 3718 1600
+            </a>
+          </div>
+
+          <div className="mobile-footer-social" aria-label="Social links">
+            <a
+              className="mobile-footer-social-link"
+              href="https://instagram.com"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Instagram"
+            >
+              <InstagramIcon className="mobile-footer-social-icon" width={28} height={28} />
+            </a>
+            <a
+              className="mobile-footer-social-link"
+              href="https://youtube.com"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="YouTube"
+            >
+              <YouTubeIcon className="mobile-footer-social-icon" width={28} height={28} />
+            </a>
+          </div>
+        </div>
+      </footer>
+    );
+  }
   
   return (
     <footer id="footer" className="relative mt-20 border-t border-white/10 bg-black pb-24 sm:pb-0">

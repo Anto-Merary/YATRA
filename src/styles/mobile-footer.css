@@ -1,0 +1,104 @@
+/* Mobile footer (reference design) - used by both:
+   - Mobile landing app (`src/mobile/**`)
+   - Main site footer on small screens
+*/
+
+.mobile-footer {
+  /* Reference purple-magenta gradient */
+  background: linear-gradient(180deg, #7d067a 0%, #c90dc1 55%, #a30aa0 100%);
+  color: #000000;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  /* Space for the fixed mobile dock */
+  padding: 3rem 1.5rem calc(3rem + 96px + env(safe-area-inset-bottom));
+}
+
+.mobile-footer-container {
+  max-width: 520px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2.25rem;
+}
+
+.mobile-footer-title {
+  font-family: 'Victory Striker', sans-serif;
+  font-size: clamp(3.2rem, 14vw, 4.3rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 0.92;
+  color: #000000;
+}
+
+.mobile-footer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.mobile-footer-label {
+  font-family: 'Akira Expanded', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.95rem;
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.mobile-footer-text,
+.mobile-footer-link {
+  font-family: 'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 1.25rem;
+  line-height: 1.35;
+  color: rgba(0, 0, 0, 0.78);
+}
+
+.mobile-footer-link {
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.78);
+  word-break: break-word;
+}
+
+.mobile-footer-link--underline {
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 2px;
+}
+
+.mobile-footer-social {
+  display: flex;
+  gap: 1.25rem;
+  padding-top: 0.25rem;
+}
+
+.mobile-footer-social-link {
+  width: 64px;
+  height: 64px;
+  min-width: 64px;
+  min-height: 64px;
+  border: 2px solid rgba(0, 0, 0, 0.65);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  color: rgba(0, 0, 0, 0.92);
+  text-decoration: none;
+  transition: transform 180ms ease, background-color 180ms ease, color 180ms ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.mobile-footer-social-link:active {
+  transform: scale(0.98);
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.mobile-footer-social-icon {
+  width: 28px;
+  height: 28px;
+  display: block;
+  color: currentColor;
+}
+
