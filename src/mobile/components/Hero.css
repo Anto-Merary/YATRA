@@ -1464,6 +1464,12 @@
   /* Give the scroll art room to breathe around the 2-line title */
   padding: 0.9rem 0.75rem;
   margin-bottom: 2rem;
+  /* Stabilize layout while GlitchText swaps states (prevents scroll "jump") */
+  min-height: clamp(120px, 32vw, 175px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .blast-section .features-title::before {
@@ -1473,15 +1479,21 @@
   left: 50%;
   /* Slightly raise the scroll so it frames both lines evenly */
   transform: translate(-50%, -54%);
-  /* Responsive sizing: big enough to cover the whole title across devices */
-  width: clamp(420px, 175%, 780px);
-  height: clamp(150px, 150%, 320px);
+  /* Stable sizing (viewport-based) so it doesn't jump when text metrics change */
+  width: clamp(420px, 92vw, 760px);
+  height: clamp(150px, 28vw, 300px);
   background-image: url('../assets/scroll.webp');
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   z-index: -1;
   pointer-events: none;
+  /* Smooth out any size/position changes */
+  transition:
+    width 420ms cubic-bezier(0.4, 0, 0.2, 1),
+    height 420ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 420ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: width, height, transform;
   /* Helps it read against the pink bg without changing the asset */
   filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.25));
 }
@@ -1537,7 +1549,7 @@
   left: 50%;
   top: 52%;
   /* Slightly smaller cards for cleaner spacing */
-  width: clamp(150px, 54vw, 300px);
+  width: clamp(140px, 50vw, 280px);
   aspect-ratio: 4 / 5;
   object-fit: cover;
   border-radius: 14px;
