@@ -149,16 +149,24 @@ function Hero() {
   }, [])
 
   const blastImages = useMemo(() => {
-    // Use only web-safe formats (HEIC isn't reliably supported in browsers).
-    // Include both lowercase and uppercase extensions to catch files like syn.JPG
-    const modules = import.meta.glob('../assets/gal/*.{jpg,JPG,jpeg,JPEG,png,PNG,webp,WEBP,gif,GIF}', {
+    // Use only webp images for better performance and consistency
+    const modules = import.meta.glob('../assets/gal/*.{webp,WEBP}', {
       eager: true,
       import: 'default',
     })
 
-    const srcs = Object.keys(modules)
-      .sort((a, b) => a.localeCompare(b))
-      .map((k) => modules[k])
+    // Get unique images by base filename to avoid any duplicates
+    const uniqueImages = new Map()
+    Object.keys(modules).forEach((key) => {
+      const baseName = key.split('/').pop()?.replace(/\.(webp|WEBP)$/i, '').toLowerCase()
+      if (baseName && !uniqueImages.has(baseName)) {
+        uniqueImages.set(baseName, modules[key])
+      }
+    })
+
+    // Convert map values to array, sort for consistent order, and take up to 6 unique images
+    const srcs = Array.from(uniqueImages.values())
+      .sort((a, b) => String(a).localeCompare(String(b)))
 
     // Never reuse a photo. If fewer than 6 exist, we render fewer than 6.
     return srcs.slice(0, 6)
@@ -418,8 +426,9 @@ function Hero() {
       const count = els.length
 
       const s = Math.min(w, h)
-      const spreadX = s * 0.33
-      const spreadY = Math.min(h * 0.34, s * 0.52)
+      // Slightly wider spread to reduce photo collisions now that cards are smaller.
+      const spreadX = s * 0.37
+      const spreadY = Math.min(h * 0.38, s * 0.58)
 
       const baseFinal = [
         { x: -spreadX * 0.92, y: -spreadY * 0.05 },
