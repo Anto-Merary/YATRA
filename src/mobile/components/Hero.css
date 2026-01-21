@@ -1497,20 +1497,50 @@
 .blast-collage {
   position: relative;
   width: 100%;
-  height: clamp(360px, 48vh, 560px);
+  height: clamp(340px, 46vh, 520px);
   /* More space below the scroll-backed title */
   margin-top: 0.5rem;
   z-index: 12;
+  isolation: isolate;
+  border-radius: 18px;
+  /* Creates a little safe area so photos don't feel cramped at the edges */
+  padding: clamp(10px, 2.2vw, 16px);
+}
+
+.blast-collage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  /* Subtle “finished” stage behind the collage */
+  background:
+    radial-gradient(circle at 18% 25%, rgba(255, 241, 157, 0.16), transparent 55%),
+    radial-gradient(circle at 82% 75%, rgba(155, 23, 153, 0.18), transparent 60%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.28));
+  z-index: 1;
+  pointer-events: none;
+}
+
+.blast-collage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.10);
+  z-index: 2;
+  pointer-events: none;
 }
 
 .blast-photo {
   position: absolute;
   left: 50%;
-  top: 46%;
-  width: clamp(170px, 60vw, 340px);
+  top: 52%;
+  /* Slightly smaller cards for cleaner spacing */
+  width: clamp(150px, 54vw, 300px);
   aspect-ratio: 4 / 5;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: 14px;
   opacity: 0;
   transform: translate3d(-50%, -50%, 0);
   will-change: transform, opacity;
@@ -1518,6 +1548,7 @@
   box-shadow:
     0 10px 26px rgba(0, 0, 0, 0.22),
     0 2px 10px rgba(0, 0, 0, 0.14);
+  outline: 1px solid rgba(255, 255, 255, 0.10);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   transform-style: preserve-3d;

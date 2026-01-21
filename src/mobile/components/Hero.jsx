@@ -426,8 +426,9 @@ function Hero() {
       const count = els.length
 
       const s = Math.min(w, h)
-      const spreadX = s * 0.33
-      const spreadY = Math.min(h * 0.34, s * 0.52)
+      // Slightly wider spread to reduce photo collisions now that cards are smaller.
+      const spreadX = s * 0.37
+      const spreadY = Math.min(h * 0.38, s * 0.58)
 
       const baseFinal = [
         { x: -spreadX * 0.92, y: -spreadY * 0.05 },
