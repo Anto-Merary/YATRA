@@ -86,10 +86,60 @@ function Hero() {
   const hasAboutEnteredRef = useRef(false)
   const [isFeaturesSectionVisible, setIsFeaturesSectionVisible] = useState(false)
   const [isBlastSectionVisible, setIsBlastSectionVisible] = useState(false)
+  const [shimmerTrigger, setShimmerTrigger] = useState(0)
+
+  // Lineup teaser modal (catchy reveal-soon popup)
+  const [lineupModalState, setLineupModalState] = useState('closed') // 'closed' | 'open' | 'closing'
+  const isLineupModalOpen = lineupModalState !== 'closed'
+
+  const openLineupModal = useCallback(() => {
+    setLineupModalState('open')
+  }, [])
+
+  const closeLineupModal = useCallback(() => {
+    setLineupModalState((s) => (s === 'open' ? 'closing' : s))
+  }, [])
+
+  useEffect(() => {
+    if (lineupModalState !== 'closing') return
+    const t = window.setTimeout(() => setLineupModalState('closed'), 340)
+    return () => window.clearTimeout(t)
+  }, [lineupModalState])
+
+  useEffect(() => {
+    if (!isLineupModalOpen) return
+
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') closeLineupModal()
+    }
+
+    // lock scroll while modal is open
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    window.addEventListener('keydown', onKeyDown)
+    return () => {
+      window.removeEventListener('keydown', onKeyDown)
+      document.body.style.overflow = prevOverflow
+    }
+  }, [isLineupModalOpen, closeLineupModal])
+
+  const lineupSparks = useMemo(() => {
+    // Deterministic enough across renders; keeps a consistent “spark” layout.
+    return Array.from({ length: 12 }, (_, i) => ({
+      id: i,
+      x: Math.round(8 + Math.random() * 84),
+      y: Math.round(10 + Math.random() * 80),
+      d: (Math.random() * 1.4).toFixed(2),
+      s: (2 + Math.random() * 3.5).toFixed(2),
+      t: (2.4 + Math.random() * 2.8).toFixed(2),
+    }))
+  }, [])
 
   const blastImages = useMemo(() => {
     // Use only web-safe formats (HEIC isn't reliably supported in browsers).
-    const modules = import.meta.glob('../assets/gal/*.{jpg,jpeg,png,webp,gif}', {
+    // Include both lowercase and uppercase extensions to catch files like syn.JPG
+    const modules = import.meta.glob('../assets/gal/*.{jpg,JPG,jpeg,JPEG,png,PNG,webp,WEBP,gif,GIF}', {
       eager: true,
       import: 'default',
     })
@@ -542,6 +592,45 @@ function Hero() {
     }
   }, [isLoading, lamps])
 
+  // Random shimmer effect for BUY TICKETS button
+  useEffect(() => {
+    if (isLoading || !hasLoaded) return
+
+    let cancelled = false
+    let timeoutId = 0
+
+    const rand = (min, max) => min + Math.random() * (max - min)
+
+    const scheduleShimmer = () => {
+      if (cancelled) return
+
+      // Random interval between 3-7 seconds for subtle, natural feel
+      const nextIn = Math.round(rand(3000, 7000))
+      timeoutId = window.setTimeout(() => {
+        if (cancelled) return
+
+        // Trigger shimmer by updating state
+        setShimmerTrigger((prev) => prev + 1)
+        
+        scheduleShimmer()
+      }, nextIn)
+    }
+
+    // Start first shimmer after initial delay (2-4 seconds)
+    const initialDelay = Math.round(rand(2000, 4000))
+    timeoutId = window.setTimeout(() => {
+      if (!cancelled) {
+        setShimmerTrigger(1)
+        scheduleShimmer()
+      }
+    }, initialDelay)
+
+    return () => {
+      cancelled = true
+      if (timeoutId) window.clearTimeout(timeoutId)
+    }
+  }, [isLoading, hasLoaded])
+
   return (
     <>
     <section
@@ -618,7 +707,13 @@ function Hero() {
 
         {/* Action Buttons - Below 2026 text */}
         <div className="hero-buttons">
-          <button className="hero-button buy-tickets" onClick={scrollToPasses} type="button">
+          <button 
+            className={`hero-button buy-tickets ${shimmerTrigger > 0 ? 'shimmer-active' : ''}`}
+            onClick={scrollToPasses} 
+            type="button"
+            data-shimmer-trigger={shimmerTrigger}
+          >
+            <span className="hero-button-shimmer" aria-hidden="true" />
             <span className="hero-button-text">BUY TICKETS</span>
             <span className="star-icon" aria-hidden="true">
               ✦
@@ -771,7 +866,9 @@ function Hero() {
             ELECTRIFYING PERFORMANCES
           </div>
           <img src={performanceImage} alt="Electrifying Performance" className="features-event-image" />
-          <button className="features-show-more-btn">SEE LINEUP</button>
+          <button className="features-show-more-btn" type="button" onClick={openLineupModal}>
+            SHOW LINEUP
+          </button>
         </div>
       </div>
     </section>
@@ -860,6 +957,15 @@ function Hero() {
               Register Now
             </a>
           </div>
+          
+          {/* CHECK EVENTS Button */}
+          <button
+            type="button"
+            onClick={goToEvents}
+            className="mobile-check-events-btn"
+          >
+            CHECK EVENTS
+          </button>
         </div>
       </div>
     </section>
@@ -916,6 +1022,68 @@ function Hero() {
         </div>
       </div>
     </footer>
+
+    {/* Lineup Teaser Modal */}
+    {lineupModalState !== 'closed' && (
+      <div
+        className={`lineup-modal-overlay ${lineupModalState === 'open' ? 'is-open' : 'is-closing'}`}
+        onMouseDown={closeLineupModal}
+        role="presentation"
+      >
+        <div className="lineup-modal" role="dialog" aria-modal="true" aria-labelledby="lineup-modal-title" onMouseDown={(e) => e.stopPropagation()}>
+          <button className="lineup-modal-close" type="button" onClick={closeLineupModal} aria-label="Close popup">
+            ×
+          </button>
+
+          <div className="lineup-modal-top" aria-hidden="true">
+            <span className="lineup-modal-chip">LINEUP</span>
+            <span className="lineup-modal-chip lineup-modal-chip--accent">COMING SOON</span>
+          </div>
+
+          <div className="lineup-modal-sparks" aria-hidden="true">
+            {lineupSparks.map((p) => (
+              <span
+                key={p.id}
+                className="lineup-spark"
+                style={{
+                  '--x': `${p.x}%`,
+                  '--y': `${p.y}%`,
+                  '--d': `${p.d}s`,
+                  '--t': `${p.t}s`,
+                  '--s': `${p.s}px`,
+                }}
+              />
+            ))}
+          </div>
+
+          <h3 id="lineup-modal-title" className="lineup-modal-title">
+            <GlitchText
+              koreanText="곧 공개됩니다"
+              englishText="WILL BE REVEALED SOON"
+              className="lineup-modal-title-text"
+              delay={0}
+              shouldStart={lineupModalState === 'open'}
+              variant="glitch"
+            />
+          </h3>
+
+          <p className="lineup-modal-subtitle">
+            The stage is getting set. The reveal drop is going to be wild — keep your eyes on YATRA.
+          </p>
+
+          <div className="lineup-modal-stamp" aria-hidden="true">
+            <span className="lineup-modal-stamp-ring" />
+            <span className="lineup-modal-stamp-text">REVEAL</span>
+          </div>
+
+          <div className="lineup-modal-actions">
+            <button className="lineup-modal-cta" type="button" onClick={closeLineupModal}>
+              OK, I’LL WAIT
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
     </>
   )
 }

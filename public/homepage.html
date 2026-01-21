@@ -754,7 +754,7 @@
         <div class="hidden md:flex gap-8 text-sm font-bold uppercase tracking-widest pointer-events-auto absolute left-1/2 transform -translate-x-1/2">
             <a href="#about" class="hacker-text hover:text-[var(--color-accent)] transition-colors" data-original="About">About</a>
             <a href="#lineup" class="hacker-text hover:text-[var(--color-accent)] transition-colors" data-original="Lineup">Lineup</a>
-            <a href="/events" class="hacker-text hover:text-[var(--color-accent)] transition-colors" data-original="Events">Events</a>
+            <a href="/events" class="hacker-text hover:text-[var(--color-accent)] transition-colors" data-original="Events" onclick="event.preventDefault(); if (window.parent !== window) { window.parent.postMessage({ type: 'navigate', path: '/events' }, '*'); } else { window.location.href = '/events'; }">Events</a>
             <a href="#registration" class="hacker-text hover:text-[var(--color-accent)] transition-colors" data-original="Passes">Passes</a>
         </div>
     </nav>
