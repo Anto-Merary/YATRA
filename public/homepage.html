@@ -909,8 +909,8 @@
     <div class="py-4 sm:py-5 md:py-6 bg-[var(--color-accent)] text-black rotate-1 scale-105 z-10 relative">
         <div class="marquee-container">
             <div class="marquee-content reverse text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-black uppercase">
-                &nbsp;Battle of Bands • Short Film • Yatra '26 •
-                &nbsp;Battle of Bands • Short Film • Yatra '26 •
+                &nbsp;Dance Battle • Exciting 40+ Events • Yatra '26 •
+                &nbsp;Dance Battle • Exciting 40+ Events • Yatra '26 •
             </div>
         </div>
     </div>
@@ -1218,7 +1218,7 @@
         }
 
         // Hover detection for cursor scaling
-        const hoverables = document.querySelectorAll('a, button, .card-hover, input');
+        const hoverables = document.querySelectorAll('a, button, .card-hover, input, .magnetic-wrap');
         hoverables.forEach(el => {
             el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
             el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
@@ -1257,21 +1257,11 @@
                 if (!magneticRafId) {
                     magneticRafId = requestAnimationFrame(updateMagnets);
                 }
-                
-                // Move cursor outline towards element center
-                const cursorOutlineEl = document.querySelector('.cursor-outline');
-                if (cursorOutlineEl) {
-                    gsap.to(cursorOutlineEl, { scale: 1.5, duration: 0.3, overwrite: true });
-                }
             }, { passive: true });
 
             magnet.addEventListener('mouseleave', () => {
                 magneticUpdates.delete(magnet);
                 gsap.to(content, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.3)' });
-                const cursorOutlineEl = document.querySelector('.cursor-outline');
-                if (cursorOutlineEl) {
-                    gsap.to(cursorOutlineEl, { scale: 1, duration: 0.3 });
-                }
             });
         });
 
