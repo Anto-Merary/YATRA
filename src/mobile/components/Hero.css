@@ -1509,6 +1509,8 @@
   border-radius: 18px;
   /* Creates a little safe area so photos don't feel cramped at the edges */
   padding: clamp(10px, 2.2vw, 16px);
+  /* Critical: prevent any photo from spilling into the next section on different screens */
+  overflow: hidden;
 }
 
 .blast-collage::before {

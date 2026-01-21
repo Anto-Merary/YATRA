@@ -438,17 +438,18 @@ function Hero() {
       const count = els.length
 
       const s = Math.min(w, h)
-      // Slightly wider spread to reduce photo collisions now that cards are smaller.
-      const spreadX = s * 0.37
-      const spreadY = Math.min(h * 0.38, s * 0.58)
+      // Keep photos strictly inside the collage box across many screen sizes.
+      // Smaller spread prevents bottom photos from overflowing into the next section.
+      const spreadX = s * 0.32
+      const spreadY = Math.min(h * 0.30, s * 0.44)
 
       const baseFinal = [
-        { x: -spreadX * 0.92, y: -spreadY * 0.05 },
-        { x: spreadX * 0.12, y: -spreadY * 0.98 },
-        { x: spreadX * 0.98, y: spreadY * 0.08 },
-        { x: spreadX * 0.52, y: spreadY * 0.92 },
-        { x: -spreadX * 0.62, y: spreadY * 1.02 },
-        { x: -spreadX * 1.02, y: spreadY * 0.42 },
+        { x: -spreadX * 0.85, y: -spreadY * 0.10 },
+        { x: 0, y: -spreadY * 0.78 },
+        { x: spreadX * 0.85, y: -spreadY * 0.10 },
+        { x: spreadX * 0.55, y: spreadY * 0.70 },
+        { x: -spreadX * 0.55, y: spreadY * 0.76 },
+        { x: -spreadX * 0.95, y: spreadY * 0.30 },
       ]
       const finalPositions = baseFinal.slice(0, count)
 
@@ -461,7 +462,7 @@ function Hero() {
         { x: -1, y: 0.55 },
       ]
       const startDirs = baseDirs.slice(0, count)
-      const amp = s * 0.95
+      const amp = s * 0.8
 
       const startPositions = finalPositions.map((p, i) => ({
         x: p.x + (startDirs[i]?.x ?? 0) * amp,
@@ -488,7 +489,7 @@ function Hero() {
         gsap.set(el, {
           x: start.x,
           y: start.y,
-          scale: 1.6,
+          scale: 1.35,
           opacity: 0,
           rotate: rotations[i] ?? 0,
           transformOrigin: '50% 50%',
