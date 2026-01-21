@@ -438,21 +438,48 @@ function Hero() {
       const count = els.length
 
       const s = Math.min(w, h)
-      // Keep photos strictly inside the collage box across many screen sizes.
-      // Smaller spread prevents bottom photos from overflowing into the next section.
-      // Slightly wider fan-out (requested): still constrained by the collage overflow.
-      const spreadX = s * 0.38
-      const spreadY = Math.min(h * 0.36, s * 0.52)
+
+      // Allow a wider "spread", but clamp positions so photos never get clipped by overflow.
+      const spreadX = s * 0.52
+      const spreadY = Math.min(h * 0.48, s * 0.70)
+
+      const clamp = (v, min, max) => Math.min(max, Math.max(min, v))
+      const css = window.getComputedStyle(collageEl)
+      const anchorStr = (css.getPropertyValue('--blast-photo-anchor-y') || '50%').trim()
+      const anchorPct = anchorStr.endsWith('%') ? parseFloat(anchorStr) / 100 : 0.5
+      const anchorPx = h * (Number.isFinite(anchorPct) ? anchorPct : 0.5)
+      const pad = 10
+
+      const clampPosToBounds = (pos, el) => {
+        const fallbackW = Math.min(w * 0.5, 320)
+        const fallbackH = Math.min(h * 0.6, 400)
+        const elW = el?.offsetWidth || fallbackW
+        const elH = el?.offsetHeight || fallbackH
+        const halfW = elW / 2
+        const halfH = elH / 2
+
+        // X is centered at 50% (w/2), Y is anchored at `--blast-photo-anchor-y` (anchorPx).
+        const minX = pad + halfW - w / 2
+        const maxX = w / 2 - pad - halfW
+        const minY = pad + halfH - anchorPx
+        const maxY = h - pad - halfH - anchorPx
+
+        return {
+          x: clamp(pos.x, minX, maxX),
+          y: clamp(pos.y, minY, maxY),
+        }
+      }
 
       const baseFinal = [
-        { x: -spreadX * 0.85, y: -spreadY * 0.10 },
-        { x: 0, y: -spreadY * 0.78 },
-        { x: spreadX * 0.85, y: -spreadY * 0.10 },
-        { x: spreadX * 0.55, y: spreadY * 0.70 },
-        { x: -spreadX * 0.55, y: spreadY * 0.76 },
-        { x: -spreadX * 0.95, y: spreadY * 0.30 },
+        { x: -spreadX * 0.95, y: -spreadY * 0.18 },
+        { x: 0, y: -spreadY * 0.92 },
+        { x: spreadX * 0.95, y: -spreadY * 0.18 },
+        { x: spreadX * 0.78, y: spreadY * 0.88 },
+        { x: -spreadX * 0.78, y: spreadY * 0.92 },
+        { x: -spreadX * 1.10, y: spreadY * 0.45 },
       ]
-      const finalPositions = baseFinal.slice(0, count)
+      const unclampedFinal = baseFinal.slice(0, count)
+      const finalPositions = unclampedFinal.map((p, i) => clampPosToBounds(p, els[i]))
 
       const baseDirs = [
         { x: -1, y: -0.15 },
@@ -465,10 +492,14 @@ function Hero() {
       const startDirs = baseDirs.slice(0, count)
       const amp = s * 0.8
 
-      const startPositions = finalPositions.map((p, i) => ({
-        x: p.x + (startDirs[i]?.x ?? 0) * amp,
-        y: p.y + (startDirs[i]?.y ?? 0) * amp,
-      }))
+      const startPositions = finalPositions.map((p, i) => {
+        const raw = {
+          x: p.x + (startDirs[i]?.x ?? 0) * amp,
+          y: p.y + (startDirs[i]?.y ?? 0) * amp,
+        }
+        // Keep the entry motion inside bounds too, so nothing ever appears "cut".
+        return clampPosToBounds(raw, els[i])
+      })
 
       // Gentle rotations (deterministic) so it looks natural but stable.
       const rotations = [ -6, 5, -3, 7, -4, 6 ].slice(0, count)
@@ -1112,7 +1143,7 @@ function Hero() {
         <div className="mobile-footer-social" aria-label="Social links">
           <a
             className="mobile-footer-social-link"
-            href="https://instagram.com"
+            href="https://www.instagram.com/yatra_rit?igsh=MTYzdDJhbHlnOHhmNQ=="
             target="_blank"
             rel="noreferrer"
             aria-label="Instagram"
@@ -1129,7 +1160,7 @@ function Hero() {
           </a>
           <a
             className="mobile-footer-social-link"
-            href="https://youtube.com"
+            href="https://youtube.com/@rajalakshmiinstituteoftech4448?si=E-E820dMeHNlnfBo"
             target="_blank"
             rel="noreferrer"
             aria-label="YouTube"
