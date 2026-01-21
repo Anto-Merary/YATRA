@@ -15,6 +15,24 @@
       name="description"
       content="YATRA 2026 - Rajalakshmi Institute of Technology Cultural Festival - Mobile Version"
     />
+    <!-- Open Graph / Twitter (social sharing) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="YATRA'26" />
+    <meta property="og:title" content="YATRA'26 | Mobile" />
+    <meta
+      property="og:description"
+      content="YATRA 2026 - Rajalakshmi Institute of Technology Cultural Festival - Mobile Version"
+    />
+    <meta property="og:image" content="%BASE_URL%android-chrome-512x512.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="YATRA'26 | Mobile" />
+    <meta
+      name="twitter:description"
+      content="YATRA 2026 - Rajalakshmi Institute of Technology Cultural Festival - Mobile Version"
+    />
+    <meta name="twitter:image" content="%BASE_URL%android-chrome-512x512.png" />
     <title>YATRA'26 | Mobile</title>
 
     <!-- Favicon (works on sub-path deploys too) -->
@@ -61,14 +79,18 @@
         const forceMobile = urlParams.get('mobile') === 'true';
         if (forceMobile) return;
 
-        const MOBILE_MAX_WIDTH = 743; // iPad mini (portrait) is 744px CSS width
+        // Only allow the mobile experience for specific phone-sized viewports
+        // (matches iPhone SE/XR/12 Pro/14 Pro Max, Pixel 7, Galaxy S8+/S20 Ultra/A52/71 and close variants).
+        const MOBILE_MIN_SHORT_SIDE = 360;
+        const MOBILE_MAX_SHORT_SIDE = 430;
         const userAgent = (navigator.userAgent || navigator.vendor || window.opera || '').toLowerCase();
         const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        const isPhoneSized = window.innerWidth <= MOBILE_MAX_WIDTH;
+        const shortSide = Math.min(window.innerWidth, window.innerHeight);
+        const isAllowedSize = shortSide >= MOBILE_MIN_SHORT_SIDE && shortSide <= MOBILE_MAX_SHORT_SIDE;
         const isIPhoneOrIPod = /iphone|ipod/i.test(userAgent);
         const isAndroidPhone = /android/i.test(userAgent) && /mobile/i.test(userAgent);
         const isOtherPhone = /webos|blackberry|iemobile|opera mini/i.test(userAgent);
-        const isPhone = isTouchDevice && isPhoneSized && (isIPhoneOrIPod || isAndroidPhone || isOtherPhone);
+        const isPhone = isTouchDevice && isAllowedSize && (isIPhoneOrIPod || isAndroidPhone || isOtherPhone);
 
         // If this isn't a phone-sized mobile device, go to desktop version
         if (!isPhone) {

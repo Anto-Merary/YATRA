@@ -1,6 +1,8 @@
 {
   "routes": [
     { "handle": "filesystem" },
+    { "src": "/mobile/?", "dest": "/mobile.html" },
+    { "src": "/homepage/?", "dest": "/homepage.html" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }

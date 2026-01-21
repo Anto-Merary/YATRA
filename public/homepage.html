@@ -4,6 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YATRA'26 | The Cultural Phenomenon</title>
+    <meta name="description" content="YATRA 2026 - Rajalakshmi Institute of Technology Cultural Festival" />
+    
+    <!-- Open Graph / Twitter (social sharing) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="YATRA'26" />
+    <meta property="og:title" content="YATRA'26 | The Cultural Phenomenon" />
+    <meta property="og:description" content="YATRA 2026 - Rajalakshmi Institute of Technology Cultural Festival" />
+    <meta property="og:image" content="android-chrome-512x512.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="YATRA'26 | The Cultural Phenomenon" />
+    <meta name="twitter:description" content="YATRA 2026 - Rajalakshmi Institute of Technology Cultural Festival" />
+    <meta name="twitter:image" content="android-chrome-512x512.png" />
     
     <!-- Favicon (use relative paths so sub-folder deploys work) -->
     <link rel="icon" href="favicon.ico?v=2" sizes="any">
@@ -24,15 +38,17 @@
             if (forceDesktop) return;
             
             // Mobile detection (PHONE only).
-            // Requirement: from iPad mini size and larger, stay on desktop (do NOT redirect to mobile.html).
-            const MOBILE_MAX_WIDTH = 743; // iPad mini (portrait) is 744px CSS width
+            // Requirement: only allow a narrow set of phone-sized viewports (the supported devices + close matches).
+            const MOBILE_MIN_SHORT_SIDE = 360;
+            const MOBILE_MAX_SHORT_SIDE = 430;
             const userAgent = (navigator.userAgent || navigator.vendor || window.opera || '').toLowerCase();
             const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-            const isPhoneSized = window.innerWidth <= MOBILE_MAX_WIDTH;
+            const shortSide = Math.min(window.innerWidth, window.innerHeight);
+            const isAllowedSize = shortSide >= MOBILE_MIN_SHORT_SIDE && shortSide <= MOBILE_MAX_SHORT_SIDE;
             const isIPhoneOrIPod = /iphone|ipod/i.test(userAgent);
             const isAndroidPhone = /android/i.test(userAgent) && /mobile/i.test(userAgent); // avoids Android tablets
             const isOtherPhone = /webos|blackberry|iemobile|opera mini/i.test(userAgent);
-            const isMobile = isTouchDevice && isPhoneSized && (isIPhoneOrIPod || isAndroidPhone || isOtherPhone);
+            const isMobile = isTouchDevice && isAllowedSize && (isIPhoneOrIPod || isAndroidPhone || isOtherPhone);
             
             if (isMobile) {
                 const currentPath = window.location.pathname;
@@ -1102,14 +1118,16 @@
         (function() {
             function isMobileDevice() {
                 // PHONE-only detection (iPad/tablets stay on desktop).
-                const MOBILE_MAX_WIDTH = 743; // iPad mini (portrait) is 744px CSS width
+                const MOBILE_MIN_SHORT_SIDE = 360;
+                const MOBILE_MAX_SHORT_SIDE = 430;
                 const userAgent = (navigator.userAgent || navigator.vendor || window.opera || '').toLowerCase();
                 const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-                const isPhoneSized = window.innerWidth <= MOBILE_MAX_WIDTH;
+                const shortSide = Math.min(window.innerWidth, window.innerHeight);
+                const isAllowedSize = shortSide >= MOBILE_MIN_SHORT_SIDE && shortSide <= MOBILE_MAX_SHORT_SIDE;
                 const isIPhoneOrIPod = /iphone|ipod/i.test(userAgent);
                 const isAndroidPhone = /android/i.test(userAgent) && /mobile/i.test(userAgent);
                 const isOtherPhone = /webos|blackberry|iemobile|opera mini/i.test(userAgent);
-                return isTouchDevice && isPhoneSized && (isIPhoneOrIPod || isAndroidPhone || isOtherPhone);
+                return isTouchDevice && isAllowedSize && (isIPhoneOrIPod || isAndroidPhone || isOtherPhone);
             }
             
             // Check for desktop override first
@@ -1125,7 +1143,8 @@
                 // Don't redirect if already on mobile version or React app
                 if (currentPath.includes('mobile') || currentPath.includes('index.html') || currentPath === '/') {
                     // Stay on this page, show loader for mobile if on homepage.html
-                    if (currentPath.includes('homepage.html') && window.innerWidth <= 743) {
+                    const shortSide = Math.min(window.innerWidth, window.innerHeight);
+                    if (currentPath.includes('homepage.html') && shortSide >= 360 && shortSide <= 430) {
                         const loader = document.getElementById('loader');
                         if (loader) loader.style.display = 'flex';
                     }
@@ -1134,11 +1153,8 @@
                 
                 // Redirect to mobile version (src/mobile)
                 // The mobile app is served via mobile.html which loads /src/mobile/main.jsx
-                const baseUrl = window.location.origin;
-                const redirectUrl = baseUrl + '/mobile.html' + currentSearch + currentHash;
-                
-                // Immediate redirect
-                window.location.replace(redirectUrl);
+                // Redirect relative so sub-folder deploys work too
+                window.location.replace('mobile.html' + currentSearch + currentHash);
                 return;
             }
             

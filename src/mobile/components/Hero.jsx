@@ -104,6 +104,7 @@ function Hero() {
   const hasAboutEnteredRef = useRef(false)
   const [isFeaturesSectionVisible, setIsFeaturesSectionVisible] = useState(false)
   const [isBlastSectionVisible, setIsBlastSectionVisible] = useState(false)
+  const [blastShouldEagerLoad, setBlastShouldEagerLoad] = useState(false)
   const [shimmerTrigger, setShimmerTrigger] = useState(0)
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false)
   const videoContainerRef = useRef(null)
@@ -352,7 +353,8 @@ function Hero() {
   }, [])
 
   const goToEvents = useCallback(() => {
-    window.location.assign('/events')
+    const baseUrl = (import.meta?.env?.BASE_URL || '/').replace(/\/+$/, '')
+    window.location.assign(`${baseUrl}/events`)
   }, [])
 
   // Features section: trigger glitch animation when section enters view
@@ -411,6 +413,39 @@ function Hero() {
     }
   }, [])
 
+  // BLAST collage: start loading images *before* the section is visible so the last
+  // photos don't pop in late when users scroll slowly.
+  useEffect(() => {
+    const sectionEl = blastSectionRef.current
+    if (!sectionEl) return
+
+    if (blastShouldEagerLoad) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0]
+        if (!entry?.isIntersecting) return
+        setBlastShouldEagerLoad(true)
+        observer.disconnect()
+      },
+      // Preload early: when the section is still far below the viewport.
+      { rootMargin: '900px 0px 900px 0px', threshold: 0.01 }
+    )
+
+    observer.observe(sectionEl)
+    return () => observer.disconnect()
+  }, [blastShouldEagerLoad])
+
+  useEffect(() => {
+    if (!blastShouldEagerLoad) return
+    // Preload all collage images (browser cache will handle duplicates).
+    blastImages.forEach((src) => {
+      const img = new Image()
+      img.decoding = 'async'
+      img.src = src
+    })
+  }, [blastShouldEagerLoad, blastImages])
+
   // BLAST collage: no sticky/pin — simple cinematic entrance.
   useEffect(() => {
     const sectionEl = blastSectionRef.current
@@ -442,18 +477,54 @@ function Hero() {
       // Smaller spread prevents bottom photos from overflowing into the next section.
       // Slightly wider fan-out (requested): still constrained by the collage overflow.
       const spreadX = s * 0.38
-      const spreadY = Math.min(h * 0.36, s * 0.52)
+      // More vertical spread so bottom photos use the available space and feel "revealed"
+      // as users scroll down.
+      const spreadY = Math.min(h * 0.52, s * 0.78)
+
+      const hash = (str) => {
+        // Simple deterministic hash (djb2-ish)
+        let h = 5381
+        for (let i = 0; i < str.length; i++) {
+          h = ((h << 5) + h) ^ str.charCodeAt(i)
+        }
+        return h >>> 0
+      }
+      const rand01 = (seed) => {
+        // xorshift32 -> [0,1)
+        let x = seed >>> 0
+        x ^= x << 13
+        x ^= x >>> 17
+        x ^= x << 5
+        return ((x >>> 0) % 10000) / 10000
+      }
 
       const baseFinal = [
-        { x: -spreadX * 0.85, y: -spreadY * 0.10 },
+        { x: -spreadX * 0.85, y: -spreadY * 0.14 },
         // Top-center ("syn") photo: bring it down a bit so it never hides under the title
-        { x: 0, y: -spreadY * 0.58 },
-        { x: spreadX * 0.85, y: -spreadY * 0.10 },
-        { x: spreadX * 0.55, y: spreadY * 0.70 },
-        { x: -spreadX * 0.55, y: spreadY * 0.76 },
-        { x: -spreadX * 0.95, y: spreadY * 0.30 },
+        { x: 0, y: -spreadY * 0.48 },
+        { x: spreadX * 0.85, y: -spreadY * 0.08 },
+        { x: spreadX * 0.55, y: spreadY * 0.92 },
+        { x: -spreadX * 0.55, y: spreadY * 1.06 },
+        { x: -spreadX * 0.95, y: spreadY * 0.48 },
       ]
-      const finalPositions = baseFinal.slice(0, count)
+      // Add a small deterministic jitter so it looks randomly stacked but stays stable.
+      const finalPositions = baseFinal.slice(0, count).map((p, i) => {
+        const src = String(blastImages[i] || '')
+        const seed = hash(`${src}:${i}`)
+        const jx = (rand01(seed) - 0.5) * spreadX * 0.16
+        const jy = (rand01(seed ^ 0x9e3779b9) - 0.5) * spreadY * 0.14
+        // Small manual nudges for specific photos (requested):
+        // - asal: move up a little
+        // - pal: move up a little more than asal
+        const isAsal = /(^|\/|\\)asal\./i.test(src)
+        const isPal = /(^|\/|\\)pal\./i.test(src)
+        // Stronger upward nudges so they sit higher along their rotated angle.
+        const nudgeAsal = -Math.min(32, spreadY * 0.11)
+        const nudgePal = -Math.min(48, spreadY * 0.17)
+        const nudgeY = isPal ? nudgePal : isAsal ? nudgeAsal : 0
+
+        return { x: p.x + jx, y: p.y + jy + nudgeY }
+      })
 
       const baseDirs = [
         { x: -1, y: -0.15 },
@@ -472,7 +543,12 @@ function Hero() {
       }))
 
       // Gentle rotations (deterministic) so it looks natural but stable.
-      const rotations = [ -6, 5, -3, 7, -4, 6 ].slice(0, count)
+      const rotations = [ -6, 5, -3, 7, -4, 6 ].slice(0, count).map((r, i) => {
+        const src = String(blastImages[i] || '')
+        const seed = hash(`${src}:rot:${i}`)
+        const jr = (rand01(seed) - 0.5) * 6 // +/-3deg
+        return r + jr
+      })
 
       return { finalPositions, startPositions, rotations }
     }
@@ -488,6 +564,11 @@ function Hero() {
       // Base state
       els.forEach((el, i) => {
         const start = startPositions[i] || { x: 0, y: 0 }
+        const src = String(el.currentSrc || el.src || '')
+        const isPal = /(^|\/|\\)pal\./i.test(src)
+        // Make `pal` clearly larger without completely blowing up the layout.
+        const baseScale = isPal ? 2.4 : 1.35
+
         gsap.set(el, {
           // Center using GSAP-managed percent transforms so CSS centering isn't lost
           // when GSAP updates `transform` (prevents images "dropping" to the bottom).
@@ -495,7 +576,7 @@ function Hero() {
           yPercent: -50,
           x: start.x,
           y: start.y,
-          scale: 1.35,
+          scale: baseScale,
           opacity: 0,
           rotate: rotations[i] ?? 0,
           transformOrigin: '50% 50%',
@@ -520,12 +601,16 @@ function Hero() {
       // Slower + slightly overlapping entrances
       els.forEach((el, i) => {
         const base = finalPositions[i] || { x: 0, y: 0 }
+        const src = String(el.currentSrc || el.src || '')
+        const isPal = /(^|\/|\\)pal\./i.test(src)
+        const finalScale = isPal ? 1.45 : 1
+
         tl.to(
           el,
           {
             x: base.x,
             y: base.y,
-            scale: 1,
+            scale: finalScale,
             opacity: 1,
             rotate: 0,
             duration: 1.65,
@@ -1024,7 +1109,9 @@ function Hero() {
               alt=""
               className="blast-photo"
               draggable="false"
-              loading="lazy"
+              decoding="async"
+              loading={blastShouldEagerLoad ? 'eager' : 'lazy'}
+              fetchPriority={blastShouldEagerLoad && idx < 2 ? 'high' : 'auto'}
             />
           ))}
         </div>
@@ -1093,7 +1180,7 @@ function Hero() {
 
         <div className="mobile-footer-section">
           <div className="mobile-footer-label">WEBSITE</div>
-          <a className="mobile-footer-link" href="https://www.ritchennai.org" target="_blank" rel="noreferrer">
+          <a className="mobile-footer-link" href="https://www.ritchennai.org" target="_blank" rel="noopener noreferrer">
             www.ritchennai.org
           </a>
         </div>
@@ -1115,7 +1202,7 @@ function Hero() {
             className="mobile-footer-social-link"
             href="https://www.instagram.com/yatra_rit?igsh=MTYzdDJhbHlnOHhmNQ=="
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             aria-label="Instagram"
           >
             <svg className="mobile-footer-social-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -1132,7 +1219,7 @@ function Hero() {
             className="mobile-footer-social-link"
             href="https://youtube.com/@rajalakshmiinstituteoftech4448?si=E-E820dMeHNlnfBo"
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             aria-label="YouTube"
           >
             <svg className="mobile-footer-social-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">

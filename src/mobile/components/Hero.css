@@ -1512,9 +1512,10 @@
   position: relative;
   width: 100%;
   /* Bigger stage so the collage fills the section better on mobile */
-  height: clamp(420px, 58vh, 760px);
-  /* Nudge the photo cluster down so top images never hide under the title */
-  --blast-photo-anchor-y: 48%;
+  height: clamp(520px, 68vh, 900px);
+  /* Nudge the photo cluster down so top images never hide under the title,
+     and so bottom photos can use the section's bottom padding space. */
+  --blast-photo-anchor-y: 52%;
   /* Title is text-only now; reduce dead space before collage */
   margin-top: 0.9rem;
   z-index: 12;
@@ -1522,8 +1523,9 @@
   background: transparent;
   border-radius: 0;
   padding: 0;
-  /* Critical: prevent any photo from spilling into the next section on different screens */
-  overflow: hidden;
+  /* Allow photos to use the extra space below as you scroll; the section itself
+     is still clipped to prevent collision with the next section. */
+  overflow: visible;
 }
 
 .blast-collage::before,

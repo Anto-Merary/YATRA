@@ -24,6 +24,8 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public render() {
+    const isDev = import.meta.env.DEV;
+
     if (this.state.hasError) {
       return (
         <div className="min-h-screen flex items-center justify-center bg-black text-white p-4">
@@ -41,12 +43,14 @@ export class ErrorBoundary extends Component<Props, State> {
             >
               Reload Page
             </button>
-            <details className="mt-4 text-left">
-              <summary className="cursor-pointer text-white/50">Error Details</summary>
-              <pre className="mt-2 p-4 bg-gray-900 rounded text-xs overflow-auto">
-                {this.state.error?.stack}
-              </pre>
-            </details>
+            {isDev && (
+              <details className="mt-4 text-left">
+                <summary className="cursor-pointer text-white/50">Error Details</summary>
+                <pre className="mt-2 p-4 bg-gray-900 rounded text-xs overflow-auto">
+                  {this.state.error?.stack}
+                </pre>
+              </details>
+            )}
           </div>
         </div>
       );

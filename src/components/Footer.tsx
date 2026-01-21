@@ -76,7 +76,12 @@ export function Footer() {
 
           <div className="mobile-footer-section">
             <div className="mobile-footer-label">WEBSITE</div>
-            <a className="mobile-footer-link" href="https://www.ritchennai.org" target="_blank" rel="noreferrer">
+            <a
+              className="mobile-footer-link"
+              href="https://www.ritchennai.org"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               www.ritchennai.org
             </a>
           </div>
@@ -96,18 +101,18 @@ export function Footer() {
           <div className="mobile-footer-social" aria-label="Social links">
             <a
               className="mobile-footer-social-link"
-              href="https://instagram.com"
+              href="https://www.instagram.com/yatra_rit?igsh=MTYzdDJhbHlnOHhmNQ=="
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               aria-label="Instagram"
             >
               <InstagramIcon className="mobile-footer-social-icon" width={28} height={28} />
             </a>
             <a
               className="mobile-footer-social-link"
-              href="https://youtube.com"
+              href="https://youtube.com/@rajalakshmiinstituteoftech4448?si=E-E820dMeHNlnfBo"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               aria-label="YouTube"
             >
               <YouTubeIcon className="mobile-footer-social-icon" width={28} height={28} />
@@ -150,7 +155,16 @@ export function Footer() {
           {/* Left Column - Address */}
           <div className="flex-1">
             <div className="space-y-1.5 xs:space-y-2 text-sm xs:text-base md:text-lg text-white/90 leading-relaxed text-center md:text-left">
-              <div className="font-semibold text-white">Rajalakshmi Institute of Technology</div>
+              <div className="font-semibold text-white">
+                <a
+                  href="https://www.ritchennai.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white/90 underline-offset-4 hover:underline"
+                >
+                  Rajalakshmi Institute of Technology
+                </a>
+              </div>
               <div className="text-white/95">Bangalore Highway Road, Kuthambakkam,</div>
               <div className="text-white/95">Chennai, Tamil Nadu - 600124</div>
             </div>
@@ -172,9 +186,9 @@ export function Footer() {
                 <FacebookIcon className="h-5 w-5" width={20} height={20} style={{ width: 20, height: 20, flex: "0 0 auto" }} />
               </a>
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/yatra_rit?igsh=MTYzdDJhbHlnOHhmNQ=="
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="rounded-full border border-white/20 bg-black/50 p-2 xs:p-2.5 text-white hover:text-white hover:border-white/40 active:bg-white/10 transition-colors touch-manipulation"
                 aria-label="Instagram"
                 style={{ minWidth: "44px", minHeight: "44px", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}
@@ -182,9 +196,9 @@ export function Footer() {
                 <InstagramIcon className="h-5 w-5" width={20} height={20} style={{ width: 20, height: 20, flex: "0 0 auto" }} />
               </a>
               <a
-                href="https://youtube.com"
+                href="https://youtube.com/@rajalakshmiinstituteoftech4448?si=E-E820dMeHNlnfBo"
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="rounded-full border border-white/20 bg-black/50 p-2 xs:p-2.5 text-white hover:text-white hover:border-white/40 active:bg-white/10 transition-colors touch-manipulation"
                 aria-label="YouTube"
                 style={{ minWidth: "44px", minHeight: "44px", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}
