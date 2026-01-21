@@ -96,7 +96,7 @@ export function EventDetailPage() {
             <div className="mt-6 flex flex-wrap gap-3">
               <Button
                 variant="secondary"
-                onClick={() => navigate("/events")}
+                onClick={() => navigate("/yatraevents")}
                 className="border border-white/10 bg-white/5 text-white hover:bg-white/10"
               >
                 Back to Events
@@ -160,7 +160,7 @@ export function EventDetailPage() {
         {/* Top bar */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Link
-            to="/events"
+            to="/yatraevents"
             className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-white/80 backdrop-blur-sm transition-colors hover:bg-white/[0.06]"
           >
             <span aria-hidden="true">←</span>

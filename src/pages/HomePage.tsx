@@ -24,13 +24,13 @@ export function HomePage() {
   }, [navigate]);
 
   return (
-    <div style={{ width: '100%', height: '100vh', overflow: 'hidden' }}>
+    <div style={{ width: '100%', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <iframe
         ref={iframeRef}
         src="/homepage.html"
         style={{
           width: '100%',
-          height: '100%',
+          flex: '1',
           border: 'none',
           display: 'block',
         }}

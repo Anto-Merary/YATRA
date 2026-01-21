@@ -1,6 +1,7 @@
 import type { SVGProps } from "react";
 import { TextHoverEffect } from "./ui/text-hover-effect";
 import { NoiseOverlay } from "./NoiseOverlay";
+import { useLocation } from "react-router-dom";
 
 function InstagramIcon(props: SVGProps<SVGSVGElement>) {
   return (
@@ -36,28 +37,11 @@ function FacebookIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-function TwitterIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
-      <path
-        d="M18.9 2H21l-4.6 5.26L22 22h-5l-3.9-5.1L8.6 22H6.5l5-5.8L2 2h5.1l3.5 4.7L14.7 2h4.2ZM18 20.3h1.2L6.9 3.6H5.6L18 20.3Z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
-
 function YouTubeIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
       <path
-        d="M21.582 6.186a2.506 2.506 0 0 0-1.768-1.768C18.254 4 12 4 12 4s-6.254 0-7.814.418a2.506 2.506 0 0 0-1.768 1.768C2 7.746 2 12 2 12s0 4.254.418 5.814a2.506 2.506 0 0 0 1.768 1.768C5.746 20 12 20 12 20s6.254 0 7.814-.418a2.506 2.506 0 0 0 1.768-1.768C22 16.254 22 12 22 12s0-4.254-.418-5.814z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        fill="none"
-      />
-      <path
-        d="M9.75 12l5.75 3.27V8.73L9.75 12z"
+        d="M21.593 7.203a2.506 2.506 0 0 0-1.762-1.766C18.265 5.007 12 5 12 5s-6.264-.007-7.831.404a2.56 2.56 0 0 0-1.766 1.778c-.413 1.566-.417 4.814-.417 4.814s-.004 3.264.406 4.814c.266.978.842 1.74 1.766 1.778 1.582.43 7.831.437 7.831.437s6.265.007 7.831-.403a2.515 2.515 0 0 0 1.767-1.776c.415-1.563.417-4.812.417-4.812s.002-3.265-.415-4.831zM9.996 15.005l-.005-6 5.207 3.005-5.202 2.995z"
         fill="currentColor"
       />
     </svg>
@@ -65,6 +49,9 @@ function YouTubeIcon(props: SVGProps<SVGSVGElement>) {
 }
 
 export function Footer() {
+  const location = useLocation();
+  const isEventsPage = location.pathname === "/events" || location.pathname === "/yatraevents" || location.pathname === "/pro-dance-battle";
+  
   return (
     <footer id="footer" className="relative mt-20 border-t border-white/10 bg-black pb-24 sm:pb-0">
       {/* Film grain overlay */}
@@ -74,7 +61,21 @@ export function Footer() {
         {/* Main Title - Centered at top */}
         <div className="flex justify-center mb-6 xs:mb-8 sm:mb-10 md:mb-12 lg:mb-16 overflow-hidden px-2">
           <div className="w-full max-w-5xl h-28 xs:h-32 sm:h-36 md:h-44 lg:h-56 xl:h-64 overflow-hidden py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 flex items-center justify-center">
-            <TextHoverEffect text="YATRA'26" duration={0.15} />
+            {isEventsPage ? (
+              <div 
+                className="font-akira font-bold tracking-wider uppercase text-6xl sm:text-7xl md:text-8xl lg:text-9xl"
+                style={{
+                  background: "linear-gradient(0deg, rgb(205, 7, 194) 0%, rgba(205, 7, 194, 0.65) 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                YATRA'26
+              </div>
+            ) : (
+              <TextHoverEffect text="YATRA'26" duration={0.15} />
+            )}
           </div>
         </div>
 
@@ -94,7 +95,7 @@ export function Footer() {
             {/* Social Media Icons */}
             <div className="flex md:justify-end items-center gap-2 xs:gap-3 mb-4 xs:mb-5 sm:mb-6">
               <a
-                href="https://facebook.com"
+                href="https://www.facebook.com/ritchennai"
                 target="_blank"
                 rel="noreferrer"
                 className="rounded-full border border-white/20 bg-black/50 p-2 xs:p-2.5 text-white hover:text-white hover:border-white/40 active:bg-white/10 transition-colors touch-manipulation"
@@ -122,16 +123,6 @@ export function Footer() {
                 style={{ minWidth: "44px", minHeight: "44px", display: "flex", alignItems: "center", justifyContent: "center" }}
               >
                 <YouTubeIcon className="h-5 w-5" />
-              </a>
-              <a
-                href="https://x.com"
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-full border border-white/20 bg-black/50 p-2 xs:p-2.5 text-white hover:text-white hover:border-white/40 active:bg-white/10 transition-colors touch-manipulation"
-                aria-label="Twitter"
-                style={{ minWidth: "44px", minHeight: "44px", display: "flex", alignItems: "center", justifyContent: "center" }}
-              >
-                <TwitterIcon className="h-5 w-5" />
               </a>
             </div>
 

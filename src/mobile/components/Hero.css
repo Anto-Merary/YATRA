@@ -36,6 +36,9 @@
   font-display: swap;
 }
 
+.font-akira {
+  font-family: 'Akira Expanded', 'Impact', 'Arial Black', sans-serif;
+}
 
 @font-face {
   font-family: 'Milker';

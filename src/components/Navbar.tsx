@@ -77,6 +77,9 @@ export function Navbar({ variant = "fixed" }: NavbarProps) {
 
   const positionClass = variant === "fixed" ? "fixed inset-x-0 top-0" : "absolute top-0 left-0 right-0";
   const isEventsPage = location.pathname === "/events" || location.pathname.startsWith("/events/");
+  const isYatraEventsPage = location.pathname === "/yatraevents";
+  const isDanceBattlePage = location.pathname === "/pro-dance-battle";
+  const shouldCenterNav = isYatraEventsPage || isDanceBattlePage;
 
   const navLinks = [
     { to: "/", label: "Home", end: true, icon: Home },
@@ -122,13 +125,13 @@ export function Navbar({ variant = "fixed" }: NavbarProps) {
         }}
         className={`${positionClass} z-[100] px-4 sm:px-6 md:px-8 pt-4 sm:pt-6`}
       >
-        <div className="w-full mx-auto flex items-center justify-between">
-          {/* Left: RIT Logo - Hidden on Events page */}
-          {!isEventsPage && (
+        <div className={`w-full mx-auto flex items-center ${shouldCenterNav ? 'justify-center' : 'justify-between'}`}>
+          {/* Left: Yatra Logo - Hidden on Yatra Events and Dance Battle pages */}
+          {!shouldCenterNav && (
             <div className="flex items-center flex-1 justify-start relative z-[101]">
               <img
-                src={ritLogo}
-                alt="RIT Logo"
+                src={yatraLogo}
+                alt="Yatra Logo"
                 className="h-10 md:h-[69px] w-auto object-contain"
                 draggable={false}
               />
@@ -188,15 +191,22 @@ export function Navbar({ variant = "fixed" }: NavbarProps) {
             </motion.div>
           )}
 
-          {/* Right: Yatra Logo */}
-          <div className={`flex items-center flex-1 justify-end ${(location.pathname.startsWith("/events") || location.pathname.startsWith("/yatraevents") || location.pathname.startsWith("/proevents")) ? "hidden" : ""}`}>
-            <img
-              src={yatraLogo}
-              alt="Yatra Logo"
-              className="h-10 md:h-16 w-auto object-contain"
-              draggable={false}
-            />
-          </div>
+          {/* Right: Yatra Logo or Spacer - Hidden on Events, Yatra Events, and Dance Battle pages */}
+          {isEventsPage || shouldCenterNav ? (
+            /* Spacer to balance layout and center nav */
+            <div className="flex items-center flex-1 justify-end relative z-[101]">
+              <div className="h-10 md:h-[69px] w-auto" />
+            </div>
+          ) : (
+            <div className={`flex items-center flex-1 justify-end ${location.pathname.startsWith("/proevents") ? "hidden" : ""}`}>
+              <img
+                src={yatraLogo}
+                alt="Yatra Logo"
+                className="h-10 md:h-16 w-auto object-contain"
+                draggable={false}
+              />
+            </div>
+          )}
         </div>
       </motion.div>
 
