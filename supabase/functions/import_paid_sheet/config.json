@@ -1,7 +1,8 @@
 {
   "functions": {
-    "issue_tickets_batch": {
+    "import_paid_sheet": {
       "verify_jwt": true
     }
   }
 }
+

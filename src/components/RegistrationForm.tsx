@@ -176,6 +176,7 @@ export function RegistrationForm({
   const { collapse } = useExpandableScreen();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const registrationDisabled = true; // Bank/college sheet is the source of truth
 
   const form = useForm<RegistrationFormValues>({
     resolver: zodResolver(registrationSchema),
@@ -220,6 +221,15 @@ export function RegistrationForm({
   const displayPrice = isRITStudent ? ritStudentPrice : earlyBirdPrice;
 
   const onSubmit = async (data: RegistrationFormValues) => {
+    if (registrationDisabled) {
+      toast({
+        title: "Registration Closed",
+        description: "Registrations are handled through the bank/college payment sheet. Please contact the organizers.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     
     try {
@@ -497,7 +507,7 @@ export function RegistrationForm({
               </Button>
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={registrationDisabled || isSubmitting}
                 className="flex-1 bg-white text-black hover:bg-white/90 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (
@@ -506,7 +516,7 @@ export function RegistrationForm({
                   </>
                 ) : (
                   <>
-                    <span className="text-pink-600">제출</span> Submit Registration
+                    <span className="text-pink-600">제출</span> {registrationDisabled ? 'Registration Closed' : 'Submit Registration'}
                   </>
                 )}
               </Button>

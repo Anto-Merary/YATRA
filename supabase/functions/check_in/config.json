@@ -1,7 +1,8 @@
 {
   "functions": {
-    "issue_tickets_batch": {
+    "check_in": {
       "verify_jwt": true
     }
   }
 }
+

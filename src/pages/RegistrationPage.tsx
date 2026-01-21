@@ -38,6 +38,7 @@ const FormSchema = z.object({
 
 export function RegistrationPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const registrationDisabled = true; // Bank/college sheet is the source of truth
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -50,6 +51,15 @@ export function RegistrationPage() {
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
+    if (registrationDisabled) {
+      toast({
+        title: 'Registration Closed',
+        description: 'Registrations are handled through the bank/college payment sheet. Please contact the organizers.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       // Prepare data for Supabase
@@ -247,10 +257,10 @@ export function RegistrationPage() {
             <Button
               type="submit"
               className="w-full bg-purple-600 hover:bg-purple-700 touch-manipulation"
-              disabled={isSubmitting}
+              disabled={registrationDisabled || isSubmitting}
               style={{ minHeight: "44px" }}
             >
-              {isSubmitting ? 'Registering...' : 'Register Now'}
+              {registrationDisabled ? 'Registration Closed' : (isSubmitting ? 'Registering...' : 'Register Now')}
             </Button>
           </form>
         </Form>

@@ -8,6 +8,36 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
+async function requireAdminEmail(req: Request): Promise<string> {
+  const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY')
+  }
+
+  const authHeader = req.headers.get('Authorization') ?? ''
+  const jwt = authHeader.startsWith('Bearer ')
+    ? authHeader.slice('Bearer '.length)
+    : authHeader
+  if (!jwt) throw new Error('Missing Authorization bearer token')
+
+  const supabase = createClient(supabaseUrl, supabaseKey)
+  const { data, error } = await supabase.auth.getUser(jwt)
+  if (error || !data?.user?.email) {
+    throw new Error('Unauthorized: invalid user token')
+  }
+
+  const email = data.user.email.toLowerCase()
+  const masterAdmin = (Deno.env.get('MASTER_ADMIN_EMAIL') ?? 'meraryanto@gmail.com').toLowerCase()
+  if (email === masterAdmin) return email
+
+  const { data: isAdmin, error: rpcError } = await supabase.rpc('check_is_admin', { user_email: email })
+  if (rpcError) throw new Error('Unauthorized: admin check failed')
+  if (!isAdmin) throw new Error('Unauthorized: not an admin')
+
+  return email
+}
+
 // SMTP Configuration
 const EMAIL_USER = Deno.env.get("EMAIL_USER");
 const EMAIL_PASS = Deno.env.get("EMAIL_PASS");
@@ -89,18 +119,17 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const adminEmail = await requireAdminEmail(req)
+
     // 1. Validation
-    const { registration_ids, issued_by_admin_email } = await req.json()
+    const { registration_ids } = await req.json()
 
     if (!registration_ids || !Array.isArray(registration_ids) || registration_ids.length === 0) {
       throw new Error('registration_ids array is required')
     }
-    if (!issued_by_admin_email) {
-      throw new Error('issued_by_admin_email is required')
-    }
 
     const uniqueIds = [...new Set(registration_ids)];
-    console.log(`Processing ${uniqueIds.length} tickets. Issuer: ${issued_by_admin_email}`);
+    console.log(`Processing ${uniqueIds.length} tickets. Issuer: ${adminEmail}`);
 
     // Init Supabase Client
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
@@ -111,6 +140,8 @@ Deno.serve(async (req) => {
       success: true,
       issued_count: 0,
       skipped_count: 0,
+      not_paid_count: 0,
+      already_sent_count: 0,
       failed: [] as any[]
     };
 
@@ -128,61 +159,113 @@ Deno.serve(async (req) => {
           throw new Error(`Registration not found: ${fetchError?.message}`);
         }
 
+        // B. Eligibility: must be paid
+        if ((reg.payment_status ?? 'unpaid') !== 'paid') {
+          results.not_paid_count++;
+          results.failed.push({ registration_id: regId, reason: 'Not eligible: payment_status is not paid' });
+          continue;
+        }
+
+        // C. Idempotency: if already marked sent, skip
         // B. Idempotency Check
         if (reg.ticket_email_sent) {
           console.log(`Skipping ${reg.email} - already sent`);
           results.skipped_count++;
+          results.already_sent_count++;
           continue;
         }
 
-        // C. Generate Unique 6-Digit Code
-        let ticketCode = '';
-        let isUnique = false;
-        let attempts = 0;
-
-        while (!isUnique && attempts < 5) {
-          // Generate 6-digit number
-          ticketCode = Math.floor(100000 + Math.random() * 900000).toString();
-          
-          // Check uniqueness
-          const { data: existing } = await supabase
-            .from('tickets')
-            .select('id')
-            .eq('six_digit_code', ticketCode)
+        // D. Secondary idempotency: if latest email event says "sent", treat as sent
+        try {
+          const { data: latestEvent } = await supabase
+            .from('ticket_email_events')
+            .select('status, created_at')
+            .eq('registration_id', regId)
+            .order('created_at', { ascending: false })
+            .limit(1)
             .maybeSingle();
-            
-          if (!existing) isUnique = true;
-          attempts++;
+
+          if (latestEvent?.status === 'sent') {
+            console.log(`Skipping ${reg.email} - last email event is sent`);
+            results.skipped_count++;
+            results.already_sent_count++;
+            // best-effort reconcile
+            await supabase
+              .from('registrations')
+              .update({ ticket_email_sent: true })
+              .eq('id', regId);
+            continue;
+          }
+        } catch {
+          // ignore if table doesn't exist yet
         }
 
-        if (!isUnique) throw new Error("Failed to generate unique ticket code");
+        // E. Ticket: reuse if already created for this registration (prevents duplicates on retries)
+        let ticketId = '';
+        let ticketCode = '';
+        const qrPayload = regId; // QR is registration UUID only
 
-        // D. Generate Ticket UUID and QR Payload
-        const ticketId = crypto.randomUUID(); // Generate UUID upfront
-
-        const qrPayload = JSON.stringify({
-          uid: ticketId,       // ticket_uuid
-          rid: regId,          // registration_id
-          code: ticketCode     // six_digit_code
-        });
-        
-        const qrDataUrl = await QRCode.toDataURL(qrPayload);
-
-        // E. Insert Ticket (Atomic-ish)
-        const { error: insertError } = await supabase
+        const { data: existingTicket, error: ticketFetchError } = await supabase
           .from('tickets')
-          .insert({
-            id: ticketId, // Explicitly set the ID
-            registration_id: reg.id,
-            email: reg.email,
-            name: reg.name,
-            college: reg.college,
-            six_digit_code: ticketCode,
-            qr_payload: qrPayload,
-            ticket_status: 'valid'
-          });
+          .select('id, code_6_digit, qr_payload')
+          .eq('registration_id', regId)
+          .maybeSingle();
 
-        if (insertError) throw new Error(`Ticket insert failed: ${insertError.message}`);
+        if (ticketFetchError) {
+          throw new Error(`Failed to check existing ticket: ${ticketFetchError.message}`);
+        }
+
+        if (existingTicket) {
+          ticketId = String(existingTicket.id);
+          ticketCode = String(existingTicket.code_6_digit);
+          // Best-effort normalize stored QR payload
+          if (existingTicket.qr_payload !== qrPayload) {
+            await supabase
+              .from('tickets')
+              .update({ qr_payload: qrPayload })
+              .eq('id', ticketId);
+          }
+        } else {
+          // Generate Unique 6-Digit Code
+          let isUnique = false;
+          let attempts = 0;
+
+          while (!isUnique && attempts < 10) {
+            ticketCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+            const { data: existing } = await supabase
+              .from('tickets')
+              .select('id')
+              .eq('code_6_digit', ticketCode)
+              .maybeSingle();
+
+            if (!existing) isUnique = true;
+            attempts++;
+          }
+
+          if (!isUnique) throw new Error("Failed to generate unique ticket code");
+
+          // Generate Ticket UUID
+          ticketId = crypto.randomUUID();
+
+          // Insert Ticket
+          const { error: insertError } = await supabase
+            .from('tickets')
+            .insert({
+              id: ticketId,
+              registration_id: reg.id,
+              email: reg.email,
+              name: reg.name,
+              college: reg.college,
+              code_6_digit: ticketCode,
+              qr_payload: qrPayload,
+              ticket_status: 'valid'
+            });
+
+          if (insertError) throw new Error(`Ticket insert failed: ${insertError.message}`);
+        }
+
+        const qrDataUrl = await QRCode.toDataURL(qrPayload);
 
         // F. Send Email
         const emailHtml = `
@@ -211,17 +294,48 @@ Deno.serve(async (req) => {
               </p>
             </div>
             <div style="background: #f9fafb; padding: 16px; text-align: center; font-size: 12px; color: #9ca3af;">
-              Sent by YATRA 2026 Admin Team
+              Sent by YATRA 2026 Admin Team (${adminEmail})
             </div>
           </div>
         `;
 
-        await sendEmailViaSMTP(
-          reg.email,
-          `Your YATRA 2026 Ticket [${ticketCode}]`,
-          emailHtml,
-          `Your Ticket Code: ${ticketCode}`
-        );
+        try {
+          await sendEmailViaSMTP(
+            reg.email,
+            `Your YATRA 2026 Ticket [${ticketCode}]`,
+            emailHtml,
+            `Your Ticket Code: ${ticketCode}\nQR contains your registration ID.`
+          );
+
+          // Log email success (best-effort)
+          try {
+            await supabase.from('ticket_email_events').insert({
+              registration_id: regId,
+              ticket_id: ticketId,
+              to_email: reg.email,
+              status: 'sent',
+              error_text: null
+            });
+          } catch {
+            // ignore
+          }
+        } catch (emailError) {
+          const errText = emailError instanceof Error ? emailError.message : String(emailError);
+          // Log email failure (best-effort)
+          try {
+            await supabase.from('ticket_email_events').insert({
+              registration_id: regId,
+              ticket_id: ticketId,
+              to_email: reg.email,
+              status: 'failed',
+              error_text: errText
+            });
+          } catch {
+            // ignore
+          }
+
+          throw new Error(`Email send failed: ${errText}`);
+        }
 
         // G. Update Registration (Final State)
         const { error: updateError } = await supabase
@@ -243,7 +357,8 @@ Deno.serve(async (req) => {
 
       } catch (itemError) {
         console.error(`Failed for ${regId}:`, itemError);
-        results.failed.push({ registration_id: regId, reason: itemError.message });
+        const reason = itemError instanceof Error ? itemError.message : String(itemError);
+        results.failed.push({ registration_id: regId, reason });
       }
     }
 
