@@ -79,12 +79,19 @@ export function Navbar({ variant = "fixed" }: NavbarProps) {
   const isEventsPage = location.pathname === "/events" || location.pathname.startsWith("/events/");
   const isYatraEventsPage = location.pathname === "/yatraevents";
   const isDanceBattlePage = location.pathname === "/pro-dance-battle";
-  const shouldCenterNav = isYatraEventsPage || isDanceBattlePage;
+  // Treat these pages as part of the "Events" family so they share the same navbar UI.
+  const isEventsFamilyPage = isEventsPage || isYatraEventsPage || isDanceBattlePage;
 
   const navLinks = [
     { to: "/", label: "Home", end: true, icon: Home },
     { to: "/events", label: "Events", icon: Calendar },
   ];
+
+  const isLinkActive = (to: string) => {
+    if (to === "/") return location.pathname === "/";
+    if (to === "/events") return isEventsFamilyPage;
+    return location.pathname === to;
+  };
 
   // Wrapper function to scroll and navigate
   const handleNavigation = (to: string) => {
@@ -125,18 +132,16 @@ export function Navbar({ variant = "fixed" }: NavbarProps) {
         }}
         className={`${positionClass} z-[100] px-4 sm:px-6 md:px-8 pt-4 sm:pt-6`}
       >
-        <div className={`w-full mx-auto flex items-center ${shouldCenterNav ? 'justify-center' : 'justify-between'}`}>
-          {/* Left: Yatra Logo - Hidden on Yatra Events and Dance Battle pages */}
-          {!shouldCenterNav && (
-            <div className="flex items-center flex-1 justify-start relative z-[101]">
-              <img
-                src={yatraLogo}
-                alt="Yatra Logo"
-                className="h-10 md:h-[69px] w-auto object-contain"
-                draggable={false}
-              />
-            </div>
-          )}
+        <div className="w-full mx-auto flex items-center justify-between">
+          {/* Left: Yatra Logo */}
+          <div className="flex items-center flex-1 justify-start relative z-[101]">
+            <img
+              src={yatraLogo}
+              alt="Yatra Logo"
+              className="h-10 md:h-[69px] w-auto object-contain"
+              draggable={false}
+            />
+          </div>
 
           {/* Center: Desktop Navigation */}
           {!isMobile && (
@@ -169,14 +174,16 @@ export function Navbar({ variant = "fixed" }: NavbarProps) {
                   <NavLink
                     key={link.to}
                     to={link.to}
-                    className={({ isActive }) => (isActive ? linkActive : linkBase)}
+                    className={() => (isLinkActive(link.to) ? linkActive : linkBase)}
                     end={link.end}
                   >
-                    {({ isActive }) => (
+                    {() => {
+                      const active = isLinkActive(link.to);
+                      return (
                       <motion.span
                         animate={{
-                          scale: isActive ? 1.05 : 1,
-                          textShadow: isActive 
+                          scale: active ? 1.05 : 1,
+                          textShadow: active 
                             ? "0 0 8px rgba(255, 255, 255, 0.3)" 
                             : "none",
                         }}
@@ -184,15 +191,16 @@ export function Navbar({ variant = "fixed" }: NavbarProps) {
                       >
                         {link.label}
                       </motion.span>
-                    )}
+                      )
+                    }}
                   </NavLink>
                 ))}
               </nav>
             </motion.div>
           )}
 
-          {/* Right: Yatra Logo or Spacer - Hidden on Events, Yatra Events, and Dance Battle pages */}
-          {isEventsPage || shouldCenterNav ? (
+          {/* Right: Spacer (keeps center nav visually centered like the /events page) */}
+          {isEventsFamilyPage ? (
             /* Spacer to balance layout and center nav */
             <div className="flex items-center flex-1 justify-end relative z-[101]">
               <div className="h-10 md:h-[69px] w-auto" />

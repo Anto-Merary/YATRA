@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Modal } from "../components/Modal";
 import { Button } from "../components/ui/button";
 import { useMobile } from "../hooks/use-mobile";
@@ -13,6 +14,13 @@ const EVENT_NAME = "DANCE BATTLE";
 export function ProDanceBattlePage() {
   const { prefersReducedMotion } = useMobile();
   const [rulesOpen, setRulesOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    // Prefer history back, but fall back to Events hub if user landed here directly.
+    if (window.history.length > 1) navigate(-1);
+    else navigate("/events");
+  };
 
   const categoryCards = useMemo(
     () => [
@@ -61,12 +69,26 @@ export function ProDanceBattlePage() {
 
         <div className="relative z-10">
           <div className="container-max px-4 sm:px-6 py-6 sm:py-10 md:py-12">
+            {/* Back button (requested for Pro Dance Battle page) */}
+            <motion.button
+              type="button"
+              onClick={handleBack}
+              initial={prefersReducedMotion ? undefined : { opacity: 0, y: -6 }}
+              animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-3 py-1.5 text-xs font-semibold tracking-[0.14em] text-white/85 backdrop-blur-sm hover:bg-white/[0.10] hover:text-white active:scale-[0.99]"
+              aria-label="Go back"
+            >
+              <span aria-hidden="true">←</span>
+              <span>BACK</span>
+            </motion.button>
+
             {/* Top row */}
             <motion.div
               initial={prefersReducedMotion ? undefined : { opacity: 0, y: -10 }}
               animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="flex items-center justify-between gap-4"
+              className="mt-4 flex items-center justify-between gap-4"
             >
               <div className="flex items-center gap-3">
                 <img
