@@ -185,8 +185,9 @@
   transform: translate(-50%, -50%) scale(1.18);
 }
 
+/* Keep video crisp even during entrance on low-end devices. */
 .hero-stage:not(.is-loaded) .hero-video {
-  filter: blur(6px);
+  filter: none;
 }
 
 /* Note: We intentionally do NOT disable these animations for `prefers-reduced-motion`.
@@ -372,7 +373,7 @@
   height: 100%;
   object-fit: cover;
   border-radius: 4px;
-  filter: blur(2px);
+  filter: none;
   transition: opacity 300ms ease;
 }
 

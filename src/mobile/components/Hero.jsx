@@ -2,6 +2,7 @@ import './Hero.css'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import heroBg from '../assets/optimized/herobg-w1280.webp'
 import heroBgLq from '../assets/optimized/herobg-lq.webp'
+import heroBgPoster from '../assets/optimized/herobg-w640.webp'
 import yatraText from '../assets/optimized/yatratxt-w1536.webp'
 import torriGate from '../assets/optimized/torrigate-w1280.webp'
 import yearText from '../assets/optimized/2026txt-w1536.webp'
@@ -243,8 +244,8 @@ function Hero() {
       rect.left < window.innerWidth &&
       rect.right > 0
 
-    if (isInViewport && hasLoaded) {
-      // Video is already visible and images have loaded
+    if (isInViewport) {
+      // Video is already visible
       setShouldLoadVideo(true)
       return
     }
@@ -252,7 +253,7 @@ function Hero() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && hasLoaded) {
+          if (entry.isIntersecting) {
             setShouldLoadVideo(true)
             observer.disconnect()
           }
@@ -269,7 +270,7 @@ function Hero() {
     return () => {
       observer.disconnect()
     }
-  }, [networkShouldLoad, hasLoaded])
+  }, [networkShouldLoad])
 
   const runAboutReveal = useCallback(() => {
     // Wait for React to finish mounting new elements when step changes
@@ -758,8 +759,8 @@ function Hero() {
               loop
               muted
               playsInline
-              preload="metadata"
-              poster={heroBgLq}
+              preload={isSlowConnection ? 'metadata' : 'auto'}
+              poster={heroBgPoster}
               onLoadedData={() => {
                 // Auto-play when data is loaded (on fast connections only)
                 if (videoRef.current && networkShouldLoad && !isSlowConnection) {
@@ -777,7 +778,7 @@ function Hero() {
               style={{
                 width: '100%',
                 height: '100%',
-                backgroundImage: `url(${heroBgLq})`,
+                backgroundImage: `url(${heroBgPoster})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }}
