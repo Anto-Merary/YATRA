@@ -6,7 +6,6 @@ import heroBgLq from '../assets/optimized/herobg-lq.webp'
 import heroBgPoster from '../assets/optimized/herobg-w640.webp'
 import yatraText from '../assets/optimized/yatratxt-w1536.webp'
 import torriGate from '../assets/optimized/torrigate-w1280.webp'
-import yearText from '../assets/optimized/2026txt-w1536.webp'
 import videoSrc from '../assets/video.mp4'
 import eventImage from '../assets/optimized/event-w1024.webp'
 import performanceImage from '../assets/optimized/performance-w1280.webp'
@@ -85,7 +84,6 @@ function Hero() {
   const [loaded, setLoaded] = useState(() => ({
     bleedBg: false,
     bg: false,
-    year: false,
     yatra: false,
     torii: false,
   }))
@@ -222,13 +220,12 @@ function Hero() {
     return {
       bleedBg: make('bleedBg'),
       bg: make('bg'),
-      year: make('year'),
       yatra: make('yatra'),
       torii: make('torii'),
     }
   }, [markLoaded])
 
-  const isHeroReady = loaded.bg && loaded.year && loaded.yatra && loaded.torii
+  const isHeroReady = loaded.bg && loaded.yatra && loaded.torii
 
   // Trigger entrance animations exactly once, right after we finish loading.
   useEffect(() => {
@@ -784,7 +781,7 @@ function Hero() {
       timeoutId = window.setTimeout(() => {
         if (cancelled) return
 
-        // Trigger shimmer by updating state
+        // Trigger shimmer by updating state - incrementing forces animation restart
         setShimmerTrigger((prev) => prev + 1)
         
         scheduleShimmer()
@@ -805,6 +802,26 @@ function Hero() {
       if (timeoutId) window.clearTimeout(timeoutId)
     }
   }, [hasLoaded])
+
+  // Force animation restart by toggling class when shimmerTrigger changes
+  const buyTicketsButtonRef = useRef(null)
+  useEffect(() => {
+    if (shimmerTrigger === 0) return
+    
+    const button = buyTicketsButtonRef.current
+    if (!button) return
+
+    // Remove class to reset animation
+    button.classList.remove('shimmer-active')
+    
+    // Force reflow to ensure class removal is processed
+    void button.offsetWidth
+    
+    // Re-add class to trigger animation
+    requestAnimationFrame(() => {
+      button.classList.add('shimmer-active')
+    })
+  }, [shimmerTrigger])
 
   const isExperienceReady = isVideoReady || videoError
 
@@ -950,12 +967,15 @@ function Hero() {
 
         {/* "2026" Text - Behind Torii gate */}
         <div className="hero-year-text">
-          <img src={yearText} alt="2026" className="year-text-image" {...img.year} />
+          <span className="hero-year-text-inner" aria-label="2026">
+            2026
+          </span>
         </div>
 
         {/* Action Buttons - Below 2026 text */}
         <div className="hero-buttons">
           <button 
+            ref={buyTicketsButtonRef}
             className={`hero-button buy-tickets ${shimmerTrigger > 0 ? 'shimmer-active' : ''}`}
             onClick={scrollToPasses} 
             type="button"
