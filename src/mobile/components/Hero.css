@@ -1832,7 +1832,7 @@
 
 .mobile-pass-card-title {
   font-family: 'Akira Expanded', var(--hero-font-family);
-  font-size: clamp(0.95rem, 4.2vw, 1.1rem);
+  font-size: clamp(1.05rem, 4.8vw, 1.25rem);
   line-height: 1.15;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.78);
@@ -1852,7 +1852,7 @@
 
 .mobile-pass-price {
   font-family: 'Akira Expanded', var(--hero-font-family);
-  font-size: clamp(1.8rem, 9vw, 2.4rem);
+  font-size: clamp(1.35rem, 7.4vw, 2rem);
   line-height: 1;
   font-weight: 900;
   margin: 0.25rem 0 0;
@@ -1903,7 +1903,7 @@
   display: grid;
   gap: 0.45rem;
   color: rgba(255, 255, 255, 0.7);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   line-height: 1.35;
   font-family: 'Poppins', var(--hero-font-family);
   font-weight: 500;
@@ -1920,7 +1920,7 @@
 .mobile-pass-description {
   margin: 0;
   color: rgba(255, 255, 255, 0.7);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   line-height: 1.55;
   font-family: 'Poppins', var(--hero-font-family);
   font-weight: 500;
