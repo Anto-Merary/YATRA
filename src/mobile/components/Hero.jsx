@@ -281,8 +281,15 @@ function Hero() {
       }
     }, 0)
 
+    // Fallback: if the video never becomes playable, unblock after a bit so the site doesn't look "stuck".
+    const fallback = window.setTimeout(() => {
+      setVideoError(true)
+      setIsVideoReady(true)
+    }, 15000)
+
     return () => {
       window.clearTimeout(t)
+      window.clearTimeout(fallback)
       if (link.parentNode) link.parentNode.removeChild(link)
     }
   }, [])
@@ -801,6 +808,19 @@ function Hero() {
 
   const isExperienceReady = isVideoReady || videoError
 
+  // While the gate is shown, prevent scrolling so the user doesn't land on a half-revealed section.
+  useEffect(() => {
+    if (isExperienceReady) return
+    const prevHtmlOverflow = document.documentElement.style.overflow
+    const prevBodyOverflow = document.body.style.overflow
+    document.documentElement.style.overflow = 'hidden'
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.documentElement.style.overflow = prevHtmlOverflow
+      document.body.style.overflow = prevBodyOverflow
+    }
+  }, [isExperienceReady])
+
   return (
     <>
     {!isExperienceReady && (
@@ -832,7 +852,7 @@ function Hero() {
         className="hero-bleed-bg"
         decoding="async"
         loading="eager"
-        fetchPriority="high"
+        fetchpriority="high"
         {...img.bleedBg}
       />
 
@@ -850,7 +870,7 @@ function Hero() {
             className="hero-bg-image"
             decoding="async"
             loading="eager"
-            fetchPriority="high"
+            fetchpriority="high"
             {...img.bg}
           />
         </div>
@@ -998,8 +1018,6 @@ function Hero() {
       </div>
     </section>
 
-    {isExperienceReady && (
-      <>
     {/* Black Background Section - After Divider */}
     <section className="hero-black-section" aria-label="About section" ref={aboutRef}>
       <div className="about-sticky">
@@ -1141,7 +1159,7 @@ function Hero() {
               draggable="false"
               decoding="async"
               loading={blastShouldEagerLoad ? 'eager' : 'lazy'}
-              fetchPriority={blastShouldEagerLoad && idx < 2 ? 'high' : 'auto'}
+              fetchpriority={blastShouldEagerLoad && idx < 2 ? 'high' : 'auto'}
             />
           ))}
         </div>
@@ -1380,8 +1398,6 @@ function Hero() {
           </div>
         </div>
       </div>
-    )}
-      </>
     )}
     </>
   )
