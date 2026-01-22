@@ -1138,7 +1138,7 @@ function Hero() {
             <div className="mobile-pass-badge">EXCLUSIVE</div>
             <div className="mobile-pass-card-header">
               <h3 className="mobile-pass-card-title mobile-pass-card-title--accent">
-                YATRA ENTRY PASS
+                YATRA PASS
               </h3>
               <p className="mobile-pass-price">₹500</p>
               <p className="mobile-pass-description">+ Event Registration Charges</p>
@@ -1165,7 +1165,7 @@ function Hero() {
             <div className="mobile-pass-badge">MANDATORY</div>
             <div className="mobile-pass-card-header">
               <h3 className="mobile-pass-card-title mobile-pass-card-title--accent">
-                YATRA ENTRY PASS
+                YATRA PASS
               </h3>
               <p className="mobile-pass-price">₹850</p>
               <p className="mobile-pass-description">+ Event Registration Charges</p>
