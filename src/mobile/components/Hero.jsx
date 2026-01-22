@@ -864,16 +864,18 @@ function Hero() {
       ref={heroRef}
     >
       {/* Full-bleed background (blurred) so the stage can keep a fixed aspect ratio */}
-      <img
-        src={heroBg}
-        alt=""
-        aria-hidden="true"
-        className="hero-bleed-bg"
-        decoding="async"
-        loading="eager"
-        fetchpriority="high"
-        {...img.bleedBg}
-      />
+      <div className="hero-bleed-bg-wrapper">
+        <img
+          src={heroBg}
+          alt=""
+          aria-hidden="true"
+          className="hero-bleed-bg"
+          decoding="async"
+          loading="eager"
+          fetchpriority="high"
+          {...img.bleedBg}
+        />
+      </div>
 
       {/* Fixed-aspect "stage" that scales uniformly across all mobile sizes */}
       <div
