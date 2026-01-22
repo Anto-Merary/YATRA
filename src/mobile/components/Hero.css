@@ -104,7 +104,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 8; /* Above background, behind main content but visible */
+  z-index: 2; /* Behind YATRA image (z-index: 3) but above background */
   background:
     /* Dark shadow drop from top - lighter darkness */
     linear-gradient(to bottom, 
@@ -118,62 +118,62 @@
       rgba(0, 0, 0, 0) 60%,
       transparent 100%
     ),
-    /* Enhanced dark vignette - much stronger at edges */
-    radial-gradient(150% 120% at 50% 50%, 
-      rgba(22, 0, 24, 0) 25%, 
-      rgba(22, 0, 24, 0.5) 45%, 
-      rgba(0, 0, 0, 0.7) 65%, 
-      rgba(0, 0, 0, 0.9) 85%,
-      rgba(0, 0, 0, 1) 100%
-    );
+    /* Enhanced dark vignette - stronger at edges */
+    radial-gradient(140% 110% at 50% 50%, rgba(22, 0, 24, 0) 40%, rgba(22, 0, 24, 0.65) 70%, rgba(0, 0, 0, 0.75) 100%);
 }
 
-/* Film grain/noise texture overlay - visible but subtle */
+/* Film grain/noise texture overlay - very subtle */
 .hero::before {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 100; /* Above ALL content for maximum visibility */
-  /* Create noise texture using multiple techniques for better browser support */
+  z-index: 6; /* Above lightning gradients but below main content and buttons */
   background-image: 
-    /* SVG noise */
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E"),
-    /* Fallback: fine grain pattern */
+    /* Fine grain pattern */
     repeating-linear-gradient(
       0deg,
-      rgba(255, 255, 255, 0.03) 0px,
+      rgba(255, 255, 255, 0.015) 0px,
+      transparent 0.5px,
       transparent 1px,
+      rgba(0, 0, 0, 0.01) 1.5px,
       transparent 2px,
-      rgba(0, 0, 0, 0.02) 3px,
-      transparent 4px,
-      rgba(255, 255, 255, 0.02) 5px,
-      transparent 6px
+      rgba(255, 255, 255, 0.01) 2.5px,
+      transparent 3px
     ),
     repeating-linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.03) 0px,
+      rgba(255, 255, 255, 0.015) 0px,
+      transparent 0.5px,
+      transparent 1px,
+      rgba(0, 0, 0, 0.01) 1.5px,
+      transparent 2px,
+      rgba(255, 255, 255, 0.01) 2.5px,
+      transparent 3px
+    ),
+    /* Additional random grain */
+    repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.008) 0px,
       transparent 1px,
       transparent 2px,
-      rgba(0, 0, 0, 0.02) 3px,
-      transparent 4px,
-      rgba(255, 255, 255, 0.02) 5px,
-      transparent 6px
+      rgba(0, 0, 0, 0.005) 3px,
+      transparent 4px
     );
-  background-size: 200px 200px, 150px 150px, 150px 150px;
-  opacity: 0.5;
+  background-size: 300% 300%, 300% 300%, 400% 400%;
+  opacity: 0.4;
   mix-blend-mode: overlay;
-  animation: hero-grain-shift 8s linear infinite;
+  animation: hero-grain-shift 12s linear infinite;
   will-change: background-position;
-  filter: contrast(1.2);
+  filter: contrast(1.1);
 }
 
 @keyframes hero-grain-shift {
   0% {
-    background-position: 0% 0%;
+    background-position: 0% 0%, 0% 0%;
   }
   100% {
-    background-position: 100% 100%;
+    background-position: 100% 100%, 100% 100%;
   }
 }
 
@@ -183,34 +183,31 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 9; /* Above background and vignette, below main content but visible */
+  z-index: 4; /* Above background, below main content */
   background:
-    /* Lightning gradient 1 - top left - more visible */
+    /* Lightning gradient 1 - top left */
     radial-gradient(
-      ellipse 100% 80% at 10% 15%,
-      rgba(155, 23, 153, 0.35) 0%,
-      rgba(255, 184, 107, 0.18) 20%,
-      rgba(155, 23, 153, 0.1) 40%,
+      ellipse 80% 60% at 15% 20%,
+      rgba(155, 23, 153, 0.18) 0%,
+      rgba(255, 184, 107, 0.08) 25%,
+      transparent 50%
+    ),
+    /* Lightning gradient 2 - top right */
+    radial-gradient(
+      ellipse 70% 50% at 85% 25%,
+      rgba(255, 184, 107, 0.12) 0%,
+      rgba(155, 23, 153, 0.06) 30%,
+      transparent 55%
+    ),
+    /* Lightning gradient 3 - bottom center */
+    radial-gradient(
+      ellipse 90% 70% at 50% 85%,
+      rgba(155, 23, 153, 0.15) 0%,
+      rgba(255, 184, 107, 0.05) 35%,
       transparent 60%
-    ),
-    /* Lightning gradient 2 - top right - more visible */
-    radial-gradient(
-      ellipse 90% 70% at 90% 20%,
-      rgba(255, 184, 107, 0.28) 0%,
-      rgba(155, 23, 153, 0.15) 25%,
-      rgba(255, 184, 107, 0.08) 45%,
-      transparent 65%
-    ),
-    /* Lightning gradient 3 - bottom center - more visible */
-    radial-gradient(
-      ellipse 110% 90% at 50% 90%,
-      rgba(155, 23, 153, 0.3) 0%,
-      rgba(255, 184, 107, 0.12) 30%,
-      rgba(155, 23, 153, 0.06) 50%,
-      transparent 70%
     );
   opacity: 0;
-  animation: hero-lightning-pulse 10s ease-in-out infinite;
+  animation: hero-lightning-pulse 12s ease-in-out infinite;
   mix-blend-mode: screen;
 }
 
@@ -220,24 +217,20 @@
 
 @keyframes hero-lightning-pulse {
   0%, 100% {
-    opacity: 0.7;
+    opacity: 0.6;
     transform: scale(1);
   }
-  20% {
-    opacity: 1;
-    transform: scale(1.03);
-  }
-  40% {
-    opacity: 0.8;
-    transform: scale(0.97);
-  }
-  60% {
-    opacity: 0.95;
+  25% {
+    opacity: 0.85;
     transform: scale(1.02);
   }
-  80% {
-    opacity: 0.75;
-    transform: scale(0.99);
+  50% {
+    opacity: 0.7;
+    transform: scale(0.98);
+  }
+  75% {
+    opacity: 0.9;
+    transform: scale(1.01);
   }
 }
 
@@ -247,20 +240,19 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 10; /* Above first lightning layer, visible but below main content */
+  z-index: 5; /* Above first lightning layer */
   background:
-    /* More visible diagonal lightning streak */
+    /* Subtle diagonal lightning streak */
     linear-gradient(
       135deg,
       transparent 0%,
-      rgba(255, 184, 107, 0.15) 15%,
-      rgba(155, 23, 153, 0.22) 35%,
-      rgba(255, 184, 107, 0.18) 50%,
-      rgba(155, 23, 153, 0.15) 65%,
-      transparent 85%
+      rgba(255, 184, 107, 0.08) 20%,
+      rgba(155, 23, 153, 0.12) 40%,
+      rgba(255, 184, 107, 0.08) 60%,
+      transparent 80%
     );
   opacity: 0;
-  animation: hero-lightning-streak 12s ease-in-out infinite;
+  animation: hero-lightning-streak 15s ease-in-out infinite;
   mix-blend-mode: screen;
 }
 
@@ -270,16 +262,16 @@
 
 @keyframes hero-lightning-streak {
   0%, 100% {
+    opacity: 0.3;
+    transform: translateX(-5%) translateY(-3%);
+  }
+  33% {
     opacity: 0.5;
-    transform: translateX(-8%) translateY(-5%);
+    transform: translateX(2%) translateY(1%);
   }
-  30% {
-    opacity: 0.75;
-    transform: translateX(3%) translateY(2%);
-  }
-  60% {
-    opacity: 0.6;
-    transform: translateX(-3%) translateY(3%);
+  66% {
+    opacity: 0.4;
+    transform: translateX(-2%) translateY(2%);
   }
 }
 
@@ -294,7 +286,7 @@
   /* Fine-tune layer positions (stable across all mobile sizes via the stage) */
   --yatra-top: 8%;
   --yatra-width: 98%;
-  --year-top: 57.3%;
+  --year-top: 59.25%;
   /* Scroll-settle progress (0 -> 1). Set by JS, continues until hero is out of view. */
   --settle: 0;
   /* Settle distances (px) - increased so images fully hide behind Torii */
@@ -498,16 +490,16 @@
   object-position: center;
   opacity: 0;
   transition: opacity 500ms ease-in-out, filter 800ms ease-in-out;
-  /* Reduced saturation by 15-20% (from default 1.0 to 0.80) */
-  filter: brightness(1) saturate(0.80);
+  /* Reduced saturation by 15-20% (from default 1.0 to 0.82-0.85) */
+  filter: brightness(1) saturate(0.82);
 }
 
 /* Fade in background image after loading and darken slightly */
 .hero-stage.is-loaded .hero-bg-image {
   animation: hero-fade-in 500ms ease-in-out forwards;
   animation-delay: 260ms;
-  /* Reduced saturation by 15-20% + brightness adjustment - more noticeable */
-  filter: brightness(0.85) saturate(0.80);
+  /* Reduced saturation by 15-20% + brightness adjustment */
+  filter: brightness(0.85) saturate(0.82);
 }
 
 /* 2. Video Container (Center Focus) - Horizontal, smaller, behind Torii gate */
@@ -552,44 +544,14 @@
   left: 50%;
   transform: translate3d(-50%, 0, 0);
   z-index: 2;
-  width: 65%; /* Further increased width */
-  /* Huge padding to ensure absolutely no clipping of descenders or large glows */
-  padding: 15% 0 25% 0; 
+  width: 44.5%;
   will-change: transform, opacity;
   transition:
     top 980ms cubic-bezier(0.18, 0.9, 0.22, 1) 120ms,
     transform 980ms cubic-bezier(0.18, 0.9, 0.22, 1) 120ms,
     opacity 520ms ease 120ms,
     filter 900ms ease 120ms;
-  overflow: visible; /* Explicitly allow overflow */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: min-content;
-}
-
-/* Text replacement for the old 2026 image */
-.hero-year-text-inner {
-  display: block;
-  width: 100%;
-  text-align: center;
-  line-height: 1.1;
-  letter-spacing: -0.06em;
-  font-family: 'Akira Expanded', var(--hero-font-family);
-  font-weight: 900;
-  font-size: clamp(3.4rem, 15vw, 5.4rem);
-  /* Ensure text doesn't get clipped */
-  padding: 0;
-  margin: 0;
-  color: #FFFFFF; /* Pure white as requested */
-  /* Remove old muddy shadows/strokes */
-  text-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-}
-
-@supports (width: 1cqw) {
-  .hero-year-text-inner {
-    font-size: 18.5cqw;
-  }
+  overflow: hidden;
 }
 
 /* Scroll settle (enabled only after entrance finishes). */
@@ -599,83 +561,210 @@
     scale(calc(1 - (0.02 * var(--settle))));
 }
 
-/* Ensure the year is fully visible once loaded */
-.hero-stage.is-loaded .hero-year-text {
-  opacity: 1;
-  filter: none;
+/* Purple glitch overlay effect */
+.hero-year-text::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(138, 43, 226, 0.95) 20%,
+    rgba(138, 43, 226, 1) 50%,
+    rgba(138, 43, 226, 0.95) 80%,
+    transparent 100%
+  );
+  mix-blend-mode: overlay;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+  transform: translateX(-100%);
 }
 
-/* 
-  "JAWDROP" Animation: Vertical Reel Snap 
-  - Simulates a heavy, mechanical "slot machine" stop or "stamp" impact.
-  - No colors, just kinetic energy and white flash.
-*/
-.hero-year-text-inner {
-  position: relative;
-  /* Use hardware acceleration for smooth snap */
-  will-change: transform, opacity, filter;
+/* Glitch animation - runs once initially, then randomly between 4-12 seconds */
+.hero-stage.is-loaded .hero-year-text::before {
+  animation: hero-year-glitch 16s ease-in-out infinite;
+  animation-delay: 1200ms;
 }
 
-.hero-stage.is-loaded .hero-year-text-inner {
-  animation: hero-year-reel-snap 5s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
-  animation-delay: 1.5s;
-}
-
-@keyframes hero-year-reel-snap {
-  /* Idle state (Static) */
-  0%, 88% {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-    filter: brightness(1) blur(0);
+@keyframes hero-year-glitch {
+  /* Initial chaotic glitch right after text animation */
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
   }
-
-  /* 1. Wind up (pull back slightly) */
-  89% {
-    transform: translateY(-8px) scale(0.98);
+  0.4% {
+    opacity: 1;
+    transform: translateX(-100%);
+  }
+  0.5% {
     opacity: 0.8;
-    filter: brightness(0.9) blur(0);
+    transform: translateX(-30%);
   }
-
-  /* 2. The Drop (rapid vertical smear) */
-  90% {
-    transform: translateY(15%) scale(1.1, 0.9);
-    opacity: 0.5;
-    filter: brightness(1.5) blur(4px);
-  }
-
-  /* 3. The Re-entry (from top, blurred) */
-  91% {
-    transform: translateY(-25%) scale(0.9, 1.3);
-    opacity: 0.5;
-    filter: brightness(1.5) blur(8px);
-  }
-
-  /* 4. IMPACT (Over-shoot center + Flash) */
-  92% {
-    transform: translateY(0) scale(1.15);
+  0.6% {
     opacity: 1;
-    filter: brightness(2.5) blur(0); /* Bright white flash */
+    transform: translateX(-10%);
   }
-
-  /* 5. Settle (bounce) */
-  94% {
-    transform: translateY(0) scale(0.95);
-    filter: brightness(1.2);
+  0.7% {
+    opacity: 0.3;
+    transform: translateX(15%);
   }
-
-  /* 6. Return to resting */
-  96% {
-    transform: translateY(0) scale(1.02);
-    filter: brightness(1);
+  0.8% {
+    opacity: 1;
+    transform: translateX(-5%);
   }
-
-  100% {
-    transform: translateY(0) scale(1);
-    filter: brightness(1);
+  0.9% {
+    opacity: 0.6;
+    transform: translateX(20%);
+  }
+  1% {
+    opacity: 1;
+    transform: translateX(5%);
+  }
+  1.2% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  
+  /* Random glitch 1 - around 4.5s (28% of 16s) */
+  27.5%, 28.2% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  27.6% {
+    opacity: 1;
+    transform: translateX(-80%);
+  }
+  27.7% {
+    opacity: 0.4;
+    transform: translateX(-20%);
+  }
+  27.8% {
+    opacity: 1;
+    transform: translateX(10%);
+  }
+  27.9% {
+    opacity: 0.2;
+    transform: translateX(-15%);
+  }
+  28% {
+    opacity: 0.9;
+    transform: translateX(25%);
+  }
+  28.1% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  
+  /* Random glitch 2 - around 7s (44% of 16s) */
+  43.5%, 44.2% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  43.6% {
+    opacity: 0.9;
+    transform: translateX(-60%);
+  }
+  43.7% {
+    opacity: 0.3;
+    transform: translateX(-5%);
+  }
+  43.8% {
+    opacity: 1;
+    transform: translateX(18%);
+  }
+  43.9% {
+    opacity: 0.5;
+    transform: translateX(-8%);
+  }
+  44% {
+    opacity: 0.95;
+    transform: translateX(12%);
+  }
+  44.1% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  
+  /* Random glitch 3 - around 9.5s (59% of 16s) */
+  58.5%, 59.2% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  58.6% {
+    opacity: 1;
+    transform: translateX(-40%);
+  }
+  58.7% {
+    opacity: 0.2;
+    transform: translateX(5%);
+  }
+  58.8% {
+    opacity: 0.95;
+    transform: translateX(-12%);
+  }
+  58.9% {
+    opacity: 0.4;
+    transform: translateX(22%);
+  }
+  59% {
+    opacity: 1;
+    transform: translateX(0%);
+  }
+  59.1% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  
+  /* Random glitch 4 - around 11.5s (72% of 16s) */
+  71.5%, 72.2% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  71.6% {
+    opacity: 0.8;
+    transform: translateX(-70%);
+  }
+  71.7% {
+    opacity: 1;
+    transform: translateX(-25%);
+  }
+  71.8% {
+    opacity: 0.3;
+    transform: translateX(8%);
+  }
+  71.9% {
+    opacity: 0.9;
+    transform: translateX(-15%);
+  }
+  72% {
+    opacity: 0.6;
+    transform: translateX(28%);
+  }
+  72.1% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  
+  /* End of cycle */
+  73%, 100% {
+    opacity: 0;
+    transform: translateX(-100%);
   }
 }
 
-/* old `.year-text-image` removed (we now render text) */
+.year-text-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.5));
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  will-change: transform;
+}
 
 
 /* Action Buttons - Below 2026 text, above Torii gate */

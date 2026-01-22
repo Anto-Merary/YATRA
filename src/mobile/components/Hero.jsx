@@ -6,6 +6,7 @@ import heroBgLq from '../assets/optimized/herobg-lq.webp'
 import heroBgPoster from '../assets/optimized/herobg-w640.webp'
 import yatraText from '../assets/optimized/yatratxt-w1536.webp'
 import torriGate from '../assets/optimized/torrigate-w1280.webp'
+import yearText from '../assets/optimized/2026txt-w1536.webp'
 import videoSrc from '../assets/video.mp4'
 import eventImage from '../assets/optimized/event-w1024.webp'
 import performanceImage from '../assets/optimized/performance-w1280.webp'
@@ -84,6 +85,7 @@ function Hero() {
   const [loaded, setLoaded] = useState(() => ({
     bleedBg: false,
     bg: false,
+    year: false,
     yatra: false,
     torii: false,
   }))
@@ -220,12 +222,13 @@ function Hero() {
     return {
       bleedBg: make('bleedBg'),
       bg: make('bg'),
+      year: make('year'),
       yatra: make('yatra'),
       torii: make('torii'),
     }
   }, [markLoaded])
 
-  const isHeroReady = loaded.bg && loaded.yatra && loaded.torii
+  const isHeroReady = loaded.bg && loaded.year && loaded.yatra && loaded.torii
 
   // Trigger entrance animations exactly once, right after we finish loading.
   useEffect(() => {
@@ -967,9 +970,7 @@ function Hero() {
 
         {/* "2026" Text - Behind Torii gate */}
         <div className="hero-year-text">
-          <span className="hero-year-text-inner" aria-label="2026">
-            2026
-          </span>
+          <img src={yearText} alt="2026" className="year-text-image" {...img.year} />
         </div>
 
         {/* Action Buttons - Below 2026 text */}
