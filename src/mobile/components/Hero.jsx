@@ -836,7 +836,6 @@ function Hero() {
           <div className="hero-gate-title">YATRA&apos;26</div>
           <div className="hero-gate-subtitle">Preparing the experience…</div>
           <div className="hero-gate-spinner" aria-hidden="true" />
-          <div className="hero-gate-hint">Loading the hero video for a smooth first impression.</div>
         </div>
       </div>
     )}
