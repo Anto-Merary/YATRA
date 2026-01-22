@@ -1710,6 +1710,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.28rem;
+  padding-right: 4.5rem; /* Make room for the badge */
 }
 
 .mobile-pass-card--featured {
@@ -1837,6 +1838,9 @@
   color: rgba(255, 255, 255, 0.78);
   margin: 0;
   letter-spacing: 0.06em;
+  /* Reserve space for the top-right badge so the title never overlaps it */
+  max-width: calc(100% - 6.25rem);
+  overflow-wrap: anywhere;
 }
 
 .mobile-pass-card-title--accent {

@@ -137,7 +137,7 @@ export function ProDanceBattlePage() {
                   <img
                     src={posterImage}
                     alt={`${EVENT_NAME} poster`}
-                    className="h-[420px] w-full object-cover sm:h-[520px] lg:h-[600px]"
+                    className="w-full h-auto object-contain"
                     draggable={false}
                     loading="eager"
                     decoding="async"
@@ -235,7 +235,7 @@ export function ProDanceBattlePage() {
               <img
                 src={rulesImage}
                 alt={`${EVENT_NAME} rules`}
-                className="w-full h-auto"
+                className="w-full h-auto object-contain"
                 draggable={false}
                 loading="lazy"
                 decoding="async"
