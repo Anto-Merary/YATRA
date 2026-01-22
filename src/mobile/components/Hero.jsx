@@ -1137,12 +1137,14 @@ function Hero() {
         <div className="mobile-passes-grid">
           {/* YATRA ENTRY PASS */}
           <div className="mobile-pass-card mobile-pass-card--featured">
+            <div className="mobile-pass-badge">EXCLUSIVE</div>
             <div className="mobile-pass-card-header">
               <h3 className="mobile-pass-card-title mobile-pass-card-title--accent">
                 YATRA ENTRY PASS
               </h3>
               <p className="mobile-pass-price">₹500</p>
-              <p className="mobile-pass-subprice">(RIT students)</p>
+              <p className="mobile-pass-description">+ Event Registration Charges</p>
+              <p className="mobile-pass-subprice">(Rajalakshmi Institutions)</p>
             </div>
             <div className="mobile-pass-divider" aria-hidden="true" />
             <ul className="mobile-pass-card-list mobile-pass-card-list--bright">
@@ -1156,7 +1158,34 @@ function Hero() {
               rel="noopener noreferrer"
               className="mobile-pass-cta mobile-pass-cta--accent"
             >
-              Register Now
+              REGISTER NOW
+            </a>
+          </div>
+
+          {/* YATRA ENTRY PASS (Other Institutions) */}
+          <div className="mobile-pass-card mobile-pass-card--featured">
+            <div className="mobile-pass-badge">MANDATORY</div>
+            <div className="mobile-pass-card-header">
+              <h3 className="mobile-pass-card-title mobile-pass-card-title--accent">
+                YATRA ENTRY PASS
+              </h3>
+              <p className="mobile-pass-price">₹850</p>
+              <p className="mobile-pass-description">+ Event Registration Charges</p>
+              <p className="mobile-pass-subprice">(Other Institutions)</p>
+            </div>
+            <div className="mobile-pass-divider" aria-hidden="true" />
+            <ul className="mobile-pass-card-list mobile-pass-card-list--bright">
+              <li>• Access to 2 DAYS</li>
+              <li>• Proshow</li>
+              <li>• DJ Night</li>
+            </ul>
+            <a
+              href="https://formbuilder.ccavenue.com/live/icici-bank/rajalakshmi-institue-of-technology-2/yatra-2026-reg-fees-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mobile-pass-cta mobile-pass-cta--accent"
+            >
+              REGISTER NOW
             </a>
           </div>
           
