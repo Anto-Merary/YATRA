@@ -65,12 +65,23 @@
   text-decoration: none;
   color: rgba(0, 0, 0, 0.78);
   word-break: break-word;
+  transition: color 180ms ease, opacity 180ms ease;
+}
+
+.mobile-footer-link:hover {
+  color: rgba(0, 0, 0, 0.95);
+  opacity: 1;
 }
 
 .mobile-footer-link--underline {
   text-decoration: underline;
   text-underline-offset: 6px;
   text-decoration-thickness: 2px;
+  text-decoration-color: rgba(0, 0, 0, 0.6);
+}
+
+.mobile-footer-link--underline:hover {
+  text-decoration-color: rgba(0, 0, 0, 0.9);
 }
 
 .mobile-footer-social {

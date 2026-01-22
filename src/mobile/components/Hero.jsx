@@ -107,6 +107,8 @@ function Hero() {
   const [blastShouldEagerLoad, setBlastShouldEagerLoad] = useState(false)
   const [shimmerTrigger, setShimmerTrigger] = useState(0)
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false)
+  const [isVideoReady, setIsVideoReady] = useState(false)
+  const [videoError, setVideoError] = useState(false)
   const videoContainerRef = useRef(null)
   const videoRef = useRef(null)
 
@@ -231,6 +233,8 @@ function Hero() {
   // Trigger entrance animations exactly once, right after we finish loading.
   useEffect(() => {
     if (hasLoaded) return
+    // Keep first paint smooth: don't start entrance until hero video is ready to play.
+    if (!isVideoReady && !videoError) return
 
     // Start entrance once critical hero assets are ready,
     // but never wait too long on slow networks.
@@ -241,57 +245,47 @@ function Hero() {
 
     const fallback = window.setTimeout(() => setHasLoaded(true), 1200)
     return () => window.clearTimeout(fallback)
-  }, [hasLoaded, isHeroReady])
+  }, [hasLoaded, isHeroReady, isVideoReady, videoError])
 
   // After the entrance animation finishes, enable the scroll-based "settle" transforms.
   useEffect(() => {
     if (!hasLoaded) return
+    if (!isVideoReady && !videoError) return
     const t = window.setTimeout(() => setIsScrollReady(true), 1200)
     return () => window.clearTimeout(t)
-  }, [hasLoaded])
+  }, [hasLoaded, isVideoReady, videoError])
 
-  // Lazy load video when it enters viewport (and network allows it)
+  // First impression: aggressively preload the hero MP4 and block the rest of the page
+  // until the video is ready to play (so users never see a half-loaded hero).
   useEffect(() => {
-    if (!networkShouldLoad) return // Don't load video on slow connections
+    // Always start fetching ASAP (even on slow networks) so the hero is consistent.
+    setShouldLoadVideo(true)
 
-    const containerEl = videoContainerRef.current
-    if (!containerEl) return
+    // Hint the browser to prioritize the MP4 request. Using the imported `videoSrc`
+    // ensures this works for both dev and production (hashed) builds.
+    const link = document.createElement('link')
+    link.rel = 'preload'
+    link.as = 'video'
+    link.href = videoSrc
+    link.type = 'video/mp4'
+    document.head.appendChild(link)
 
-    // Check if already in viewport
-    const rect = containerEl.getBoundingClientRect()
-    const isInViewport =
-      rect.top < window.innerHeight + 50 &&
-      rect.bottom > -50 &&
-      rect.left < window.innerWidth &&
-      rect.right > 0
-
-    if (isInViewport) {
-      // Video is already visible
-      setShouldLoadVideo(true)
-      return
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setShouldLoadVideo(true)
-            observer.disconnect()
-          }
-        })
-      },
-      {
-        rootMargin: '50px', // Start loading 50px before entering viewport
-        threshold: 0.1,
+    // Kick off loading as soon as the video element mounts.
+    const t = window.setTimeout(() => {
+      if (videoRef.current) {
+        try {
+          videoRef.current.load()
+        } catch {
+          // ignore
+        }
       }
-    )
-
-    observer.observe(containerEl)
+    }, 0)
 
     return () => {
-      observer.disconnect()
+      window.clearTimeout(t)
+      if (link.parentNode) link.parentNode.removeChild(link)
     }
-  }, [networkShouldLoad])
+  }, [])
 
   const runAboutReveal = useCallback(() => {
     // Wait for React to finish mounting new elements when step changes
@@ -805,8 +799,27 @@ function Hero() {
     }
   }, [hasLoaded])
 
+  const isExperienceReady = isVideoReady || videoError
+
   return (
     <>
+    {!isExperienceReady && (
+      <div
+        className="hero-gate"
+        role="status"
+        aria-live="polite"
+        aria-label="Loading the YATRA experience"
+        style={{ backgroundImage: `url(${heroBgPoster})` }}
+      >
+        <div className="hero-gate-scrim" aria-hidden="true" />
+        <div className="hero-gate-inner">
+          <div className="hero-gate-title">YATRA&apos;26</div>
+          <div className="hero-gate-subtitle">Preparing the experience…</div>
+          <div className="hero-gate-spinner" aria-hidden="true" />
+          <div className="hero-gate-hint">Loading the hero video for a smooth first impression.</div>
+        </div>
+      </div>
+    )}
     <section
       className={`hero ${hasLoaded ? 'is-loaded' : ''}`}
       ref={heroRef}
@@ -876,15 +889,28 @@ function Hero() {
               loop
               muted
               playsInline
-              preload={isSlowConnection ? 'metadata' : 'auto'}
+              preload="auto"
               poster={heroBgPoster}
               onLoadedData={() => {
-                // Auto-play when data is loaded (on fast connections only)
-                if (videoRef.current && networkShouldLoad && !isSlowConnection) {
+                if (!isVideoReady) setIsVideoReady(true)
+                // Try to start playback immediately (muted autoplay usually works on mobile).
+                if (videoRef.current) {
                   videoRef.current.play().catch(() => {
                     // Ignore autoplay errors (browser policies)
                   })
                 }
+              }}
+              onCanPlay={() => {
+                if (!isVideoReady) setIsVideoReady(true)
+                if (videoRef.current) {
+                  videoRef.current.play().catch(() => {
+                    // Ignore autoplay errors
+                  })
+                }
+              }}
+              onError={() => {
+                setVideoError(true)
+                setIsVideoReady(true)
               }}
             >
               <source src={videoSrc} type="video/mp4" />
@@ -971,7 +997,9 @@ function Hero() {
         </div>
       </div>
     </section>
-    
+
+    {isExperienceReady && (
+      <>
     {/* Black Background Section - After Divider */}
     <section className="hero-black-section" aria-label="About section" ref={aboutRef}>
       <div className="about-sticky">
@@ -1352,6 +1380,8 @@ function Hero() {
           </div>
         </div>
       </div>
+    )}
+      </>
     )}
     </>
   )

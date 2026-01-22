@@ -118,6 +118,24 @@ export function Footer() {
               <YouTubeIcon className="mobile-footer-social-icon" width={28} height={28} />
             </a>
           </div>
+
+          <div className="mobile-footer-section">
+            <div className="mobile-footer-label">LEGAL</div>
+            <div className="mobile-footer-phone-numbers" style={{ flexDirection: 'column', gap: '8px', alignItems: 'flex-start' }}>
+              <Link
+                to="/privacy-policy"
+                className="mobile-footer-link mobile-footer-link--underline"
+              >
+                Privacy Policy
+              </Link>
+              <Link
+                to="/terms-conditions"
+                className="mobile-footer-link mobile-footer-link--underline"
+              >
+                Terms & Conditions
+              </Link>
+            </div>
+          </div>
         </div>
       </footer>
     );
@@ -229,14 +247,14 @@ export function Footer() {
             <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-[10px] xs:text-xs">
               <Link
                 to="/privacy-policy"
-                className="text-white/40 hover:text-white/70 transition-colors underline-offset-4 hover:underline"
+                className="text-white/70 hover:text-white transition-colors underline underline-offset-4 decoration-white/50 hover:decoration-white"
               >
                 Privacy Policy
               </Link>
-              <span className="text-white/20">|</span>
+              <span className="text-white/30">|</span>
               <Link
                 to="/terms-conditions"
-                className="text-white/40 hover:text-white/70 transition-colors underline-offset-4 hover:underline"
+                className="text-white/70 hover:text-white transition-colors underline underline-offset-4 decoration-white/50 hover:decoration-white"
               >
                 Terms & Conditions
               </Link>
