@@ -5,6 +5,7 @@ import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { useMobile } from "../hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
 import { useRouteTransition } from "../components/RouteTransitionContext";
+import eventsHeroImg from "../mobile/assets/event.webp?url";
 
 type Filter = "all" | "day1" | "day2";
 
@@ -245,6 +246,27 @@ export function YatraEventsPage() {
 
       {/* Content Layer - scrollable above fixed background */}
       <div className="container-max py-6 sm:py-8 md:py-14 relative z-10 px-3 sm:px-4">
+        {/* Mobile hero (events banner) */}
+        {isMobile && (
+          <div className="mb-5 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02]">
+            <div className="relative h-44">
+              <img
+                src={eventsHeroImg}
+                alt=""
+                className="absolute inset-0 h-full w-full object-cover object-center"
+                draggable={false}
+              />
+              <div className="absolute inset-0 bg-black/45 backdrop-blur-[2px]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/60" />
+              <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
+                <div className="font-akira text-2xl tracking-[0.28em] text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.7)]">
+                  EVENTS
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Back Button */}
         <button
           type="button"
@@ -257,10 +279,17 @@ export function YatraEventsPage() {
           <span className="text-sm sm:text-base">Back to Categories</span>
         </button>
         {/* Header Section */}
-        <div className="mb-4 sm:mb-6 md:mb-8 lg:mb-12">
-          <div className="text-[10px] xs:text-xs sm:text-sm font-semibold tracking-[0.15em] xs:tracking-[0.2em] sm:tracking-[0.25em] text-yatra-300">
-            EVENTS
-          </div>
+        <div
+          className={[
+            "mb-4 sm:mb-6 md:mb-8 lg:mb-12",
+            isMobile ? "text-center flex flex-col items-center" : "",
+          ].join(" ")}
+        >
+          {!isMobile && (
+            <div className="text-[10px] xs:text-xs sm:text-sm font-semibold tracking-[0.15em] xs:tracking-[0.2em] sm:tracking-[0.25em] text-yatra-300">
+              EVENTS
+            </div>
+          )}
           <div className="mt-1.5 sm:mt-2 md:mt-3 font-display text-xl xs:text-2xl sm:text-3xl md:text-4xl font-semibold tracking-[-0.02em]">
             {!prefersReducedMotion ? (
               <DecryptText
@@ -276,7 +305,12 @@ export function YatraEventsPage() {
           <div className="mt-2 text-xs sm:text-sm text-white/60 max-w-2xl">
             {ui.subhead}
           </div>
-          <div className="mt-2 flex items-center gap-2 text-xs sm:text-sm flex-wrap">
+          <div
+            className={[
+              "mt-2 flex items-center gap-2 text-xs sm:text-sm flex-wrap",
+              isMobile ? "justify-center" : "",
+            ].join(" ")}
+          >
             <span className="text-white/50">
               {filtered.length} {filtered.length === 1 ? "event" : "events"} found
             </span>
@@ -289,7 +323,13 @@ export function YatraEventsPage() {
 
         {/* Solo / Group Switch */}
         <LayoutGroup id="events-mode">
-          <div className="mb-4 sm:mb-6 md:mb-8 grid gap-2.5 xs:gap-3 sm:gap-4 sm:grid-cols-2">
+          <div
+            className={
+              isMobile
+                ? "mb-4 sm:mb-6 md:mb-8 grid grid-cols-2 gap-3"
+                : "mb-4 sm:mb-6 md:mb-8 grid gap-2.5 xs:gap-3 sm:gap-4 sm:grid-cols-2"
+            }
+          >
             {(
               [
                 {
@@ -334,7 +374,8 @@ export function YatraEventsPage() {
                   onClick={() => setParticipation(m.key)}
                   whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                   className={[
-                    "relative overflow-hidden rounded-2xl border p-4 xs:p-5 text-left transition-all touch-manipulation",
+                    "relative overflow-hidden rounded-2xl border text-left transition-all touch-manipulation",
+                    isMobile ? "p-3" : "p-4 xs:p-5",
                     isActive
                       ? `${accents.borderActive} shadow-lg ${m.key === "group" ? "bg-[#fff19d]/30" : "bg-white/[0.03]"}`
                       : "border-white/10 bg-white/[0.03]",
@@ -558,13 +599,18 @@ export function YatraEventsPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={prefersReducedMotion ? undefined : { opacity: 0, y: -14 }}
               transition={{ duration: 0.25 }}
-              className="grid gap-2.5 xs:gap-3 sm:gap-4 grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+              className={
+                isMobile
+                  ? "grid grid-cols-2 gap-3 auto-rows-fr"
+                  : "grid gap-2.5 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+              }
             >
               {filtered.map((e) => (
                 <SpotlightCard
                   key={e.id}
                   className={[
                     "group relative border-white/10 bg-white/[0.04] p-3 xs:p-4 sm:p-5 transition-all active:scale-[0.98] touch-manipulation flex flex-col cursor-default hover:opacity-20",
+                    isMobile ? "aspect-square" : "",
                     ui.cardHover,
                     !isMobile ? "backdrop-blur-sm hover:backdrop-blur-none" : "",
                   ].join(" ")}
@@ -577,6 +623,21 @@ export function YatraEventsPage() {
                       ui.overlayHover,
                     ].join(" ")}
                   />
+
+                  {/* Thumbnail */}
+                  {isMobile && e.posterUrl && (
+                    <div className="relative z-10 mb-3 overflow-hidden rounded-xl border border-white/10">
+                      <div className="relative aspect-[16/10] w-full">
+                        <img
+                          src={e.posterUrl}
+                          alt=""
+                          className="absolute inset-0 h-full w-full object-cover object-center"
+                          draggable={false}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-black/35" />
+                      </div>
+                    </div>
+                  )}
 
                   <div className="relative z-10 flex-1">
                     <div className="flex items-start justify-between gap-2 xs:gap-3 mb-2 xs:mb-3">
@@ -602,9 +663,15 @@ export function YatraEventsPage() {
                     <button
                       onClick={() => navigate(`/events/${e.id}`)}
                       className={`w-full h-9 xs:h-10 rounded-lg xs:rounded-xl text-xs xs:text-sm font-semibold text-white transition-all hover:opacity-90 ${
-                        e.day === "day1"
-                          ? "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500"
-                          : "bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400"
+                        isMobile
+                          ? `backdrop-blur-sm ${
+                              e.day === "day1"
+                                ? "bg-blue-500/20 border border-blue-400/25 hover:bg-blue-500/25"
+                                : "bg-pink-500/20 border border-pink-400/25 hover:bg-pink-500/25"
+                            }`
+                          : e.day === "day1"
+                            ? "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500"
+                            : "bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400"
                       }`}
                     >
                       More Info
