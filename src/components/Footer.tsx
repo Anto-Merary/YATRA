@@ -1,7 +1,7 @@
 import type { SVGProps } from "react";
 import { TextHoverEffect } from "./ui/text-hover-effect";
 import { NoiseOverlay } from "./NoiseOverlay";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import "../styles/mobile-footer.css";
 import { useEffect, useState } from "react";
 
@@ -220,10 +220,27 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Copyright - Bottom Left */}
+        {/* Copyright and Legal Links */}
         <div className="border-t border-white/10 pt-4 xs:pt-5 sm:pt-6">
-          <div className="text-[10px] xs:text-xs text-white/40">
-            Copyright © 2026 Rajalakshmi Institutions
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4">
+            <div className="text-[10px] xs:text-xs text-white/40">
+              Copyright © 2026 Rajalakshmi Institutions
+            </div>
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-[10px] xs:text-xs">
+              <Link
+                to="/privacy-policy"
+                className="text-white/40 hover:text-white/70 transition-colors underline-offset-4 hover:underline"
+              >
+                Privacy Policy
+              </Link>
+              <span className="text-white/20">|</span>
+              <Link
+                to="/terms-conditions"
+                className="text-white/40 hover:text-white/70 transition-colors underline-offset-4 hover:underline"
+              >
+                Terms & Conditions
+              </Link>
+            </div>
           </div>
         </div>
       </div>

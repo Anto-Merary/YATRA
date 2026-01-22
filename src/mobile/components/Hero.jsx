@@ -518,7 +518,7 @@ function Hero() {
         // - pal: move up more (increased upward movement)
         const isAsal = /(^|\/|\\)asal\./i.test(src)
         const isPal = /(^|\/|\\)pal\./i.test(src)
-        // Stronger upward nudges so they sit higher along their rotated angle.
+k        // Stronger upward nudges so they sit higher along their rotated angle.
         const nudgeAsal = -Math.min(32, spreadY * 0.11)
         const nudgePal = -Math.min(70, spreadY * 0.25) // Increased upward nudge for pal
         const nudgeY = isPal ? nudgePal : isAsal ? nudgeAsal : 0
@@ -1260,6 +1260,34 @@ function Hero() {
               />
             </svg>
           </a>
+        </div>
+
+        <div className="mobile-footer-section">
+          <div className="mobile-footer-label">LEGAL</div>
+          <div className="mobile-footer-phone-numbers" style={{ flexDirection: 'column', gap: '8px', alignItems: 'flex-start' }}>
+            <a 
+              className="mobile-footer-link mobile-footer-link--underline" 
+              href="/privacy-policy"
+              onClick={(e) => {
+                e.preventDefault()
+                const baseUrl = (import.meta?.env?.BASE_URL || '/').replace(/\/+$/, '')
+                window.location.assign(`${baseUrl}/privacy-policy`)
+              }}
+            >
+              Privacy Policy
+            </a>
+            <a 
+              className="mobile-footer-link mobile-footer-link--underline" 
+              href="/terms-conditions"
+              onClick={(e) => {
+                e.preventDefault()
+                const baseUrl = (import.meta?.env?.BASE_URL || '/').replace(/\/+$/, '')
+                window.location.assign(`${baseUrl}/terms-conditions`)
+              }}
+            >
+              Terms & Conditions
+            </a>
+          </div>
         </div>
       </div>
     </footer>

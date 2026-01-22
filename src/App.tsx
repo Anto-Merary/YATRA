@@ -10,6 +10,8 @@ import { EventDetailPage } from "./pages/EventDetailPage";
 import { ProDanceBattlePage } from "./pages/ProDanceBattlePage";
 import { AdminPage } from "./pages/AdminPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { PrivacyPolicyPage } from "./pages/PrivacyPolicyPage";
+import { TermsConditionsPage } from "./pages/TermsConditionsPage";
 // Images
 import ritLogoImage from "./assets/RIT WHITE LOGO.webp";
 import logoImage from "./assets/LOGO .webp";
@@ -169,6 +171,8 @@ export default function App() {
         <Route path="/yatraevents" element={<YatraEventsPage />} />
         <Route path="/pro-dance-battle" element={<ProDanceBattlePage />} />
         <Route path="/events/:eventId" element={<EventDetailPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms-conditions" element={<TermsConditionsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
       {/* Admin route - separate from SiteLayout, no navigation links */}
