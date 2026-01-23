@@ -246,26 +246,24 @@ export function YatraEventsPage() {
 
       {/* Content Layer - scrollable above fixed background */}
       <div className="container-max py-6 sm:py-8 md:py-14 relative z-10 px-3 sm:px-4">
-        {/* Mobile hero (events banner) */}
-        {isMobile && (
-          <div className="mb-5 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02]">
-            <div className="relative h-44">
-              <img
-                src={eventsHeroImg}
-                alt=""
-                className="absolute inset-0 h-full w-full object-cover object-center"
-                draggable={false}
-              />
-              <div className="absolute inset-0 bg-black/45 backdrop-blur-[2px]" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/60" />
-              <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
-                <div className="font-akira text-2xl tracking-[0.28em] text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.7)]">
-                  EVENTS
-                </div>
+        {/* Events banner - shown on both mobile and desktop */}
+        <div className="mb-5 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02]">
+          <div className="relative h-44 sm:h-56 md:h-64">
+            <img
+              src={eventsHeroImg}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover object-center"
+              draggable={false}
+            />
+            <div className="absolute inset-0 bg-black/45 backdrop-blur-[2px]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/60" />
+            <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
+              <div className="font-akira text-2xl sm:text-3xl md:text-4xl tracking-[0.28em] text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.7)]">
+                EVENTS
               </div>
             </div>
           </div>
-        )}
+        </div>
 
         {/* Back Button */}
         <button
@@ -602,7 +600,7 @@ export function YatraEventsPage() {
               className={
                 isMobile
                   ? "grid grid-cols-2 gap-3 auto-rows-fr"
-                  : "grid gap-2.5 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                  : "grid gap-2.5 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
               }
             >
               {filtered.map((e) => (
@@ -624,8 +622,8 @@ export function YatraEventsPage() {
                     ].join(" ")}
                   />
 
-                  {/* Thumbnail */}
-                  {isMobile && e.posterUrl && (
+                  {/* Thumbnail - shown on both mobile and desktop */}
+                  {e.posterUrl && (
                     <div className="relative z-10 mb-3 overflow-hidden rounded-xl border border-white/10">
                       <div className="relative aspect-[16/10] w-full">
                         <img
@@ -662,16 +660,10 @@ export function YatraEventsPage() {
                   <div className="relative z-10 mt-3 pt-3 border-t border-white/10">
                     <button
                       onClick={() => navigate(`/events/${e.id}`)}
-                      className={`w-full h-9 xs:h-10 rounded-lg xs:rounded-xl text-xs xs:text-sm font-semibold text-white transition-all hover:opacity-90 ${
-                        isMobile
-                          ? `backdrop-blur-sm ${
-                              e.day === "day1"
-                                ? "bg-blue-500/20 border border-blue-400/25 hover:bg-blue-500/25"
-                                : "bg-pink-500/20 border border-pink-400/25 hover:bg-pink-500/25"
-                            }`
-                          : e.day === "day1"
-                            ? "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500"
-                            : "bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400"
+                      className={`w-full h-9 xs:h-10 rounded-lg xs:rounded-xl text-xs xs:text-sm font-semibold text-white transition-all hover:opacity-90 backdrop-blur-sm ${
+                        e.day === "day1"
+                          ? "bg-blue-500/20 border border-blue-400/25 hover:bg-blue-500/25"
+                          : "bg-pink-500/20 border border-pink-400/25 hover:bg-pink-500/25"
                       }`}
                     >
                       More Info
