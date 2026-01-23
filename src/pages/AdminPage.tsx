@@ -16,10 +16,18 @@ export function AdminPage() {
 
   // 1. Define Admin Verification Logic
   const verifyAdmin = async (currentUser: User) => {
-    console.log('Verifying admin for:', currentUser.email);
+    if (!currentUser?.email) {
+      console.error('No email found in user object');
+      setError('User email not found.');
+      setAuthState('unauthorized');
+      return;
+    }
+
+    const userEmail = currentUser.email.toLowerCase().trim();
+    console.log('Verifying admin for:', userEmail);
     
-    // MVP Bypass: Immediate access for your email
-    if (currentUser.email === 'meraryanto@gmail.com') {
+    // MVP Bypass: Immediate access for your email (case-insensitive)
+    if (userEmail === 'meraryanto@gmail.com') {
       console.log('Master admin detected - granting access');
       setUser(currentUser);
       setAuthState('authorized');
@@ -29,9 +37,14 @@ export function AdminPage() {
     try {
       // Use RPC for secure, server-side verification
       const { data: isAdmin, error: rpcError } = await supabase
-        .rpc('check_is_admin', { user_email: currentUser.email });
+        .rpc('check_is_admin', { user_email: userEmail });
 
-      if (rpcError) throw rpcError;
+      if (rpcError) {
+        console.error('RPC error:', rpcError);
+        throw rpcError;
+      }
+
+      console.log('RPC check result:', isAdmin);
 
       if (isAdmin) {
         console.log('Admin verified');
@@ -39,12 +52,13 @@ export function AdminPage() {
         setAuthState('authorized');
       } else {
         console.log('User is not an admin');
+        setError(`Access denied. ${userEmail} is not authorized as an admin.`);
         setAuthState('unauthorized');
         await supabase.auth.signOut();
       }
     } catch (err) {
       console.error('Admin verification failed:', err);
-      setError('Failed to verify admin privileges.');
+      setError(`Failed to verify admin privileges: ${err instanceof Error ? err.message : 'Unknown error'}`);
       setAuthState('unauthorized');
       await supabase.auth.signOut();
     }
@@ -58,20 +72,10 @@ export function AdminPage() {
     const initAuth = async () => {
       console.log('Initializing Admin Auth...');
       
-      // Check current session
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session) {
-        console.log('Session detected on load');
-        await verifyAdmin(session.user);
-      } else {
-        console.log('No session on load');
-        setAuthState('unauthenticated');
-      }
-
-      // Listen for auth changes
+      // First, set up the auth state change listener BEFORE checking session
+      // This ensures we catch the SIGNED_IN event if it fires during OAuth callback
       const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-        console.log('Auth event:', event);
+        console.log('Auth event:', event, session?.user?.email);
 
         if (event === 'SIGNED_IN' && session) {
           console.log('User signed in - verifying');
@@ -80,8 +84,56 @@ export function AdminPage() {
           console.log('User signed out');
           setAuthState('unauthenticated');
           setUser(null);
+        } else if (event === 'TOKEN_REFRESHED' && session) {
+          console.log('Token refreshed');
+          // Re-verify admin on token refresh to ensure still authorized
+          await verifyAdmin(session.user);
         }
       });
+
+      // Now check for existing session (this will also extract session from URL if present)
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) {
+        console.error('Session error:', sessionError);
+        setError('Failed to check session.');
+        setAuthState('unauthenticated');
+        return subscription;
+      }
+      
+      if (session) {
+        console.log('Session detected on load:', session.user.email);
+        await verifyAdmin(session.user);
+      } else {
+        console.log('No session on load');
+        // Check if we're coming back from OAuth
+        // - Implicit flow: URL hash has access_token
+        // - PKCE flow (our default): URL query has code
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const accessToken = hashParams.get('access_token');
+        const queryParams = new URLSearchParams(window.location.search);
+        const code = queryParams.get('code');
+        
+        if (accessToken || code) {
+          console.log('OAuth callback detected in URL, waiting for session...', {
+            hasAccessToken: Boolean(accessToken),
+            hasCode: Boolean(code),
+          });
+          // Session should be processed by Supabase automatically, but wait a bit
+          setTimeout(async () => {
+            const { data: { session: newSession } } = await supabase.auth.getSession();
+            if (newSession) {
+              console.log('Session found after OAuth callback');
+              await verifyAdmin(newSession.user);
+            } else {
+              console.log('No session after OAuth callback');
+              setAuthState('unauthenticated');
+            }
+          }, 500);
+        } else {
+          setAuthState('unauthenticated');
+        }
+      }
 
       return subscription;
     };
@@ -94,20 +146,57 @@ export function AdminPage() {
     };
   }, []);
 
+  // Clean up URL after OAuth callback - remove hash fragments
+  useEffect(() => {
+    // Check if we have OAuth callback parameters in the URL
+    const hasHashCallback =
+      window.location.hash.includes('access_token') || window.location.hash.includes('error');
+    const hasQueryCallback =
+      window.location.search.includes('code=') || window.location.search.includes('error=');
+
+    if (hasHashCallback || hasQueryCallback) {
+      // Clean up the URL after a short delay to allow Supabase to process it
+      const timer = setTimeout(() => {
+        // Only clean up if we're still on /admin
+        if (window.location.pathname === '/admin') {
+          window.history.replaceState(null, '', '/admin');
+        }
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   // 3. Handlers
   const handleGoogleSignIn = async () => {
     try {
       setError(null);
+      const redirectUrl = `${window.location.origin}/admin`;
+      console.log('Initiating Google OAuth with redirect to:', redirectUrl);
+
+      // Mark that we intentionally started an admin OAuth flow.
+      // If Supabase redirects back to "/" (misconfigured redirect allowlist),
+      // the App-level handler can forward `/?code=...` to `/admin`.
+      sessionStorage.setItem('admin-oauth-in-progress', '1');
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/admin`,
+          redirectTo: redirectUrl,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         },
       });
-      if (error) throw error;
+      
+      if (error) {
+        console.error('OAuth initiation error:', error);
+        throw error;
+      }
+      // Note: User will be redirected to Google, then back to /admin
     } catch (err) {
       console.error('Login failed:', err);
-      setError('Failed to initiate login.');
+      setError(`Failed to initiate login: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
   };
 

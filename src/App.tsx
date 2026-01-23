@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { SiteLayout } from "./components/SiteLayout";
 import Loader from "./components/Loader";
 import { HomePage } from "./pages/HomePage";
@@ -24,8 +24,30 @@ import yatraVideo from "./assets/video.mp4?url";
 import fontFile from "./assets/fonts/BaseNeueTrial-ExtBdObliq.ttf";
 
 export default function App() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // If Supabase sends the user back to "/?code=..." (PKCE) after admin login,
+  // forward them into "/admin?code=..." so the AdminPage can finalize auth + verify admin.
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const hasCode = params.has("code");
+    const hasError = params.has("error") || params.has("error_description");
+
+    // We only have one OAuth flow in this app (admin login), so route all
+    // Supabase auth callbacks into /admin where we finalize the session.
+    if ((hasCode || hasError) && location.pathname !== "/admin") {
+      navigate(`/admin${location.search}${location.hash}`, { replace: true });
+    }
+  }, [location.hash, location.pathname, location.search, navigate]);
+
   // Check if this is the first load in this session
   const [isInitialLoad, setIsInitialLoad] = useState(() => {
+    // Don't block auth callbacks behind the heavy initial loader.
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("code") || params.has("error") || params.has("error_description")) {
+      return false;
+    }
     const hasLoadedBefore = sessionStorage.getItem('yatra-initial-load-complete');
     return !hasLoadedBefore;
   });
