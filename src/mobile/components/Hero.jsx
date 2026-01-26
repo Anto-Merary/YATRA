@@ -170,21 +170,25 @@ function Hero() {
       import: 'default',
     })
 
-    // Get unique images by base filename to avoid any duplicates
+    /**
+     * Keep the *same* visual order you had before (dev matched prod sometimes by accident),
+     * but make it production-stable:
+     * - Previously we sorted by the generated URL string, which changes in prod due to hashing.
+     * - Now we sort by the original module key (path), which is stable in both dev and prod.
+     */
+    const orderedKeys = Object.keys(modules).sort((a, b) => a.localeCompare(b))
+
+    // Get unique images by base filename to avoid any duplicates (preserve orderedKeys order)
     const uniqueImages = new Map()
-    Object.keys(modules).forEach((key) => {
+    orderedKeys.forEach((key) => {
       const baseName = key.split('/').pop()?.replace(/\.(webp|WEBP)$/i, '').toLowerCase()
       if (baseName && !uniqueImages.has(baseName)) {
         uniqueImages.set(baseName, modules[key])
       }
     })
 
-    // Convert map values to array, sort for consistent order, and take up to 6 unique images
-    const srcs = Array.from(uniqueImages.values())
-      .sort((a, b) => String(a).localeCompare(String(b)))
-
     // Never reuse a photo. If fewer than 6 exist, we render fewer than 6.
-    return srcs.slice(0, 6)
+    return Array.from(uniqueImages.values()).slice(0, 6)
   }, [])
 
   // Lantern (lamp) glow hotspots placed over the background art.
