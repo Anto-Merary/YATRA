@@ -87,14 +87,26 @@ export function Footer() {
           </div>
 
           <div className="mobile-footer-section">
-            <div className="mobile-footer-label">PHONE</div>
-            <div className="mobile-footer-phone-numbers">
-              <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+918825910614">
-                +91 88259 10614
-              </a>
-              <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+919884470171">
-                +91 98844 70171
-              </a>
+            <div className="mobile-footer-label">CONTACT</div>
+            <div className="mobile-footer-phone-numbers" style={{ flexDirection: 'column', gap: '8px', alignItems: 'flex-start' }}>
+              <div>
+                <div className="mobile-footer-text" style={{ fontSize: '0.875rem', marginBottom: '2px' }}>Derry Gabriel - Overall Coordinator</div>
+                <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+919884470171">
+                  +91 98844 70171
+                </a>
+              </div>
+              <div>
+                <div className="mobile-footer-text" style={{ fontSize: '0.875rem', marginBottom: '2px' }}>Kishore Kumar S - Event Committee Coordinator</div>
+                <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+918825910614">
+                  +91 88259 10614
+                </a>
+              </div>
+              <div>
+                <div className="mobile-footer-text" style={{ fontSize: '0.875rem', marginBottom: '2px' }}>Muthu Kumaran - Joint Overall Coordinator</div>
+                <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+919094141232">
+                  +91 90941 41232
+                </a>
+              </div>
             </div>
           </div>
 
@@ -225,14 +237,22 @@ export function Footer() {
               </a>
             </div>
 
-            {/* Email and Phone */}
-            <div className="space-y-1 text-xs xs:text-sm md:text-base text-white/70">
-              <div>yatra@ritchennai.edu.in</div>
+            {/* Contact Information */}
+            <div className="space-y-2 text-xs xs:text-sm md:text-base text-white/70">
               <div>
-                <a href="tel:+919843656238" className="hover:text-white transition-colors">+91 98436 56238</a>
+                <div className="text-white/90 font-semibold mb-0.5">Derry Gabriel</div>
+                <div className="text-white/60 text-[10px] xs:text-xs mb-1">Overall Coordinator</div>
+                <a href="tel:+919884470171" className="hover:text-white transition-colors">+91 98844 70171</a>
               </div>
               <div>
-                <a href="tel:+919080850106" className="hover:text-white transition-colors">+91 90808 50106</a>
+                <div className="text-white/90 font-semibold mb-0.5">Kishore Kumar S</div>
+                <div className="text-white/60 text-[10px] xs:text-xs mb-1">Event Committee Coordinator</div>
+                <a href="tel:+918825910614" className="hover:text-white transition-colors">+91 88259 10614</a>
+              </div>
+              <div>
+                <div className="text-white/90 font-semibold mb-0.5">Muthu Kumaran</div>
+                <div className="text-white/60 text-[10px] xs:text-xs mb-1">Joint Overall Coordinator</div>
+                <a href="tel:+919094141232" className="hover:text-white transition-colors">+91 90941 41232</a>
               </div>
             </div>
           </div>
