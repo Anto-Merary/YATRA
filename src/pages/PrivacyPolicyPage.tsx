@@ -1,4 +1,4 @@
-import { useLayoutEffect } from "react";
+  import { useLayoutEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { NoiseOverlay } from "@/components/NoiseOverlay";
