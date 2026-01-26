@@ -516,12 +516,12 @@ function Hero() {
         const jy = (rand01(seed ^ 0x9e3779b9) - 0.5) * spreadY * 0.14
         // Small manual nudges for specific photos (requested):
         // - asal: move up a little
-        // - pal: move up more (increased upward movement)
+        // - pal: move up 5% more than original
         const isAsal = /(^|\/|\\)asal\./i.test(src)
         const isPal = /(^|\/|\\)pal\./i.test(src)
         // Stronger upward nudges so they sit higher along their rotated angle.
         const nudgeAsal = -Math.min(32, spreadY * 0.11)
-        const nudgePal = -Math.min(70, spreadY * 0.30) // Increased upward nudge for pal (5% more upward)
+        const nudgePal = -Math.min(70, spreadY * 0.30) // pal moved up 5% more (was 0.25, now 0.30)
         const nudgeY = isPal ? nudgePal : isAsal ? nudgeAsal : 0
 
         return { x: p.x + jx, y: p.y + jy + nudgeY }
@@ -569,7 +569,8 @@ function Hero() {
         const isPal = /(^|\/|\\)pal\./i.test(src)
         const isSyn = /(^|\/|\\)syn\./i.test(src)
         // Make `pal` and `syn` larger without completely blowing up the layout.
-        const baseScale = isPal ? 2.9355 : isSyn ? 1.75 : 1.35 // pal increased by 3%
+        // pal: increased by 3% (was 2.85, now 2.85 * 1.03 = 2.9355)
+        const baseScale = isPal ? 2.9355 : isSyn ? 1.75 : 1.35
 
         gsap.set(el, {
           // Center using GSAP-managed percent transforms so CSS centering isn't lost
@@ -593,12 +594,13 @@ function Hero() {
           const src = String(el.currentSrc || el.src || '')
           const isPal = /(^|\/|\\)pal\./i.test(src)
           const isSyn = /(^|\/|\\)syn\./i.test(src)
+          // pal: increased by 3% (was 1.35, now 1.35 * 1.03 = 1.3905)
           gsap.set(el, {
             xPercent: -50,
             yPercent: -50,
             x: base.x,
             y: base.y,
-            scale: isPal ? 1.3905 : isSyn ? 1.4 : 1, // pal increased by 3%
+            scale: isPal ? 1.3905 : isSyn ? 1.4 : 1,
             opacity: 1,
             rotate: 0,
           })
@@ -617,7 +619,8 @@ function Hero() {
         const src = String(el.currentSrc || el.src || '')
         const isPal = /(^|\/|\\)pal\./i.test(src)
         const isSyn = /(^|\/|\\)syn\./i.test(src)
-        const finalScale = isPal ? 1.6995 : isSyn ? 1.35 : 1 // pal increased by 3%
+        // pal: increased by 3% (was 1.65, now 1.65 * 1.03 = 1.6995)
+        const finalScale = isPal ? 1.6995 : isSyn ? 1.35 : 1
 
         tl.to(
           el,
