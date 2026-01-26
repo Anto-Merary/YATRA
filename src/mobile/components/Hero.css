@@ -2309,6 +2309,27 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* Make entire card clickable - Fitts's Law: massive touch target */
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  transition: transform 150ms ease, opacity 150ms ease;
+  /* Ensure minimum touch target size (44x44px minimum, but card is much larger) */
+  min-height: 200px;
+  /* Remove default outline, add custom focus style */
+  outline: none;
+}
+
+.features-event-media:focus-visible {
+  outline: 2px solid rgba(255, 184, 107, 0.6);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.features-event-media:active {
+  transform: scale(0.98);
+  opacity: 0.9;
 }
 
 .features-event-media + .features-event-media {
@@ -2411,7 +2432,8 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  cursor: pointer;
+  /* Remove cursor pointer since parent handles it */
+  pointer-events: none;
 
   box-shadow:
     0 10px 24px rgba(0, 0, 0, 0.34),
@@ -2422,8 +2444,6 @@
   will-change: transform, opacity, filter;
   position: relative;
   overflow: hidden;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
 }
 
 .features-show-more-btn::before {
@@ -2549,9 +2569,9 @@
   transition-delay: 2000ms; /* After second description appears */
 }
 
-.features-show-more-btn:hover {
+/* Hover effects now on parent card */
+.features-event-media:hover .features-show-more-btn {
   background-position: 100% 50%;
-  transform: translateY(-2px);
   filter: brightness(1.06) saturate(1.08);
   box-shadow:
     0 14px 30px rgba(0, 0, 0, 0.42),
@@ -2559,12 +2579,11 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
 
-.features-show-more-btn:hover::after {
+.features-event-media:hover .features-show-more-btn::after {
   transform: translateX(3px);
 }
 
-.features-show-more-btn:active {
-  transform: translateY(0) scale(0.99);
+.features-event-media:active .features-show-more-btn {
   filter: brightness(0.98) saturate(0.98);
   box-shadow:
     0 8px 18px rgba(0, 0, 0, 0.34),

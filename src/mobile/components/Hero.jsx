@@ -1121,7 +1121,19 @@ function Hero() {
             variant="blur"
           />
         </h2>
-        <div className="features-event-media features-event-media--left">
+        <div 
+          className="features-event-media features-event-media--left"
+          onClick={goToEvents}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              goToEvents();
+            }
+          }}
+          aria-label="Explore 50+ Events with Cash Price"
+        >
           <div className="features-event-badge">
             50+ Events with CASH PRICE
           </div>
@@ -1132,11 +1144,23 @@ function Hero() {
               Across tech, arts, culture & performance - Throughout the day
             </p>
           </div>
-          <button className="features-show-more-btn" onClick={goToEvents} type="button">
+          <span className="features-show-more-btn">
             EXPLORE EVENTS
-          </button>
+          </span>
         </div>
-        <div className="features-event-media features-event-media--right">
+        <div 
+          className="features-event-media features-event-media--right"
+          onClick={openLineupModal}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              openLineupModal();
+            }
+          }}
+          aria-label="Show Electrifying Performances Lineup"
+        >
           <div className="features-event-badge">
             ELECTRIFYING PERFORMANCES
           </div>
@@ -1147,9 +1171,9 @@ function Hero() {
               3 Big Names. 2 Days. Electrifying Pro Shows. DJ Night
             </p>
           </div>
-          <button className="features-show-more-btn" type="button" onClick={openLineupModal}>
+          <span className="features-show-more-btn">
             SHOW LINEUP
-          </button>
+          </span>
         </div>
       </div>
     </section>

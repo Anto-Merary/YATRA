@@ -280,7 +280,7 @@ export function YatraEventsPage() {
         <div
           className={[
             "mb-4 sm:mb-6 md:mb-8 lg:mb-12",
-            isMobile ? "text-center flex flex-col items-center" : "",
+            "text-center flex flex-col items-center",
           ].join(" ")}
         >
           {!isMobile && (
@@ -305,8 +305,7 @@ export function YatraEventsPage() {
           </div>
           <div
             className={[
-              "mt-2 flex items-center gap-2 text-xs sm:text-sm flex-wrap",
-              isMobile ? "justify-center" : "",
+              "mt-2 flex items-center gap-2 text-xs sm:text-sm flex-wrap justify-center",
             ].join(" ")}
           >
             <span className="text-white/50">
@@ -607,8 +606,8 @@ export function YatraEventsPage() {
                 <SpotlightCard
                   key={e.id}
                   className={[
-                    "group relative border-white/10 bg-white/[0.04] p-3 xs:p-4 sm:p-5 transition-all active:scale-[0.98] touch-manipulation flex flex-col cursor-default hover:opacity-20",
-                    isMobile ? "aspect-square" : "",
+                    "group relative border-white/10 bg-white/[0.04] transition-all active:scale-[0.98] touch-manipulation flex flex-col cursor-default hover:opacity-20",
+                    isMobile ? "p-1 min-h-0" : "p-2 xs:p-3 sm:p-4",
                     ui.cardHover,
                     !isMobile ? "backdrop-blur-sm hover:backdrop-blur-none" : "",
                   ].join(" ")}
@@ -624,8 +623,10 @@ export function YatraEventsPage() {
 
                   {/* Thumbnail - shown on both mobile and desktop */}
                   {e.posterUrl && (
-                    <div className="relative z-10 mb-3 overflow-hidden rounded-xl border border-white/10">
-                      <div className="relative aspect-[16/10] w-full">
+                    <div className={`relative z-10 overflow-hidden rounded-lg xs:rounded-xl border border-white/10 flex-shrink-0 ${
+                      isMobile ? "mb-1" : "mb-2 xs:mb-2.5 sm:mb-3"
+                    }`} style={isMobile ? { flexBasis: '60%', maxHeight: '60%' } : {}}>
+                      <div className="relative aspect-square w-full">
                         <img
                           src={e.posterUrl}
                           alt=""
@@ -637,15 +638,19 @@ export function YatraEventsPage() {
                     </div>
                   )}
 
-                  <div className="relative z-10 flex-1">
-                    <div className="flex items-start justify-between gap-2 xs:gap-3 mb-2 xs:mb-3">
+                  <div className="relative z-10 flex-1 min-h-0 flex flex-col">
+                    <div className={`flex items-start justify-between gap-1 xs:gap-1.5 ${
+                      isMobile ? "mb-0.5" : "mb-1.5 xs:mb-2"
+                    }`}>
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm xs:text-base font-semibold leading-tight text-white group-hover:text-white/90 line-clamp-2">
+                        <div className={`font-semibold leading-tight text-white group-hover:text-white/90 line-clamp-2 ${
+                          isMobile ? "text-[11px] leading-snug" : "text-sm xs:text-base"
+                        }`}>
                           {e.name}
                         </div>
                       </div>
                       <div
-                        className={`flex-shrink-0 rounded-full px-2 xs:px-2.5 py-0.5 xs:py-1 text-[9px] xs:text-[10px] font-medium tracking-wider whitespace-nowrap ${
+                        className={`flex-shrink-0 rounded-full px-1.5 xs:px-2 py-0.5 text-[8px] xs:text-[9px] font-medium tracking-wider whitespace-nowrap ${
                           e.day === "day1"
                             ? "border-blue-500/20 bg-blue-500/10 text-blue-300"
                             : "border-pink-500/20 bg-pink-500/10 text-pink-300"
@@ -657,10 +662,14 @@ export function YatraEventsPage() {
                   </div>
 
                   {/* More Info Button */}
-                  <div className="relative z-10 mt-3 pt-3 border-t border-white/10">
+                  <div className={`relative z-10 border-t border-white/10 flex-shrink-0 ${
+                    isMobile ? "pt-0.5 mt-0.5" : "pt-2 xs:pt-2.5 mt-auto"
+                  }`}>
                     <button
                       onClick={() => navigate(`/events/${e.id}`)}
-                      className={`w-full h-9 xs:h-10 rounded-lg xs:rounded-xl text-xs xs:text-sm font-semibold text-white transition-all hover:opacity-90 backdrop-blur-sm ${
+                      className={`w-full rounded-md xs:rounded-lg font-semibold text-white transition-all hover:opacity-90 backdrop-blur-sm ${
+                        isMobile ? "h-6 text-[10px] py-0" : "h-8 xs:h-9 sm:h-10 text-xs xs:text-sm"
+                      } ${
                         e.day === "day1"
                           ? "bg-blue-500/20 border border-blue-400/25 hover:bg-blue-500/25"
                           : "bg-pink-500/20 border border-pink-400/25 hover:bg-pink-500/25"
