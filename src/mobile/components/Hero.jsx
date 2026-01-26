@@ -516,12 +516,12 @@ function Hero() {
         const jy = (rand01(seed ^ 0x9e3779b9) - 0.5) * spreadY * 0.14
         // Small manual nudges for specific photos (requested):
         // - asal: move up a little
-        // - pal: move up 5% more than original
+        // - pal: move up 8% more than original (5% + 3% additional)
         const isAsal = /(^|\/|\\)asal\./i.test(src)
         const isPal = /(^|\/|\\)pal\./i.test(src)
         // Stronger upward nudges so they sit higher along their rotated angle.
         const nudgeAsal = -Math.min(32, spreadY * 0.11)
-        const nudgePal = -Math.min(70, spreadY * 0.30) // pal moved up 5% more (was 0.25, now 0.30)
+        const nudgePal = -Math.min(70, spreadY * 0.33) // pal moved up 8% more total (was 0.25, now 0.33)
         const nudgeY = isPal ? nudgePal : isAsal ? nudgeAsal : 0
 
         return { x: p.x + jx, y: p.y + jy + nudgeY }

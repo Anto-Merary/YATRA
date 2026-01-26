@@ -1683,9 +1683,8 @@
   left: 50%;
   top: var(--blast-photo-anchor-y, 52%);
   /* Let images maintain their natural size without clamping or cropping */
-  /* Increased max dimensions to accommodate larger scaled images (pal.webp, syn.webp) */
-  max-width: min(60vw, 420px);
-  max-height: min(70vh, 500px);
+  max-width: min(50vw, 320px);
+  max-height: min(60vh, 400px);
   width: auto;
   height: auto;
   aspect-ratio: auto;
