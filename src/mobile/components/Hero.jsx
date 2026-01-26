@@ -521,7 +521,7 @@ function Hero() {
         const isPal = /(^|\/|\\)pal\./i.test(src)
         // Stronger upward nudges so they sit higher along their rotated angle.
         const nudgeAsal = -Math.min(32, spreadY * 0.11)
-        const nudgePal = -Math.min(70, spreadY * 0.30) // Increased upward nudge for pal (5% more)
+        const nudgePal = -Math.min(70, spreadY * 0.30) // Increased upward nudge for pal (5% more upward)
         const nudgeY = isPal ? nudgePal : isAsal ? nudgeAsal : 0
 
         return { x: p.x + jx, y: p.y + jy + nudgeY }
