@@ -1,51 +1,54 @@
-// Import event images
-import lyricQuestImg from "../assets/events images/lyric quest.webp?url";
-import animeKoreanQuizImg from "../assets/events images/anime x korean quiz.webp?url";
-import rjHuntImg from "../assets/events images/rj hunt.webp?url";
-import mehandhiImg from "../assets/events images/mehandhi competition.webp?url";
-import megaOrigamiImg from "../assets/events images/mega origami.webp?url";
-import redLightGreenLightImg from "../assets/events images/red light green light.webp?url";
-import brainTeasersImg from "../assets/events images/brain teasers.webp?url";
-import cricketCommentaryImg from "../assets/events images/cricket commentry.webp?url";
-import memeCreationImg from "../assets/events images/meme creation challange .webp?url";
-import balloonBurstingImg from "../assets/events images/ballon burrsting challenge.webp?url";
-import soloDanceImg from "../assets/events images/solo dance .webp?url";
-import kidsSoloDanceImg from "../assets/events images/kids solo dance .webp?url";
-import groupDanceImg from "../assets/events images/group dance .webp?url";
-import adaptuneSoloImg from "../assets/events images/adaptune solo battle .webp?url";
-import pubgImg from "../assets/events images/pubg.webp?url";
-import brawlStarsImg from "../assets/events images/brawl stars.webp?url";
-import channelSurfingImg from "../assets/events images/channel surfing.webp?url";
-import laughingChallengeImg from "../assets/events images/laughing challange.webp?url";
-import boxCricketImg from "../assets/events images/box cricket.webp?url";
-import posterDesigningImg from "../assets/events images/poster designing.webp?url";
-import tugOfWarImg from "../assets/events images/tug of war.webp?url";
-import ethnicFoodImg from "../assets/events images/ethnic food contest.webp?url";
-import shortFilmImg from "../assets/events images/short filim.webp?url";
-import photographyImg from "../assets/events images/photography.webp?url";
-import jamImg from "../assets/events images/jam.webp?url";
-import singingImg from "../assets/events images/singing .webp?url";
-import beatBoxImg from "../assets/events images/beat box battle .webp?url";
-import battleOfBandsImg from "../assets/events images/battle the band instrument .webp?url";
-import adzapImg from "../assets/events images/adzap.webp?url";
-import mimeImg from "../assets/events images/mime .webp?url";
-import monoActingImg from "../assets/events images/mono acting.webp?url";
-import faceFiestaImg from "../assets/events images/face fiesta .webp?url";
-import oratoryImg from "../assets/events images/oratry.webp?url";
-import pencilArtImg from "../assets/events images/painting and pencil art .webp?url";
-import debateImg from "../assets/events images/deabte .webp?url";
-import theOppositeImg from "../assets/events images/the opposite.webp?url";
-import mockParliamentImg from "../assets/events images/mock parliment .webp?url";
-import classicalDanceImg from "../assets/events images/classic dance.webp?url";
-import freeFireImg from "../assets/events images/free fire .webp?url";
-import valorantImg from "../assets/events images/valorant.webp?url";
-import stumbleGuysImg from "../assets/events images/stumble guys .webp?url";
-import fakeNewsImg from "../assets/events images/fake news or fact.webp?url";
-import tongueTwisterImg from "../assets/events images/tongue twister.webp?url";
-import bioscopeImg from "../assets/events images/bio scope.webp?url";
-import towerBuildImg from "../assets/events images/tower build.webp?url";
-import rangoliImg from "../assets/events images/rangoli.webp?url";
-import treasureHuntImg from "../assets/events images/treasure hunt.webp?url";
+// Import event images from YATRA EVENT POSTERS
+import lyricQuestImg from "../assets/YATRA EVENT POSTERS/lyrics quest.webp?url";
+import animeKoreanQuizImg from "../assets/YATRA EVENT POSTERS/KDRAMA VS ANIME.webp?url";
+import rjHuntImg from "../assets/YATRA EVENT POSTERS/RJ HUNT.webp?url";
+import mehandhiImg from "../assets/YATRA EVENT POSTERS/MEHANDI.webp?url";
+import megaOrigamiImg from "../assets/YATRA EVENT POSTERS/MEGA ORIGAMI.webp?url";
+import redLightGreenLightImg from "../assets/YATRA EVENT POSTERS/red light green light.webp?url";
+import brainTeasersImg from "../assets/YATRA EVENT POSTERS/BRAIN TEASER ARENA.webp?url";
+import cricketCommentaryImg from "../assets/YATRA EVENT POSTERS/CRICKET COMMENTARY.webp?url";
+import memeCreationImg from "../assets/YATRA EVENT POSTERS/Meme Creation.webp?url";
+import balloonBurstingImg from "../assets/YATRA EVENT POSTERS/Balloon bursting challenge.webp?url";
+import soloDanceImg from "../assets/YATRA EVENT POSTERS/SOLO DANCE.webp?url";
+import kidsSoloDanceImg from "../assets/YATRA EVENT POSTERS/KIDS DANCE.webp?url";
+import groupDanceImg from "../assets/YATRA EVENT POSTERS/Group Dance.webp?url";
+import adaptuneSoloImg from "../assets/YATRA EVENT POSTERS/Adaptune Battle.webp?url";
+import pubgImg from "../assets/YATRA EVENT POSTERS/bgmi.webp?url";
+import brawlStarsImg from "../assets/YATRA EVENT POSTERS/BRAWL STAR.webp?url";
+import channelSurfingImg from "../assets/YATRA EVENT POSTERS/Channel Surfing.webp?url";
+import laughingChallengeImg from "../assets/YATRA EVENT POSTERS/DONT LAUGH.webp?url";
+import boxCricketImg from "../assets/YATRA EVENT POSTERS/BOX CRICKET.webp?url";
+import posterDesigningImg from "../assets/YATRA EVENT POSTERS/POSTER DESIGN.webp?url";
+import tugOfWarImg from "../assets/YATRA EVENT POSTERS/TUG OF WAR 2.webp?url";
+import ethnicFoodImg from "../assets/YATRA EVENT POSTERS/ETHNIC FOOD CONTEST.webp?url";
+import shortFilmImg from "../assets/YATRA EVENT POSTERS/SHORT FILM.webp?url";
+import photographyImg from "../assets/YATRA EVENT POSTERS/PHOTOGRAPHY.webp?url";
+import jamImg from "../assets/YATRA EVENT POSTERS/JAM.webp?url";
+import singingImg from "../assets/YATRA EVENT POSTERS/singing solo.webp?url";
+import beatBoxImg from "../assets/YATRA EVENT POSTERS/beatbox battle.webp?url";
+import battleOfBandsImg from "../assets/YATRA EVENT POSTERS/BATTLE OF BEATS 2.webp?url";
+import adzapImg from "../assets/YATRA EVENT POSTERS/ADZAP.webp?url";
+import mimeImg from "../assets/YATRA EVENT POSTERS/Mime.webp?url";
+import monoActingImg from "../assets/YATRA EVENT POSTERS/MONO ACTING.webp?url";
+import faceFiestaImg from "../assets/YATRA EVENT POSTERS/FACE FIESTA.webp?url";
+import oratoryImg from "../assets/YATRA EVENT POSTERS/ORATORY.webp?url";
+import pencilArtImg from "../assets/YATRA EVENT POSTERS/Pencil art-painting.webp?url";
+import debateImg from "../assets/YATRA EVENT POSTERS/DEBATE.webp?url";
+import theOppositeImg from "../assets/YATRA EVENT POSTERS/THE OPPOSITE.webp?url";
+import mockParliamentImg from "../assets/YATRA EVENT POSTERS/MOCK PARLIAMENT.webp?url";
+import classicalDanceImg from "../assets/YATRA EVENT POSTERS/classical dance.webp?url";
+import freeFireImg from "../assets/YATRA EVENT POSTERS/FREE FIRE.webp?url";
+import valorantImg from "../assets/YATRA EVENT POSTERS/VALORANT.webp?url";
+import stumbleGuysImg from "../assets/YATRA EVENT POSTERS/STUMBLE GUYS.webp?url";
+import fakeNewsImg from "../assets/YATRA EVENT POSTERS/FAKE NEWS OR FACTS.webp?url";
+import tongueTwisterImg from "../assets/YATRA EVENT POSTERS/Tounge Twister.webp?url";
+import bioscopeImg from "../assets/YATRA EVENT POSTERS/BIOSCOPE.webp?url";
+import towerBuildImg from "../assets/YATRA EVENT POSTERS/TOWER BUILD.webp?url";
+import rangoliImg from "../assets/YATRA EVENT POSTERS/rangoli.webp?url";
+import treasureHuntImg from "../assets/YATRA EVENT POSTERS/TREASURE HUNT.webp?url";
+import avatarPortfolioImg from "../assets/YATRA EVENT POSTERS/avatar portfolio.webp?url";
+import standupComedyImg from "../assets/YATRA EVENT POSTERS/STANDUP COMEDY.webp?url";
+import gonggiImg from "../assets/YATRA EVENT POSTERS/GONGII.webp?url";
 
 export type EventDay = "day1" | "day2";
 
@@ -276,7 +279,7 @@ export const EVENTS: FestEvent[] = [
     name: "Avatar Portfolio",
     day: "day1",
     participation: "solo",
-    posterUrl: pencilArtImg, // Using pencil art as closest match for creative/art event
+    posterUrl: avatarPortfolioImg,
     description: "Avatar Portfolio is a creative showcase where participants design and present a fictional avatar that reflects their personality, skills, or imagination. The event blends storytelling, visual creativity, and self-expression as contestants bring their unique digital or conceptual avatar to life.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -530,7 +533,7 @@ export const EVENTS: FestEvent[] = [
     name: "Gonggi (Pebble Toss)",
     day: "day1",
     participation: "solo",
-    posterUrl: redLightGreenLightImg, // Using red light green light as closest match for game event
+    posterUrl: gonggiImg,
     description: "Gonggi is a traditional skill-based game where players toss and catch pebbles in quick sequences requiring focus and hand–eye coordination. The event blends nostalgia and precision, challenging participants to complete levels with speed and accuracy.",
     venue: "TBA",
     organizerName: "Organizer Name",
@@ -1012,7 +1015,7 @@ export const EVENTS: FestEvent[] = [
     name: "Stand-Up Comedy",
     day: "day2",
     participation: "solo",
-    posterUrl: laughingChallengeImg, // Using laughing challenge as closest match for comedy/humor event
+    posterUrl: standupComedyImg,
     description: "Stand-Up Comedy is a solo performance event where participants entertain the audience through humor, storytelling, and observational comedy. The event highlights wit, timing, originality, and the ability to connect with the crowd through laughter.",
     venue: "TBA",
     organizerName: "Organizer Name",

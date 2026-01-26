@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "optimize:mobile-images": "node scripts/optimize-mobile-images.mjs",
     "optimize:events-images": "node scripts/optimize-events-images.mjs",
-    "optimize:site-images": "node scripts/optimize-site-images.mjs"
+    "optimize:site-images": "node scripts/optimize-site-images.mjs",
+    "optimize:event-posters": "node scripts/optimize-event-posters.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
