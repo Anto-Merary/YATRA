@@ -521,7 +521,7 @@ function Hero() {
         const isPal = /(^|\/|\\)pal\./i.test(src)
         // Stronger upward nudges so they sit higher along their rotated angle.
         const nudgeAsal = -Math.min(32, spreadY * 0.11)
-        const nudgePal = -Math.min(70, spreadY * 0.25) // Increased upward nudge for pal
+        const nudgePal = -Math.min(70, spreadY * 0.30) // Increased upward nudge for pal (5% more)
         const nudgeY = isPal ? nudgePal : isAsal ? nudgeAsal : 0
 
         return { x: p.x + jx, y: p.y + jy + nudgeY }
@@ -569,7 +569,7 @@ function Hero() {
         const isPal = /(^|\/|\\)pal\./i.test(src)
         const isSyn = /(^|\/|\\)syn\./i.test(src)
         // Make `pal` and `syn` larger without completely blowing up the layout.
-        const baseScale = isPal ? 2.85 : isSyn ? 1.75 : 1.35
+        const baseScale = isPal ? 2.9355 : isSyn ? 1.75 : 1.35 // pal increased by 3%
 
         gsap.set(el, {
           // Center using GSAP-managed percent transforms so CSS centering isn't lost
@@ -598,7 +598,7 @@ function Hero() {
             yPercent: -50,
             x: base.x,
             y: base.y,
-            scale: isPal ? 1.35 : isSyn ? 1.4 : 1,
+            scale: isPal ? 1.3905 : isSyn ? 1.4 : 1, // pal increased by 3%
             opacity: 1,
             rotate: 0,
           })
@@ -617,7 +617,7 @@ function Hero() {
         const src = String(el.currentSrc || el.src || '')
         const isPal = /(^|\/|\\)pal\./i.test(src)
         const isSyn = /(^|\/|\\)syn\./i.test(src)
-        const finalScale = isPal ? 1.65 : isSyn ? 1.35 : 1
+        const finalScale = isPal ? 1.6995 : isSyn ? 1.35 : 1 // pal increased by 3%
 
         tl.to(
           el,
