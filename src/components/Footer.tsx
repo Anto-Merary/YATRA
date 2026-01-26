@@ -88,21 +88,24 @@ export function Footer() {
 
           <div className="mobile-footer-section">
             <div className="mobile-footer-label">CONTACT</div>
-            <div className="mobile-footer-phone-numbers" style={{ flexDirection: 'column', gap: '8px', alignItems: 'flex-start' }}>
+            <div className="mobile-footer-phone-numbers" style={{ flexDirection: 'column', gap: '12px', alignItems: 'flex-start' }}>
               <div>
-                <div className="mobile-footer-text" style={{ fontSize: '0.875rem', marginBottom: '2px' }}>Derry Gabriel - Overall Coordinator</div>
+                <div className="mobile-footer-text" style={{ fontSize: '0.875rem', marginBottom: '4px', fontWeight: '500' }}>Derry Gabriel</div>
+                <div className="mobile-footer-text" style={{ fontSize: '0.75rem', marginBottom: '4px', opacity: 0.8 }}>Overall Coordinator</div>
                 <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+919884470171">
                   +91 98844 70171
                 </a>
               </div>
               <div>
-                <div className="mobile-footer-text" style={{ fontSize: '0.875rem', marginBottom: '2px' }}>Kishore Kumar S - Event Committee Coordinator</div>
+                <div className="mobile-footer-text" style={{ fontSize: '0.875rem', marginBottom: '4px', fontWeight: '500' }}>Kishore Kumar S</div>
+                <div className="mobile-footer-text" style={{ fontSize: '0.75rem', marginBottom: '4px', opacity: 0.8 }}>Event Committee Coordinator</div>
                 <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+918825910614">
                   +91 88259 10614
                 </a>
               </div>
               <div>
-                <div className="mobile-footer-text" style={{ fontSize: '0.875rem', marginBottom: '2px' }}>Muthu Kumaran - Joint Overall Coordinator</div>
+                <div className="mobile-footer-text" style={{ fontSize: '0.875rem', marginBottom: '4px', fontWeight: '500' }}>Muthu Kumaran</div>
+                <div className="mobile-footer-text" style={{ fontSize: '0.75rem', marginBottom: '4px', opacity: 0.8 }}>Joint Overall Coordinator</div>
                 <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+919094141232">
                   +91 90941 41232
                 </a>
@@ -238,20 +241,20 @@ export function Footer() {
             </div>
 
             {/* Contact Information */}
-            <div className="space-y-2 text-xs xs:text-sm md:text-base text-white/70">
+            <div className="space-y-3 xs:space-y-3.5 text-xs xs:text-sm md:text-base text-white/70">
               <div>
-                <div className="text-white/90 font-semibold mb-0.5">Derry Gabriel</div>
-                <div className="text-white/60 text-[10px] xs:text-xs mb-1">Overall Coordinator</div>
+                <div className="text-white/90 font-semibold mb-1">Derry Gabriel</div>
+                <div className="text-white/60 text-[10px] xs:text-xs mb-1.5">Overall Coordinator</div>
                 <a href="tel:+919884470171" className="hover:text-white transition-colors">+91 98844 70171</a>
               </div>
               <div>
-                <div className="text-white/90 font-semibold mb-0.5">Kishore Kumar S</div>
-                <div className="text-white/60 text-[10px] xs:text-xs mb-1">Event Committee Coordinator</div>
+                <div className="text-white/90 font-semibold mb-1">Kishore Kumar S</div>
+                <div className="text-white/60 text-[10px] xs:text-xs mb-1.5">Event Committee Coordinator</div>
                 <a href="tel:+918825910614" className="hover:text-white transition-colors">+91 88259 10614</a>
               </div>
               <div>
-                <div className="text-white/90 font-semibold mb-0.5">Muthu Kumaran</div>
-                <div className="text-white/60 text-[10px] xs:text-xs mb-1">Joint Overall Coordinator</div>
+                <div className="text-white/90 font-semibold mb-1">Muthu Kumaran</div>
+                <div className="text-white/60 text-[10px] xs:text-xs mb-1.5">Joint Overall Coordinator</div>
                 <a href="tel:+919094141232" className="hover:text-white transition-colors">+91 90941 41232</a>
               </div>
             </div>

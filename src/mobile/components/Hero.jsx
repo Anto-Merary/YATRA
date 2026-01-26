@@ -569,8 +569,9 @@ function Hero() {
         const isPal = /(^|\/|\\)pal\./i.test(src)
         const isSyn = /(^|\/|\\)syn\./i.test(src)
         // Make `pal` and `syn` larger without completely blowing up the layout.
-        // pal: increased by 3% (was 2.85, now 2.85 * 1.03 = 2.9355)
-        const baseScale = isPal ? 2.9355 : isSyn ? 1.75 : 1.35
+        // pal: increased significantly to ensure visibility in production (was 2.85, now 3.15)
+        // syn: increased to match visual consistency (was 1.75, now 1.95)
+        const baseScale = isPal ? 3.15 : isSyn ? 1.95 : 1.35
 
         gsap.set(el, {
           // Center using GSAP-managed percent transforms so CSS centering isn't lost
@@ -594,13 +595,14 @@ function Hero() {
           const src = String(el.currentSrc || el.src || '')
           const isPal = /(^|\/|\\)pal\./i.test(src)
           const isSyn = /(^|\/|\\)syn\./i.test(src)
-          // pal: increased by 3% (was 1.35, now 1.35 * 1.03 = 1.3905)
+          // pal: increased significantly for production visibility (was 1.35, now 1.55)
+          // syn: increased for consistency (was 1.4, now 1.5)
           gsap.set(el, {
             xPercent: -50,
             yPercent: -50,
             x: base.x,
             y: base.y,
-            scale: isPal ? 1.3905 : isSyn ? 1.4 : 1,
+            scale: isPal ? 1.55 : isSyn ? 1.5 : 1,
             opacity: 1,
             rotate: 0,
           })
@@ -619,8 +621,9 @@ function Hero() {
         const src = String(el.currentSrc || el.src || '')
         const isPal = /(^|\/|\\)pal\./i.test(src)
         const isSyn = /(^|\/|\\)syn\./i.test(src)
-        // pal: increased by 3% (was 1.65, now 1.65 * 1.03 = 1.6995)
-        const finalScale = isPal ? 1.6995 : isSyn ? 1.35 : 1
+        // pal: increased significantly for production visibility (was 1.65, now 1.85)
+        // syn: increased for consistency (was 1.35, now 1.5)
+        const finalScale = isPal ? 1.85 : isSyn ? 1.5 : 1
 
         tl.to(
           el,
@@ -1324,14 +1327,29 @@ function Hero() {
         </div>
 
         <div className="mobile-footer-section">
-          <div className="mobile-footer-label">PHONE</div>
-          <div className="mobile-footer-phone-numbers">
-            <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+918825910614">
-              +91 88259 10614
-            </a>
-            <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+919884470171">
-              +91 98844 70171
-            </a>
+          <div className="mobile-footer-label">CONTACT</div>
+          <div className="mobile-footer-phone-numbers" style={{ flexDirection: 'column', gap: '12px', alignItems: 'flex-start' }}>
+            <div>
+              <div className="mobile-footer-text" style={{ fontSize: '0.875rem', marginBottom: '4px', fontWeight: '500' }}>Derry Gabriel</div>
+              <div className="mobile-footer-text" style={{ fontSize: '0.75rem', marginBottom: '4px', opacity: 0.8 }}>Overall Coordinator</div>
+              <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+919884470171">
+                +91 98844 70171
+              </a>
+            </div>
+            <div>
+              <div className="mobile-footer-text" style={{ fontSize: '0.875rem', marginBottom: '4px', fontWeight: '500' }}>Kishore Kumar S</div>
+              <div className="mobile-footer-text" style={{ fontSize: '0.75rem', marginBottom: '4px', opacity: 0.8 }}>Event Committee Coordinator</div>
+              <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+918825910614">
+                +91 88259 10614
+              </a>
+            </div>
+            <div>
+              <div className="mobile-footer-text" style={{ fontSize: '0.875rem', marginBottom: '4px', fontWeight: '500' }}>Muthu Kumaran</div>
+              <div className="mobile-footer-text" style={{ fontSize: '0.75rem', marginBottom: '4px', opacity: 0.8 }}>Joint Overall Coordinator</div>
+              <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+919094141232">
+                +91 90941 41232
+              </a>
+            </div>
           </div>
         </div>
 
