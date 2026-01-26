@@ -516,12 +516,12 @@ function Hero() {
         const jy = (rand01(seed ^ 0x9e3779b9) - 0.5) * spreadY * 0.14
         // Small manual nudges for specific photos (requested):
         // - asal: move up a little
-        // - pal: move up 8% more than original (5% + 3% additional)
+        // - pal: move up 8% (from 5% → 8%)
         const isAsal = /(^|\/|\\)asal\./i.test(src)
         const isPal = /(^|\/|\\)pal\./i.test(src)
         // Stronger upward nudges so they sit higher along their rotated angle.
         const nudgeAsal = -Math.min(32, spreadY * 0.11)
-        const nudgePal = -Math.min(70, spreadY * 0.33) // pal moved up 8% more total (was 0.25, now 0.33)
+        const nudgePal = -Math.min(70, spreadY * 0.33) // pal moved up (was 0.25, now 0.33)
         const nudgeY = isPal ? nudgePal : isAsal ? nudgeAsal : 0
 
         return { x: p.x + jx, y: p.y + jy + nudgeY }
@@ -569,9 +569,9 @@ function Hero() {
         const isPal = /(^|\/|\\)pal\./i.test(src)
         const isSyn = /(^|\/|\\)syn\./i.test(src)
         // Make `pal` and `syn` larger without completely blowing up the layout.
-        // pal: increased significantly to ensure visibility in production (was 2.85, now 3.15)
-        // syn: increased to match visual consistency (was 1.75, now 1.95)
-        const baseScale = isPal ? 3.15 : isSyn ? 1.95 : 1.35
+        // pal: +5% (3.15 → 3.3075)
+        // syn: +5% (1.95 → 2.0475)
+        const baseScale = isPal ? 3.3075 : isSyn ? 2.0475 : 1.35
 
         gsap.set(el, {
           // Center using GSAP-managed percent transforms so CSS centering isn't lost
@@ -595,14 +595,14 @@ function Hero() {
           const src = String(el.currentSrc || el.src || '')
           const isPal = /(^|\/|\\)pal\./i.test(src)
           const isSyn = /(^|\/|\\)syn\./i.test(src)
-          // pal: increased significantly for production visibility (was 1.35, now 1.55)
-          // syn: increased for consistency (was 1.4, now 1.5)
+          // pal: +5% (1.55 → 1.6275)
+          // syn: +5% (1.5 → 1.575)
           gsap.set(el, {
             xPercent: -50,
             yPercent: -50,
             x: base.x,
             y: base.y,
-            scale: isPal ? 1.55 : isSyn ? 1.5 : 1,
+            scale: isPal ? 1.6275 : isSyn ? 1.575 : 1,
             opacity: 1,
             rotate: 0,
           })
@@ -621,9 +621,9 @@ function Hero() {
         const src = String(el.currentSrc || el.src || '')
         const isPal = /(^|\/|\\)pal\./i.test(src)
         const isSyn = /(^|\/|\\)syn\./i.test(src)
-        // pal: increased significantly for production visibility (was 1.65, now 1.85)
-        // syn: increased for consistency (was 1.35, now 1.5)
-        const finalScale = isPal ? 1.85 : isSyn ? 1.5 : 1
+        // pal: +5% (1.85 → 1.9425)
+        // syn: +5% (1.5 → 1.575)
+        const finalScale = isPal ? 1.9425 : isSyn ? 1.575 : 1
 
         tl.to(
           el,
