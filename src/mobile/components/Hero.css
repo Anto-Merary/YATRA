@@ -508,6 +508,17 @@
     opacity 520ms ease;
 }
 
+/* Hidden preload video (loads MP4 during gate without rendering heavy UI) */
+.hero-preload-video {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  left: -9999px;
+  top: -9999px;
+}
+
 .hero-video {
   width: 100%;
   height: 100%;
@@ -515,6 +526,24 @@
   border-radius: 4px;
   will-change: filter, border-radius, transform, box-shadow;
   transition: filter 900ms ease;
+}
+
+/* Keep the poster visible until the video is actually playing (masks early low-FPS on weak phones) */
+.hero-video-cover {
+  position: absolute;
+  inset: 0;
+  border-radius: 4px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 1;
+  transition: opacity 520ms ease;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hero-video-cover.is-hidden {
+  opacity: 0;
 }
 
 .hero-video-poster {
@@ -2293,12 +2322,12 @@
   opacity: 1;
 }
 
-/* Mask appears with its image */
-.features-section.is-visible .features-event-media--left .features-event-image-mask {
+/* Mask appears with its image (top card first) */
+.features-section.is-visible .features-event-media--right .features-event-image-mask {
   transition-delay: 0ms;
 }
 
-.features-section.is-visible .features-event-media--right .features-event-image-mask {
+.features-section.is-visible .features-event-media--left .features-event-image-mask {
   transition-delay: 600ms;
 }
 
@@ -2489,13 +2518,13 @@
   transform: translate3d(0, 0, 0) scale(1);
 }
 
-/* First image (left) appears immediately */
-.features-section.is-visible .features-event-media--left .features-event-image {
+/* First image (top card: `.features-event-media--right`) appears immediately */
+.features-section.is-visible .features-event-media--right .features-event-image {
   transition-delay: 0ms;
 }
 
-/* Second image (right) appears after the first one */
-.features-section.is-visible .features-event-media--right .features-event-image {
+/* Second image (bottom card: `.features-event-media--left`) appears after the first one */
+.features-section.is-visible .features-event-media--left .features-event-image {
   transition-delay: 600ms;
 }
 
@@ -2512,12 +2541,12 @@
   transform: translate(-50%, -50%) translateY(0) scale(1) rotate(0deg);
 }
 
-/* Badge appears after its image settles */
-.features-section.is-visible .features-event-media--left .features-event-badge {
+/* Badge appears after its image settles (top card first) */
+.features-section.is-visible .features-event-media--right .features-event-badge {
   transition-delay: 900ms;
 }
 
-.features-section.is-visible .features-event-media--right .features-event-badge {
+.features-section.is-visible .features-event-media--left .features-event-badge {
   transition-delay: 1500ms; /* After second image appears */
 }
 
@@ -2534,12 +2563,12 @@
   transform: translateY(0);
 }
 
-/* Description appears after its badge */
-.features-section.is-visible .features-event-media--left .features-event-description {
+/* Description appears after its badge (top card first) */
+.features-section.is-visible .features-event-media--right .features-event-description {
   transition-delay: 1100ms;
 }
 
-.features-section.is-visible .features-event-media--right .features-event-description {
+.features-section.is-visible .features-event-media--left .features-event-description {
   transition-delay: 1700ms; /* After second badge appears */
 }
 
@@ -2560,12 +2589,12 @@
     filter 520ms ease;
 }
 
-/* Buttons appear after their descriptions */
-.features-section.is-visible .features-event-media--left .features-show-more-btn {
+/* Buttons appear after their descriptions (top card first) */
+.features-section.is-visible .features-event-media--right .features-show-more-btn {
   transition-delay: 1400ms; /* After description appears */
 }
 
-.features-section.is-visible .features-event-media--right .features-show-more-btn {
+.features-section.is-visible .features-event-media--left .features-show-more-btn {
   transition-delay: 2000ms; /* After second description appears */
 }
 
@@ -3175,6 +3204,16 @@
   z-index: 3;
 }
 
+.lineup-subtitle {
+  margin: 0.25rem 0 0.75rem;
+  font-family: 'Poppins', var(--hero-font-family);
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+}
+
 /* LINEUP flip card (tap to reveal) */
 .lineup-carousel-wrap {
   width: 100%;
@@ -3235,19 +3274,24 @@
   top: 52%;
   transform: translateY(-50%);
   z-index: 6;
-  width: 38px;
-  height: 56px;
+  width: 32px;
+  height: 48px;
   border-radius: 16px;
-  border: 1px solid rgba(255, 241, 157, 0.18);
-  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 241, 157, 0.2);
+  background:
+    radial-gradient(circle at 50% 30%, rgba(255, 241, 157, 0.25), transparent 60%),
+    rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(10px);
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255, 255, 255, 0.7);
   display: grid;
   place-items: center;
-  font-size: 2rem;
+  font-size: 1.6rem;
   line-height: 1;
   cursor: pointer;
   user-select: none;
+  box-shadow:
+    0 0 18px rgba(155, 23, 153, 0.6),
+    0 0 32px rgba(0, 0, 0, 0.8);
 }
 
 .lineup-carousel-arrow--left {

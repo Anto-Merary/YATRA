@@ -111,8 +111,10 @@ function Hero() {
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false)
   const [isVideoReady, setIsVideoReady] = useState(false)
   const [videoError, setVideoError] = useState(false)
+  const [shouldShowVideoVisual, setShouldShowVideoVisual] = useState(false)
   const videoContainerRef = useRef(null)
   const videoRef = useRef(null)
+  const preloadVideoRef = useRef(null)
 
   // Network status detection
   const { shouldLoadVideo: networkShouldLoad, isSlowConnection } = useNetworkStatus()
@@ -300,11 +302,12 @@ function Hero() {
     link.type = 'video/mp4'
     document.head.appendChild(link)
 
-    // Kick off loading as soon as the video element mounts.
+    // Kick off loading as soon as the preload video element mounts.
     const t = window.setTimeout(() => {
-      if (videoRef.current) {
+      const el = preloadVideoRef.current
+      if (el) {
         try {
-          videoRef.current.load()
+          el.load()
         } catch {
           // ignore
         }
@@ -880,25 +883,55 @@ function Hero() {
   return (
     <>
     {!isExperienceReady && (
-      <div
-        className="hero-gate"
-        role="status"
-        aria-live="polite"
-        aria-label="Loading the YATRA experience"
-        style={{ backgroundImage: `url(${heroBgPoster})` }}
-      >
-        <div className="hero-gate-scrim" aria-hidden="true" />
-        <div className="hero-gate-inner">
-          <div className="hero-gate-title">YATRA&apos;26</div>
-          <div className="hero-gate-subtitle">Preparing the experience…</div>
-          <div className="hero-gate-spinner" aria-hidden="true" />
+      <>
+        <div
+          className="hero-gate"
+          role="status"
+          aria-live="polite"
+          aria-label="Loading the YATRA experience"
+          style={{ backgroundImage: `url(${heroBgPoster})` }}
+        >
+          <div className="hero-gate-scrim" aria-hidden="true" />
+          <div className="hero-gate-inner">
+            <div className="hero-gate-title">YATRA&apos;26</div>
+            <div className="hero-gate-subtitle">Preparing the experience…</div>
+            <div className="hero-gate-spinner" aria-hidden="true" />
+          </div>
         </div>
-      </div>
+
+        {/* Preload the MP4 while the gate is visible (keeps the heavy hero UI unmounted). */}
+        {shouldLoadVideo && (
+          <video
+            ref={preloadVideoRef}
+            className="hero-preload-video"
+            muted
+            playsInline
+            preload="auto"
+            onLoadedData={() => {
+              if (!isVideoReady) setIsVideoReady(true)
+            }}
+            onCanPlay={() => {
+              if (!isVideoReady) setIsVideoReady(true)
+            }}
+            onCanPlayThrough={() => {
+              if (!isVideoReady) setIsVideoReady(true)
+            }}
+            onError={() => {
+              setVideoError(true)
+              setIsVideoReady(true)
+            }}
+          >
+            <source src={videoSrc} type="video/mp4" />
+          </video>
+        )}
+      </>
     )}
-    <section
-      className={`hero ${hasLoaded ? 'is-loaded' : ''}`}
-      ref={heroRef}
-    >
+
+    {isExperienceReady && (
+      <section
+        className={`hero ${hasLoaded ? 'is-loaded' : ''}`}
+        ref={heroRef}
+      >
       {/* Full-bleed background (blurred) so the stage can keep a fixed aspect ratio */}
       <div className="hero-bleed-bg-wrapper">
         <img
@@ -959,39 +992,66 @@ function Hero() {
         {/* Video Container - Center Focus */}
         <div className="hero-video-container" ref={videoContainerRef}>
           {shouldLoadVideo ? (
-            <video
-              ref={videoRef}
-              className="hero-video"
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="auto"
-              poster={heroBgPoster}
-              onLoadedData={() => {
-                if (!isVideoReady) setIsVideoReady(true)
-                // Try to start playback immediately (muted autoplay usually works on mobile).
-                if (videoRef.current) {
-                  videoRef.current.play().catch(() => {
-                    // Ignore autoplay errors (browser policies)
-                  })
-                }
-              }}
-              onCanPlay={() => {
-                if (!isVideoReady) setIsVideoReady(true)
-                if (videoRef.current) {
-                  videoRef.current.play().catch(() => {
-                    // Ignore autoplay errors
-                  })
-                }
-              }}
-              onError={() => {
-                setVideoError(true)
-                setIsVideoReady(true)
-              }}
-            >
-              <source src={videoSrc} type="video/mp4" />
-            </video>
+            <>
+              <video
+                ref={videoRef}
+                className="hero-video"
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="auto"
+                poster={heroBgPoster}
+                onLoadedData={() => {
+                  if (!isVideoReady) setIsVideoReady(true)
+                  // Try to start playback immediately (muted autoplay usually works on mobile).
+                  if (videoRef.current) {
+                    videoRef.current.play().catch(() => {
+                      // Ignore autoplay errors (browser policies)
+                    })
+                  }
+                }}
+                onCanPlay={() => {
+                  if (!isVideoReady) setIsVideoReady(true)
+                  if (videoRef.current) {
+                    videoRef.current.play().catch(() => {
+                      // Ignore autoplay errors
+                    })
+                  }
+                }}
+                onPlaying={() => {
+                  // Hide the poster overlay only once playback has actually started.
+                  // This masks the "first few seconds low-FPS" look on weaker phones.
+                  const el = videoRef.current
+                  if (!el) return
+                  const t0 = performance.now()
+                  const poll = () => {
+                    if (!videoRef.current) return
+                    const elapsed = performance.now() - t0
+                    if (videoRef.current.currentTime >= 0.25 || elapsed > 1500) {
+                      setShouldShowVideoVisual(true)
+                      return
+                    }
+                    window.requestAnimationFrame(poll)
+                  }
+                  poll()
+                }}
+                onError={() => {
+                  setVideoError(true)
+                  setIsVideoReady(true)
+                }}
+              >
+                <source src={videoSrc} type="video/mp4" />
+              </video>
+
+              <div
+                className={`hero-video-cover ${shouldShowVideoVisual ? 'is-hidden' : ''}`}
+                aria-hidden="true"
+                style={{
+                  backgroundImage: `url(${heroBgPoster})`,
+                }}
+              />
+            </>
           ) : (
             <div
               className="hero-video-poster"
@@ -1075,6 +1135,7 @@ function Hero() {
         </div>
       </div>
     </section>
+    )}
 
     {/* Black Background Section - After Divider */}
     <section className="hero-black-section" aria-label="About section" ref={aboutRef}>
@@ -1135,6 +1196,9 @@ function Hero() {
     <section className="lineup-section" aria-label="Lineup section">
       <div className="lineup-container">
         <h2 className="lineup-title">LINEUP</h2>
+        <p className="lineup-subtitle">
+          Experience the biggest names live
+        </p>
 
         <div className="lineup-carousel-wrap" aria-label="Lineup cards">
           <button
