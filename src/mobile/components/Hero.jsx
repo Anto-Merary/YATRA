@@ -116,6 +116,8 @@ function Hero() {
   const videoRef = useRef(null)
   const preloadVideoRef = useRef(null)
 
+  const isExperienceReady = isVideoReady || videoError
+
   // Network status detection
   const { shouldLoadVideo: networkShouldLoad, isSlowConnection } = useNetworkStatus()
 
@@ -875,8 +877,6 @@ function Hero() {
       button.classList.add('shimmer-active')
     })
   }, [shimmerTrigger])
-
-  const isExperienceReady = isVideoReady || videoError
 
   // Once the gate is gone and the full layout mounts, refresh ScrollTrigger so start/end
   // positions are computed against the final DOM (prevents “already revealed” animations).
