@@ -1047,9 +1047,6 @@ function Hero() {
               <div
                 className={`hero-video-cover ${shouldShowVideoVisual ? 'is-hidden' : ''}`}
                 aria-hidden="true"
-                style={{
-                  backgroundImage: `url(${heroBgPoster})`,
-                }}
               />
             </>
           ) : (
