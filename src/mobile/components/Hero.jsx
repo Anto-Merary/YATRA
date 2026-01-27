@@ -1282,6 +1282,30 @@ function Hero() {
           />
         </h2>
         <div 
+          className="features-event-media features-event-media--right"
+          onClick={openLineupModal}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              openLineupModal();
+            }
+          }}
+          aria-label="Show Electrifying Performances Lineup"
+        >
+          <div className="features-event-badge">
+            ELECTRIFYING PERFORMANCES
+          </div>
+          <div className="features-event-image-wrapper">
+            <img src={performanceImage} alt="Electrifying Performance" className="features-event-image" />
+            <div className="features-event-image-mask"></div>
+            <p className="features-event-description">
+              3 Big Names. 2 Days. Electrifying Pro Shows. DJ Night
+            </p>
+          </div>
+        </div>
+        <div 
           className="features-event-media features-event-media--left"
           onClick={goToEvents}
           role="button"
@@ -1306,33 +1330,6 @@ function Hero() {
           </div>
           <span className="features-show-more-btn">
             EXPLORE EVENTS
-          </span>
-        </div>
-        <div 
-          className="features-event-media features-event-media--right"
-          onClick={openLineupModal}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              openLineupModal();
-            }
-          }}
-          aria-label="Show Electrifying Performances Lineup"
-        >
-          <div className="features-event-badge">
-            ELECTRIFYING PERFORMANCES
-          </div>
-          <div className="features-event-image-wrapper">
-            <img src={performanceImage} alt="Electrifying Performance" className="features-event-image" />
-            <div className="features-event-image-mask"></div>
-            <p className="features-event-description">
-              3 Big Names. 2 Days. Electrifying Pro Shows. DJ Night
-            </p>
-          </div>
-          <span className="features-show-more-btn">
-            SHOW LINEUP
           </span>
         </div>
       </div>
