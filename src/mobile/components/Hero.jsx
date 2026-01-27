@@ -1389,9 +1389,6 @@ function Hero() {
           <div className="features-event-image-wrapper">
             <img src={performanceImage} alt="Electrifying Performance" className="features-event-image" />
             <div className="features-event-image-mask"></div>
-            <p className="features-event-description">
-              3 Big Names. 2 Days. Electrifying Pro Shows. DJ Night
-            </p>
           </div>
         </div>
         <div 
