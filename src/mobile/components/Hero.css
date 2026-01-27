@@ -3172,6 +3172,7 @@
 
 .lineup-section-divider .hero-divider-track {
   animation-duration: 22s; /* slightly faster for 'LINEUP' */
+  animation-direction: reverse; /* Move left to right */
 }
 
 .lineup-section {
