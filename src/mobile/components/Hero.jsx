@@ -181,12 +181,16 @@ function Hero() {
 
   // Track which lineup card is centered in the carousel (character-select style).
   useEffect(() => {
+    if (!isExperienceReady) return
+    
     const el = lineupCarouselRef.current
     if (!el) return
 
     let raf = 0
+    let ticking = false
+    
     const update = () => {
-      raf = 0
+      ticking = false
       const children = Array.from(el.querySelectorAll('.lineup-card-slot'))
       if (children.length === 0) return
 
@@ -205,27 +209,46 @@ function Hero() {
         }
       })
 
-      setActiveLineupIndex(bestIdx)
+      setActiveLineupIndex((prev) => {
+        if (prev !== bestIdx) return bestIdx
+        return prev
+      })
     }
 
     const onScroll = () => {
-      if (raf) return
-      raf = window.requestAnimationFrame(update)
+      if (!ticking) {
+        ticking = true
+        raf = window.requestAnimationFrame(update)
+      }
     }
 
-    const onResize = () => update()
+    const onResize = () => {
+      if (!ticking) {
+        ticking = true
+        raf = window.requestAnimationFrame(update)
+      }
+    }
 
-    el.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onResize)
-    // initial
-    update()
+    // Wait a bit to ensure DOM is ready, then set up listeners
+    let intervalId = null
+    const initTimer = window.setTimeout(() => {
+      el.addEventListener('scroll', onScroll, { passive: true })
+      el.addEventListener('touchmove', onScroll, { passive: true })
+      window.addEventListener('resize', onResize)
+      // Initial update + periodic check
+      update()
+      intervalId = window.setInterval(update, 200)
+    }, 100)
 
     return () => {
+      window.clearTimeout(initTimer)
+      if (intervalId) window.clearInterval(intervalId)
       el.removeEventListener('scroll', onScroll)
+      el.removeEventListener('touchmove', onScroll)
       window.removeEventListener('resize', onResize)
       if (raf) window.cancelAnimationFrame(raf)
     }
-  }, [])
+  }, [isExperienceReady])
 
   const openLineupModal = useCallback(() => {
     setLineupModalState('open')
@@ -1451,16 +1474,7 @@ function Hero() {
         </h2>
         <div 
           className="features-event-media features-event-media--right"
-          onClick={openLineupModal}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              openLineupModal();
-            }
-          }}
-          aria-label="Show Electrifying Performances Lineup"
+          aria-label="Electrifying Performances"
         >
           <div className="features-event-badge">
             ELECTRIFYING PERFORMANCES
@@ -1468,6 +1482,11 @@ function Hero() {
           <div className="features-event-image-wrapper">
             <img src={performanceImage} alt="Electrifying Performance" className="features-event-image" />
             <div className="features-event-image-mask"></div>
+            <p className="features-event-description">
+              5 Big Names. 2 Days. Electrifying Pro Shows.
+              <br />
+              DJ Night. Unforgettable Experience.
+            </p>
           </div>
         </div>
         <div 
