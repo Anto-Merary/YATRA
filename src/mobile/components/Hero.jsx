@@ -1288,7 +1288,7 @@ function Hero() {
                           />
                         </svg>
                       </div>
-                      <div className="lineup-locked-text">WILL BE REVEALED</div>
+                      <div className="lineup-locked-text">REVEAL DROPPING SOON</div>
                     </div>
                   </div>
                 </div>
