@@ -357,27 +357,34 @@ function Hero() {
     attemptReveal()
   }, [])
 
-  // About section: reveal when it enters view (and remember it's been seen).
+  // About section: reveal when it enters view (ScrollTrigger = reliable with Lenis + dynamic layout).
   useEffect(() => {
+    if (!isExperienceReady) return
     const sectionEl = aboutRef.current
     if (!sectionEl) return
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0]
-        if (!entry?.isIntersecting) return
+    gsap.registerPlugin(ScrollTrigger)
+
+    const st = ScrollTrigger.create({
+      id: 'about-reveal',
+      trigger: sectionEl,
+      start: 'top 72%',
+      once: true,
+      onEnter: () => {
         hasAboutEnteredRef.current = true
         runAboutReveal()
-        observer.disconnect()
       },
-      { threshold: 0.28, rootMargin: '0px 0px -10% 0px' }
-    )
+    })
 
-    observer.observe(sectionEl)
+    // In case we're already past the trigger point when the page mounts (e.g., restore scroll),
+    // force an update so `onEnter` can fire appropriately.
+    st.refresh()
+    st.update()
+
     return () => {
-      observer.disconnect()
+      st.kill()
     }
-  }, [runAboutReveal])
+  }, [isExperienceReady, runAboutReveal])
 
   const scrollToPasses = useCallback(() => {
     const el = passesRef.current
@@ -393,6 +400,7 @@ function Hero() {
 
   // Features section: trigger glitch animation when section enters view
   useEffect(() => {
+    if (!isExperienceReady) return
     const sectionEl = featuresSectionRef.current
     if (!sectionEl) return
 
@@ -419,10 +427,11 @@ function Hero() {
     return () => {
       observer.disconnect()
     }
-  }, [])
+  }, [isExperienceReady])
 
   // BLAST INTO PAST section: trigger blur crossfade when section enters view
   useEffect(() => {
+    if (!isExperienceReady) return
     const sectionEl = blastSectionRef.current
     if (!sectionEl) return
 
@@ -445,11 +454,12 @@ function Hero() {
     return () => {
       observer.disconnect()
     }
-  }, [])
+  }, [isExperienceReady])
 
   // BLAST collage: start loading images *before* the section is visible so the last
   // photos don't pop in late when users scroll slowly.
   useEffect(() => {
+    if (!isExperienceReady) return
     const sectionEl = blastSectionRef.current
     if (!sectionEl) return
 
@@ -468,7 +478,7 @@ function Hero() {
 
     observer.observe(sectionEl)
     return () => observer.disconnect()
-  }, [blastShouldEagerLoad])
+  }, [isExperienceReady, blastShouldEagerLoad])
 
   useEffect(() => {
     if (!blastShouldEagerLoad) return
@@ -482,6 +492,7 @@ function Hero() {
 
   // BLAST collage: no sticky/pin — simple cinematic entrance.
   useEffect(() => {
+    if (!isExperienceReady) return
     const sectionEl = blastSectionRef.current
     const collageEl = blastCollageRef.current
     if (!sectionEl || !collageEl) return
@@ -698,7 +709,7 @@ function Hero() {
       if (st) st.kill()
       if (tl) tl.kill()
     }
-  }, [blastImages.length])
+  }, [isExperienceReady, blastImages.length])
 
 
   // Scroll-based settle interaction - continuous and proportional to scroll distance,
@@ -866,6 +877,21 @@ function Hero() {
   }, [shimmerTrigger])
 
   const isExperienceReady = isVideoReady || videoError
+
+  // Once the gate is gone and the full layout mounts, refresh ScrollTrigger so start/end
+  // positions are computed against the final DOM (prevents “already revealed” animations).
+  useEffect(() => {
+    if (!isExperienceReady) return
+    gsap.registerPlugin(ScrollTrigger)
+    const t = window.setTimeout(() => {
+      try {
+        ScrollTrigger.refresh()
+      } catch {
+        // ignore
+      }
+    }, 0)
+    return () => window.clearTimeout(t)
+  }, [isExperienceReady])
 
   // While the gate is shown, prevent scrolling so the user doesn't land on a half-revealed section.
   useEffect(() => {
@@ -1134,6 +1160,8 @@ function Hero() {
     </section>
     )}
 
+    {isExperienceReady && (
+      <>
     {/* Black Background Section - After Divider */}
     <section className="hero-black-section" aria-label="About section" ref={aboutRef}>
       <div className="about-sticky">
@@ -1689,6 +1717,8 @@ function Hero() {
           </div>
         </div>
       </div>
+    )}
+      </>
     )}
     </>
   )
