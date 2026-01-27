@@ -138,11 +138,9 @@ function Hero() {
 
   const lineupCards = useMemo(
     () => [
+      { id: 'gv', status: 'revealed' },
       { id: 'locked-0', status: 'locked' },
       { id: 'locked-1', status: 'locked' },
-      { id: 'gv', status: 'revealed' },
-      { id: 'locked-2', status: 'locked' },
-      { id: 'locked-3', status: 'locked' },
     ],
     []
   )
@@ -1179,9 +1177,29 @@ function Hero() {
                   <div className="lineup-locked-card" aria-hidden="true">
                     <img className="lineup-flip-card-img lineup-locked-img" src={gvBackCard} alt="" decoding="async" loading="lazy" />
                     <div className="lineup-locked-overlay">
-                      <div className="lineup-locked-title">LOCKED</div>
-                      <div className="lineup-locked-subtitle">WILL BE REVEALED IN DUE TIME</div>
-                      <div className="lineup-locked-tagline">STAY CONNECTED • STAY READY</div>
+                      <div className="lineup-locked-icon" aria-hidden="true">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+                          <path
+                            d="M7.5 10V7.9a4.5 4.5 0 0 1 9 0V10"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            strokeLinecap="round"
+                          />
+                          <path
+                            d="M7.2 10h9.6c.9 0 1.6.7 1.6 1.6v7.2c0 .9-.7 1.6-1.6 1.6H7.2c-.9 0-1.6-.7-1.6-1.6v-7.2c0-.9.7-1.6 1.6-1.6Z"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M12 14.2v2.6"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </div>
+                      <div className="lineup-locked-text">WILL BE REVEALED</div>
                     </div>
                   </div>
                 </div>
