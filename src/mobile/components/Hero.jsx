@@ -127,6 +127,26 @@ function Hero() {
     setIsGvCardFlipped((v) => !v)
   }, [])
 
+  // LINEUP carousel (character-select style)
+  const lineupCarouselRef = useRef(null)
+  const scrollLineup = useCallback((dir) => {
+    const el = lineupCarouselRef.current
+    if (!el) return
+    const amount = Math.round(el.clientWidth * 0.78)
+    el.scrollBy({ left: dir * amount, behavior: 'smooth' })
+  }, [])
+
+  const lineupCards = useMemo(
+    () => [
+      { id: 'locked-0', status: 'locked' },
+      { id: 'locked-1', status: 'locked' },
+      { id: 'gv', status: 'revealed' },
+      { id: 'locked-2', status: 'locked' },
+      { id: 'locked-3', status: 'locked' },
+    ],
+    []
+  )
+
   const openLineupModal = useCallback(() => {
     setLineupModalState('open')
   }, [])
@@ -1077,26 +1097,107 @@ function Hero() {
       </div>
     </section>
 
+    {/* LINEUP Divider */}
+    <div className="lineup-section-divider" aria-hidden="true">
+      <div className="hero-divider-scroll">
+        <div className="hero-divider-track">
+          <div className="hero-divider-content">
+            <span className="hero-divider-text">LINEUP</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">LINEUP</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">LINEUP</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">LINEUP</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">LINEUP</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">LINEUP</span>
+            <span className="hero-divider-star">✦</span>
+          </div>
+          <div className="hero-divider-content" aria-hidden="true">
+            <span className="hero-divider-text">LINEUP</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">LINEUP</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">LINEUP</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">LINEUP</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">LINEUP</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">LINEUP</span>
+            <span className="hero-divider-star">✦</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     {/* LINEUP Section */}
     <section className="lineup-section" aria-label="Lineup section">
       <div className="lineup-container">
         <h2 className="lineup-title">LINEUP</h2>
 
-        <button
-          type="button"
-          className={`lineup-flip-card ${isGvCardFlipped ? 'is-flipped' : ''}`}
-          onClick={toggleGvCard}
-          aria-label={isGvCardFlipped ? 'Hide lineup card' : 'Reveal lineup card'}
-        >
-          <span className="lineup-flip-card-inner" aria-hidden="true">
-            <span className="lineup-flip-card-face lineup-flip-card-face--back">
-              <img className="lineup-flip-card-img" src={gvBackCard} alt="GV lineup card (back)" decoding="async" loading="lazy" />
-            </span>
-            <span className="lineup-flip-card-face lineup-flip-card-face--front">
-              <img className="lineup-flip-card-img" src={gvFrontCard} alt="GV lineup card (front)" decoding="async" loading="lazy" />
-            </span>
-          </span>
-        </button>
+        <div className="lineup-carousel-wrap" aria-label="Lineup cards">
+          <button
+            type="button"
+            className="lineup-carousel-arrow lineup-carousel-arrow--left"
+            onClick={() => scrollLineup(-1)}
+            aria-label="Scroll lineup left"
+          >
+            ‹
+          </button>
+
+          <div className="lineup-carousel" ref={lineupCarouselRef}>
+            {lineupCards.map((card) => {
+              const isRevealed = card.status === 'revealed'
+              if (isRevealed) {
+                return (
+                  <div key={card.id} className="lineup-card-slot lineup-card-slot--revealed">
+                    <button
+                      type="button"
+                      className={`lineup-flip-card ${isGvCardFlipped ? 'is-flipped' : ''}`}
+                      onClick={toggleGvCard}
+                      aria-label={isGvCardFlipped ? 'Hide GV lineup card' : 'Tap to reveal GV lineup card'}
+                    >
+                      <span className="lineup-flip-card-inner" aria-hidden="true">
+                        <span className="lineup-flip-card-face lineup-flip-card-face--back">
+                          <img className="lineup-flip-card-img" src={gvBackCard} alt="GV lineup card (back)" decoding="async" loading="lazy" />
+                          {!isGvCardFlipped && <span className="lineup-tap-to-reveal">TAP TO REVEAL</span>}
+                        </span>
+                        <span className="lineup-flip-card-face lineup-flip-card-face--front">
+                          <img className="lineup-flip-card-img" src={gvFrontCard} alt="GV lineup card (front)" decoding="async" loading="lazy" />
+                        </span>
+                      </span>
+                    </button>
+                  </div>
+                )
+              }
+
+              return (
+                <div key={card.id} className="lineup-card-slot lineup-card-slot--locked" aria-label="Locked lineup card">
+                  <div className="lineup-locked-card" aria-hidden="true">
+                    <img className="lineup-flip-card-img lineup-locked-img" src={gvBackCard} alt="" decoding="async" loading="lazy" />
+                    <div className="lineup-locked-overlay">
+                      <div className="lineup-locked-title">LOCKED</div>
+                      <div className="lineup-locked-subtitle">WILL BE REVEALED IN DUE TIME</div>
+                      <div className="lineup-locked-tagline">STAY CONNECTED • STAY READY</div>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          <button
+            type="button"
+            className="lineup-carousel-arrow lineup-carousel-arrow--right"
+            onClick={() => scrollLineup(1)}
+            aria-label="Scroll lineup right"
+          >
+            ›
+          </button>
+        </div>
       </div>
     </section>
 
