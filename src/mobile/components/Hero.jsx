@@ -10,6 +10,8 @@ import yearText from '../assets/optimized/2026txt-w1536.webp'
 import videoSrc from '../assets/video.mp4'
 import eventImage from '../assets/optimized/event-w1024.webp'
 import performanceImage from '../assets/optimized/performance-w1280.webp'
+import gvBackCard from '../assets/gvbackcard.jpeg'
+import gvFrontCard from '../assets/gvfrontcard.jpeg'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useNetworkStatus } from '../hooks/useNetworkStatus'
@@ -118,6 +120,12 @@ function Hero() {
   // Lineup teaser modal (catchy reveal-soon popup)
   const [lineupModalState, setLineupModalState] = useState('closed') // 'closed' | 'open' | 'closing'
   const isLineupModalOpen = lineupModalState !== 'closed'
+
+  // LINEUP flip card (tap to reveal)
+  const [isGvCardFlipped, setIsGvCardFlipped] = useState(false)
+  const toggleGvCard = useCallback(() => {
+    setIsGvCardFlipped((v) => !v)
+  }, [])
 
   const openLineupModal = useCallback(() => {
     setLineupModalState('open')
@@ -1066,6 +1074,29 @@ function Hero() {
             </p>
           </div>
         </div>
+      </div>
+    </section>
+
+    {/* LINEUP Section */}
+    <section className="lineup-section" aria-label="Lineup section">
+      <div className="lineup-container">
+        <h2 className="lineup-title">LINEUP</h2>
+
+        <button
+          type="button"
+          className={`lineup-flip-card ${isGvCardFlipped ? 'is-flipped' : ''}`}
+          onClick={toggleGvCard}
+          aria-label={isGvCardFlipped ? 'Hide lineup card' : 'Reveal lineup card'}
+        >
+          <span className="lineup-flip-card-inner" aria-hidden="true">
+            <span className="lineup-flip-card-face lineup-flip-card-face--back">
+              <img className="lineup-flip-card-img" src={gvBackCard} alt="GV lineup card (back)" decoding="async" loading="lazy" />
+            </span>
+            <span className="lineup-flip-card-face lineup-flip-card-face--front">
+              <img className="lineup-flip-card-img" src={gvFrontCard} alt="GV lineup card (front)" decoding="async" loading="lazy" />
+            </span>
+          </span>
+        </button>
       </div>
     </section>
 
