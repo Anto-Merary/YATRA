@@ -15,7 +15,6 @@ import gvFrontCard from '../assets/gvfrontcard.webp'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useNetworkStatus } from '../hooks/useNetworkStatus'
-import yatraEventsCard from '../../assets/yatraevents.webp'
 
 function GlitchText({ koreanText, englishText, className, delay = 0, shouldStart = false, variant = 'glitch' }) {
   const [isGlitching, setIsGlitching] = useState(false)
@@ -1356,7 +1355,7 @@ function Hero() {
                     <div className="lineup-locked-card" aria-hidden="true">
                       <img
                         className="lineup-flip-card-img"
-                        src={yatraEventsCard}
+                        src={gvBackCard}
                         alt=""
                         decoding="async"
                         loading="lazy"
