@@ -1265,6 +1265,26 @@
   animation-direction: reverse;
 }
 
+/* PASSES divider (between BLAST and GET PASSES) */
+.passes-section-divider {
+  width: 100%;
+  background-image: url('../assets/pink.jpeg');
+  background-image: -webkit-image-set(url('../assets/optimized/pink-w768.webp') 1x);
+  background-image: image-set(
+    url('../assets/optimized/pink-w768.webp') type('image/webp') 1x,
+    url('../assets/pink.jpeg') type('image/jpeg') 1x
+  );
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0;
+  line-height: 1;
+  filter: saturate(0.9);
+}
+
 .features-section {
   width: 100%;
   min-height: 100svh;
@@ -3255,14 +3275,30 @@
 
 .lineup-card-slot {
   flex: 0 0 78%;
-  scroll-snap-align: start;
+  scroll-snap-align: center;
   display: grid;
   place-items: center;
+  transform: scale(0.86);
+  opacity: 0.55;
+  filter: grayscale(0.25) brightness(0.85);
+  transition:
+    transform 320ms cubic-bezier(0.2, 0.85, 0.22, 1),
+    opacity 260ms ease,
+    filter 320ms ease;
+  will-change: transform, opacity, filter;
+  position: relative;
+  z-index: 1;
+}
+
+.lineup-card-slot.is-active {
+  transform: scale(1);
+  opacity: 1;
+  filter: none;
+  z-index: 5;
 }
 
 .lineup-card-slot--locked {
-  opacity: 0.9;
-  transform: scale(0.95);
+  /* locked cards already styled via base + is-active scaling */
 }
 
 .lineup-carousel-arrow {
@@ -3411,6 +3447,39 @@
   padding: 1.25rem;
   z-index: 2;
   color: rgba(255, 255, 255, 0.92);
+}
+
+.lineup-countdown-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 0.5rem;
+  text-align: center;
+  padding: 1.25rem;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.countdown-timer {
+  font-size: clamp(1.55rem, 7vw, 2.15rem);
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.92);
+  font-family: 'Space Grotesk', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  letter-spacing: 0.06em;
+  text-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.65),
+    0 0 18px rgba(155, 23, 153, 0.25);
+}
+
+.countdown-label {
+  font-family: 'Poppins', var(--hero-font-family);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
 }
 
 .lineup-locked-icon {

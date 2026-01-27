@@ -15,6 +15,7 @@ import gvFrontCard from '../assets/gvfrontcard.webp'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useNetworkStatus } from '../hooks/useNetworkStatus'
+import yatraEventsCard from '../../assets/yatraevents.webp'
 
 function GlitchText({ koreanText, englishText, className, delay = 0, shouldStart = false, variant = 'glitch' }) {
   const [isGlitching, setIsGlitching] = useState(false)
@@ -133,6 +134,8 @@ function Hero() {
 
   // LINEUP carousel (character-select style)
   const lineupCarouselRef = useRef(null)
+  const [activeLineupIndex, setActiveLineupIndex] = useState(0)
+
   const scrollLineup = useCallback((dir) => {
     const el = lineupCarouselRef.current
     if (!el) return
@@ -143,11 +146,87 @@ function Hero() {
   const lineupCards = useMemo(
     () => [
       { id: 'gv', status: 'revealed' },
+      { id: 'countdown-48hr', status: 'countdown' },
       { id: 'locked-0', status: 'locked' },
       { id: 'locked-1', status: 'locked' },
     ],
     []
   )
+
+  // 48-hour countdown card (same vibe as desktop): counts down from first mount.
+  const countdownStartRef = useRef(0)
+  const [countdownNow, setCountdownNow] = useState(() => Date.now())
+
+  useEffect(() => {
+    if (!isExperienceReady) return
+    if (!countdownStartRef.current) countdownStartRef.current = Date.now()
+    const t = window.setInterval(() => setCountdownNow(Date.now()), 1000)
+    return () => window.clearInterval(t)
+  }, [isExperienceReady])
+
+  const countdownText48hr = useMemo(() => {
+    const start = countdownStartRef.current || Date.now()
+    const target = start + 48 * 60 * 60 * 1000
+    const distance = Math.max(0, target - countdownNow)
+    const totalHours = Math.floor(distance / (1000 * 60 * 60))
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000)
+    return (
+      String(totalHours).padStart(2, '0') +
+      ':' +
+      String(minutes).padStart(2, '0') +
+      ':' +
+      String(seconds).padStart(2, '0')
+    )
+  }, [countdownNow])
+
+  // Track which lineup card is centered in the carousel (character-select style).
+  useEffect(() => {
+    const el = lineupCarouselRef.current
+    if (!el) return
+
+    let raf = 0
+    const update = () => {
+      raf = 0
+      const children = Array.from(el.querySelectorAll('.lineup-card-slot'))
+      if (children.length === 0) return
+
+      const r = el.getBoundingClientRect()
+      const centerX = r.left + r.width / 2
+      let bestIdx = 0
+      let bestDist = Number.POSITIVE_INFINITY
+
+      children.forEach((child, idx) => {
+        const cr = child.getBoundingClientRect()
+        const cCenter = cr.left + cr.width / 2
+        const d = Math.abs(cCenter - centerX)
+        if (d < bestDist) {
+          bestDist = d
+          bestIdx = idx
+        }
+      })
+
+      setActiveLineupIndex(bestIdx)
+    }
+
+    const onScroll = () => {
+      if (raf) return
+      raf = window.requestAnimationFrame(update)
+    }
+
+    const onResize = () => update()
+
+    el.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onResize)
+    // initial
+    update()
+
+    return () => {
+      el.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onResize)
+      if (raf) window.cancelAnimationFrame(raf)
+    }
+  }, [])
 
   const openLineupModal = useCallback(() => {
     setLineupModalState('open')
@@ -1236,11 +1315,16 @@ function Hero() {
           </button>
 
           <div className="lineup-carousel" ref={lineupCarouselRef}>
-            {lineupCards.map((card) => {
+            {lineupCards.map((card, idx) => {
               const isRevealed = card.status === 'revealed'
+              const isActive = idx === activeLineupIndex
               if (isRevealed) {
                 return (
-                  <div key={card.id} className="lineup-card-slot lineup-card-slot--revealed">
+                  <div
+                    key={card.id}
+                    className={`lineup-card-slot lineup-card-slot--revealed ${isActive ? 'is-active' : ''}`}
+                    aria-current={isActive ? 'true' : undefined}
+                  >
                     <button
                       type="button"
                       className={`lineup-flip-card ${isGvCardFlipped ? 'is-flipped' : ''}`}
@@ -1261,8 +1345,40 @@ function Hero() {
                 )
               }
 
+              if (card.status === 'countdown') {
+                return (
+                  <div
+                    key={card.id}
+                    className={`lineup-card-slot lineup-card-slot--countdown ${isActive ? 'is-active' : ''}`}
+                    aria-current={isActive ? 'true' : undefined}
+                    aria-label="Lineup reveal countdown"
+                  >
+                    <div className="lineup-locked-card" aria-hidden="true">
+                      <img
+                        className="lineup-flip-card-img"
+                        src={yatraEventsCard}
+                        alt=""
+                        decoding="async"
+                        loading="lazy"
+                      />
+                      <div className="lineup-countdown-overlay">
+                        <div className="countdown-timer" aria-label="Countdown timer">
+                          {countdownText48hr}
+                        </div>
+                        <div className="countdown-label">Hours : Minutes : Seconds</div>
+                      </div>
+                    </div>
+                  </div>
+                )
+              }
+
               return (
-                <div key={card.id} className="lineup-card-slot lineup-card-slot--locked" aria-label="Locked lineup card">
+                <div
+                  key={card.id}
+                  className={`lineup-card-slot lineup-card-slot--locked ${isActive ? 'is-active' : ''}`}
+                  aria-label="Locked lineup card"
+                  aria-current={isActive ? 'true' : undefined}
+                >
                   <div className="lineup-locked-card" aria-hidden="true">
                     <img className="lineup-flip-card-img lineup-locked-img" src={gvBackCard} alt="" decoding="async" loading="lazy" />
                     <div className="lineup-locked-overlay">
@@ -1307,42 +1423,6 @@ function Hero() {
         </div>
       </div>
     </section>
-
-    {/* Features Divider */}
-    <div className="features-section-divider" aria-hidden="true">
-      <div className="hero-divider-scroll">
-        <div className="hero-divider-track">
-          <div className="hero-divider-content">
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
-            <span className="hero-divider-star">✦</span>
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
-            <span className="hero-divider-star">✦</span>
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
-            <span className="hero-divider-star">✦</span>
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
-            <span className="hero-divider-star">✦</span>
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
-            <span className="hero-divider-star">✦</span>
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
-            <span className="hero-divider-star">✦</span>
-          </div>
-          <div className="hero-divider-content" aria-hidden="true">
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
-            <span className="hero-divider-star">✦</span>
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
-            <span className="hero-divider-star">✦</span>
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
-            <span className="hero-divider-star">✦</span>
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
-            <span className="hero-divider-star">✦</span>
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
-            <span className="hero-divider-star">✦</span>
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
-            <span className="hero-divider-star">✦</span>
-          </div>
-        </div>
-      </div>
-    </div>
 
     {/* FEATURES OF YATRA section (content coming next) */}
     <section
@@ -1466,6 +1546,42 @@ function Hero() {
         </div>
       </div>
     </section>
+
+    {/* PASSES Divider (between BLAST and GET PASSES) */}
+    <div className="passes-section-divider" aria-hidden="true">
+      <div className="hero-divider-scroll">
+        <div className="hero-divider-track">
+          <div className="hero-divider-content">
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+          </div>
+          <div className="hero-divider-content" aria-hidden="true">
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
     {/* BUY PASSES section (from desktop registration) */}
     <section
