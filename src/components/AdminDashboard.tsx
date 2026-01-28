@@ -18,6 +18,23 @@ export interface Ticket {
   payment_status?: string;
 }
 
+export interface EventRegistrationRow {
+  id: string;
+  event_id: string;
+  event_display_name?: string | null;
+  event_variant?: string | null;
+  name: string;
+  email: string;
+  phone?: string | null;
+  college?: string | null;
+  amount_inr: number;
+  unit: string;
+  payment_status: string;
+  payment_confirmed_at?: string | null;
+  payment_reference?: string | null;
+  created_at: string;
+}
+
 // Filter options
 type TicketStatusFilter = 'not_sent' | 'sent' | 'all';
 
@@ -33,6 +50,8 @@ export function AdminDashboard({ adminEmail }: AdminDashboardProps) {
   // Data state
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [filteredTickets, setFilteredTickets] = useState<Ticket[]>([]);
+  const [eventRegs, setEventRegs] = useState<EventRegistrationRow[]>([]);
+  const [eventRegsLoading, setEventRegsLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -63,6 +82,9 @@ export function AdminDashboard({ adminEmail }: AdminDashboardProps) {
   const paidTickets = tickets.filter(t => t.payment_status === 'paid').length;
   const paidNotSentTickets = tickets.filter(t => t.payment_status === 'paid' && !t.ticket_email_sent).length;
   const unpaidTickets = tickets.filter(t => (t.payment_status ?? 'unpaid') !== 'paid').length;
+  const totalEventRegs = eventRegs.length;
+  const paidEventRegs = eventRegs.filter(r => r.payment_status === 'paid' || r.payment_status === 'free').length;
+  const unpaidEventRegs = eventRegs.filter(r => r.payment_status === 'unpaid').length;
 
   // Fetch tickets from Supabase
   // Add a small delay to ensure auth is fully established before fetching
@@ -70,6 +92,7 @@ export function AdminDashboard({ adminEmail }: AdminDashboardProps) {
     // Small delay to avoid race condition with admin verification
     const timer = setTimeout(() => {
       fetchTickets();
+      fetchEventRegistrations();
     }, 100);
     
     return () => clearTimeout(timer);
@@ -106,6 +129,25 @@ export function AdminDashboard({ adminEmail }: AdminDashboardProps) {
       setError(err instanceof Error ? err.message : 'Failed to fetch tickets');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchEventRegistrations = async () => {
+    try {
+      setEventRegsLoading(true);
+      const { data, error: fetchError } = await supabase
+        .from('event_registrations')
+        .select('id,event_id,event_display_name,event_variant,name,email,phone,college,amount_inr,unit,payment_status,payment_confirmed_at,payment_reference,created_at')
+        .order('created_at', { ascending: false });
+
+      if (fetchError) {
+        console.error('Supabase event_registrations fetch error:', fetchError);
+        return;
+      }
+
+      setEventRegs((data as any[]) || []);
+    } finally {
+      setEventRegsLoading(false);
     }
   };
 
@@ -393,6 +435,26 @@ export function AdminDashboard({ adminEmail }: AdminDashboardProps) {
         <div className="bg-gray-900 rounded-lg p-6 border border-gray-800">
           <h3 className="text-sm font-medium text-gray-400 mb-2">Unpaid</h3>
           <p className="text-3xl font-bold text-gray-300">{unpaidTickets}</p>
+        </div>
+      </div>
+
+      {/* Event Registrations Summary */}
+      <div className="bg-gray-900 rounded-lg p-4 border border-gray-800">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <h3 className="text-lg font-semibold text-white">Event Registrations</h3>
+            <p className="text-sm text-gray-400">
+              Total: {totalEventRegs} • Paid/Free: {paidEventRegs} • Unpaid: {unpaidEventRegs}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={fetchEventRegistrations}
+            disabled={eventRegsLoading || isSending || isImporting}
+            className="px-4 py-2 bg-gray-800 hover:bg-gray-700 disabled:bg-gray-800/60 disabled:text-gray-500 rounded text-white text-sm transition-colors"
+          >
+            {eventRegsLoading ? 'Refreshing…' : 'Refresh events'}
+          </button>
         </div>
       </div>
 
@@ -688,6 +750,85 @@ export function AdminDashboard({ adminEmail }: AdminDashboardProps) {
         {filteredTickets.length > 0 && (
           <div className="px-6 py-3 bg-gray-800 border-t border-gray-700 text-sm text-gray-400">
             Showing {filteredTickets.length} of {totalTickets} ticket{totalTickets !== 1 ? 's' : ''}
+          </div>
+        )}
+      </div>
+
+      {/* Event Registrations Table */}
+      <div className="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden">
+        <div className="px-6 py-3 bg-gray-800 border-b border-gray-700 text-sm text-gray-200">
+          Event Registrations
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-800">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  Event
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  Name
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  Email
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  Amount
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  Payment
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  Registered At
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-800">
+              {eventRegs.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-8 text-center text-gray-400">
+                    No event registrations yet.
+                  </td>
+                </tr>
+              ) : (
+                eventRegs.map((r) => (
+                  <tr key={r.id} className="hover:bg-gray-800/50 transition-colors">
+                    <td className="px-6 py-4 text-sm text-gray-200">
+                      <div className="font-medium text-white">{r.event_display_name || r.event_id}</div>
+                      <div className="text-xs text-gray-400">{r.event_id}{r.event_variant ? ` • ${r.event_variant}` : ''}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                      {r.name}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                      {r.email}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
+                      ₹{r.amount_inr} <span className="text-xs text-gray-400">({r.unit})</span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded ${
+                          r.payment_status === 'paid' || r.payment_status === 'free'
+                            ? 'bg-blue-900/30 text-blue-300'
+                            : 'bg-gray-800 text-gray-300'
+                        }`}
+                      >
+                        {r.payment_status === 'paid' ? 'Paid' : r.payment_status === 'free' ? 'Free' : 'Unpaid'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                      {formatDate(r.created_at)}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+        {eventRegs.length > 0 && (
+          <div className="px-6 py-3 bg-gray-800 border-t border-gray-700 text-sm text-gray-400">
+            Showing {eventRegs.length} event registration{eventRegs.length !== 1 ? 's' : ''}
           </div>
         )}
       </div>

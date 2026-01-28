@@ -196,18 +196,12 @@ export function ProDanceBattlePage() {
 
                 {/* CTAs */}
                 <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <a
-                    href="https://formbuilder.ccavenue.com/live/icici-bank/rajalakshmi-institue-of-technology-2/yatra-26-dance-battle"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full sm:w-auto"
+                  <Button
+                    onClick={() => window.location.assign("/events/dance-battle/register")}
+                    className="w-full sm:w-auto h-12 rounded-2xl px-6 text-sm sm:text-base font-semibold text-white bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-400 hover:to-purple-400 shadow-[0_18px_60px_rgba(236,72,153,0.25)]"
                   >
-                    <Button
-                      className="w-full sm:w-auto h-12 rounded-2xl px-6 text-sm sm:text-base font-semibold text-white bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-400 hover:to-purple-400 shadow-[0_18px_60px_rgba(236,72,153,0.25)]"
-                    >
-                      REGISTER NOW
-                    </Button>
-                  </a>
+                    REGISTER NOW
+                  </Button>
 
                   <Button
                     type="button"

@@ -18,7 +18,19 @@ interface RegistrationData {
 }
 
 // Native SMTP implementation using Deno's built-in TLS
-async function sendEmailViaSMTP(to: string, subject: string, html: string, text: string): Promise<void> {
+type SmtpSendResult = {
+  greeting: string;
+  ehlo: string;
+  authLogin: string;
+  authUser: string;
+  authPass: string;
+  mailFrom: string;
+  rcptTo: string;
+  data: string;
+  messageAccepted: string;
+};
+
+async function sendEmailViaSMTP(to: string, subject: string, html: string, text: string): Promise<SmtpSendResult> {
   if (!EMAIL_USER || !EMAIL_PASS) {
     throw new Error("EMAIL_USER or EMAIL_PASS not configured");
   }
@@ -34,11 +46,23 @@ async function sendEmailViaSMTP(to: string, subject: string, html: string, text:
 
   try {
     const buffer = new Uint8Array(4096);
+    const result: SmtpSendResult = {
+      greeting: "",
+      ehlo: "",
+      authLogin: "",
+      authUser: "",
+      authPass: "",
+      mailFrom: "",
+      rcptTo: "",
+      data: "",
+      messageAccepted: "",
+    };
     
     // Read server greeting
     let n = await conn.read(buffer);
     if (n === null) throw new Error("Connection closed");
     let response = decoder.decode(buffer.subarray(0, n));
+    result.greeting = response;
     if (!response.startsWith("220")) {
       throw new Error(`SMTP greeting failed: ${response}`);
     }
@@ -48,6 +72,7 @@ async function sendEmailViaSMTP(to: string, subject: string, html: string, text:
     n = await conn.read(buffer);
     if (n === null) throw new Error("Connection closed");
     response = decoder.decode(buffer.subarray(0, n));
+    result.ehlo = response;
     if (!response.startsWith("250")) {
       throw new Error(`EHLO failed: ${response}`);
     }
@@ -57,6 +82,7 @@ async function sendEmailViaSMTP(to: string, subject: string, html: string, text:
     n = await conn.read(buffer);
     if (n === null) throw new Error("Connection closed");
     response = decoder.decode(buffer.subarray(0, n));
+    result.authLogin = response;
     if (!response.startsWith("334")) {
       throw new Error(`AUTH LOGIN failed: ${response}`);
     }
@@ -67,6 +93,7 @@ async function sendEmailViaSMTP(to: string, subject: string, html: string, text:
     n = await conn.read(buffer);
     if (n === null) throw new Error("Connection closed");
     response = decoder.decode(buffer.subarray(0, n));
+    result.authUser = response;
     if (!response.startsWith("334")) {
       throw new Error(`Username auth failed: ${response}`);
     }
@@ -77,6 +104,7 @@ async function sendEmailViaSMTP(to: string, subject: string, html: string, text:
     n = await conn.read(buffer);
     if (n === null) throw new Error("Connection closed");
     response = decoder.decode(buffer.subarray(0, n));
+    result.authPass = response;
     if (!response.startsWith("235")) {
       throw new Error(`Authentication failed: ${response}`);
     }
@@ -86,6 +114,7 @@ async function sendEmailViaSMTP(to: string, subject: string, html: string, text:
     n = await conn.read(buffer);
     if (n === null) throw new Error("Connection closed");
     response = decoder.decode(buffer.subarray(0, n));
+    result.mailFrom = response;
     if (!response.startsWith("250")) {
       throw new Error(`MAIL FROM failed: ${response}`);
     }
@@ -95,6 +124,7 @@ async function sendEmailViaSMTP(to: string, subject: string, html: string, text:
     n = await conn.read(buffer);
     if (n === null) throw new Error("Connection closed");
     response = decoder.decode(buffer.subarray(0, n));
+    result.rcptTo = response;
     if (!response.startsWith("250")) {
       throw new Error(`RCPT TO failed: ${response}`);
     }
@@ -104,6 +134,7 @@ async function sendEmailViaSMTP(to: string, subject: string, html: string, text:
     n = await conn.read(buffer);
     if (n === null) throw new Error("Connection closed");
     response = decoder.decode(buffer.subarray(0, n));
+    result.data = response;
     if (!response.startsWith("354")) {
       throw new Error(`DATA command failed: ${response}`);
     }
@@ -138,6 +169,7 @@ async function sendEmailViaSMTP(to: string, subject: string, html: string, text:
     n = await conn.read(buffer);
     if (n === null) throw new Error("Connection closed");
     response = decoder.decode(buffer.subarray(0, n));
+    result.messageAccepted = response;
     if (!response.startsWith("250")) {
       throw new Error(`Message send failed: ${response}`);
     }
@@ -146,6 +178,8 @@ async function sendEmailViaSMTP(to: string, subject: string, html: string, text:
     await conn.write(encoder.encode("QUIT\r\n"));
     n = await conn.read(buffer);
     if (n === null) throw new Error("Connection closed");
+
+    return result;
   } finally {
     conn.close();
   }
@@ -163,9 +197,12 @@ Deno.serve(async (req: Request) => {
     });
   }
 
+  let registrationForLog: { id: string; email: string } | null = null;
+
   try {
     // Parse request body
     const registration: RegistrationData = await req.json();
+    registrationForLog = { id: registration.id, email: registration.email };
 
     // Validate required fields
     if (!registration.email || !registration.name) {
@@ -187,11 +224,12 @@ Deno.serve(async (req: Request) => {
       console.log("Registration details:", registration);
       return new Response(
         JSON.stringify({
-          message: "Email service not configured. Registration logged.",
-          registration,
+          error: "Email service not configured. Cannot send email.",
+          configured: false,
+          to: registration.email,
         }),
         {
-          status: 200,
+          status: 503,
           headers: {
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin": "*",
@@ -210,19 +248,21 @@ Deno.serve(async (req: Request) => {
     let ticketId = '';
     let qrDataUrl = '';
     let ticketGenerated = false;
+    let ticketUuid: string | null = null;
 
     try {
       // Check if ticket already exists for this registration
       const { data: existingTicket } = await supabase
         .from('tickets')
-        .select('six_digit_code, qr_payload')
+        .select('id, six_digit_code, qr_payload')
         .eq('registration_id', registration.id)
         .maybeSingle();
 
       if (existingTicket) {
         // Ticket already exists, use existing code
         ticketCode = existingTicket.six_digit_code;
-        ticketId = registration.id; // Use registration ID as reference
+        ticketUuid = existingTicket.id;
+        ticketId = existingTicket.id;
         
         // Regenerate QR code URL
         qrDataUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(existingTicket.qr_payload)}`;
@@ -282,20 +322,7 @@ Deno.serve(async (req: Request) => {
           throw new Error(`Ticket creation failed: ${insertError.message}`);
         }
 
-        // Update registration to mark ticket as generated
-        const { error: updateError } = await supabase
-          .from('registrations')
-          .update({
-            ticket_generated: true,
-            ticket_email_sent: true,
-            ticket_sent_at: new Date().toISOString()
-          })
-          .eq('id', registration.id);
-
-        if (updateError) {
-          console.error('Failed to update registration:', updateError);
-          // Don't fail the email send, but log it
-        }
+        ticketUuid = ticketId;
 
         ticketGenerated = true;
         console.log(`Generated ticket ${ticketCode} for registration ${registration.id}`);
@@ -446,7 +473,7 @@ This is an automated confirmation email. Please do not reply.
     // Send email using native Deno TLS
     console.log(`Attempting to send email from: ${FROM_EMAIL} to: ${registration.email}`);
 
-    await sendEmailViaSMTP(
+    const smtpResult = await sendEmailViaSMTP(
       registration.email,
       "YATRA 2026 - Registration Confirmation",
       emailHtml,
@@ -455,11 +482,39 @@ This is an automated confirmation email. Please do not reply.
 
     console.log("Email sent successfully to:", registration.email);
 
+    // Persist verifiable email state (service role bypasses RLS)
+    try {
+      await supabase.from('ticket_email_events').insert({
+        registration_id: registration.id,
+        ticket_id: ticketUuid,
+        to_email: registration.email,
+        status: 'sent',
+        error_text: null,
+      });
+    } catch (e) {
+      console.error('Failed to insert ticket_email_events (sent):', e);
+    }
+
+    try {
+      const { error: updateError } = await supabase
+        .from('registrations')
+        .update({
+          ticket_generated: ticketGenerated,
+          ticket_email_sent: true,
+          ticket_sent_at: new Date().toISOString(),
+        })
+        .eq('id', registration.id);
+      if (updateError) console.error('Failed to update registration email flags:', updateError);
+    } catch (e) {
+      console.error('Failed to update registrations email flags:', e);
+    }
+
     return new Response(
       JSON.stringify({
         message: "Confirmation email sent successfully",
         to: registration.email,
         ticket_generated: ticketGenerated,
+        smtp: smtpResult,
         debug_error: debugError
       }),
       {
@@ -472,6 +527,26 @@ This is an automated confirmation email. Please do not reply.
     );
   } catch (error) {
     console.error("Error sending email:", error);
+
+    // Best-effort: log failed send attempt
+    try {
+      const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+      const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      if (registrationForLog?.id && registrationForLog?.email) {
+        await supabase.from('ticket_email_events').insert({
+          registration_id: registrationForLog.id,
+          ticket_id: null,
+          to_email: registrationForLog.email,
+          status: 'failed',
+          error_text: error instanceof Error ? error.message : String(error),
+        });
+      }
+    } catch (e) {
+      console.error('Failed to log ticket_email_events (failed):', e);
+    }
+
     return new Response(
       JSON.stringify({
         error: "Failed to send confirmation email",

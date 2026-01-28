@@ -1,0 +1,8 @@
+{
+  "functions": {
+    "ccavenue_callback": {
+      "verify_jwt": false
+    }
+  }
+}
+

@@ -1,0 +1,8 @@
+{
+  "functions": {
+    "ccavenue_create_order": {
+      "verify_jwt": false
+    }
+  }
+}
+

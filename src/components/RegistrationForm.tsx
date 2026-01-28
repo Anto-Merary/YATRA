@@ -310,13 +310,26 @@ export function RegistrationForm({
             const result = await response.json();
             if (response.ok) {
               console.log('✅ Email sent successfully:', result);
+              toast({
+                title: "Email Sent",
+                description: `Confirmation email sent to ${result.to || insertedData[0].email}.`,
+              });
             } else {
               console.error('❌ Email sending failed:', result);
+              toast({
+                title: "Email Failed",
+                description: result?.error || "Confirmation email could not be sent. Please contact the organizers.",
+                variant: "destructive",
+              });
             }
           })
           .catch((err) => {
             console.error('❌ Failed to call email function:', err);
-            // Don't show error to user - email sending is not critical
+            toast({
+              title: "Email Failed",
+              description: "Could not reach email service. Please contact the organizers.",
+              variant: "destructive",
+            });
           });
         }
       }

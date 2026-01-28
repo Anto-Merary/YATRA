@@ -2,6 +2,7 @@ import { useMemo, useRef, useLayoutEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { EVENTS, type FestEvent } from "../data/events";
 import { Button } from "../components/ui/button";
+import { EVENT_FEES, formatFee } from "../data/eventFees";
 import eventInfoBg1 from "../assets/eventinfo.webp?url";
 import eventInfoBg2 from "../assets/eventinfo2.webp?url";
 
@@ -115,6 +116,7 @@ export function EventDetailPage() {
   }
 
   const rules = event.rules?.length ? event.rules : DEFAULT_RULES;
+  const fee = EVENT_FEES[event.id];
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-black" style={{ minHeight: '100vh', position: 'relative', zIndex: 1 }}>
@@ -221,18 +223,17 @@ export function EventDetailPage() {
                 ref={formRef}
                 className="mt-4"
               >
-                <a
-                  href="https://formbuilder.ccavenue.com/live/icici-bank/rajalakshmi-institue-of-technology-2/yatra-2026-reg-fees-link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block w-full"
-                >
+                <div className="inline-block w-full">
+                  <div className="mb-2 text-xs text-white/70">
+                    {fee ? formatFee(fee) : "Fee: TBA"}
+                  </div>
                   <Button
+                    onClick={() => navigate(`/events/${event.id}/register`)}
                     className={`w-full h-10 rounded-xl text-sm font-semibold text-white ${accents.cta}`}
                   >
-                    Register Now
+                    Register & Pay
                   </Button>
-                </a>
+                </div>
               </div>
             </div>
 

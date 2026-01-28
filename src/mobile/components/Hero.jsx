@@ -1219,9 +1219,7 @@ function Hero() {
               <li>• DJ Night</li>
             </ul>
             <a
-              href="https://formbuilder.ccavenue.com/live/icici-bank/rajalakshmi-institue-of-technology-2/yatra-2026-reg-fees-link"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/yatra-entry"
               className="mobile-pass-cta mobile-pass-cta--accent"
             >
               REGISTER NOW
@@ -1235,7 +1233,7 @@ function Hero() {
               <h3 className="mobile-pass-card-title mobile-pass-card-title--accent">
                 YATRA PASS
               </h3>
-              <p className="mobile-pass-price">₹850</p>
+              <p className="mobile-pass-price">₹800</p>
               <p className="mobile-pass-description">+ Event Registration Charges</p>
               <p className="mobile-pass-subprice">(Other Institutions)</p>
             </div>
@@ -1246,9 +1244,7 @@ function Hero() {
               <li>• DJ Night</li>
             </ul>
             <a
-              href="https://formbuilder.ccavenue.com/live/icici-bank/rajalakshmi-institue-of-technology-2/yatra-2026-reg-fees-link"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/yatra-entry"
               className="mobile-pass-cta mobile-pass-cta--accent"
             >
               REGISTER NOW

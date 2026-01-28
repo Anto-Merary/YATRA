@@ -8,6 +8,9 @@ import { ProEventsPage } from "./pages/ProEventsPage";
 import { YatraEventsPage } from "./pages/YatraEventsPage";
 import { EventDetailPage } from "./pages/EventDetailPage";
 import { ProDanceBattlePage } from "./pages/ProDanceBattlePage";
+import { YatraEntryPage } from "./pages/YatraEntryPage";
+import { EventRegistrationPage } from "./pages/EventRegistrationPage";
+import { PaymentResultPage } from "./pages/PaymentResultPage";
 import { AdminPage } from "./pages/AdminPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { PrivacyPolicyPage } from "./pages/PrivacyPolicyPage";
@@ -36,13 +39,18 @@ export default function App() {
 
     // We only have one OAuth flow in this app (admin login), so route all
     // Supabase auth callbacks into /admin where we finalize the session.
-    if ((hasCode || hasError) && location.pathname !== "/admin") {
+    if ((hasCode || hasError) && !location.pathname.startsWith("/admin")) {
       navigate(`/admin${location.search}${location.hash}`, { replace: true });
     }
   }, [location.hash, location.pathname, location.search, navigate]);
 
   // Check if this is the first load in this session
   const [isInitialLoad, setIsInitialLoad] = useState(() => {
+    // Never block /admin behind the heavy initial loader.
+    if (window.location.pathname.startsWith("/admin")) {
+      return false;
+    }
+
     // Don't block auth callbacks behind the heavy initial loader.
     const params = new URLSearchParams(window.location.search);
     if (params.has("code") || params.has("error") || params.has("error_description")) {
@@ -193,12 +201,15 @@ export default function App() {
         <Route path="/yatraevents" element={<YatraEventsPage />} />
         <Route path="/pro-dance-battle" element={<ProDanceBattlePage />} />
         <Route path="/events/:eventId" element={<EventDetailPage />} />
+        <Route path="/events/:eventId/register" element={<EventRegistrationPage />} />
+        <Route path="/yatra-entry" element={<YatraEntryPage />} />
+        <Route path="/payment/:result" element={<PaymentResultPage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
         <Route path="/terms-conditions" element={<TermsConditionsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
       {/* Admin route - separate from SiteLayout, no navigation links */}
-      <Route path="/admin" element={<AdminPage />} />
+      <Route path="/admin/*" element={<AdminPage />} />
     </Routes>
   );
 }

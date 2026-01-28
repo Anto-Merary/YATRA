@@ -157,8 +157,9 @@ export function AdminPage() {
     if (hasHashCallback || hasQueryCallback) {
       // Clean up the URL after a short delay to allow Supabase to process it
       const timer = setTimeout(() => {
-        // Only clean up if we're still on /admin
-        if (window.location.pathname === '/admin') {
+        // Only clean up if we're still on /admin (or /admin/...).
+        // Normalize any trailing slash/extra segments back to "/admin".
+        if (window.location.pathname.startsWith('/admin')) {
           window.history.replaceState(null, '', '/admin');
         }
       }, 1000);
