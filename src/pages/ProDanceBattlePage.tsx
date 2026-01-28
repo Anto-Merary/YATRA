@@ -5,7 +5,7 @@ import { Modal } from "../components/Modal";
 import { Button } from "../components/ui/button";
 import { useMobile } from "../hooks/use-mobile";
 
-import posterImage from "../assets/dance.webp?url";
+import posterImage from "../assets/YATRA EVENT POSTERS/dance Battle insta post UPDATED (1).webp?url";
 import rulesImage from "../assets/dance-rules.webp?url";
 
 const EVENT_NAME = "DANCE BATTLE";
@@ -35,7 +35,7 @@ export function ProDanceBattlePage() {
         details: [
           { label: "Prize Pool", value: "₹10,000" },
           { label: "Entry Fee", value: "₹800 per team" },
-          { label: "Date", value: "12/02/2026" },
+          { label: "Date", value: "14 Feb" },
         ],
         accent: "from-yellow-500/25 to-orange-500/10",
       },
@@ -44,7 +44,7 @@ export function ProDanceBattlePage() {
         details: [
           { label: "Prize Pool", value: "₹3,000" },
           { label: "Entry Fee", value: "₹250" },
-          { label: "Date", value: "12/02/2026" },
+          { label: "Date", value: "14 Feb" },
         ],
         accent: "from-red-500/25 to-pink-500/10",
       },
