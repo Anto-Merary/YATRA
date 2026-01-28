@@ -10,6 +10,8 @@ import yearText from '../assets/optimized/2026txt-w1536.webp'
 import videoSrc from '../assets/video.mp4'
 import eventImage from '../assets/optimized/event-w1024.webp'
 import performanceImage from '../assets/optimized/performance-w1280.webp'
+import gvBackCard from '../assets/gvbackcard.webp'
+import gvFrontCard from '../assets/gvfrontcard.webp'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useNetworkStatus } from '../hooks/useNetworkStatus'
@@ -109,8 +111,12 @@ function Hero() {
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false)
   const [isVideoReady, setIsVideoReady] = useState(false)
   const [videoError, setVideoError] = useState(false)
+  const [shouldShowVideoVisual, setShouldShowVideoVisual] = useState(false)
   const videoContainerRef = useRef(null)
   const videoRef = useRef(null)
+  const preloadVideoRef = useRef(null)
+
+  const isExperienceReady = isVideoReady || videoError
 
   // Network status detection
   const { shouldLoadVideo: networkShouldLoad, isSlowConnection } = useNetworkStatus()
@@ -118,6 +124,131 @@ function Hero() {
   // Lineup teaser modal (catchy reveal-soon popup)
   const [lineupModalState, setLineupModalState] = useState('closed') // 'closed' | 'open' | 'closing'
   const isLineupModalOpen = lineupModalState !== 'closed'
+
+  // LINEUP flip card (tap to reveal)
+  const [isGvCardFlipped, setIsGvCardFlipped] = useState(false)
+  const toggleGvCard = useCallback(() => {
+    setIsGvCardFlipped((v) => !v)
+  }, [])
+
+  // LINEUP carousel (character-select style)
+  const lineupCarouselRef = useRef(null)
+  const [activeLineupIndex, setActiveLineupIndex] = useState(0)
+
+  const scrollLineup = useCallback((dir) => {
+    const el = lineupCarouselRef.current
+    if (!el) return
+    const amount = Math.round(el.clientWidth * 0.78)
+    el.scrollBy({ left: dir * amount, behavior: 'smooth' })
+  }, [])
+
+  const lineupCards = useMemo(
+    () => [
+      { id: 'gv', status: 'revealed' },
+      { id: 'countdown-48hr', status: 'countdown' },
+      { id: 'locked-0', status: 'locked' },
+      { id: 'locked-1', status: 'locked' },
+    ],
+    []
+  )
+
+  // 48-hour countdown card (same vibe as desktop): counts down from first mount.
+  const countdownStartRef = useRef(0)
+  const [countdownNow, setCountdownNow] = useState(() => Date.now())
+
+  useEffect(() => {
+    if (!isExperienceReady) return
+    if (!countdownStartRef.current) countdownStartRef.current = Date.now()
+    const t = window.setInterval(() => setCountdownNow(Date.now()), 1000)
+    return () => window.clearInterval(t)
+  }, [isExperienceReady])
+
+  const countdownText48hr = useMemo(() => {
+    const start = countdownStartRef.current || Date.now()
+    const target = start + 48 * 60 * 60 * 1000
+    const distance = Math.max(0, target - countdownNow)
+    const totalHours = Math.floor(distance / (1000 * 60 * 60))
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000)
+    return (
+      String(totalHours).padStart(2, '0') +
+      ':' +
+      String(minutes).padStart(2, '0') +
+      ':' +
+      String(seconds).padStart(2, '0')
+    )
+  }, [countdownNow])
+
+  // Track which lineup card is centered in the carousel (character-select style).
+  useEffect(() => {
+    if (!isExperienceReady) return
+    
+    const el = lineupCarouselRef.current
+    if (!el) return
+
+    let raf = 0
+    let ticking = false
+    
+    const update = () => {
+      ticking = false
+      const children = Array.from(el.querySelectorAll('.lineup-card-slot'))
+      if (children.length === 0) return
+
+      const r = el.getBoundingClientRect()
+      const centerX = r.left + r.width / 2
+      let bestIdx = 0
+      let bestDist = Number.POSITIVE_INFINITY
+
+      children.forEach((child, idx) => {
+        const cr = child.getBoundingClientRect()
+        const cCenter = cr.left + cr.width / 2
+        const d = Math.abs(cCenter - centerX)
+        if (d < bestDist) {
+          bestDist = d
+          bestIdx = idx
+        }
+      })
+
+      setActiveLineupIndex((prev) => {
+        if (prev !== bestIdx) return bestIdx
+        return prev
+      })
+    }
+
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true
+        raf = window.requestAnimationFrame(update)
+      }
+    }
+
+    const onResize = () => {
+      if (!ticking) {
+        ticking = true
+        raf = window.requestAnimationFrame(update)
+      }
+    }
+
+    // Wait a bit to ensure DOM is ready, then set up listeners
+    let intervalId = null
+    const initTimer = window.setTimeout(() => {
+      el.addEventListener('scroll', onScroll, { passive: true })
+      el.addEventListener('touchmove', onScroll, { passive: true })
+      window.addEventListener('resize', onResize)
+      // Initial update + periodic check
+      update()
+      intervalId = window.setInterval(update, 200)
+    }, 100)
+
+    return () => {
+      window.clearTimeout(initTimer)
+      if (intervalId) window.clearInterval(intervalId)
+      el.removeEventListener('scroll', onScroll)
+      el.removeEventListener('touchmove', onScroll)
+      window.removeEventListener('resize', onResize)
+      if (raf) window.cancelAnimationFrame(raf)
+    }
+  }, [isExperienceReady])
 
   const openLineupModal = useCallback(() => {
     setLineupModalState('open')
@@ -170,21 +301,25 @@ function Hero() {
       import: 'default',
     })
 
-    // Get unique images by base filename to avoid any duplicates
+    /**
+     * Keep the *same* visual order you had before (dev matched prod sometimes by accident),
+     * but make it production-stable:
+     * - Previously we sorted by the generated URL string, which changes in prod due to hashing.
+     * - Now we sort by the original module key (path), which is stable in both dev and prod.
+     */
+    const orderedKeys = Object.keys(modules).sort((a, b) => a.localeCompare(b))
+
+    // Get unique images by base filename to avoid any duplicates (preserve orderedKeys order)
     const uniqueImages = new Map()
-    Object.keys(modules).forEach((key) => {
+    orderedKeys.forEach((key) => {
       const baseName = key.split('/').pop()?.replace(/\.(webp|WEBP)$/i, '').toLowerCase()
       if (baseName && !uniqueImages.has(baseName)) {
         uniqueImages.set(baseName, modules[key])
       }
     })
 
-    // Convert map values to array, sort for consistent order, and take up to 6 unique images
-    const srcs = Array.from(uniqueImages.values())
-      .sort((a, b) => String(a).localeCompare(String(b)))
-
     // Never reuse a photo. If fewer than 6 exist, we render fewer than 6.
-    return srcs.slice(0, 6)
+    return Array.from(uniqueImages.values()).slice(0, 6)
   }, [])
 
   // Lantern (lamp) glow hotspots placed over the background art.
@@ -270,11 +405,12 @@ function Hero() {
     link.type = 'video/mp4'
     document.head.appendChild(link)
 
-    // Kick off loading as soon as the video element mounts.
+    // Kick off loading as soon as the preload video element mounts.
     const t = window.setTimeout(() => {
-      if (videoRef.current) {
+      const el = preloadVideoRef.current
+      if (el) {
         try {
-          videoRef.current.load()
+          el.load()
         } catch {
           // ignore
         }
@@ -324,27 +460,34 @@ function Hero() {
     attemptReveal()
   }, [])
 
-  // About section: reveal when it enters view (and remember it's been seen).
+  // About section: reveal when it enters view (ScrollTrigger = reliable with Lenis + dynamic layout).
   useEffect(() => {
+    if (!isExperienceReady) return
     const sectionEl = aboutRef.current
     if (!sectionEl) return
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0]
-        if (!entry?.isIntersecting) return
+    gsap.registerPlugin(ScrollTrigger)
+
+    const st = ScrollTrigger.create({
+      id: 'about-reveal',
+      trigger: sectionEl,
+      start: 'top 72%',
+      once: true,
+      onEnter: () => {
         hasAboutEnteredRef.current = true
         runAboutReveal()
-        observer.disconnect()
       },
-      { threshold: 0.28, rootMargin: '0px 0px -10% 0px' }
-    )
+    })
 
-    observer.observe(sectionEl)
+    // In case we're already past the trigger point when the page mounts (e.g., restore scroll),
+    // force an update so `onEnter` can fire appropriately.
+    st.refresh()
+    st.update()
+
     return () => {
-      observer.disconnect()
+      st.kill()
     }
-  }, [runAboutReveal])
+  }, [isExperienceReady, runAboutReveal])
 
   const scrollToPasses = useCallback(() => {
     const el = passesRef.current
@@ -360,6 +503,7 @@ function Hero() {
 
   // Features section: trigger glitch animation when section enters view
   useEffect(() => {
+    if (!isExperienceReady) return
     const sectionEl = featuresSectionRef.current
     if (!sectionEl) return
 
@@ -386,10 +530,11 @@ function Hero() {
     return () => {
       observer.disconnect()
     }
-  }, [])
+  }, [isExperienceReady])
 
   // BLAST INTO PAST section: trigger blur crossfade when section enters view
   useEffect(() => {
+    if (!isExperienceReady) return
     const sectionEl = blastSectionRef.current
     if (!sectionEl) return
 
@@ -412,11 +557,12 @@ function Hero() {
     return () => {
       observer.disconnect()
     }
-  }, [])
+  }, [isExperienceReady])
 
   // BLAST collage: start loading images *before* the section is visible so the last
   // photos don't pop in late when users scroll slowly.
   useEffect(() => {
+    if (!isExperienceReady) return
     const sectionEl = blastSectionRef.current
     if (!sectionEl) return
 
@@ -435,7 +581,7 @@ function Hero() {
 
     observer.observe(sectionEl)
     return () => observer.disconnect()
-  }, [blastShouldEagerLoad])
+  }, [isExperienceReady, blastShouldEagerLoad])
 
   useEffect(() => {
     if (!blastShouldEagerLoad) return
@@ -449,6 +595,7 @@ function Hero() {
 
   // BLAST collage: no sticky/pin — simple cinematic entrance.
   useEffect(() => {
+    if (!isExperienceReady) return
     const sectionEl = blastSectionRef.current
     const collageEl = blastCollageRef.current
     if (!sectionEl || !collageEl) return
@@ -516,12 +663,12 @@ function Hero() {
         const jy = (rand01(seed ^ 0x9e3779b9) - 0.5) * spreadY * 0.14
         // Small manual nudges for specific photos (requested):
         // - asal: move up a little
-        // - pal: move up more (increased upward movement)
+        // - pal: move up 8% (from 5% → 8%)
         const isAsal = /(^|\/|\\)asal\./i.test(src)
         const isPal = /(^|\/|\\)pal\./i.test(src)
         // Stronger upward nudges so they sit higher along their rotated angle.
         const nudgeAsal = -Math.min(32, spreadY * 0.11)
-        const nudgePal = -Math.min(70, spreadY * 0.25) // Increased upward nudge for pal
+        const nudgePal = -Math.min(70, spreadY * 0.33) // pal moved up (was 0.25, now 0.33)
         const nudgeY = isPal ? nudgePal : isAsal ? nudgeAsal : 0
 
         return { x: p.x + jx, y: p.y + jy + nudgeY }
@@ -569,7 +716,9 @@ function Hero() {
         const isPal = /(^|\/|\\)pal\./i.test(src)
         const isSyn = /(^|\/|\\)syn\./i.test(src)
         // Make `pal` and `syn` larger without completely blowing up the layout.
-        const baseScale = isPal ? 2.85 : isSyn ? 1.75 : 1.35
+        // pal: +5% (3.15 → 3.3075)
+        // syn: +5% (1.95 → 2.0475)
+        const baseScale = isPal ? 3.3075 : isSyn ? 2.0475 : 1.35
 
         gsap.set(el, {
           // Center using GSAP-managed percent transforms so CSS centering isn't lost
@@ -593,12 +742,14 @@ function Hero() {
           const src = String(el.currentSrc || el.src || '')
           const isPal = /(^|\/|\\)pal\./i.test(src)
           const isSyn = /(^|\/|\\)syn\./i.test(src)
+          // pal: +5% (1.55 → 1.6275)
+          // syn: +5% (1.5 → 1.575)
           gsap.set(el, {
             xPercent: -50,
             yPercent: -50,
             x: base.x,
             y: base.y,
-            scale: isPal ? 1.35 : isSyn ? 1.4 : 1,
+            scale: isPal ? 1.6275 : isSyn ? 1.575 : 1,
             opacity: 1,
             rotate: 0,
           })
@@ -617,7 +768,9 @@ function Hero() {
         const src = String(el.currentSrc || el.src || '')
         const isPal = /(^|\/|\\)pal\./i.test(src)
         const isSyn = /(^|\/|\\)syn\./i.test(src)
-        const finalScale = isPal ? 1.65 : isSyn ? 1.35 : 1
+        // pal: +5% (1.85 → 1.9425)
+        // syn: +5% (1.5 → 1.575)
+        const finalScale = isPal ? 1.9425 : isSyn ? 1.575 : 1
 
         tl.to(
           el,
@@ -659,7 +812,7 @@ function Hero() {
       if (st) st.kill()
       if (tl) tl.kill()
     }
-  }, [blastImages.length])
+  }, [isExperienceReady, blastImages.length])
 
 
   // Scroll-based settle interaction - continuous and proportional to scroll distance,
@@ -826,7 +979,20 @@ function Hero() {
     })
   }, [shimmerTrigger])
 
-  const isExperienceReady = isVideoReady || videoError
+  // Once the gate is gone and the full layout mounts, refresh ScrollTrigger so start/end
+  // positions are computed against the final DOM (prevents “already revealed” animations).
+  useEffect(() => {
+    if (!isExperienceReady) return
+    gsap.registerPlugin(ScrollTrigger)
+    const t = window.setTimeout(() => {
+      try {
+        ScrollTrigger.refresh()
+      } catch {
+        // ignore
+      }
+    }, 0)
+    return () => window.clearTimeout(t)
+  }, [isExperienceReady])
 
   // While the gate is shown, prevent scrolling so the user doesn't land on a half-revealed section.
   useEffect(() => {
@@ -844,25 +1010,55 @@ function Hero() {
   return (
     <>
     {!isExperienceReady && (
-      <div
-        className="hero-gate"
-        role="status"
-        aria-live="polite"
-        aria-label="Loading the YATRA experience"
-        style={{ backgroundImage: `url(${heroBgPoster})` }}
-      >
-        <div className="hero-gate-scrim" aria-hidden="true" />
-        <div className="hero-gate-inner">
-          <div className="hero-gate-title">YATRA&apos;26</div>
-          <div className="hero-gate-subtitle">Preparing the experience…</div>
-          <div className="hero-gate-spinner" aria-hidden="true" />
+      <>
+        <div
+          className="hero-gate"
+          role="status"
+          aria-live="polite"
+          aria-label="Loading the YATRA experience"
+          style={{ backgroundImage: `url(${heroBgPoster})` }}
+        >
+          <div className="hero-gate-scrim" aria-hidden="true" />
+          <div className="hero-gate-inner">
+            <div className="hero-gate-title">YATRA&apos;26</div>
+            <div className="hero-gate-subtitle">Preparing the experience…</div>
+            <div className="hero-gate-spinner" aria-hidden="true" />
+          </div>
         </div>
-      </div>
+
+        {/* Preload the MP4 while the gate is visible (keeps the heavy hero UI unmounted). */}
+        {shouldLoadVideo && (
+          <video
+            ref={preloadVideoRef}
+            className="hero-preload-video"
+            muted
+            playsInline
+            preload="auto"
+            onLoadedData={() => {
+              if (!isVideoReady) setIsVideoReady(true)
+            }}
+            onCanPlay={() => {
+              if (!isVideoReady) setIsVideoReady(true)
+            }}
+            onCanPlayThrough={() => {
+              if (!isVideoReady) setIsVideoReady(true)
+            }}
+            onError={() => {
+              setVideoError(true)
+              setIsVideoReady(true)
+            }}
+          >
+            <source src={videoSrc} type="video/mp4" />
+          </video>
+        )}
+      </>
     )}
-    <section
-      className={`hero ${hasLoaded ? 'is-loaded' : ''}`}
-      ref={heroRef}
-    >
+
+    {isExperienceReady && (
+      <section
+        className={`hero ${hasLoaded ? 'is-loaded' : ''}`}
+        ref={heroRef}
+      >
       {/* Full-bleed background (blurred) so the stage can keep a fixed aspect ratio */}
       <div className="hero-bleed-bg-wrapper">
         <img
@@ -923,39 +1119,63 @@ function Hero() {
         {/* Video Container - Center Focus */}
         <div className="hero-video-container" ref={videoContainerRef}>
           {shouldLoadVideo ? (
-            <video
-              ref={videoRef}
-              className="hero-video"
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="auto"
-              poster={heroBgPoster}
-              onLoadedData={() => {
-                if (!isVideoReady) setIsVideoReady(true)
-                // Try to start playback immediately (muted autoplay usually works on mobile).
-                if (videoRef.current) {
-                  videoRef.current.play().catch(() => {
-                    // Ignore autoplay errors (browser policies)
-                  })
-                }
-              }}
-              onCanPlay={() => {
-                if (!isVideoReady) setIsVideoReady(true)
-                if (videoRef.current) {
-                  videoRef.current.play().catch(() => {
-                    // Ignore autoplay errors
-                  })
-                }
-              }}
-              onError={() => {
-                setVideoError(true)
-                setIsVideoReady(true)
-              }}
-            >
-              <source src={videoSrc} type="video/mp4" />
-            </video>
+            <>
+              <video
+                ref={videoRef}
+                className="hero-video"
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="auto"
+                poster={heroBgPoster}
+                onLoadedData={() => {
+                  if (!isVideoReady) setIsVideoReady(true)
+                  // Try to start playback immediately (muted autoplay usually works on mobile).
+                  if (videoRef.current) {
+                    videoRef.current.play().catch(() => {
+                      // Ignore autoplay errors (browser policies)
+                    })
+                  }
+                }}
+                onCanPlay={() => {
+                  if (!isVideoReady) setIsVideoReady(true)
+                  if (videoRef.current) {
+                    videoRef.current.play().catch(() => {
+                      // Ignore autoplay errors
+                    })
+                  }
+                }}
+                onPlaying={() => {
+                  // Hide the poster overlay only once playback has actually started.
+                  // This masks the "first few seconds low-FPS" look on weaker phones.
+                  const el = videoRef.current
+                  if (!el) return
+                  const t0 = performance.now()
+                  const poll = () => {
+                    if (!videoRef.current) return
+                    const elapsed = performance.now() - t0
+                    if (videoRef.current.currentTime >= 0.25 || elapsed > 1500) {
+                      setShouldShowVideoVisual(true)
+                      return
+                    }
+                    window.requestAnimationFrame(poll)
+                  }
+                  poll()
+                }}
+                onError={() => {
+                  setVideoError(true)
+                  setIsVideoReady(true)
+                }}
+              >
+                <source src={videoSrc} type="video/mp4" />
+              </video>
+
+              <div
+                className={`hero-video-cover ${shouldShowVideoVisual ? 'is-hidden' : ''}`}
+                aria-hidden="true"
+              />
+            </>
           ) : (
             <div
               className="hero-video-poster"
@@ -1039,7 +1259,10 @@ function Hero() {
         </div>
       </div>
     </section>
+    )}
 
+    {isExperienceReady && (
+      <>
     {/* Black Background Section - After Divider */}
     <section className="hero-black-section" aria-label="About section" ref={aboutRef}>
       <div className="about-sticky">
@@ -1059,41 +1282,169 @@ function Hero() {
       </div>
     </section>
 
-    {/* Features Divider */}
-    <div className="features-section-divider" aria-hidden="true">
+    {/* LINEUP Divider */}
+    <div className="lineup-section-divider" aria-hidden="true">
       <div className="hero-divider-scroll">
         <div className="hero-divider-track">
           <div className="hero-divider-content">
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
+            <span className="hero-divider-text">LINEUP</span>
             <span className="hero-divider-star">✦</span>
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
+            <span className="hero-divider-text">LINEUP</span>
             <span className="hero-divider-star">✦</span>
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
+            <span className="hero-divider-text">LINEUP</span>
             <span className="hero-divider-star">✦</span>
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
+            <span className="hero-divider-text">LINEUP</span>
             <span className="hero-divider-star">✦</span>
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
+            <span className="hero-divider-text">LINEUP</span>
             <span className="hero-divider-star">✦</span>
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
+            <span className="hero-divider-text">LINEUP</span>
             <span className="hero-divider-star">✦</span>
           </div>
           <div className="hero-divider-content" aria-hidden="true">
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
+            <span className="hero-divider-text">LINEUP</span>
             <span className="hero-divider-star">✦</span>
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
+            <span className="hero-divider-text">LINEUP</span>
             <span className="hero-divider-star">✦</span>
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
+            <span className="hero-divider-text">LINEUP</span>
             <span className="hero-divider-star">✦</span>
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
+            <span className="hero-divider-text">LINEUP</span>
             <span className="hero-divider-star">✦</span>
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
+            <span className="hero-divider-text">LINEUP</span>
             <span className="hero-divider-star">✦</span>
-            <span className="hero-divider-text">FEATURES OF YATRA</span>
+            <span className="hero-divider-text">LINEUP</span>
             <span className="hero-divider-star">✦</span>
           </div>
         </div>
       </div>
     </div>
+
+    {/* LINEUP Section */}
+    <section className="lineup-section" aria-label="Lineup section">
+      <div className="lineup-container">
+        <h2 className="lineup-title">LINEUP</h2>
+        <p className="lineup-subtitle">
+          Experience the biggest names live
+        </p>
+
+        <div className="lineup-carousel-wrap" aria-label="Lineup cards">
+          <button
+            type="button"
+            className="lineup-carousel-arrow lineup-carousel-arrow--left"
+            onClick={() => scrollLineup(-1)}
+            aria-label="Scroll lineup left"
+          >
+            ‹
+          </button>
+
+          <div className="lineup-carousel" ref={lineupCarouselRef}>
+            {lineupCards.map((card, idx) => {
+              const isRevealed = card.status === 'revealed'
+              const isActive = idx === activeLineupIndex
+              if (isRevealed) {
+                return (
+                  <div
+                    key={card.id}
+                    className={`lineup-card-slot lineup-card-slot--revealed ${isActive ? 'is-active' : ''}`}
+                    aria-current={isActive ? 'true' : undefined}
+                  >
+                    <button
+                      type="button"
+                      className={`lineup-flip-card ${isGvCardFlipped ? 'is-flipped' : ''}`}
+                      onClick={toggleGvCard}
+                      aria-label={isGvCardFlipped ? 'Hide GV lineup card' : 'Tap to reveal GV lineup card'}
+                    >
+                      <span className="lineup-flip-card-inner" aria-hidden="true">
+                        <span className="lineup-flip-card-face lineup-flip-card-face--back">
+                          <img className="lineup-flip-card-img" src={gvBackCard} alt="GV lineup card (back)" decoding="async" loading="lazy" />
+                          {!isGvCardFlipped && <span className="lineup-tap-to-reveal">TAP TO REVEAL</span>}
+                        </span>
+                        <span className="lineup-flip-card-face lineup-flip-card-face--front">
+                          <img className="lineup-flip-card-img" src={gvFrontCard} alt="GV lineup card (front)" decoding="async" loading="lazy" />
+                        </span>
+                      </span>
+                    </button>
+                  </div>
+                )
+              }
+
+              if (card.status === 'countdown') {
+                return (
+                  <div
+                    key={card.id}
+                    className={`lineup-card-slot lineup-card-slot--countdown ${isActive ? 'is-active' : ''}`}
+                    aria-current={isActive ? 'true' : undefined}
+                    aria-label="Lineup reveal countdown"
+                  >
+                    <div className="lineup-locked-card" aria-hidden="true">
+                      <img
+                        className="lineup-flip-card-img"
+                        src={gvBackCard}
+                        alt=""
+                        decoding="async"
+                        loading="lazy"
+                      />
+                      <div className="lineup-countdown-overlay">
+                        <div className="countdown-timer" aria-label="Countdown timer">
+                          {countdownText48hr}
+                        </div>
+                        <div className="countdown-label">Hours : Minutes : Seconds</div>
+                      </div>
+                    </div>
+                  </div>
+                )
+              }
+
+              return (
+                <div
+                  key={card.id}
+                  className={`lineup-card-slot lineup-card-slot--locked ${isActive ? 'is-active' : ''}`}
+                  aria-label="Locked lineup card"
+                  aria-current={isActive ? 'true' : undefined}
+                >
+                  <div className="lineup-locked-card" aria-hidden="true">
+                    <img className="lineup-flip-card-img lineup-locked-img" src={gvBackCard} alt="" decoding="async" loading="lazy" />
+                    <div className="lineup-locked-overlay">
+                      <div className="lineup-locked-icon" aria-hidden="true">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+                          <path
+                            d="M7.5 10V7.9a4.5 4.5 0 0 1 9 0V10"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            strokeLinecap="round"
+                          />
+                          <path
+                            d="M7.2 10h9.6c.9 0 1.6.7 1.6 1.6v7.2c0 .9-.7 1.6-1.6 1.6H7.2c-.9 0-1.6-.7-1.6-1.6v-7.2c0-.9.7-1.6 1.6-1.6Z"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M12 14.2v2.6"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </div>
+                      <div className="lineup-locked-text">REVEAL DROPPING SOON</div>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          <button
+            type="button"
+            className="lineup-carousel-arrow lineup-carousel-arrow--right"
+            onClick={() => scrollLineup(1)}
+            aria-label="Scroll lineup right"
+          >
+            ›
+          </button>
+        </div>
+      </div>
+    </section>
 
     {/* FEATURES OF YATRA section (content coming next) */}
     <section
@@ -1121,23 +1472,49 @@ function Hero() {
             variant="blur"
           />
         </h2>
-        <div className="features-event-media features-event-media--left">
-          <div className="features-event-badge">
-            50+ Events with CASH PRICE
-          </div>
-          <img src={eventImage} alt="Yatra Event" className="features-event-image" />
-          <button className="features-show-more-btn" onClick={goToEvents} type="button">
-            Register Now
-          </button>
-        </div>
-        <div className="features-event-media features-event-media--right">
+        <div 
+          className="features-event-media features-event-media--right"
+          aria-label="Electrifying Performances"
+        >
           <div className="features-event-badge">
             ELECTRIFYING PERFORMANCES
           </div>
-          <img src={performanceImage} alt="Electrifying Performance" className="features-event-image" />
-          <button className="features-show-more-btn" type="button" onClick={openLineupModal}>
-            SHOW LINEUP
-          </button>
+          <div className="features-event-image-wrapper">
+            <img src={performanceImage} alt="Electrifying Performance" className="features-event-image" />
+            <div className="features-event-image-mask"></div>
+            <p className="features-event-description">
+              5 Big Names. 2 Days. Electrifying Pro Shows.
+              <br />
+              DJ Night. Unforgettable Experience.
+            </p>
+          </div>
+        </div>
+        <div 
+          className="features-event-media features-event-media--left"
+          onClick={goToEvents}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              goToEvents();
+            }
+          }}
+          aria-label="Explore 50+ Events with Cash Price"
+        >
+          <div className="features-event-badge">
+            50+ Events with CASH PRICE
+          </div>
+          <div className="features-event-image-wrapper">
+            <img src={eventImage} alt="Yatra Event" className="features-event-image" />
+            <div className="features-event-image-mask"></div>
+            <p className="features-event-description">
+              Across tech, arts, culture & performance - Throughout the day
+            </p>
+          </div>
+          <span className="features-show-more-btn">
+            EXPLORE EVENTS
+          </span>
         </div>
       </div>
     </section>
@@ -1187,6 +1564,42 @@ function Hero() {
         </div>
       </div>
     </section>
+
+    {/* PASSES Divider (between BLAST and GET PASSES) */}
+    <div className="passes-section-divider" aria-hidden="true">
+      <div className="hero-divider-scroll">
+        <div className="hero-divider-track">
+          <div className="hero-divider-content">
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+          </div>
+          <div className="hero-divider-content" aria-hidden="true">
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+            <span className="hero-divider-text">GET PASSES</span>
+            <span className="hero-divider-star">✦</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
     {/* BUY PASSES section (from desktop registration) */}
     <section
@@ -1281,14 +1694,29 @@ function Hero() {
         </div>
 
         <div className="mobile-footer-section">
-          <div className="mobile-footer-label">PHONE</div>
-          <div className="mobile-footer-phone-numbers">
-            <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+918825910614">
-              +91 88259 10614
-            </a>
-            <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+919884470171">
-              +91 98844 70171
-            </a>
+          <div className="mobile-footer-label">CONTACT</div>
+          <div className="mobile-footer-phone-numbers" style={{ flexDirection: 'column', gap: '12px', alignItems: 'flex-start' }}>
+            <div>
+              <div className="mobile-footer-text" style={{ fontSize: '0.875rem', marginBottom: '4px', fontWeight: '500' }}>Derry Gabriel</div>
+              <div className="mobile-footer-text" style={{ fontSize: '0.75rem', marginBottom: '4px', opacity: 0.8 }}>Overall Coordinator</div>
+              <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+919884470171">
+                +91 98844 70171
+              </a>
+            </div>
+            <div>
+              <div className="mobile-footer-text" style={{ fontSize: '0.875rem', marginBottom: '4px', fontWeight: '500' }}>Kishore Kumar S</div>
+              <div className="mobile-footer-text" style={{ fontSize: '0.75rem', marginBottom: '4px', opacity: 0.8 }}>Event Committee Coordinator</div>
+              <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+918825910614">
+                +91 88259 10614
+              </a>
+            </div>
+            <div>
+              <div className="mobile-footer-text" style={{ fontSize: '0.875rem', marginBottom: '4px', fontWeight: '500' }}>Muthu Kumaran</div>
+              <div className="mobile-footer-text" style={{ fontSize: '0.75rem', marginBottom: '4px', opacity: 0.8 }}>Joint Overall Coordinator</div>
+              <a className="mobile-footer-link mobile-footer-link--underline" href="tel:+919094141232">
+                +91 90941 41232
+              </a>
+            </div>
           </div>
         </div>
 
@@ -1416,6 +1844,8 @@ function Hero() {
           </div>
         </div>
       </div>
+    )}
+      </>
     )}
     </>
   )

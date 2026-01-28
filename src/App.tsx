@@ -19,8 +19,6 @@ import { TermsConditionsPage } from "./pages/TermsConditionsPage";
 import ritLogoImage from "./assets/RIT WHITE LOGO.webp";
 import logoImage from "./assets/LOGO .webp";
 import artistImage from "./assets/artist.webp?url";
-import christopherImage from "./assets/christopher.webp?url";
-import antomeraryImage from "./assets/antomerary.webp?url";
 // Video
 import yatraVideo from "./assets/video.mp4?url";
 // Font
@@ -72,13 +70,7 @@ export default function App() {
       const promises: Promise<void>[] = [];
 
       // Preload images
-      const imageUrls = [
-        ritLogoImage,
-        logoImage,
-        artistImage,
-        christopherImage,
-        antomeraryImage,
-      ];
+      const imageUrls = [ritLogoImage, logoImage, artistImage];
 
       imageUrls.forEach((url) => {
         promises.push(
