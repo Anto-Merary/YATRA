@@ -11,7 +11,7 @@ import videoSrc from '../assets/video.mp4'
 import eventImage from '../assets/optimized/event-w1024.webp'
 import performanceImage from '../assets/optimized/performance-w1280.webp'
 const gvBackCard = '/gvbackcard (1).webp'
-import gvFrontCard from '../assets/gvfrontcard.webp'
+const gvFrontCard = '/gvfrontcard.webp'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useNetworkStatus } from '../hooks/useNetworkStatus'
@@ -1378,8 +1378,8 @@ function Hero() {
                           <div className="lineup-locked-card" aria-hidden="true">
                             <img
                               className="lineup-flip-card-img"
-                              src={gvBackCard}
-                              alt=""
+                              src="/Gallery/yatraevents.webp"
+                              alt="Countdown card"
                               decoding="async"
                               loading="lazy"
                             />
