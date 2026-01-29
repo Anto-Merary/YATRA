@@ -682,6 +682,10 @@
             display: block;
         }
 
+        .lineup-flip-card-face--front .lineup-flip-card-img {
+            object-fit: contain;
+        }
+
         .lineup-tap-to-reveal {
             position: absolute;
             left: 50%;
@@ -868,6 +872,10 @@
             height: 100%;
             object-fit: cover;
             display: block;
+        }
+
+        .lineup-flip-card-face--front .lineup-flip-card-img {
+            object-fit: contain;
         }
 
         .lineup-tap-to-reveal {
@@ -2411,7 +2419,7 @@
             }
 
             // Initialize 48-hour countdown timer
-            update48HourCountdown('ticket-countdown');
+            update48HourCountdown('countdown-48hr');
 
             // Flip card functionality for GV Prakash card
             // Lineup Stagger Animation for Cards

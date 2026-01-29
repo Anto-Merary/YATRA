@@ -3396,6 +3396,10 @@
   display: block;
 }
 
+.lineup-flip-card-face--front .lineup-flip-card-img {
+  object-fit: contain;
+}
+
 .lineup-tap-to-reveal {
   position: absolute;
   left: 50%;
