@@ -22,19 +22,19 @@ function accentClasses(bgVariant: BgVariant) {
   // - eventinfo2.jpeg: deep blue pattern → cyan/indigo accents
   return bgVariant === "eventinfo"
     ? {
-        pill: "border-fuchsia-500/25 bg-fuchsia-500/10 text-fuchsia-100",
-        ring: "focus-visible:ring-fuchsia-400/55",
-        cta:
-          "bg-gradient-to-r from-fuchsia-500 to-rose-500 hover:from-fuchsia-400 hover:to-rose-400 hover:shadow-[0_10px_30px_rgba(217,70,239,0.32)]",
-        link: "hover:text-fuchsia-100",
-      }
+      pill: "border-fuchsia-500/25 bg-fuchsia-500/10 text-fuchsia-100",
+      ring: "focus-visible:ring-fuchsia-400/55",
+      cta:
+        "bg-gradient-to-r from-fuchsia-500 to-rose-500 hover:from-fuchsia-400 hover:to-rose-400 hover:shadow-[0_10px_30px_rgba(217,70,239,0.32)]",
+      link: "hover:text-fuchsia-100",
+    }
     : {
-        pill: "border-cyan-400/25 bg-cyan-400/10 text-cyan-100",
-        ring: "focus-visible:ring-cyan-300/55",
-        cta:
-          "bg-gradient-to-r from-cyan-400 to-indigo-500 hover:from-cyan-300 hover:to-indigo-400 hover:shadow-[0_10px_30px_rgba(34,211,238,0.26)]",
-        link: "hover:text-cyan-100",
-      };
+      pill: "border-cyan-400/25 bg-cyan-400/10 text-cyan-100",
+      ring: "focus-visible:ring-cyan-300/55",
+      cta:
+        "bg-gradient-to-r from-cyan-400 to-indigo-500 hover:from-cyan-300 hover:to-indigo-400 hover:shadow-[0_10px_30px_rgba(34,211,238,0.26)]",
+      link: "hover:text-cyan-100",
+    };
 }
 
 const DEFAULT_RULES: string[] = [
@@ -65,7 +65,7 @@ export function EventDetailPage() {
     const idx = EVENTS.findIndex((e) => e.id === found.id);
     const auto: BgVariant = idx % 2 === 0 ? "eventinfo" : "eventinfo2";
     const chosen: BgVariant = found.backgroundVariant ?? auto;
-    
+
     return { event: found, bgVariant: chosen };
   }, [eventId]);
 
@@ -228,7 +228,10 @@ export function EventDetailPage() {
                     {fee ? formatFee(fee) : "Fee: TBA"}
                   </div>
                   <Button
-                    onClick={() => navigate(`/events/${event.id}/register`)}
+                    onClick={() => {
+                      // navigate(`/events/${event.id}/register`)
+                      alert("Will be updated soon");
+                    }}
                     className={`w-full h-10 rounded-xl text-sm font-semibold text-white ${accents.cta}`}
                   >
                     Register & Pay

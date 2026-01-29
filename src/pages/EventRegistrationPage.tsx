@@ -164,102 +164,19 @@ export function EventRegistrationPage() {
 
   return (
     <div className="container-max py-10 sm:py-14">
-      <div className="mx-auto max-w-2xl rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8 text-white">
+      <div className="mx-auto max-w-2xl rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8 text-white text-center">
         <div className="text-xs font-semibold tracking-[0.25em] text-yatra-300">
           EVENT REGISTRATION
         </div>
-        <h1 className="mt-2 text-2xl sm:text-3xl font-semibold">{event.name}</h1>
-        <p className="mt-3 text-sm text-white/70">
-          You must have a paid Yatra Entry Pass (same email) before event registration.
-        </p>
+        <h1 className="mt-4 text-2xl sm:text-3xl font-semibold">{event.name}</h1>
 
-        <div className="mt-5 rounded-xl border border-white/10 bg-black/20 p-4 text-sm text-white/75">
-          <div>
-            <span className="text-white/50">Fee:</span>{" "}
-            {fee ? formatFee(fee) : "TBA"}
-          </div>
+        <div className="mt-8 mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+            Will be updated soon
+          </h2>
         </div>
 
-        <div className="mt-6 grid gap-4">
-          <div>
-            <div className="mb-2 text-xs font-semibold tracking-[0.22em] text-white/70">
-              FULL NAME
-            </div>
-            <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Your name"
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
-            />
-          </div>
-
-          <div>
-            <div className="mb-2 text-xs font-semibold tracking-[0.22em] text-white/70">
-              EMAIL (MUST MATCH YATRA ENTRY)
-            </div>
-            <Input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
-            />
-          </div>
-
-          <div>
-            <div className="mb-2 text-xs font-semibold tracking-[0.22em] text-white/70">
-              PHONE
-            </div>
-            <Input
-              value={phone}
-              onChange={(e) => setPhone(digitsOnly(e.target.value).slice(0, 10))}
-              placeholder="10-digit mobile number"
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
-            />
-          </div>
-
-          <div>
-            <div className="mb-2 text-xs font-semibold tracking-[0.22em] text-white/70">
-              COLLEGE
-            </div>
-            <Input
-              value={college}
-              onChange={(e) => setCollege(e.target.value)}
-              placeholder="Your college name"
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
-            />
-          </div>
-
-          {variantOptions.length > 0 && (
-            <div>
-              <div className="mb-2 text-xs font-semibold tracking-[0.22em] text-white/70">
-                CATEGORY / VARIANT
-              </div>
-              <select
-                value={variant}
-                onChange={(e) => setVariant(e.target.value)}
-                className="h-10 w-full rounded-md border border-white/20 bg-white/10 px-3 text-sm text-white outline-none"
-              >
-                <option value="" className="bg-black">
-                  Select…
-                </option>
-                {variantOptions.map((o) => (
-                  <option key={o.value} value={o.value} className="bg-black">
-                    {o.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-        </div>
-
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Button
-            onClick={handleSubmit}
-            disabled={!canSubmit || submitting}
-            className="bg-white text-black hover:bg-white/90 disabled:opacity-50"
-          >
-            {submitting ? "Redirecting…" : "Proceed to payment"}
-          </Button>
+        <div className="mt-6 flex justify-center">
           <Button
             variant="secondary"
             onClick={() => navigate(`/events/${eventId}`)}

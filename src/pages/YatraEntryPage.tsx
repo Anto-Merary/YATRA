@@ -144,103 +144,21 @@ export function YatraEntryPage() {
 
   return (
     <div className="container-max py-8 sm:py-12">
-      <div className="mx-auto max-w-2xl rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8 text-white">
+      <div className="mx-auto max-w-2xl rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8 text-white text-center">
         <div className="text-xs font-semibold tracking-[0.25em] text-yatra-300">
           YATRA ENTRY PASS (MANDATORY)
         </div>
-        <h1 className="mt-2 text-2xl sm:text-3xl font-semibold">
+        <h1 className="mt-4 text-2xl sm:text-3xl font-semibold">
           Buy your Yatra Entry Pass
         </h1>
-        <p className="mt-3 text-sm text-white/70">
-          Yatra Entry is mandatory before registering for events.
-        </p>
 
-        <div className="mt-6 grid gap-4">
-          <div>
-            <div className="mb-2 text-xs font-semibold tracking-[0.22em] text-white/70">
-              FULL NAME
-            </div>
-            <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Your name"
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
-            />
-          </div>
-
-          <div>
-            <div className="mb-2 text-xs font-semibold tracking-[0.22em] text-white/70">
-              EMAIL
-            </div>
-            <Input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
-            />
-          </div>
-
-          <div>
-            <div className="mb-2 text-xs font-semibold tracking-[0.22em] text-white/70">
-              PHONE
-            </div>
-            <Input
-              value={phone}
-              onChange={(e) => setPhone(digitsOnly(e.target.value).slice(0, 10))}
-              placeholder="10-digit mobile number"
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
-            />
-          </div>
-
-          <div>
-            <div className="mb-2 text-xs font-semibold tracking-[0.22em] text-white/70">
-              INSTITUTION
-            </div>
-            <select
-              value={institutionType}
-              onChange={(e) => setInstitutionType(e.target.value as InstitutionType)}
-              className="h-10 w-full rounded-md border border-white/20 bg-white/10 px-3 text-sm text-white outline-none"
-            >
-              {INSTITUTION_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value} className="bg-black">
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {institutionType === "other" && (
-            <div>
-              <div className="mb-2 text-xs font-semibold tracking-[0.22em] text-white/70">
-                COLLEGE NAME
-              </div>
-              <Input
-                value={otherCollege}
-                onChange={(e) => setOtherCollege(e.target.value)}
-                placeholder="Type your college name"
-                className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
-              />
-            </div>
-          )}
-
-          <div className="rounded-xl border border-white/10 bg-black/20 p-4 text-sm text-white/75">
-            <div>
-              <span className="text-white/50">Fee:</span> ₹{amountInr}
-            </div>
-            <div className="mt-1 text-xs text-white/50">
-              If you select RIT/REC/RSB/RSA → ₹500. If you select Other → ₹800.
-            </div>
-          </div>
+        <div className="mt-8 mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+            Will be updated soon
+          </h2>
         </div>
 
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Button
-            onClick={handleSubmit}
-            disabled={!canSubmit || submitting}
-            className="bg-white text-black hover:bg-white/90 disabled:opacity-50"
-          >
-            {submitting ? "Redirecting…" : "Proceed to payment"}
-          </Button>
+        <div className="mt-6 flex justify-center">
           <Button
             asChild
             variant="secondary"

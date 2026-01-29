@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YATRA'26 | The Cultural Phenomenon</title>
     <meta name="description" content="YATRA 2026 - Rajalakshmi Institute of Technology Cultural Festival" />
-    
+
     <!-- Open Graph / Twitter (social sharing) -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="YATRA'26" />
@@ -18,7 +19,7 @@
     <meta name="twitter:title" content="YATRA'26 | The Cultural Phenomenon" />
     <meta name="twitter:description" content="YATRA 2026 - Rajalakshmi Institute of Technology Cultural Festival" />
     <meta name="twitter:image" content="android-chrome-512x512.png" />
-    
+
     <!-- Favicon (use relative paths so sub-folder deploys work) -->
     <link rel="icon" href="favicon.ico?v=2" sizes="any">
     <link rel="icon" type="image/png" href="favicon-32x32.png?v=2" sizes="32x32">
@@ -27,16 +28,16 @@
     <link rel="icon" type="image/webp" href="Fav-icon.webp?v=2">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
     <link rel="manifest" href="site.webmanifest?v=2">
-    
+
     <!-- Early Mobile Redirect - Runs before page loads -->
     <script>
-        (function() {
+        (function () {
             // Check if user wants desktop version
             const urlParams = new URLSearchParams(window.location.search);
             const forceDesktop = urlParams.get('desktop') === 'true' || sessionStorage.getItem('desktopVersion') === 'true';
-            
+
             if (forceDesktop) return;
-            
+
             // Mobile detection (PHONE only).
             // Requirement: only allow a narrow set of phone-sized viewports (the supported devices + close matches).
             const MOBILE_MIN_SHORT_SIDE = 360;
@@ -49,44 +50,48 @@
             const isAndroidPhone = /android/i.test(userAgent) && /mobile/i.test(userAgent); // avoids Android tablets
             const isOtherPhone = /webos|blackberry|iemobile|opera mini/i.test(userAgent);
             const isMobile = isTouchDevice && isAllowedSize && (isIPhoneOrIPod || isAndroidPhone || isOtherPhone);
-            
+
             if (isMobile) {
                 const currentPath = window.location.pathname;
                 // Don't redirect if already on mobile version or React app
                 if (currentPath.includes('mobile') || currentPath.includes('index.html') || currentPath === '/') {
                     return;
                 }
-                
+
                 // Redirect to mobile version (src/mobile)
                 // The mobile app is served via mobile.html which loads /src/mobile/main.jsx
                 const baseUrl = window.location.origin;
                 const currentSearch = window.location.search;
                 const currentHash = window.location.hash;
-                
+
                 // Redirect relative so sub-folder deploys work too
                 window.location.replace('mobile.html' + currentSearch + currentHash);
             }
         })();
     </script>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link href="https://fonts.cdnfonts.com/css/akira-expanded" rel="stylesheet">
-    
+
     <!-- GSAP & Plugins -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <!-- Smooth Scroll (Lenis) -->
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
-    
+
     <style>
         :root {
             --color-bg: #0a0a0a;
             --color-text: #f0f0f0;
-            --color-accent: #9b1799; /* Pink - Primary */
-            --color-secondary: #fff19d; /* Yellow - Secondary */
+            --color-accent: #9b1799;
+            /* Pink - Primary */
+            --color-secondary: #fff19d;
+            /* Yellow - Secondary */
             --cursor-size: 8px;
             --cursor-outline-size: 40px;
         }
@@ -99,7 +104,7 @@
             cursor: none;
             transition: background-color 0.5s ease, color 0.5s ease;
         }
-        
+
         @media (max-width: 768px) {
             body {
                 cursor: auto;
@@ -124,11 +129,27 @@
         }
 
         @keyframes grain {
-            0%, 100% { transform: translate(0, 0); }
-            20% { transform: translate(-5%, 5%); }
-            40% { transform: translate(-10%, -5%); }
-            60% { transform: translate(5%, -10%); }
-            80% { transform: translate(10%, 10%); }
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            20% {
+                transform: translate(-5%, 5%);
+            }
+
+            40% {
+                transform: translate(-10%, -5%);
+            }
+
+            60% {
+                transform: translate(5%, -10%);
+            }
+
+            80% {
+                transform: translate(10%, 10%);
+            }
         }
 
         /* Loader Styles */
@@ -140,7 +161,7 @@
             flex-direction: column;
             pointer-events: none;
         }
-        
+
         /* Generic Mobile Loader - Simpler version */
         #mobile-loader {
             position: fixed;
@@ -153,13 +174,14 @@
             background-color: var(--color-bg);
             pointer-events: none;
         }
-        
+
         @media (max-width: 768px) {
+
             /* Hide HTML loader on mobile, show generic loader */
             #loader {
                 display: none;
             }
-            
+
             #mobile-loader {
                 display: flex;
             }
@@ -177,8 +199,256 @@
             z-index: 2;
         }
 
-        .loader-panel.top { top: 0; align-items: flex-end; border-bottom: 1px solid var(--color-accent); }
-        .loader-panel.bottom { bottom: 0; align-items: flex-start; border-top: 1px solid var(--color-accent); }
+        .loader-panel.top {
+            top: 0;
+            align-items: flex-end;
+            border-bottom: 1px solid var(--color-accent);
+        }
+
+        .loader-panel.bottom {
+            bottom: 0;
+            align-items: flex-start;
+            border-top: 1px solid var(--color-accent);
+        }
+
+        /* Neo-Brutalist Ticket Styles */
+        /* Reference-Style Ticket Styles */
+        .liquid-glass-wrapper {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .ref-ticket-container {
+            display: flex;
+            width: 100%;
+            max-width: 850px;
+            height: 350px;
+            filter: drop-shadow(0 10px 0 rgba(0, 0, 0, 1));
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+        .ref-ticket-container:hover {
+            transform: translateY(-5px);
+            filter: drop-shadow(0 15px 0 rgba(0, 0, 0, 1));
+        }
+
+        .ref-ticket-left {
+            width: 30%;
+            background-color: #0c0c0c;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Use mask for notches and rounded corners left */
+            border-radius: 4px 0 0 4px;
+            -webkit-mask:
+                radial-gradient(circle at right top, transparent 20px, black 21px) top right,
+                radial-gradient(circle at right bottom, transparent 20px, black 21px) bottom right;
+            -webkit-mask-size: 100% 51%;
+            -webkit-mask-repeat: no-repeat;
+            mask:
+                radial-gradient(circle at right top, transparent 20px, black 21px) top right,
+                radial-gradient(circle at right bottom, transparent 20px, black 21px) bottom right;
+            mask-size: 100% 51%;
+            mask-repeat: no-repeat;
+            border-right: 2px dashed rgba(255, 255, 255, 0.15);
+        }
+
+        .ref-ticket-right {
+            width: 70%;
+            background: #e8e8e8;
+            position: relative;
+            color: black;
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-radius: 0 4px 4px 0;
+            -webkit-mask:
+                radial-gradient(circle at left top, transparent 20px, black 21px) top left,
+                radial-gradient(circle at left bottom, transparent 20px, black 21px) bottom left;
+            -webkit-mask-size: 100% 51%;
+            -webkit-mask-repeat: no-repeat;
+            mask:
+                radial-gradient(circle at left top, transparent 20px, black 21px) top left,
+                radial-gradient(circle at left bottom, transparent 20px, black 21px) bottom left;
+            mask-size: 100% 51%;
+            mask-repeat: no-repeat;
+        }
+
+        /* Perforation Holes - visual only */
+        .perf-circle {
+            width: 10px;
+            height: 10px;
+            background-color: #222;
+            border-radius: 50%;
+            margin: 14px 0;
+            box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .ticket-seam {
+            position: absolute;
+            right: -6px;
+            /* align with border/gap */
+            top: 40px;
+            bottom: 40px;
+            width: 12px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .ref-ticket-left .ticket-seam {
+            right: -6px;
+        }
+
+        /* Content Styling */
+        .ticket-main-title {
+            font-family: 'Akira Expanded', sans-serif;
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1;
+            margin-bottom: 1.5rem;
+        }
+
+        .ticket-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .ticket-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 500;
+            font-size: 1.1rem;
+            line-height: 1.3;
+        }
+
+        .ticket-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.5em;
+            width: 6px;
+            height: 6px;
+            background-color: black;
+        }
+
+        .ticket-price-corner {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            text-align: right;
+        }
+
+        .ticket-price {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .ticket-qr-area {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            border: 2px solid black;
+            padding: 4px;
+            background: white;
+            width: 80px;
+            height: 80px;
+        }
+
+        .ticket-btn {
+            border: 2px solid black;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 0.75rem 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-family: 'Space Grotesk', sans-serif;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: default;
+            /* Since it's 'to be updated' */
+        }
+
+        @media (max-width: 768px) {
+            .ref-ticket-container {
+                flex-direction: column;
+                height: auto;
+                max-width: 400px;
+                filter: drop-shadow(0 5px 0 rgba(0, 0, 0, 1));
+            }
+
+            .ref-ticket-left {
+                width: 100%;
+                height: 100px;
+                border-right: none;
+                border-bottom: 2px dashed rgba(255, 255, 255, 0.15);
+                border-radius: 4px 4px 0 0;
+                -webkit-mask:
+                    radial-gradient(circle at bottom left, transparent 15px, black 16px) bottom left,
+                    radial-gradient(circle at bottom right, transparent 15px, black 16px) bottom right;
+                -webkit-mask-size: 51% 100%;
+                mask:
+                    radial-gradient(circle at bottom left, transparent 15px, black 16px) bottom left,
+                    radial-gradient(circle at bottom right, transparent 15px, black 16px) bottom right;
+                mask-size: 51% 100%;
+            }
+
+            .ref-ticket-right {
+                width: 100%;
+                padding: 1.5rem;
+                display: block;
+                /* Stack content */
+                border-radius: 0 0 4px 4px;
+                -webkit-mask:
+                    radial-gradient(circle at top left, transparent 15px, black 16px) top left,
+                    radial-gradient(circle at top right, transparent 15px, black 16px) top right;
+                -webkit-mask-size: 51% 100%;
+                mask:
+                    radial-gradient(circle at top left, transparent 15px, black 16px) top left,
+                    radial-gradient(circle at top right, transparent 15px, black 16px) top right;
+                mask-size: 51% 100%;
+            }
+
+            .ticket-seam {
+                display: none;
+            }
+
+            .ticket-price-corner {
+                position: static;
+                text-align: left;
+                margin-bottom: 1rem;
+            }
+
+            .ticket-qr-area {
+                display: none;
+            }
+        }
+
+        .neo-ticket-dashed-line {
+            border-right: 3px dashed #000;
+        }
+
+        @media (max-width: 768px) {
+            .neo-ticket-dashed-line {
+                border-right: none;
+                border-bottom: 3px dashed #000;
+            }
+        }
 
         .loader-text-bg {
             font-size: 20vw;
@@ -193,12 +463,18 @@
             white-space: nowrap;
         }
 
-        .loader-panel.top .loader-text-bg { bottom: -0.1em; }
-        .loader-panel.bottom .loader-text-bg { top: -0.1em; }
-        
+        .loader-panel.top .loader-text-bg {
+            bottom: -0.1em;
+        }
+
+        .loader-panel.bottom .loader-text-bg {
+            top: -0.1em;
+        }
+
         #loader-center-content {
             position: absolute;
-            top: 50%; left: 50%;
+            top: 50%;
+            left: 50%;
             transform: translate(-50%, -50%);
             z-index: 10;
             mix-blend-mode: difference;
@@ -210,76 +486,119 @@
             gap: 1rem;
         }
 
-        h1, h2, h3, .font-display { font-family: 'Syne', sans-serif; }
-        
+        h1,
+        h2,
+        h3,
+        .font-display {
+            font-family: 'Syne', sans-serif;
+        }
+
         /* Akira Expanded Font */
         @font-face {
             font-family: 'Akira Expanded';
             src: url('https://fonts.cdnfonts.com/css/akira-expanded');
         }
-        .font-akira { font-family: 'Akira Expanded', 'Impact', 'Arial Black', sans-serif; }
+
+        .font-akira {
+            font-family: 'Akira Expanded', 'Impact', 'Arial Black', sans-serif;
+        }
 
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 0px; } /* Hidden for Lenis */
+        ::-webkit-scrollbar {
+            width: 0px;
+        }
+
+        /* Hidden for Lenis */
 
         /* Marquee */
-        .marquee-container { overflow: hidden; white-space: nowrap; }
-        .marquee-content { 
-            display: inline-block; 
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .marquee-content {
+            display: inline-block;
             will-change: transform;
         }
 
         /* Custom Cursor */
         .cursor-dot {
-            position: fixed; top: 0; left: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
             transform: translate(-50%, -50%);
-            border-radius: 50%; z-index: 9999; pointer-events: none;
-            width: var(--cursor-size); height: var(--cursor-size);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+            width: var(--cursor-size);
+            height: var(--cursor-size);
             background-color: var(--color-accent);
             transition: width 0.3s, height 0.3s, background-color 0.3s;
             will-change: transform;
         }
+
         .cursor-outline {
-            position: fixed; top: 0; left: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
             transform: translate(-50%, -50%);
-            border-radius: 50%; z-index: 9999; pointer-events: none;
-            width: var(--cursor-outline-size); height: var(--cursor-outline-size);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+            width: var(--cursor-outline-size);
+            height: var(--cursor-outline-size);
             border: 1px solid var(--color-accent);
             transition: width 0.3s, height 0.3s, background-color 0.3s, border-color 0.3s;
             will-change: transform;
         }
-        
+
         /* Cursor Interactions */
         body.hovering .cursor-outline {
-            width: 80px; height: 80px;
+            width: 80px;
+            height: 80px;
             background-color: rgba(155, 23, 153, 0.1);
             border-color: transparent;
             backdrop-filter: blur(2px);
         }
 
         /* Magnetic Effect Class */
-        .magnetic-wrap { display: inline-block; position: relative; }
-        .magnetic-area {
-            position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            z-index: 1; border-radius: 50%;
+        .magnetic-wrap {
+            display: inline-block;
+            position: relative;
         }
-        .magnetic-content { 
-            position: relative; 
-            z-index: 2; 
-            transition: transform 0.3s ease-out; 
+
+        .magnetic-area {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            z-index: 1;
+            border-radius: 50%;
+        }
+
+        .magnetic-content {
+            position: relative;
+            z-index: 2;
+            transition: transform 0.3s ease-out;
             will-change: transform;
         }
 
         /* Hacker Text Effect */
-        .hacker-text { font-family: 'Space Grotesk', monospace; }
-        
+        .hacker-text {
+            font-family: 'Space Grotesk', monospace;
+        }
+
         /* Reveal Image Utility */
         .reveal-img {
             clip-path: inset(0 100% 0 0);
             transition: clip-path 1.2s cubic-bezier(0.77, 0, 0.175, 1);
             will-change: clip-path;
         }
-        .reveal-img.active { clip-path: inset(0 0 0 0); }
+
+        .reveal-img.active {
+            clip-path: inset(0 0 0 0);
+        }
 
         /* Lineup Cards - Mobile Style Flip Cards for Desktop */
         .lineup-card-wrapper {
@@ -639,30 +958,33 @@
             filter: blur(20px);
             opacity: 0;
             transform: scale(0.9);
-            transition: filter 1s cubic-bezier(0.4, 0, 0.2, 1), 
-                        opacity 1s cubic-bezier(0.4, 0, 0.2, 1),
-                        transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: filter 1s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 1s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 1s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             z-index: 100;
             will-change: filter, opacity, transform;
         }
+
         .blur-reveal.active {
             filter: blur(0px);
             opacity: 1;
             transform: scale(1);
             will-change: auto;
         }
+
         .logo-container {
             position: relative;
             z-index: 100;
             mix-blend-mode: normal;
         }
+
         .logo-container img {
             position: relative;
             z-index: 101;
             mix-blend-mode: normal;
         }
-        
+
         /* Ensure pink color persists in about section */
         #about .word-reveal span[style*="#9b1799"] {
             color: #9b1799 !important;
@@ -672,10 +994,10 @@
         }
 
         /* Word Reveal */
-        .word-reveal span { 
-            display: inline-block; 
-            opacity: 0; 
-            transform: translateY(20px); 
+        .word-reveal span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
             will-change: transform, opacity;
         }
 
@@ -686,12 +1008,15 @@
             overflow: hidden;
             position: relative;
         }
+
         #gallery-track {
             display: flex;
             height: 100%;
-            width: max-content; /* Important for horizontal calculation */
+            width: max-content;
+            /* Important for horizontal calculation */
             will-change: transform;
         }
+
         .gallery-item {
             width: 100vw;
             height: 100%;
@@ -701,8 +1026,9 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            border-right: 1px solid rgba(255,255,255,0.1);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
         }
+
         .gallery-year {
             font-size: 15vw;
             line-height: 1;
@@ -714,7 +1040,7 @@
             z-index: 10;
             pointer-events: none;
         }
-        
+
         /* Interactive Lineup Styles */
         .lineup-accordion {
             display: flex;
@@ -723,7 +1049,7 @@
             min-height: 500px;
             width: 100%;
         }
-        
+
         @media (max-width: 768px) {
             .lineup-accordion {
                 flex-direction: column;
@@ -731,238 +1057,240 @@
                 min-height: auto;
                 gap: 1rem;
             }
-            
+
             .lineup-panel {
                 min-height: 300px;
                 flex: 1;
             }
-            
+
             /* Mobile Navigation */
             nav {
                 padding: 0.75rem 1rem;
             }
-            
+
             /* Mobile Hero - Better sizing */
             .hero-parallax h1 {
                 font-size: 18vw;
                 line-height: 0.9;
             }
-            
+
             #hero-title-container {
                 padding: 0 1rem;
             }
-            
+
             #hero-title-container p {
                 font-size: 0.65rem;
                 letter-spacing: 0.2em;
                 line-height: 1.4;
             }
-            
+
             /* Mobile About Section */
             #about {
                 padding: 2.5rem 1rem;
             }
-            
+
             #about .word-reveal {
                 font-size: 2rem;
                 line-height: 1.1;
                 margin-bottom: 1.5rem;
             }
-            
+
             #about .word-reveal-p {
                 font-size: 0.95rem;
                 line-height: 1.7;
                 padding: 0;
             }
-            
+
             /* Mobile Gallery */
             .gallery-year {
                 font-size: 20vw;
             }
-            
+
             .gallery-item {
                 padding: 1rem;
             }
-            
+
             /* Mobile Lineup */
             .lineup-title {
                 font-size: 1.75rem;
                 line-height: 1.1;
             }
-            
+
             .lineup-info {
                 font-size: 0.9rem;
             }
-            
+
             /* Mobile Events */
             #events {
                 padding: 2.5rem 1rem;
             }
-            
+
             #events h2 {
                 font-size: 2rem;
                 line-height: 1.1;
                 margin-bottom: 1.5rem;
             }
-            
+
             #events ul {
                 gap: 1.5rem;
             }
-            
+
             #events li span {
                 font-size: 1.5rem;
             }
-            
+
             /* Mobile Registration */
             #registration {
                 padding: 2.5rem 1rem;
             }
-            
+
             #registration h2 {
                 font-size: 2rem;
                 line-height: 1.1;
                 margin-bottom: 1.5rem;
             }
-            
+
             /* Mobile Footer */
             footer {
                 padding: 2.5rem 1rem;
             }
-            
+
             footer h2 {
                 font-size: 2.5rem;
                 line-height: 1.1;
                 margin-bottom: 1.5rem;
             }
-            
+
             /* Mobile Marquee */
             .marquee-content {
                 font-size: 1.5rem;
             }
-            
+
             /* Mobile Buttons - Better touch targets */
             button {
                 min-height: 44px;
                 padding: 0.75rem 1rem;
                 font-size: 0.875rem;
             }
-            
+
             /* Mobile Cards */
             .magnetic-content {
                 padding: 1.25rem;
             }
-            
+
             /* Mobile Logos */
             .logo-container img {
                 height: 2.5rem;
                 max-width: 100%;
             }
-            
+
             /* Better spacing for mobile */
             section {
                 padding-left: 1rem;
                 padding-right: 1rem;
             }
-            
+
             /* Prevent horizontal scroll */
             body {
                 overflow-x: hidden;
                 width: 100%;
             }
-            
+
             html {
                 overflow-x: hidden;
             }
         }
-        
+
         @media (max-width: 480px) {
+
             /* Extra small devices - Refined sizes */
             .hero-parallax h1 {
                 font-size: 20vw;
                 line-height: 0.9;
             }
-            
+
             #hero-title-container p {
                 font-size: 0.6rem;
                 letter-spacing: 0.15em;
             }
-            
+
             #about {
                 padding: 2rem 0.75rem;
             }
-            
+
             #about .word-reveal {
                 font-size: 1.75rem;
                 margin-bottom: 1.25rem;
             }
-            
+
             #about .word-reveal-p {
                 font-size: 0.875rem;
                 line-height: 1.6;
             }
-            
+
             nav {
                 padding: 0.5rem 0.75rem;
             }
-            
+
             nav img {
                 height: 2.25rem;
             }
-            
+
             .magnetic-content {
                 padding: 1rem;
             }
-            
+
             #registration h2 {
                 font-size: 1.75rem;
             }
-            
+
             footer h2 {
                 font-size: 2rem;
             }
-            
+
             .lineup-title {
                 font-size: 1.5rem;
             }
-            
+
             #events h2 {
                 font-size: 1.75rem;
             }
-            
+
             .marquee-content {
                 font-size: 1.25rem;
             }
-            
+
             /* Better logo sizing on very small screens */
             .logo-container img {
                 height: 2rem;
             }
-            
+
             /* Prevent horizontal scroll */
-            html, body {
+            html,
+            body {
                 max-width: 100vw;
                 overflow-x: hidden;
                 position: relative;
             }
-            
+
             * {
                 max-width: 100%;
                 box-sizing: border-box;
             }
-            
+
             /* Better button sizing */
             button {
                 font-size: 0.8rem;
                 padding: 0.625rem 0.875rem;
             }
         }
-        
+
         /* Tablet optimizations */
         @media (min-width: 481px) and (max-width: 1024px) {
             #about .word-reveal {
                 font-size: 3.5rem !important;
             }
-            
+
             .hero-parallax h1 {
                 font-size: 14vw !important;
             }
@@ -974,7 +1302,7 @@
             overflow: hidden;
             transition: flex 0.6s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s;
             cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .lineup-panel:hover {
@@ -1000,7 +1328,7 @@
             opacity: 1;
             transform: translateY(0);
         }
-        
+
         .lineup-panel:hover .lineup-title {
             color: var(--color-accent);
             text-shadow: 0 0 8px rgba(155, 23, 153, 0.2);
@@ -1012,30 +1340,38 @@
             inset: 0;
             z-index: 10;
         }
-        
+
         /* Gradient Button Animation */
         @keyframes gradient-shift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
-        
+
         .gradient-button {
             animation: gradient-shift 3s ease infinite;
         }
-        
+
         /* Yellow-Purple Gradient */
         .yellow-purple-gradient {
             background: linear-gradient(135deg, #fff19d 0%, #9b1799 100%);
             background-size: 200% 100%;
         }
-        
+
         .yellow-purple-gradient-animated {
             background: linear-gradient(135deg, #fff19d 0%, #9b1799 50%, #fff19d 100%);
             background-size: 200% 100%;
             animation: gradient-shift 3s ease infinite;
         }
-        
+
         /* Outline Button with Gradient Hover */
         .outline-gradient-button {
             border: 1px solid white;
@@ -1043,23 +1379,23 @@
             color: white;
             transition: all 0.3s ease;
         }
-        
+
         .outline-gradient-button:hover {
             background: linear-gradient(135deg, #fff19d 0%, #9b1799 100%);
             border-color: transparent;
             color: black;
         }
-        
+
         /* Footer - No animations */
         footer {
             position: relative;
         }
-        
-        footer > * {
+
+        footer>* {
             position: relative;
             z-index: 2;
         }
-        
+
         /* Ensure footer text has no animations */
         #footer .font-akira {
             animation: none !important;
@@ -1068,14 +1404,19 @@
         }
     </style>
 </head>
+
 <body class="antialiased selection:bg-pink-400 selection:text-black">
 
     <div class="noise-overlay"></div>
 
     <!-- Split Shutter Loader - Desktop -->
     <div id="loader">
-        <div class="loader-panel top"><div class="loader-text-bg">YATRA</div></div>
-        <div class="loader-panel bottom"><div class="loader-text-bg">2026</div></div>
+        <div class="loader-panel top">
+            <div class="loader-text-bg">YATRA</div>
+        </div>
+        <div class="loader-panel bottom">
+            <div class="loader-text-bg">2026</div>
+        </div>
         <div id="loader-center-content">
             <span class="text-xs uppercase tracking-widest">Loading Festival</span>
             <span id="loader-percent" class="text-4xl font-black">0%</span>
@@ -1085,13 +1426,16 @@
     <!-- Generic Mobile Loader -->
     <div id="mobile-loader">
         <div style="text-align: center; color: var(--color-text);">
-            <div style="font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; margin-bottom: 1rem; color: var(--color-accent);">
+            <div
+                style="font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; margin-bottom: 1rem; color: var(--color-accent);">
                 YATRA'26
             </div>
-            <div style="font-family: 'Space Grotesk', monospace; font-size: 0.875rem; letter-spacing: 0.2em; opacity: 0.7;">
+            <div
+                style="font-family: 'Space Grotesk', monospace; font-size: 0.875rem; letter-spacing: 0.2em; opacity: 0.7;">
                 Loading...
             </div>
-            <div id="mobile-loader-percent" style="font-family: 'Space Grotesk', monospace; font-size: 1.5rem; margin-top: 1rem; color: var(--color-accent);">
+            <div id="mobile-loader-percent"
+                style="font-family: 'Space Grotesk', monospace; font-size: 1.5rem; margin-top: 1rem; color: var(--color-accent);">
                 0%
             </div>
         </div>
@@ -1102,25 +1446,35 @@
     <div class="cursor-outline hidden md:block"></div>
 
     <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 mix-blend-difference px-4 md:px-6 py-4 md:py-6 flex justify-between items-center pointer-events-none text-white">
+    <nav
+        class="fixed top-0 w-full z-50 mix-blend-difference px-4 md:px-6 py-4 md:py-6 flex justify-between items-center pointer-events-none text-white">
         <!-- Logo: Yatra -->
-        <div class="magnetic-wrap pointer-events-auto flex-shrink-0" style="z-index: 1000; position: relative; isolation: isolate; mix-blend-mode: normal;">
+        <div class="magnetic-wrap pointer-events-auto flex-shrink-0"
+            style="z-index: 1000; position: relative; isolation: isolate; mix-blend-mode: normal;">
             <div class="magnetic-content" style="z-index: 1001; position: relative; mix-blend-mode: normal;">
-                <img src="LOGO .webp" alt="Yatra Logo" class="h-10 sm:h-12 md:h-20 w-auto object-contain" style="z-index: 1002; position: relative; mix-blend-mode: normal; isolation: isolate;">
+                <img src="LOGO .webp" alt="Yatra Logo" class="h-10 sm:h-12 md:h-20 w-auto object-contain"
+                    style="z-index: 1002; position: relative; mix-blend-mode: normal; isolation: isolate;">
             </div>
         </div>
 
         <!-- Center: Nav Links (Restored) -->
-        <div class="hidden md:flex gap-8 text-sm font-bold uppercase tracking-widest pointer-events-auto absolute left-1/2 transform -translate-x-1/2">
-            <a href="#about" class="hacker-text hover:text-[var(--color-accent)] transition-colors" data-original="About">About</a>
-            <a href="#lineup" class="hacker-text hover:text-[var(--color-accent)] transition-colors" data-original="Lineup">Lineup</a>
-            <a href="/events" class="hacker-text hover:text-[var(--color-accent)] transition-colors" data-original="Events" onclick="event.preventDefault(); if (window.parent !== window) { window.parent.postMessage({ type: 'navigate', path: '/events' }, '*'); } else { window.location.href = '/events'; }">Events</a>
-            <a href="#registration" class="hacker-text hover:text-[var(--color-accent)] transition-colors" data-original="Passes">Passes</a>
+        <div
+            class="hidden md:flex gap-8 text-sm font-bold uppercase tracking-widest pointer-events-auto absolute left-1/2 transform -translate-x-1/2">
+            <a href="#about" class="hacker-text hover:text-[var(--color-accent)] transition-colors"
+                data-original="About">About</a>
+            <a href="#lineup" class="hacker-text hover:text-[var(--color-accent)] transition-colors"
+                data-original="Lineup">Lineup</a>
+            <a href="/events" class="hacker-text hover:text-[var(--color-accent)] transition-colors"
+                data-original="Events"
+                onclick="event.preventDefault(); if (window.parent !== window) { window.parent.postMessage({ type: 'navigate', path: '/events' }, '*'); } else { window.location.href = '/events'; }">Events</a>
+            <a href="#registration" class="hacker-text hover:text-[var(--color-accent)] transition-colors"
+                data-original="Passes">Passes</a>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <header class="relative min-h-screen flex flex-col justify-center items-center pt-16 sm:pt-20 overflow-hidden bg-black perspective-1000">
+    <header
+        class="relative min-h-screen flex flex-col justify-center items-center pt-16 sm:pt-20 overflow-hidden bg-black perspective-1000">
         <!-- Background Video -->
         <div class="absolute inset-0 z-0">
             <video autoplay muted loop playsinline class="w-full h-full object-cover opacity-80">
@@ -1128,30 +1482,38 @@
             </video>
         </div>
 
-        <div id="hero-title-container" class="z-10 text-center px-4 sm:px-6 mix-blend-difference text-white will-change-transform w-full">
-            <p class="uppercase tracking-[0.2em] sm:tracking-[0.3em] md:tracking-[0.5em] mb-3 sm:mb-4 text-[0.65rem] sm:text-xs md:text-sm lg:text-base font-bold animate-fade-in-up px-2 leading-relaxed">
+        <div id="hero-title-container"
+            class="z-10 text-center px-4 sm:px-6 mix-blend-difference text-white will-change-transform w-full">
+            <p
+                class="uppercase tracking-[0.2em] sm:tracking-[0.3em] md:tracking-[0.5em] mb-3 sm:mb-4 text-[0.65rem] sm:text-xs md:text-sm lg:text-base font-bold animate-fade-in-up px-2 leading-relaxed">
                 Two Days • 50+ Epic Events • Infinite Vibes
             </p>
             <div class="hero-parallax" style="will-change: transform;">
-                <h1 class="text-[14vw] sm:text-[12vw] md:text-[11vw] leading-[0.85] sm:leading-[0.8] font-display font-extrabold uppercase tracking-tighter">
+                <h1
+                    class="text-[14vw] sm:text-[12vw] md:text-[11vw] leading-[0.85] sm:leading-[0.8] font-display font-extrabold uppercase tracking-tighter">
                     Yatra
                 </h1>
-                <h1 class="text-[14vw] sm:text-[12vw] md:text-[11vw] leading-[1] font-display font-extrabold uppercase tracking-tighter relative bottom-2 sm:bottom-4 md:bottom-8 ml-2 sm:ml-3 md:ml-4">
+                <h1
+                    class="text-[14vw] sm:text-[12vw] md:text-[11vw] leading-[1] font-display font-extrabold uppercase tracking-tighter relative bottom-2 sm:bottom-4 md:bottom-8 ml-2 sm:ml-3 md:ml-4">
                     '26
                 </h1>
             </div>
             <div class="mt-6 sm:mt-8 md:mt-12 animate-fade-in-up mix-blend-normal">
                 <a href="#registration" class="magnetic-wrap inline-block">
-                    <div class="magnetic-content yellow-purple-gradient-animated text-black px-5 py-2.5 sm:px-6 sm:py-3 md:px-8 md:py-4 lg:px-12 lg:py-5 rounded-lg uppercase font-bold text-[0.75rem] sm:text-xs md:text-sm lg:text-base tracking-widest transition-all duration-300 shadow-lg" style="mix-blend-mode: normal; min-height: 44px; display: flex; align-items: center; justify-content: center;">
+                    <div class="magnetic-content yellow-purple-gradient-animated text-black px-5 py-2.5 sm:px-6 sm:py-3 md:px-8 md:py-4 lg:px-12 lg:py-5 rounded-lg uppercase font-bold text-[0.75rem] sm:text-xs md:text-sm lg:text-base tracking-widest transition-all duration-300 shadow-lg"
+                        style="mix-blend-mode: normal; min-height: 44px; display: flex; align-items: center; justify-content: center;">
                         BUY PASSES
                     </div>
                 </a>
             </div>
         </div>
 
-        <div class="absolute bottom-4 sm:bottom-6 md:bottom-8 lg:bottom-10 left-0 w-full z-20 rotate-[-1.5deg] sm:rotate-[-2deg] scale-[1.02] sm:scale-105 md:scale-110 overflow-hidden">
-            <div class="bg-[var(--color-accent)] text-black py-1 sm:py-1.5 md:py-2 marquee-container border-y-1 sm:border-y-2 md:border-y-2 border-black">
-                <div class="marquee-content text-base sm:text-xl md:text-2xl lg:text-3xl font-display font-black uppercase leading-tight">
+        <div
+            class="absolute bottom-4 sm:bottom-6 md:bottom-8 lg:bottom-10 left-0 w-full z-20 rotate-[-1.5deg] sm:rotate-[-2deg] scale-[1.02] sm:scale-105 md:scale-110 overflow-hidden">
+            <div
+                class="bg-[var(--color-accent)] text-black py-1 sm:py-1.5 md:py-2 marquee-container border-y-1 sm:border-y-2 md:border-y-2 border-black">
+                <div
+                    class="marquee-content text-base sm:text-xl md:text-2xl lg:text-3xl font-display font-black uppercase leading-tight">
                     &nbsp;Cultural Fest • Pro Shows • FEB 13 & 14 • Yatra '26 • Join the Vibe •
                     &nbsp;Cultural Fest • Pro Shows • FEB 13 & 14 • Yatra '26 • Join the Vibe •
                 </div>
@@ -1160,33 +1522,48 @@
     </header>
 
     <!-- Intro / About -->
-    <section id="about" class="py-10 sm:py-14 md:py-20 lg:py-40 px-4 sm:px-6 max-w-8xl xl:max-w-9xl mx-auto relative" data-theme="light">
+    <section id="about" class="py-10 sm:py-14 md:py-20 lg:py-40 px-4 sm:px-6 max-w-8xl xl:max-w-9xl mx-auto relative"
+        data-theme="light">
         <div class="flex flex-col items-center justify-center text-center">
 
             <div class="w-full max-w-full">
-                <div class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-display font-extrabold uppercase tracking-tighter leading-[1.1] sm:leading-tight mb-6 sm:mb-8 md:mb-12 lg:mb-16 xl:mb-20 word-reveal px-2" style="position: relative; z-index: 10; isolation: isolate;">
+                <div class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-display font-extrabold uppercase tracking-tighter leading-[1.1] sm:leading-tight mb-6 sm:mb-8 md:mb-12 lg:mb-16 xl:mb-20 word-reveal px-2"
+                    style="position: relative; z-index: 10; isolation: isolate;">
                     About &nbsp; YATRA
                 </div>
-                <div class="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl opacity-85 relative flex justify-center mb-3 sm:mb-4 md:mb-5 lg:mb-6 xl:mb-8">
+                <div
+                    class="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl opacity-85 relative flex justify-center mb-3 sm:mb-4 md:mb-5 lg:mb-6 xl:mb-8">
 
-                    <div class="word-reveal-p pl-0 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto leading-[1.7] sm:leading-relaxed px-2 sm:px-4 md:px-6" style="text-align: justify;">
+                    <div class="word-reveal-p pl-0 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto leading-[1.7] sm:leading-relaxed px-2 sm:px-4 md:px-6"
+                        style="text-align: justify;">
                         <p class="mb-4 sm:mb-6">
-                            YATRA 2026 is a grand intercollegiate cultural fest of Rajalakshmi Institutions, organized by the students with the support of the management, principal, and faculty. It stands as a vibrant platform that celebrates culture, creativity, and youthful energy.
+                            YATRA 2026 is a grand intercollegiate cultural fest of Rajalakshmi Institutions, organized
+                            by the students with the support of the management, principal, and faculty. It stands as a
+                            vibrant platform that celebrates culture, creativity, and youthful energy.
                         </p>
                         <p>
-                            Rooted in cultural heritage and artistic expression, YATRA brings together students to showcase their talents through music, dance, art, and a wide range of cultural events. The fest aims to inspire confidence, encourage participation, and create a space where passion meets performance. With the presence of distinguished guests and an atmosphere filled with enthusiasm and celebration, YATRA 2026 promises an unforgettable cultural journey that unites tradition, talent, and togetherness.
+                            Rooted in cultural heritage and artistic expression, YATRA brings together students to
+                            showcase their talents through music, dance, art, and a wide range of cultural events. The
+                            fest aims to inspire confidence, encourage participation, and create a space where passion
+                            meets performance. With the presence of distinguished guests and an atmosphere filled with
+                            enthusiasm and celebration, YATRA 2026 promises an unforgettable cultural journey that
+                            unites tradition, talent, and togetherness.
                         </p>
                     </div>
                 </div>
-                <div class="mt-3 sm:mt-4 md:mt-5 lg:mt-6 xl:mt-8 flex justify-center items-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 xl:gap-12 flex-wrap relative px-2" style="z-index: 100;">
+                <div class="mt-3 sm:mt-4 md:mt-5 lg:mt-6 xl:mt-8 flex justify-center items-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 xl:gap-12 flex-wrap relative px-2"
+                    style="z-index: 100;">
                     <div class="blur-reveal logo-container flex-shrink-0">
-                        <img src="RIT WHITE LOGO.webp" alt="RIT Logo" class="w-auto transition-all duration-300" style="height: 45px;">
+                        <img src="RIT WHITE LOGO.webp" alt="RIT Logo" class="w-auto transition-all duration-300"
+                            style="height: 45px;">
                     </div>
                     <div class="blur-reveal logo-container flex-shrink-0">
-                        <img src="RMC COLLEGE LOGO.webp" alt="RMC College Logo" class="w-auto transition-all duration-300" style="height: 250px;">
+                        <img src="RMC COLLEGE LOGO.webp" alt="RMC College Logo"
+                            class="w-auto transition-all duration-300" style="height: 250px;">
                     </div>
                     <div class="blur-reveal logo-container flex-shrink-0">
-                        <img src="RSB Logo.webp" alt="RSB Logo" class="w-auto transition-all duration-300" style="height: 220px;">
+                        <img src="RSB Logo.webp" alt="RSB Logo" class="w-auto transition-all duration-300"
+                            style="height: 220px;">
                     </div>
                 </div>
             </div>
@@ -1196,10 +1573,12 @@
     <!-- Horizontal Gallery / Time Tunnel -->
     <section id="gallery-pin" class="bg-black text-white">
         <div id="gallery-track">
-            
+
             <!-- Slide 1: Intro -->
             <div class="gallery-item bg-black">
-                <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
+                <div
+                    class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]">
+                </div>
                 <div class="z-10 text-center mix-blend-difference px-4">
                     <p class="uppercase tracking-[0.5em] text-[var(--color-accent)] font-bold mb-4">The Legacy</p>
                     <h2 class="text-6xl md:text-9xl font-display font-black uppercase leading-none">
@@ -1213,32 +1592,41 @@
 
             <!-- Slide 2: 2024 -->
             <div class="gallery-item group">
-                <div class="absolute inset-0 bg-black/40 z-10 group-hover:bg-black/20 transition-colors duration-500"></div>
-                <img src="/2024.JPG" class="absolute inset-0 w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700 scale-100 group-hover:scale-110">
+                <div class="absolute inset-0 bg-black/40 z-10 group-hover:bg-black/20 transition-colors duration-500">
+                </div>
+                <img src="/2024.JPG"
+                    class="absolute inset-0 w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700 scale-100 group-hover:scale-110">
                 <span class="gallery-year group-hover:text-white/10 transition-colors duration-500">2024</span>
-                <div class="absolute bottom-20 left-10 z-20 max-w-md translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-100">
+                <div
+                    class="absolute bottom-20 left-10 z-20 max-w-md translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-100">
                     <h3 class="text-3xl font-display font-bold text-[var(--color-secondary)]">Arjun Das</h3>
-                    <p class="text-white/80 mt-2">The year was packed with excitement and energy, especially with the presence of Arjun Dass, Sam C.V.</p>
+                    <p class="text-white/80 mt-2">The year was packed with excitement and energy, especially with the
+                        presence of Arjun Dass, Sam C.V.</p>
                 </div>
             </div>
 
             <!-- Slide 3: 2025 -->
             <div class="gallery-item group">
-                <div class="absolute inset-0 bg-black/40 z-10 group-hover:bg-black/20 transition-colors duration-500"></div>
-                <img src="/2025.JPG" class="absolute inset-0 w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700 scale-100 group-hover:scale-110">
+                <div class="absolute inset-0 bg-black/40 z-10 group-hover:bg-black/20 transition-colors duration-500">
+                </div>
+                <img src="/2025.JPG"
+                    class="absolute inset-0 w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700 scale-100 group-hover:scale-110">
                 <span class="gallery-year group-hover:text-white/10 transition-colors duration-500">2025</span>
-                <div class="absolute bottom-20 left-10 z-20 max-w-md translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-100">
+                <div
+                    class="absolute bottom-20 left-10 z-20 max-w-md translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-100">
                     <h3 class="text-3xl font-display font-bold text-white">Vijay Sethupathi</h3>
-                    <p class="text-white/80 mt-2">The year which exceeded all expectations, with the presence of Vijay Sethupathi and the energitic performance of Asal Kolaru and Paal Dabba.</p>
+                    <p class="text-white/80 mt-2">The year which exceeded all expectations, with the presence of Vijay
+                        Sethupathi and the energitic performance of Asal Kolaru and Paal Dabba.</p>
                 </div>
             </div>
 
-             <!-- Slide 4: 2026 (CTA) -->
-             <div class="gallery-item bg-[var(--color-accent)] text-black">
+            <!-- Slide 4: 2026 (CTA) -->
+            <div class="gallery-item bg-[var(--color-accent)] text-black">
                 <div class="text-center">
                     <p class="text-xl font-bold uppercase tracking-widest mb-4">And now...</p>
                     <h2 class="text-[12vw] font-display font-black leading-none mb-8">2026</h2>
-                    <a href="#registration" class="inline-block border-2 border-black px-12 py-6 text-xl font-bold uppercase hover:bg-black hover:text-[var(--color-accent)] transition-colors duration-300">
+                    <a href="#registration"
+                        class="inline-block border-2 border-black px-12 py-6 text-xl font-bold uppercase hover:bg-black hover:text-[var(--color-accent)] transition-colors duration-300">
                         Join the Future
                     </a>
                 </div>
@@ -1247,29 +1635,35 @@
         </div>
     </section>
 
+
+
     <!-- Lineup / Voices -->
     <section id="lineup" class="py-10 sm:py-14 md:py-20 lg:py-24 px-4 sm:px-6 border-b border-gray-800">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-8 sm:mb-12 md:mb-16">
-                <h2 class="font-akira text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold uppercase tracking-wider mb-4 text-white word-reveal">
+                <h2
+                    class="font-akira text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold uppercase tracking-wider mb-4 text-white word-reveal">
                     LINEUP
                 </h2>
                 <p class="text-sm sm:text-base md:text-lg text-gray-400 uppercase tracking-wider word-reveal-p">
                     Experience the biggest names live
                 </p>
             </div>
-            
+
             <div class="lineup-card-wrapper reveal-img">
                 <!-- Card 1 - GV Prakash Flip Card (First) -->
                 <div class="lineup-card-slot lineup-card-slot--revealed">
-                    <button type="button" class="lineup-flip-card" id="gv-flip-card" aria-label="Click to reveal GV Prakash lineup card">
+                    <button type="button" class="lineup-flip-card" id="gv-flip-card"
+                        aria-label="Click to reveal GV Prakash lineup card">
                         <span class="lineup-flip-card-inner" aria-hidden="true">
                             <span class="lineup-flip-card-face lineup-flip-card-face--back">
-                                <img class="lineup-flip-card-img" src="/gvbackcard.webp" alt="GV lineup card (back)" decoding="async" loading="lazy">
+                                <img class="lineup-flip-card-img" src="/gvbackcard.webp" alt="GV lineup card (back)"
+                                    decoding="async" loading="lazy">
                                 <span class="lineup-tap-to-reveal">CLICK TO REVEAL</span>
                             </span>
                             <span class="lineup-flip-card-face lineup-flip-card-face--front">
-                                <img class="lineup-flip-card-img" src="/gvfrontcard.webp" alt="GV Prakash - Music Director & Composer" decoding="async" loading="lazy">
+                                <img class="lineup-flip-card-img" src="/gvfrontcard.webp"
+                                    alt="GV Prakash - Music Director & Composer" decoding="async" loading="lazy">
                             </span>
                         </span>
                     </button>
@@ -1278,7 +1672,8 @@
                 <!-- Card 2 - 48 Hour Countdown Timer -->
                 <div class="lineup-card-slot">
                     <div class="lineup-locked-card">
-                        <img class="lineup-flip-card-img" src="/Gallery/yatraevents.webp" alt="Countdown card" decoding="async" loading="lazy">
+                        <img class="lineup-flip-card-img" src="/Gallery/yatraevents.webp" alt="Countdown card"
+                            decoding="async" loading="lazy">
                         <div class="lineup-countdown-overlay">
                             <div class="countdown-timer" id="countdown-48hr">00:00:00</div>
                             <div class="countdown-label">Hours : Minutes : Seconds</div>
@@ -1289,13 +1684,18 @@
                 <!-- Card 3 - To Be Revealed Soon (Locked) -->
                 <div class="lineup-card-slot lineup-card-slot--locked">
                     <div class="lineup-locked-card">
-                        <img class="lineup-flip-card-img lineup-locked-img" src="/gvbackcard.webp" alt="" decoding="async" loading="lazy">
+                        <img class="lineup-flip-card-img lineup-locked-img" src="/gvbackcard.webp" alt=""
+                            decoding="async" loading="lazy">
                         <div class="lineup-locked-overlay">
                             <div class="lineup-locked-icon" aria-hidden="true">
                                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                                    <path d="M7.5 10V7.9a4.5 4.5 0 0 1 9 0V10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                                    <path d="M7.2 10h9.6c.9 0 1.6.7 1.6 1.6v7.2c0 .9-.7 1.6-1.6 1.6H7.2c-.9 0-1.6-.7-1.6-1.6v-7.2c0-.9.7-1.6 1.6-1.6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                                    <path d="M12 14.2v2.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                                    <path d="M7.5 10V7.9a4.5 4.5 0 0 1 9 0V10" stroke="currentColor" stroke-width="1.8"
+                                        stroke-linecap="round" />
+                                    <path
+                                        d="M7.2 10h9.6c.9 0 1.6.7 1.6 1.6v7.2c0 .9-.7 1.6-1.6 1.6H7.2c-.9 0-1.6-.7-1.6-1.6v-7.2c0-.9.7-1.6 1.6-1.6Z"
+                                        stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                                    <path d="M12 14.2v2.6" stroke="currentColor" stroke-width="1.8"
+                                        stroke-linecap="round" />
                                 </svg>
                             </div>
                             <div class="lineup-locked-text">REVEAL DROPPING SOON</div>
@@ -1306,13 +1706,18 @@
                 <!-- Card 4 - To Be Revealed Soon (Locked) -->
                 <div class="lineup-card-slot lineup-card-slot--locked">
                     <div class="lineup-locked-card">
-                        <img class="lineup-flip-card-img lineup-locked-img" src="/gvbackcard.webp" alt="" decoding="async" loading="lazy">
+                        <img class="lineup-flip-card-img lineup-locked-img" src="/gvbackcard.webp" alt=""
+                            decoding="async" loading="lazy">
                         <div class="lineup-locked-overlay">
                             <div class="lineup-locked-icon" aria-hidden="true">
                                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                                    <path d="M7.5 10V7.9a4.5 4.5 0 0 1 9 0V10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                                    <path d="M7.2 10h9.6c.9 0 1.6.7 1.6 1.6v7.2c0 .9-.7 1.6-1.6 1.6H7.2c-.9 0-1.6-.7-1.6-1.6v-7.2c0-.9.7-1.6 1.6-1.6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-                                    <path d="M12 14.2v2.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                                    <path d="M7.5 10V7.9a4.5 4.5 0 0 1 9 0V10" stroke="currentColor" stroke-width="1.8"
+                                        stroke-linecap="round" />
+                                    <path
+                                        d="M7.2 10h9.6c.9 0 1.6.7 1.6 1.6v7.2c0 .9-.7 1.6-1.6 1.6H7.2c-.9 0-1.6-.7-1.6-1.6v-7.2c0-.9.7-1.6 1.6-1.6Z"
+                                        stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                                    <path d="M12 14.2v2.6" stroke="currentColor" stroke-width="1.8"
+                                        stroke-linecap="round" />
                                 </svg>
                             </div>
                             <div class="lineup-locked-text">REVEAL DROPPING SOON</div>
@@ -1327,7 +1732,8 @@
     <!-- Marquee Separator -->
     <div class="py-4 sm:py-5 md:py-6 bg-[var(--color-accent)] text-black rotate-1 scale-105 z-10 relative">
         <div class="marquee-container">
-            <div class="marquee-content reverse text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-black uppercase">
+            <div
+                class="marquee-content reverse text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-black uppercase">
                 &nbsp;Dance Battle • Exciting 50+ Events • Yatra '26 •
                 &nbsp;Dance Battle • Exciting 50+ Events • Yatra '26 •
             </div>
@@ -1340,38 +1746,66 @@
             <div class="grid md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 lg:gap-16 items-start">
                 <!-- Sticky Image -->
                 <div class="order-2 md:order-1 relative md:sticky md:top-24 mb-6 md:mb-0">
-                    <div class="absolute -top-10 -left-10 w-full h-full border-2 border-[var(--color-secondary)] z-0 hidden md:block"></div>
-                    <div class="w-full aspect-[4/3] overflow-hidden rounded-lg md:rounded-xl lg:rounded-2xl shadow-2xl relative reveal-img">
-                        <img src="/Gallery/yatraevents.webp" alt="Yatra Events" class="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">
+                    <div
+                        class="absolute -top-10 -left-10 w-full h-full border-2 border-[var(--color-secondary)] z-0 hidden md:block">
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden rounded-lg md:rounded-xl lg:rounded-2xl shadow-2xl relative reveal-img">
+                        <img src="/Gallery/yatraevents.webp" alt="Yatra Events"
+                            class="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">
                     </div>
                 </div>
                 <div class="order-1 md:order-2">
-                    <h2 class="text-2.5xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-display font-bold mb-5 sm:mb-6 md:mb-8 uppercase leading-[1.1]">
+                    <h2
+                        class="text-2.5xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-display font-bold mb-5 sm:mb-6 md:mb-8 uppercase leading-[1.1]">
                         Event <br> <span class="text-[var(--color-accent)]">Categories</span>
                     </h2>
                     <p class="text-base sm:text-lg md:text-xl text-gray-400 mb-6 sm:mb-8 word-reveal-p leading-relaxed">
-                        Compete across 50+ epic events over two days. Win massive cash prizes. Showcase your talent on the biggest stage.
+                        Compete across 50+ epic events over two days. Win massive cash prizes. Showcase your talent on
+                        the biggest stage.
                     </p>
-                    <ul class="space-y-8 sm:space-y-10 md:space-y-12 border-l-2 border-gray-800 pl-4 sm:pl-5 md:pl-6 py-2 sm:py-3 md:py-4">
-                        <li class="flex flex-col group cursor-pointer hover:pl-2 sm:hover:pl-4 transition-all duration-300">
-                            <span class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-xs sm:text-sm mb-1">Technical</span>
-                            <span class="text-xl sm:text-2xl md:text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors leading-tight">Gaming & Digital Arts</span>
-                            <p class="text-xs sm:text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-24 transition-all duration-500 leading-relaxed">Esports tournaments, Photography, Short Film, Poster Design, Brain Teasers, Quizzes, Drone Challenge, and Product Marketing.</p>
+                    <ul
+                        class="space-y-8 sm:space-y-10 md:space-y-12 border-l-2 border-gray-800 pl-4 sm:pl-5 md:pl-6 py-2 sm:py-3 md:py-4">
+                        <li
+                            class="flex flex-col group cursor-pointer hover:pl-2 sm:hover:pl-4 transition-all duration-300">
+                            <span
+                                class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-xs sm:text-sm mb-1">Technical</span>
+                            <span
+                                class="text-xl sm:text-2xl md:text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors leading-tight">Gaming
+                                & Digital Arts</span>
+                            <p
+                                class="text-xs sm:text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-24 transition-all duration-500 leading-relaxed">
+                                Esports tournaments, Photography, Short Film, Poster Design, Brain Teasers, Quizzes,
+                                Drone Challenge, and Product Marketing.</p>
                         </li>
-                        <li class="flex flex-col group cursor-pointer hover:pl-2 sm:hover:pl-4 transition-all duration-300">
-                            <span class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-xs sm:text-sm mb-1">Cultural</span>
-                            <span class="text-xl sm:text-2xl md:text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors leading-tight">Dance, Music & Arts</span>
-                             <p class="text-xs sm:text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-24 transition-all duration-500 leading-relaxed">Dance battles, Singing competitions, Beat Box, Music challenges, Traditional arts, Oratory, Comedy, Sports, Games, and Food contests.</p>
+                        <li
+                            class="flex flex-col group cursor-pointer hover:pl-2 sm:hover:pl-4 transition-all duration-300">
+                            <span
+                                class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-xs sm:text-sm mb-1">Cultural</span>
+                            <span
+                                class="text-xl sm:text-2xl md:text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors leading-tight">Dance,
+                                Music & Arts</span>
+                            <p
+                                class="text-xs sm:text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-24 transition-all duration-500 leading-relaxed">
+                                Dance battles, Singing competitions, Beat Box, Music challenges, Traditional arts,
+                                Oratory, Comedy, Sports, Games, and Food contests.</p>
                         </li>
-                        <li class="flex flex-col group cursor-pointer hover:pl-2 sm:hover:pl-4 transition-all duration-300">
-                            <span class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-xs sm:text-sm mb-1">On-Stage</span>
-                            <span class="text-xl sm:text-2xl md:text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors leading-tight">Performance & Theatre</span>
-                             <p class="text-xs sm:text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-20 transition-all duration-500 leading-relaxed">Mime, Mono Acting, Mock Parliament, K-Cosplay, and Face Fiesta competitions.</p>
+                        <li
+                            class="flex flex-col group cursor-pointer hover:pl-2 sm:hover:pl-4 transition-all duration-300">
+                            <span
+                                class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-xs sm:text-sm mb-1">On-Stage</span>
+                            <span
+                                class="text-xl sm:text-2xl md:text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors leading-tight">Performance
+                                & Theatre</span>
+                            <p
+                                class="text-xs sm:text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-20 transition-all duration-500 leading-relaxed">
+                                Mime, Mono Acting, Mock Parliament, K-Cosplay, and Face Fiesta competitions.</p>
                         </li>
                     </ul>
                     <div class="mt-12">
                         <a href="/events" class="magnetic-wrap inline-block">
-                            <div class="magnetic-content yellow-purple-gradient text-black px-8 py-4 rounded-lg uppercase font-bold text-sm tracking-widest hover:opacity-90 transition-all duration-300 shadow-lg" style="mix-blend-mode: normal;">
+                            <div class="magnetic-content yellow-purple-gradient text-black px-8 py-4 rounded-lg uppercase font-bold text-sm tracking-widest hover:opacity-90 transition-all duration-300 shadow-lg"
+                                style="mix-blend-mode: normal;">
                                 View All Events
                             </div>
                         </a>
@@ -1381,53 +1815,84 @@
         </div>
     </section>
 
-    <!-- Registration -->
+    <!-- Registration / Passes -->
     <section id="registration" class="py-10 sm:py-14 md:py-20 lg:py-24 px-4 sm:px-6 relative overflow-hidden">
-        <div class="max-w-7xl mx-auto relative z-10">
-            <h2 class="text-center text-2.5xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-8xl font-display font-black uppercase mb-6 sm:mb-8 md:mb-12 lg:mb-16 leading-[1.1]">Get <span class="text-[var(--color-accent)]">Passes</span></h2>
-            
-            <div class="grid sm:grid-cols-2 gap-4 sm:gap-5 md:gap-6 lg:gap-8 max-w-4xl mx-auto">
-                <!-- Pass 1: YATRA ENTRY PASS (Rajalakshmi Institutions) -->
-                <div class="magnetic-wrap w-full md:-translate-y-4">
-                    <div class="magnetic-content border-2 border-[var(--color-accent)] bg-[#111] p-8 flex flex-col shadow-[0_0_30px_rgba(155,23,153,0.1)] h-full relative">
-                        <div class="absolute top-0 right-0 bg-[var(--color-accent)] text-black text-xs font-bold px-2 sm:px-3 py-1 uppercase">Exclusive</div>
-                        <div class="mb-4">
-                            <h3 class="text-2xl font-display font-bold uppercase text-[var(--color-accent)]">YATRA ENTRY PASS</h3>
-                            <p class="text-2xl font-black mt-2">₹500</p>
-                            <p class="text-xs text-gray-400 mt-1">+ Event Registration Charges</p>
-                            <p class="text-sm text-gray-400 mt-1">(Rajalakshmi Institutions)</p>
+        <div
+            class="liquid-glass-wrapper relative z-10 p-8 sm:p-12 md:p-16 max-w-5xl mx-auto rounded-3xl overflow-hidden">
+            <div class="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl z-0"></div>
+            <div class="active absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-50 z-0"></div>
+
+            <div class="relative z-10 flex flex-col items-center justify-center gap-8 md:gap-12">
+                <!-- Main Title -->
+                <h2
+                    class="text-center text-3xl sm:text-4xl md:text-5xl font-display font-black uppercase mb-4 leading-tight">
+                    Passes <span class="text-[var(--color-accent)]">Dropping Soon</span>
+                </h2>
+
+                <!-- Reference-Style Ticket -->
+                <div class="ref-ticket-container">
+                    <!-- Left Stub (Black) -->
+                    <div class="ref-ticket-left">
+                        <div
+                            class="bg-[var(--color-accent)] w-14 h-14 flex items-center justify-center transform -rotate-12 shadow-lg">
+                            <span class="font-akira text-black text-2xl font-bold">Y</span>
                         </div>
-                        <ul class="flex-grow space-y-3 text-sm text-gray-300 mb-8">
-                            <li>• Access to 2 DAYS</li>
-                            <li>• Proshow</li>
-                            <li>• DJ Night</li>
-                        </ul>
-                        <a href="/yatra-entry" class="w-full py-4 yellow-purple-gradient text-black uppercase font-bold text-sm tracking-widest hover:opacity-90 transition-all text-center" onclick="event.preventDefault(); if (window.parent !== window) { window.parent.postMessage({ type: 'navigate', path: '/yatra-entry' }, '*'); } else { window.location.href = '/yatra-entry'; }">
-                            Register Now
-                        </a>
+                        <div
+                            class="absolute bottom-6 text-gray-500 font-mono text-[10px] tracking-[0.3em] uppercase w-full text-center">
+                            Yatra 2026</div>
+
+                        <!-- Seam -->
+                        <div class="ticket-seam" aria-hidden="true">
+                            <div class="perf-circle"></div>
+                            <div class="perf-circle"></div>
+                            <div class="perf-circle"></div>
+                            <div class="perf-circle"></div>
+                            <div class="perf-circle"></div>
+                            <div class="perf-circle"></div>
+                            <div class="perf-circle"></div>
+                        </div>
+                    </div>
+
+                    <!-- Right Content (White) -->
+                    <div class="ref-ticket-right">
+                        <div class="flex flex-col h-full w-full">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="ticket-main-title text-2xl md:text-4xl mb-4">YATRA PASS</h3>
+                                    <ul class="ticket-list space-y-2">
+                                        <li>Access to all 2 DAYS</li>
+                                        <li>Proshows & DJ Night Included</li>
+                                        <li>Unlimited Fun Guaranteed</li>
+                                    </ul>
+                                </div>
+
+                            </div>
+
+                            <div class="mt-auto flex flex-col md:flex-row justify-between items-end gap-4">
+                                <div class="w-full md:w-auto">
+                                    <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">Registration Opens
+                                        In</div>
+                                    <div id="ticket-countdown"
+                                        class="font-space font-black text-3xl sm:text-5xl tabular-nums leading-none">
+                                        48:00:00</div>
+                                </div>
+
+                                <button class="ticket-btn mt-4 md:mt-0 w-full md:w-auto justify-center">
+                                    Getting Ready <span class="ml-2">→</span>
+                                </button>
+
+                                <div
+                                    class="ticket-qr-area hidden md:flex items-center justify-center pointer-events-none opacity-50">
+                                    <svg width="60" height="60" viewBox="0 0 24 24" fill="none" class="text-black">
+                                        <path fill="currentColor"
+                                            d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3zM15 15h6v6h-6zM7 7h2v2H7zM19 7h2v2h-2zM7 19h2v2H7z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Pass 2: YATRA ENTRY PASS (Other Institutions) -->
-                <div class="magnetic-wrap w-full">
-                    <div class="magnetic-content border-2 border-[var(--color-accent)] bg-[#111] p-8 flex flex-col shadow-[0_0_30px_rgba(155,23,153,0.1)] h-full relative">
-                        <div class="absolute top-0 right-0 bg-[var(--color-accent)] text-black text-xs font-bold px-2 sm:px-3 py-1 uppercase">Mandatory</div>
-                        <div class="mb-4">
-                            <h3 class="text-2xl font-display font-bold uppercase text-[var(--color-accent)]">YATRA ENTRY PASS</h3>
-                            <p class="text-2xl font-black mt-2">₹800</p>
-                            <p class="text-xs text-gray-400 mt-1">+ Event Registration Charges</p>
-                            <p class="text-sm text-gray-400 mt-1">(Other Institutions)</p>
-                        </div>
-                        <ul class="flex-grow space-y-3 text-sm text-gray-300 mb-8">
-                            <li>• Access to 2 DAYS</li>
-                            <li>• Proshow</li>
-                            <li>• DJ Night</li>
-                        </ul>
-                        <a href="/yatra-entry" class="w-full py-4 yellow-purple-gradient text-black uppercase font-bold text-sm tracking-widest hover:opacity-90 transition-all text-center" onclick="event.preventDefault(); if (window.parent !== window) { window.parent.postMessage({ type: 'navigate', path: '/yatra-entry' }, '*'); } else { window.location.href = '/yatra-entry'; }">
-                            Register Now
-                        </a>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
@@ -1437,8 +1902,10 @@
         <div class="max-w-7xl mx-auto relative py-8 sm:py-10 md:py-12 lg:py-16 px-4 sm:px-6">
             <!-- Main Title - Centered at top -->
             <div class="flex justify-center mb-6 sm:mb-10 md:mb-12 lg:mb-16 overflow-hidden px-2">
-                <div class="w-full max-w-5xl h-28 sm:h-36 md:h-44 lg:h-56 xl:h-64 overflow-hidden py-2 sm:py-4 md:py-5 lg:py-6 flex items-center justify-center">
-                    <div class="font-akira text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold uppercase tracking-wider" style="background: linear-gradient(0deg, rgb(205, 7, 194) 0%, rgba(205, 7, 194, 0.65) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                <div
+                    class="w-full max-w-5xl h-28 sm:h-36 md:h-44 lg:h-56 xl:h-64 overflow-hidden py-2 sm:py-4 md:py-5 lg:py-6 flex items-center justify-center">
+                    <div class="font-akira text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold uppercase tracking-wider"
+                        style="background: linear-gradient(0deg, rgb(205, 7, 194) 0%, rgba(205, 7, 194, 0.65) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
                         YATRA'26
                     </div>
                 </div>
@@ -1448,7 +1915,8 @@
             <div class="flex flex-col md:flex-row md:justify-between gap-6 sm:gap-10 md:gap-8 mb-8 sm:mb-12">
                 <!-- Left Column - Address -->
                 <div class="flex-1">
-                    <div class="space-y-1.5 sm:space-y-2 text-sm sm:text-base md:text-lg text-white/90 leading-relaxed text-left">
+                    <div
+                        class="space-y-1.5 sm:space-y-2 text-sm sm:text-base md:text-lg text-white/90 leading-relaxed text-left">
                         <div class="font-semibold text-white">Rajalakshmi Institute of Technology</div>
                         <div class="text-white/95">Bangalore Highway Road, Kuthambakkam,</div>
                         <div class="text-white/95">Chennai, Tamil Nadu - 600124</div>
@@ -1459,42 +1927,38 @@
                 <div class="flex-1 md:text-right">
                     <!-- Social Media Icons -->
                     <div class="flex md:justify-end items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-                        <a
-                            href="https://www.facebook.com/ritchennai"
-                            target="_blank"
-                            rel="noreferrer"
+                        <a href="https://www.facebook.com/ritchennai" target="_blank" rel="noreferrer"
                             class="rounded-full border border-white/20 bg-black/50 p-2 sm:p-2.5 text-white hover:text-white hover:border-white/40 active:bg-white/10 transition-colors touch-manipulation"
                             aria-label="Facebook"
-                            style="min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;"
-                        >
+                            style="min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;">
                             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path d="M14 8.5h2V5.75A18 18 0 0 0 13.6 5.6c-2.4 0-4.1 1.46-4.1 4.15V12H7v3h2.5v6h3.1v-6h2.8l.5-3h-3.3V10c0-1 .33-1.5 1.4-1.5Z" fill="currentColor"/>
+                                <path
+                                    d="M14 8.5h2V5.75A18 18 0 0 0 13.6 5.6c-2.4 0-4.1 1.46-4.1 4.15V12H7v3h2.5v6h3.1v-6h2.8l.5-3h-3.3V10c0-1 .33-1.5 1.4-1.5Z"
+                                    fill="currentColor" />
                             </svg>
                         </a>
-                        <a
-                            href="https://instagram.com"
-                            target="_blank"
-                            rel="noreferrer"
+                        <a href="https://instagram.com" target="_blank" rel="noreferrer"
                             class="rounded-full border border-white/20 bg-black/50 p-2 sm:p-2.5 text-white hover:text-white hover:border-white/40 active:bg-white/10 transition-colors touch-manipulation"
                             aria-label="Instagram"
-                            style="min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;"
-                        >
+                            style="min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;">
                             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path d="M7.5 2.75h9A4.75 4.75 0 0 1 21.25 7.5v9A4.75 4.75 0 0 1 16.5 21.25h-9A4.75 4.75 0 0 1 2.75 16.5v-9A4.75 4.75 0 0 1 7.5 2.75Z" stroke="currentColor" stroke-width="1.5"/>
-                                <path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="1.5"/>
-                                <path d="M17.25 6.75h.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                                <path
+                                    d="M7.5 2.75h9A4.75 4.75 0 0 1 21.25 7.5v9A4.75 4.75 0 0 1 16.5 21.25h-9A4.75 4.75 0 0 1 2.75 16.5v-9A4.75 4.75 0 0 1 7.5 2.75Z"
+                                    stroke="currentColor" stroke-width="1.5" />
+                                <path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor"
+                                    stroke-width="1.5" />
+                                <path d="M17.25 6.75h.01" stroke="currentColor" stroke-width="2.5"
+                                    stroke-linecap="round" />
                             </svg>
                         </a>
-                        <a
-                            href="https://youtube.com"
-                            target="_blank"
-                            rel="noreferrer"
+                        <a href="https://youtube.com" target="_blank" rel="noreferrer"
                             class="rounded-full border border-white/20 bg-black/50 p-2 sm:p-2.5 text-white hover:text-white hover:border-white/40 active:bg-white/10 transition-colors touch-manipulation"
                             aria-label="YouTube"
-                            style="min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;"
-                        >
+                            style="min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;">
                             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path d="M21.593 7.203a2.506 2.506 0 0 0-1.762-1.766C18.265 5.007 12 5 12 5s-6.264-.007-7.831.404a2.56 2.56 0 0 0-1.766 1.778c-.413 1.566-.417 4.814-.417 4.814s-.004 3.264.406 4.814c.266.978.842 1.74 1.766 1.778 1.582.43 7.831.437 7.831.437s6.265.007 7.831-.403a2.515 2.515 0 0 0 1.767-1.776c.415-1.563.417-4.812.417-4.812s.002-3.265-.415-4.831zM9.996 15.005l-.005-6 5.207 3.005-5.202 2.995z" fill="currentColor"/>
+                                <path
+                                    d="M21.593 7.203a2.506 2.506 0 0 0-1.762-1.766C18.265 5.007 12 5 12 5s-6.264-.007-7.831.404a2.56 2.56 0 0 0-1.766 1.778c-.413 1.566-.417 4.814-.417 4.814s-.004 3.264.406 4.814c.266.978.842 1.74 1.766 1.778 1.582.43 7.831.437 7.831.437s6.265.007 7.831-.403a2.515 2.515 0 0 0 1.767-1.776c.415-1.563.417-4.812.417-4.812s.002-3.265-.415-4.831zM9.996 15.005l-.005-6 5.207 3.005-5.202 2.995z"
+                                    fill="currentColor" />
                             </svg>
                         </a>
                     </div>
@@ -1519,17 +1983,13 @@
                         Copyright © 2026 Rajalakshmi Institutions
                     </div>
                     <div class="flex flex-wrap items-center gap-4 sm:gap-6 text-[10px] sm:text-xs">
-                        <a
-                            href="/privacy-policy"
-                            class="text-white/70 hover:text-white transition-colors underline underline-offset-4 decoration-white/50 hover:decoration-white"
-                        >
+                        <a href="/privacy-policy"
+                            class="text-white/70 hover:text-white transition-colors underline underline-offset-4 decoration-white/50 hover:decoration-white">
                             Privacy Policy
                         </a>
                         <span class="text-white/30">|</span>
-                        <a
-                            href="/terms-conditions"
-                            class="text-white/70 hover:text-white transition-colors underline underline-offset-4 decoration-white/50 hover:decoration-white"
-                        >
+                        <a href="/terms-conditions"
+                            class="text-white/70 hover:text-white transition-colors underline underline-offset-4 decoration-white/50 hover:decoration-white">
                             Terms & Conditions
                         </a>
                     </div>
@@ -1540,7 +2000,7 @@
 
     <script>
         // Mobile Detection and Routing - Run Immediately
-        (function() {
+        (function () {
             function isMobileDevice() {
                 // PHONE-only detection (iPad/tablets stay on desktop).
                 const MOBILE_MIN_SHORT_SIDE = 360;
@@ -1554,17 +2014,17 @@
                 const isOtherPhone = /webos|blackberry|iemobile|opera mini/i.test(userAgent);
                 return isTouchDevice && isAllowedSize && (isIPhoneOrIPod || isAndroidPhone || isOtherPhone);
             }
-            
+
             // Check for desktop override first
             const urlParams = new URLSearchParams(window.location.search);
             const forceDesktop = urlParams.get('desktop') === 'true' || sessionStorage.getItem('desktopVersion') === 'true';
-            
+
             // Redirect mobile users immediately - before page loads
             if (isMobileDevice() && !forceDesktop) {
                 const currentPath = window.location.pathname;
                 const currentSearch = window.location.search;
                 const currentHash = window.location.hash;
-                
+
                 // Don't redirect if already on mobile version or React app
                 if (currentPath.includes('mobile') || currentPath.includes('index.html') || currentPath === '/') {
                     // Stay on this page, show loader for mobile if on homepage.html
@@ -1575,22 +2035,22 @@
                     }
                     return;
                 }
-                
+
                 // Redirect to mobile version (src/mobile)
                 // The mobile app is served via mobile.html which loads /src/mobile/main.jsx
                 // Redirect relative so sub-folder deploys work too
                 window.location.replace('mobile.html' + currentSearch + currentHash);
                 return;
             }
-            
+
             // Show appropriate loader based on device
             // Desktop loader is shown by default, mobile loader is handled in initMobileLoader
-            
+
             // Allow users to force desktop version
             if (urlParams.get('desktop') === 'true') {
                 sessionStorage.setItem('desktopVersion', 'true');
             }
-            
+
             // Clear desktop preference on desktop devices
             if (!isMobileDevice()) {
                 sessionStorage.removeItem('desktopVersion');
@@ -1599,7 +2059,7 @@
 
         // 1. Initialize Smooth Scroll (Lenis) - Optimized with GSAP ticker integration
         gsap.registerPlugin(ScrollTrigger);
-        
+
         const lenis = new Lenis({
             duration: 1.2,
             easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -1613,39 +2073,39 @@
 
         // Integrate Lenis with GSAP ticker for better performance
         lenis.on('scroll', ScrollTrigger.update);
-        
+
         gsap.ticker.add((time) => {
             lenis.raf(time * 1000);
         });
-        
+
         gsap.ticker.lagSmoothing(0);
 
         // 2. Custom Cursor Logic - Optimized with transform and RAF throttling
         const cursorDot = document.querySelector('.cursor-dot');
         const cursorOutline = document.querySelector('.cursor-outline');
-        
+
         if (cursorDot && cursorOutline) {
             let mouseX = 0, mouseY = 0;
             let outlineX = 0, outlineY = 0;
             let rafId = null;
-            
+
             // Throttle cursor updates using requestAnimationFrame
             const updateCursor = () => {
                 // Dot follows immediately with transform (GPU accelerated)
                 cursorDot.style.transform = `translate(calc(${mouseX}px - 50%), calc(${mouseY}px - 50%))`;
-                
+
                 // Smooth outline follow with lerp
                 outlineX += (mouseX - outlineX) * 0.15;
                 outlineY += (mouseY - outlineY) * 0.15;
                 cursorOutline.style.transform = `translate(calc(${outlineX}px - 50%), calc(${outlineY}px - 50%))`;
-                
+
                 rafId = null;
             };
-            
+
             window.addEventListener('mousemove', (e) => {
                 mouseX = e.clientX;
                 mouseY = e.clientY;
-                
+
                 // Only schedule RAF if not already scheduled
                 if (!rafId) {
                     rafId = requestAnimationFrame(updateCursor);
@@ -1664,13 +2124,13 @@
         const magnets = document.querySelectorAll('.magnetic-wrap');
         let magneticRafId = null;
         const magneticUpdates = new Map();
-        
+
         const updateMagnets = () => {
             magneticUpdates.forEach(({ content, x, y }) => {
-                gsap.to(content, { 
-                    x: x * 0.3, 
-                    y: y * 0.3, 
-                    duration: 0.3, 
+                gsap.to(content, {
+                    x: x * 0.3,
+                    y: y * 0.3,
+                    duration: 0.3,
                     ease: 'power2.out',
                     overwrite: true
                 });
@@ -1678,18 +2138,18 @@
             magneticUpdates.clear();
             magneticRafId = null;
         };
-        
+
         magnets.forEach((magnet) => {
             const content = magnet.querySelector('.magnetic-content');
             if (!content) return;
-            
+
             magnet.addEventListener('mousemove', (e) => {
                 const rect = magnet.getBoundingClientRect();
                 const x = e.clientX - rect.left - rect.width / 2;
                 const y = e.clientY - rect.top - rect.height / 2;
-                
+
                 magneticUpdates.set(magnet, { content, x, y });
-                
+
                 if (!magneticRafId) {
                     magneticRafId = requestAnimationFrame(updateMagnets);
                 }
@@ -1713,14 +2173,14 @@
                     event.target.innerText = originalText
                         .split("")
                         .map((letter, index) => {
-                            if(index < iteration) {
+                            if (index < iteration) {
                                 return originalText[index];
                             }
                             return letters[Math.floor(Math.random() * 26)];
                         })
                         .join("");
 
-                    if(iteration >= originalText.length){ 
+                    if (iteration >= originalText.length) {
                         clearInterval(event.target.interval);
                     }
                     iteration += 1 / 3;
@@ -1733,7 +2193,7 @@
         if (heroTitle) {
             let parallaxRafId = null;
             let targetX = 0, targetY = 0;
-            
+
             const updateParallax = () => {
                 gsap.to(heroTitle, {
                     x: targetX,
@@ -1744,11 +2204,11 @@
                 });
                 parallaxRafId = null;
             };
-            
+
             window.addEventListener('mousemove', (e) => {
                 targetX = (e.clientX / window.innerWidth - 0.5) * 40;
                 targetY = (e.clientY / window.innerHeight - 0.5) * 40;
-                
+
                 if (!parallaxRafId) {
                     parallaxRafId = requestAnimationFrame(updateParallax);
                 }
@@ -1779,7 +2239,7 @@
 
         // 7. Master Animation Loader & ScrollTriggers
         const initAnimations = () => {
-            
+
             // Marquees (Velocity Controlled)
             const marquees = document.querySelectorAll('.marquee-content');
             const tweens = [];
@@ -1799,17 +2259,17 @@
                 onUpdate: (self) => {
                     // Throttle velocity updates to reduce calculations
                     if (velocityUpdateTimer) return;
-                    
+
                     velocityUpdateTimer = requestAnimationFrame(() => {
                         const velocity = self.getVelocity();
-                        const sensitivity = 1000; 
+                        const sensitivity = 1000;
                         const speedBoost = Math.abs(velocity) / sensitivity;
                         const direction = self.direction;
                         const targetScale = direction * (1 + speedBoost);
 
                         gsap.to(tweens, {
                             timeScale: targetScale,
-                            duration: 0.2, 
+                            duration: 0.2,
                             overwrite: true
                         });
 
@@ -1817,7 +2277,7 @@
                         self.resetTimer = setTimeout(() => {
                             gsap.to(tweens, { timeScale: 1, duration: 0.8, ease: "power2.out" });
                         }, 100);
-                        
+
                         velocityUpdateTimer = null;
                     });
                 },
@@ -1861,7 +2321,7 @@
             wordRevealElements.forEach((wordEl) => {
                 const spans = wordEl.querySelectorAll('span');
                 if (spans.length === 0) return;
-                
+
                 gsap.to(spans, {
                     scrollTrigger: {
                         trigger: wordEl,
@@ -1875,12 +2335,12 @@
                     ease: "power3.out"
                 });
             });
-            
-             // Paragraph Word Reveal - Optimized
-             gsap.utils.toArray('.word-reveal-p').forEach(p => {
+
+            // Paragraph Word Reveal - Optimized
+            gsap.utils.toArray('.word-reveal-p').forEach(p => {
                 const words = p.querySelectorAll('.reveal-word');
                 if (words.length === 0) return;
-                
+
                 gsap.to(words, {
                     scrollTrigger: {
                         trigger: p,
@@ -1940,7 +2400,7 @@
                     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
                     // Display total hours (can exceed 24), minutes, and seconds
-                    element.textContent = 
+                    element.textContent =
                         String(totalHours).padStart(2, '0') + ':' +
                         String(minutes).padStart(2, '0') + ':' +
                         String(seconds).padStart(2, '0');
@@ -1951,14 +2411,14 @@
             }
 
             // Initialize 48-hour countdown timer
-            update48HourCountdown('countdown-48hr');
+            update48HourCountdown('ticket-countdown');
 
             // Flip card functionality for GV Prakash card
             // Lineup Stagger Animation for Cards
             gsap.utils.toArray('.lineup-card-slot').forEach((card, index) => {
                 gsap.from(card, {
-                    scrollTrigger: { 
-                        trigger: card, 
+                    scrollTrigger: {
+                        trigger: card,
                         start: "top 85%",
                         toggleActions: "play none none none"
                     },
@@ -1974,7 +2434,7 @@
             const gvFlipCard = document.getElementById('gv-flip-card');
             if (gvFlipCard) {
                 const revealText = gvFlipCard.querySelector('.lineup-tap-to-reveal');
-                gvFlipCard.addEventListener('click', function() {
+                gvFlipCard.addEventListener('click', function () {
                     this.classList.toggle('is-flipped');
                     if (revealText) {
                         revealText.style.display = this.classList.contains('is-flipped') ? 'none' : 'block';
@@ -1985,10 +2445,10 @@
             // Horizontal Gallery Scroll Trigger with Snap Scrolling - Optimized
             const galleryTrack = document.getElementById('gallery-track');
             if (!galleryTrack) return;
-            
+
             const galleryItems = galleryTrack.querySelectorAll('.gallery-item');
             const numSlides = galleryItems.length;
-            
+
             // Cache scroll amount calculation
             let cachedScrollAmount = null;
             let getScrollAmount = () => {
@@ -2029,7 +2489,7 @@
                 invalidateOnRefresh: true,
                 refreshPriority: 1 // Higher priority for gallery
             });
-            
+
             // Reset cache on resize
             let resizeTimer;
             window.addEventListener('resize', () => {
@@ -2063,11 +2523,11 @@
                     }
                 }
             })
-            .to("#loader-center-content", { opacity: 0, scale: 0.8, duration: 0.3 })
-            .to(".loader-panel.top", { yPercent: -100, duration: 1.2, ease: "power4.inOut" }, "split")
-            .to(".loader-panel.bottom", { yPercent: 100, duration: 1.2, ease: "power4.inOut" }, "split")
-            .to(".loader-panel.top .loader-text-bg", { y: 100, duration: 1.2, ease: "power4.inOut" }, "split")
-            .to(".loader-panel.bottom .loader-text-bg", { y: -100, duration: 1.2, ease: "power4.inOut" }, "split");
+                .to("#loader-center-content", { opacity: 0, scale: 0.8, duration: 0.3 })
+                .to(".loader-panel.top", { yPercent: -100, duration: 1.2, ease: "power4.inOut" }, "split")
+                .to(".loader-panel.bottom", { yPercent: 100, duration: 1.2, ease: "power4.inOut" }, "split")
+                .to(".loader-panel.top .loader-text-bg", { y: 100, duration: 1.2, ease: "power4.inOut" }, "split")
+                .to(".loader-panel.bottom .loader-text-bg", { y: -100, duration: 1.2, ease: "power4.inOut" }, "split");
         };
 
         // Mobile Loader Sequence (Generic)
@@ -2078,9 +2538,9 @@
                 initAnimations();
                 return;
             }
-            
+
             mobileLoader.style.display = 'flex';
-            
+
             const tl = gsap.timeline({
                 onComplete: () => {
                     document.body.style.overflow = '';
@@ -2100,7 +2560,7 @@
                     }
                 }
             })
-            .to("#mobile-loader", { opacity: 0, duration: 0.5, ease: "power2.inOut" });
+                .to("#mobile-loader", { opacity: 0, duration: 0.5, ease: "power2.inOut" });
         };
 
         // SPA routing bridge:
@@ -2160,14 +2620,14 @@
         }
 
     </script>
-    
+
     <!-- Vercel Analytics -->
     <script>
-        (function() {
+        (function () {
             var script = document.createElement('script');
             script.src = 'https://va.vercel-scripts.com/v1/script.js';
             script.defer = true;
-            script.onload = function() {
+            script.onload = function () {
                 if (window.va) {
                     window.va('pageview');
                 }
@@ -2176,4 +2636,5 @@
         })();
     </script>
 </body>
+
 </html>
