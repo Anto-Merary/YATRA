@@ -128,14 +128,9 @@ function Hero() {
   // LINEUP flip card (tap to reveal)
   const [isGvCardFlipped, setIsGvCardFlipped] = useState(false)
   const toggleGvCard = useCallback(() => {
-    if (isGvCardFlipped) {
-      // If already flipped, navigate to GV Prakash page
-      window.location.href = '/gv-prakash'
-    } else {
-      // First click - flip the card
-      setIsGvCardFlipped(true)
-    }
-  }, [isGvCardFlipped])
+    // Toggle the flip state - stay on the page
+    setIsGvCardFlipped((prev) => !prev)
+  }, [])
 
   // LINEUP carousel (character-select style)
   const lineupCarouselRef = useRef(null)
@@ -1357,7 +1352,7 @@ function Hero() {
                             type="button"
                             className={`lineup-flip-card ${isGvCardFlipped ? 'is-flipped' : ''}`}
                             onClick={toggleGvCard}
-                            aria-label={isGvCardFlipped ? 'Tap to visit GV Prakash page' : 'Tap to reveal GV lineup card'}
+                             aria-label={isGvCardFlipped ? 'Tap to flip card back' : 'Tap to reveal GV lineup card'}
                           >
                             <span className="lineup-flip-card-inner" aria-hidden="true">
                               <span className="lineup-flip-card-face lineup-flip-card-face--back">
