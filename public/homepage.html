@@ -704,6 +704,45 @@
             z-index: 10;
         }
 
+        .lineup-gv-button {
+            position: absolute;
+            left: 50%;
+            bottom: 18px;
+            transform: translateX(-50%);
+            padding: 0.75rem 1.5rem;
+            border-radius: 999px;
+            font-family: 'Akira Expanded', sans-serif;
+            letter-spacing: 0.08em;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #ffffff;
+            background: linear-gradient(135deg, rgba(155, 23, 153, 0.9), rgba(200, 50, 200, 0.9));
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 24px rgba(155, 23, 153, 0.4), 0 0 20px rgba(155, 23, 153, 0.2);
+            text-transform: uppercase;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .lineup-flip-card.is-flipped .lineup-gv-button {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .lineup-gv-button:hover {
+            background: linear-gradient(135deg, rgba(155, 23, 153, 1), rgba(200, 50, 200, 1));
+            box-shadow: 0 12px 32px rgba(155, 23, 153, 0.6), 0 0 30px rgba(155, 23, 153, 0.4);
+            transform: translateX(-50%) translateY(-2px);
+        }
+
+        .lineup-gv-button:active {
+            transform: translateX(-50%) translateY(0);
+            box-shadow: 0 4px 16px rgba(155, 23, 153, 0.4);
+        }
+
         /* Locked cards */
         .lineup-locked-card {
             width: 100%;
@@ -1672,6 +1711,10 @@
                             <span class="lineup-flip-card-face lineup-flip-card-face--front">
                                 <img class="lineup-flip-card-img" src="/gvfrontcard.webp"
                                     alt="GV Prakash - Music Director & Composer" decoding="async" loading="lazy">
+                                <button type="button" class="lineup-gv-button" id="gv-visit-button"
+                                    aria-label="Visit GV Prakash page">
+                                    Visit Page
+                                </button>
                             </span>
                         </span>
                     </button>
@@ -2438,14 +2481,55 @@
                 });
             });
 
-            // Hide "CLICK TO REVEAL" text when card is flipped
+            // Hide "CLICK TO REVEAL" text when card is flipped and handle navigation
             const gvFlipCard = document.getElementById('gv-flip-card');
             if (gvFlipCard) {
                 const revealText = gvFlipCard.querySelector('.lineup-tap-to-reveal');
-                gvFlipCard.addEventListener('click', function () {
-                    this.classList.toggle('is-flipped');
-                    if (revealText) {
-                        revealText.style.display = this.classList.contains('is-flipped') ? 'none' : 'block';
+                
+                gvFlipCard.addEventListener('click', function (e) {
+                    // Don't flip if clicking the button
+                    if (e.target.closest('.lineup-gv-button')) {
+                        return;
+                    }
+                    
+                    const isFlipped = this.classList.contains('is-flipped');
+                    
+                    if (isFlipped) {
+                        // If already flipped, navigate to GV Prakash page
+                        if (window.parent && window.parent !== window) {
+                            // If in iframe, send message to parent
+                            window.parent.postMessage(
+                                { type: 'navigate', path: '/gv-prakash' },
+                                '*'
+                            );
+                        } else {
+                            // If not in iframe, navigate directly
+                            window.location.href = '/gv-prakash';
+                        }
+                    } else {
+                        // First click - flip the card
+                        this.classList.add('is-flipped');
+                        if (revealText) {
+                            revealText.style.display = 'none';
+                        }
+                    }
+                });
+            }
+
+            // Handle "Visit Page" button click
+            const gvVisitButton = document.getElementById('gv-visit-button');
+            if (gvVisitButton) {
+                gvVisitButton.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    if (window.parent && window.parent !== window) {
+                        // If in iframe, send message to parent
+                        window.parent.postMessage(
+                            { type: 'navigate', path: '/gv-prakash' },
+                            '*'
+                        );
+                    } else {
+                        // If not in iframe, navigate directly
+                        window.location.href = '/gv-prakash';
                     }
                 });
             }

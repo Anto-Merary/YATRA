@@ -1,6 +1,7 @@
 import './Hero.css'
 import '../../styles/mobile-footer.css'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import heroBg from '../assets/optimized/herobg-w1280.webp'
 import heroBgLq from '../assets/optimized/herobg-lq.webp'
 import heroBgPoster from '../assets/optimized/herobg-w640.webp'
@@ -126,10 +127,17 @@ function Hero() {
   const isLineupModalOpen = lineupModalState !== 'closed'
 
   // LINEUP flip card (tap to reveal)
+  const navigate = useNavigate()
   const [isGvCardFlipped, setIsGvCardFlipped] = useState(false)
   const toggleGvCard = useCallback(() => {
-    setIsGvCardFlipped((v) => !v)
-  }, [])
+    if (isGvCardFlipped) {
+      // If already flipped, navigate to GV Prakash page
+      navigate('/gv-prakash')
+    } else {
+      // First click - flip the card
+      setIsGvCardFlipped(true)
+    }
+  }, [isGvCardFlipped, navigate])
 
   // LINEUP carousel (character-select style)
   const lineupCarouselRef = useRef(null)
@@ -1351,7 +1359,7 @@ function Hero() {
                             type="button"
                             className={`lineup-flip-card ${isGvCardFlipped ? 'is-flipped' : ''}`}
                             onClick={toggleGvCard}
-                            aria-label={isGvCardFlipped ? 'Hide GV lineup card' : 'Tap to reveal GV lineup card'}
+                            aria-label={isGvCardFlipped ? 'Tap to visit GV Prakash page' : 'Tap to reveal GV lineup card'}
                           >
                             <span className="lineup-flip-card-inner" aria-hidden="true">
                               <span className="lineup-flip-card-face lineup-flip-card-face--back">

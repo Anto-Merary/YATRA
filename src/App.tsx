@@ -15,6 +15,7 @@ import { AdminPage } from "./pages/AdminPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { PrivacyPolicyPage } from "./pages/PrivacyPolicyPage";
 import { TermsConditionsPage } from "./pages/TermsConditionsPage";
+import { GVPrakashPage } from "./pages/GVPrakashPage";
 // Images
 import ritLogoImage from "./assets/RIT WHITE LOGO.webp";
 import logoImage from "./assets/LOGO .webp";
@@ -196,6 +197,7 @@ export default function App() {
         <Route path="/events/:eventId/register" element={<EventRegistrationPage />} />
         <Route path="/yatra-entry" element={<YatraEntryPage />} />
         <Route path="/payment/:result" element={<PaymentResultPage />} />
+        <Route path="/gv-prakash" element={<GVPrakashPage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
         <Route path="/terms-conditions" element={<TermsConditionsPage />} />
         <Route path="*" element={<NotFoundPage />} />

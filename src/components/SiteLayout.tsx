@@ -15,6 +15,7 @@ export function SiteLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const isHomePage = location.pathname === "/";
+  const isGVPrakashPage = location.pathname === "/gv-prakash";
   const [isMobile, setIsMobile] = useState(false);
 
   // Track previous pathname to only scroll on actual route changes
@@ -104,6 +105,15 @@ export function SiteLayout() {
       className: location.pathname === link.to ? "dock-item-active" : "",
     };
   });
+
+  // For GV Prakash page, render fullscreen without Navbar/Footer
+  if (isGVPrakashPage) {
+    return (
+      <div className="w-full h-screen overflow-hidden">
+        <Outlet />
+      </div>
+    );
+  }
 
   return (
     <RouteTransitionProvider durationMs={450}>
