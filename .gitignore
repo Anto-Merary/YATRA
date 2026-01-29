@@ -7,4 +7,41 @@ dist
 # TypeScript build info (should not be committed)
 *.tsbuildinfo
 
+# Environment variables
+.env
+.env.local
+.env.*.local
 
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Coverage
+coverage
+*.lcov
+
+# Build outputs
+build
+*.tsbuildinfo
+
+# Temporary files
+*.tmp
+*.temp
+.cache
+
+# Cursor IDE
+.cursor
+
+# Test files
+test-*.ts
+test-*.js
+
+# Supabase
+.supabase

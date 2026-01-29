@@ -3275,7 +3275,7 @@
 }
 
 .lineup-card-slot {
-  flex: 0 0 78%;
+  flex: 0 0 90%;
   scroll-snap-align: center;
   display: grid;
   place-items: center;
