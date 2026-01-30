@@ -2,3 +2,29 @@
   width: 100%;
   min-height: 100vh;
 }
+
+/* Mobile dock wrapper (same behavior as the main app's dock, but without Tailwind) */
+.mobile-dock-wrapper {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  pointer-events: none;
+  width: 100vw;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-bottom: max(env(safe-area-inset-bottom), 0.5rem);
+  box-sizing: border-box;
+}
+
+.mobile-dock-inner {
+  pointer-events: auto;
+  width: 100%;
+}
+
+/* Ensure Lucide icons size nicely inside the dock */
+.dock-svg {
+  width: 100%;
+  height: 100%;
+}

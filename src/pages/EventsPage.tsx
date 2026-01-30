@@ -72,7 +72,7 @@ export function EventsPage() {
                         BATTLE
                       </h2>
                       <p className="mt-2 text-[11px] sm:text-xs text-white/85 leading-snug max-w-[18rem]">
-                        Flagship competitions held separately from the main cultural stage. Winners get a chance to perform on the main stage and win Cash price
+                        Flagship competitions held separately from the main cultural stage. Winners get a chance to perform on the main stage and win Cash prize
                       </p>
                     </div>
                   </div>
