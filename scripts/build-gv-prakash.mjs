@@ -2,7 +2,7 @@ import { execSync } from 'child_process';
 import { copyFileSync, cpSync, existsSync, mkdirSync, rmSync } from 'fs';
 import { join } from 'path';
 
-const gvPrakashDir = join(process.cwd(), 'gv page', 'yatragvprakash');
+const gvPrakashDir = join(process.cwd(), 'sana-experience');
 const outputDir = join(process.cwd(), 'public', 'gv-prakash');
 const nextOutDir = join(gvPrakashDir, 'out');
 
@@ -38,7 +38,7 @@ try {
   // Copy frames from Next.js public folder to main app's public folder (shared)
   const framesSource = join(gvPrakashDir, 'public', 'frames');
   const framesDest = join(process.cwd(), 'public', 'frames');
-  
+
   if (existsSync(framesSource)) {
     console.log('Copying frames to main public folder...');
     if (existsSync(framesDest)) {
@@ -53,7 +53,7 @@ try {
   // Copy GV Prakash poster to gv-prakash folder
   const posterSource = join(process.cwd(), 'public', 'gvfrontcard.webp');
   const posterDest = join(outputDir, 'gvfrontcard.webp');
-  
+
   if (existsSync(posterSource)) {
     console.log('Copying GV Prakash poster...');
     copyFileSync(posterSource, posterDest);

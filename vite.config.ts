@@ -1,10 +1,40 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
+import fs from "node:fs";
+
+// Custom plugin for clean URLs in development
+function cleanUrlsPlugin() {
+  return {
+    name: "clean-urls",
+    configureServer(server: { middlewares: { use: (fn: (req: { url?: string }, res: unknown, next: () => void) => void) => void } }) {
+      server.middlewares.use((req: { url?: string }, res: unknown, next: () => void) => {
+        const url = req.url?.split("?")[0] || "";
+
+        // Skip if already has extension or is an asset
+        if (url.includes(".") || url.startsWith("/@") || url.startsWith("/src") || url.startsWith("/node_modules")) {
+          return next();
+        }
+
+        // Try to find matching .html file in public folder
+        const publicPath = path.join(__dirname, "public", url + ".html");
+        const rootPath = path.join(__dirname, url + ".html");
+
+        if (fs.existsSync(publicPath)) {
+          req.url = url + ".html";
+        } else if (fs.existsSync(rootPath)) {
+          req.url = url + ".html";
+        }
+
+        next();
+      });
+    },
+  };
+}
 
 export default defineConfig({
   // Trigger reload
-  plugins: [react()],
+  plugins: [react(), cleanUrlsPlugin()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

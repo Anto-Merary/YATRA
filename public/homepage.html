@@ -65,7 +65,7 @@
                 const currentHash = window.location.hash;
 
                 // Redirect relative so sub-folder deploys work too
-                window.location.replace('mobile.html' + currentSearch + currentHash);
+                window.location.replace('mobile' + currentSearch + currentHash);
             }
         })();
     </script>
@@ -720,7 +720,7 @@
             border: 2px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 8px 24px rgba(155, 23, 153, 0.4), 0 0 20px rgba(155, 23, 153, 0.2);
             text-transform: uppercase;
-            z-index: 10;
+            z-index: 100;
             cursor: pointer;
             transition: all 0.3s ease;
             opacity: 0;
@@ -1711,12 +1711,9 @@
                             <span class="lineup-flip-card-face lineup-flip-card-face--front">
                                 <img class="lineup-flip-card-img" src="/gvfrontcard.webp"
                                     alt="GV Prakash - Music Director & Composer" decoding="async" loading="lazy">
-                                <button type="button" class="lineup-gv-button" id="gv-visit-button"
-                                    aria-label="Visit GV Prakash page">
-                                    Visit Page
-                                </button>
                             </span>
                         </span>
+                        <a href="/gv-prakash" class="lineup-gv-button" id="gv-visit-button">VIEW</a>
                     </button>
                 </div>
 
@@ -2485,15 +2482,15 @@
             const gvFlipCard = document.getElementById('gv-flip-card');
             if (gvFlipCard) {
                 const revealText = gvFlipCard.querySelector('.lineup-tap-to-reveal');
-                
+
                 gvFlipCard.addEventListener('click', function (e) {
                     // Don't flip if clicking the button
                     if (e.target.closest('.lineup-gv-button')) {
                         return;
                     }
-                    
+
                     const isFlipped = this.classList.contains('is-flipped');
-                    
+
                     if (isFlipped) {
                         // If already flipped, navigate to GV Prakash page
                         if (window.parent && window.parent !== window) {

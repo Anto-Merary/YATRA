@@ -1,109 +1,103 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover"
-    />
-    <meta name="theme-color" content="#000000" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="YATRA'26" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta
-      name="description"
-      content="YATRA 2026 - Rajalakshmi Institute of Technology Cultural Festival - Mobile Version"
-    />
-    <!-- Open Graph / Twitter (social sharing) -->
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="YATRA'26" />
-    <meta property="og:title" content="YATRA'26 | Mobile" />
-    <meta
-      property="og:description"
-      content="YATRA 2026 - Rajalakshmi Institute of Technology Cultural Festival - Mobile Version"
-    />
-    <meta property="og:image" content="%BASE_URL%android-chrome-512x512.png" />
-    <meta property="og:image:width" content="512" />
-    <meta property="og:image:height" content="512" />
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="YATRA'26 | Mobile" />
-    <meta
-      name="twitter:description"
-      content="YATRA 2026 - Rajalakshmi Institute of Technology Cultural Festival - Mobile Version"
-    />
-    <meta name="twitter:image" content="%BASE_URL%android-chrome-512x512.png" />
-    <title>YATRA'26 | Mobile</title>
 
-    <!-- Favicon (works on sub-path deploys too) -->
-    <link rel="icon" href="%BASE_URL%favicon.ico?v=2" sizes="any" />
-    <link rel="icon" type="image/png" href="%BASE_URL%favicon-32x32.png?v=2" sizes="32x32" />
-    <link rel="icon" type="image/png" href="%BASE_URL%favicon-16x16.png?v=2" sizes="16x16" />
-    <!-- Your actual favicon (some browsers may ignore WebP for tab icons) -->
-    <link rel="icon" type="image/webp" href="%BASE_URL%Fav-icon.webp?v=2" />
-    <link rel="apple-touch-icon" href="%BASE_URL%apple-touch-icon.png?v=2" />
-    <link rel="manifest" href="%BASE_URL%site.webmanifest?v=2" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="YATRA'26" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="description"
+    content="YATRA 2026 - Rajalakshmi Institute of Technology Cultural Festival - Mobile Version" />
+  <!-- Open Graph / Twitter (social sharing) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="YATRA'26" />
+  <meta property="og:title" content="YATRA'26 | Mobile" />
+  <meta property="og:description"
+    content="YATRA 2026 - Rajalakshmi Institute of Technology Cultural Festival - Mobile Version" />
+  <meta property="og:image" content="%BASE_URL%android-chrome-512x512.png" />
+  <meta property="og:image:width" content="512" />
+  <meta property="og:image:height" content="512" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="YATRA'26 | Mobile" />
+  <meta name="twitter:description"
+    content="YATRA 2026 - Rajalakshmi Institute of Technology Cultural Festival - Mobile Version" />
+  <meta name="twitter:image" content="%BASE_URL%android-chrome-512x512.png" />
+  <title>YATRA'26 | Mobile</title>
 
-    <!-- Performance: fonts (avoid CSS @import which blocks rendering) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+  <!-- Favicon (works on sub-path deploys too) -->
+  <link rel="icon" href="%BASE_URL%favicon.ico?v=2" sizes="any" />
+  <link rel="icon" type="image/png" href="%BASE_URL%favicon-32x32.png?v=2" sizes="32x32" />
+  <link rel="icon" type="image/png" href="%BASE_URL%favicon-16x16.png?v=2" sizes="16x16" />
+  <!-- Your actual favicon (some browsers may ignore WebP for tab icons) -->
+  <link rel="icon" type="image/webp" href="%BASE_URL%Fav-icon.webp?v=2" />
+  <link rel="apple-touch-icon" href="%BASE_URL%apple-touch-icon.png?v=2" />
+  <link rel="manifest" href="%BASE_URL%site.webmanifest?v=2" />
 
-    <!-- Performance: preload hero visuals used above-the-fold -->
-    <link rel="preload" as="image" href="/src/mobile/assets/optimized/herobg-w1280.webp" />
-    <link rel="preload" as="image" href="/src/mobile/assets/optimized/yatratxt-w1536.webp" />
-    <link rel="preload" as="image" href="/src/mobile/assets/optimized/torrigate-w1280.webp" />
-    <link rel="preload" as="image" href="/src/mobile/assets/optimized/2026txt-w1536.webp" />
+  <!-- Performance: fonts (avoid CSS @import which blocks rendering) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
 
-    <!-- Critical CSS (avoid white flash while JS boots) -->
-    <style>
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        background: #160018;
+  <!-- Performance: preload hero visuals used above-the-fold -->
+  <link rel="preload" as="image" href="/src/mobile/assets/optimized/herobg-w1280.webp" />
+  <link rel="preload" as="image" href="/src/mobile/assets/optimized/yatratxt-w1536.webp" />
+  <link rel="preload" as="image" href="/src/mobile/assets/optimized/torrigate-w1280.webp" />
+  <link rel="preload" as="image" href="/src/mobile/assets/optimized/2026txt-w1536.webp" />
+
+  <!-- Critical CSS (avoid white flash while JS boots) -->
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: #160018;
+    }
+
+    #root {
+      min-height: 100svh;
+    }
+  </style>
+
+  <!-- Auto-switch to PC (desktop) version for iPad mini+ -->
+  <script>
+    (function () {
+      // Allow explicit opt-in to mobile via ?mobile=true
+      const urlParams = new URLSearchParams(window.location.search);
+      const forceMobile = urlParams.get('mobile') === 'true';
+      if (forceMobile) return;
+
+      // Only allow the mobile experience for specific phone-sized viewports
+      // (matches iPhone SE/XR/12 Pro/14 Pro Max, Pixel 7, Galaxy S8+/S20 Ultra/A52/71 and close variants).
+      const MOBILE_MIN_SHORT_SIDE = 360;
+      const MOBILE_MAX_SHORT_SIDE = 430;
+      const userAgent = (navigator.userAgent || navigator.vendor || window.opera || '').toLowerCase();
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const shortSide = Math.min(window.innerWidth, window.innerHeight);
+      const isAllowedSize = shortSide >= MOBILE_MIN_SHORT_SIDE && shortSide <= MOBILE_MAX_SHORT_SIDE;
+      const isIPhoneOrIPod = /iphone|ipod/i.test(userAgent);
+      const isAndroidPhone = /android/i.test(userAgent) && /mobile/i.test(userAgent);
+      const isOtherPhone = /webos|blackberry|iemobile|opera mini/i.test(userAgent);
+      const isPhone = isTouchDevice && isAllowedSize && (isIPhoneOrIPod || isAndroidPhone || isOtherPhone);
+
+      // If this isn't a phone-sized mobile device, go to desktop version
+      if (!isPhone) {
+        const currentSearch = window.location.search;
+        const currentHash = window.location.hash;
+        window.location.replace('homepage' + currentSearch + currentHash);
       }
-      #root {
-        min-height: 100svh;
-      }
-    </style>
+    })();
+  </script>
+</head>
 
-    <!-- Auto-switch to PC (desktop) version for iPad mini+ -->
-    <script>
-      (function () {
-        // Allow explicit opt-in to mobile via ?mobile=true
-        const urlParams = new URLSearchParams(window.location.search);
-        const forceMobile = urlParams.get('mobile') === 'true';
-        if (forceMobile) return;
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/mobile/main.jsx"></script>
+</body>
 
-        // Only allow the mobile experience for specific phone-sized viewports
-        // (matches iPhone SE/XR/12 Pro/14 Pro Max, Pixel 7, Galaxy S8+/S20 Ultra/A52/71 and close variants).
-        const MOBILE_MIN_SHORT_SIDE = 360;
-        const MOBILE_MAX_SHORT_SIDE = 430;
-        const userAgent = (navigator.userAgent || navigator.vendor || window.opera || '').toLowerCase();
-        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        const shortSide = Math.min(window.innerWidth, window.innerHeight);
-        const isAllowedSize = shortSide >= MOBILE_MIN_SHORT_SIDE && shortSide <= MOBILE_MAX_SHORT_SIDE;
-        const isIPhoneOrIPod = /iphone|ipod/i.test(userAgent);
-        const isAndroidPhone = /android/i.test(userAgent) && /mobile/i.test(userAgent);
-        const isOtherPhone = /webos|blackberry|iemobile|opera mini/i.test(userAgent);
-        const isPhone = isTouchDevice && isAllowedSize && (isIPhoneOrIPod || isAndroidPhone || isOtherPhone);
-
-        // If this isn't a phone-sized mobile device, go to desktop version
-        if (!isPhone) {
-          const currentSearch = window.location.search;
-          const currentHash = window.location.hash;
-          window.location.replace('homepage.html' + currentSearch + currentHash);
-        }
-      })();
-    </script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/mobile/main.jsx"></script>
-  </body>
 </html>
-
