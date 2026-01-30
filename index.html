@@ -45,39 +45,10 @@
       rel="stylesheet"
     />
 
-    <!-- Mobile Detection and Redirect - Runs before React app loads -->
-    <script>
-      (function () {
-        // Allow explicit opt-in to desktop via ?desktop=true
-        const urlParams = new URLSearchParams(window.location.search);
-        const forceDesktop = urlParams.get('desktop') === 'true' || sessionStorage.getItem('desktopVersion') === 'true';
-        if (forceDesktop) return;
-
-        // Only allow the mobile experience for specific phone-sized viewports
-        // (matches iPhone SE/XR/12 Pro/14 Pro Max, Pixel 7, Galaxy S8+/S20 Ultra/A52/71 and close variants).
-        const MOBILE_MIN_SHORT_SIDE = 360;
-        const MOBILE_MAX_SHORT_SIDE = 430;
-        const userAgent = (navigator.userAgent || navigator.vendor || window.opera || '').toLowerCase();
-        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        const shortSide = Math.min(window.innerWidth, window.innerHeight);
-        const isAllowedSize = shortSide >= MOBILE_MIN_SHORT_SIDE && shortSide <= MOBILE_MAX_SHORT_SIDE;
-        const isIPhoneOrIPod = /iphone|ipod/i.test(userAgent);
-        const isAndroidPhone = /android/i.test(userAgent) && /mobile/i.test(userAgent);
-        const isOtherPhone = /webos|blackberry|iemobile|opera mini/i.test(userAgent);
-        const isPhone = isTouchDevice && isAllowedSize && (isIPhoneOrIPod || isAndroidPhone || isOtherPhone);
-
-        // If this is a phone-sized mobile device, redirect to mobile version
-        if (isPhone) {
-          const currentSearch = window.location.search;
-          const currentHash = window.location.hash;
-          window.location.replace('mobile.html' + currentSearch + currentHash);
-        }
-      })();
-    </script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="/src/bootstrap.ts"></script>
   </body>
 </html>
 

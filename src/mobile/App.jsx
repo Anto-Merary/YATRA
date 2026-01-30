@@ -1,11 +1,16 @@
 import Hero from './components/Hero'
 import './App.css'
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Lenis from 'lenis'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import Dock from '../components/Dock'
+import { motion } from 'framer-motion'
+import { Home, List } from 'lucide-react'
 
 function App() {
+  const [isMobile, setIsMobile] = useState(false)
+
   useEffect(() => {
     // Smooth scrolling (mobile) + GSAP integration
     const reduceMotion =
@@ -47,9 +52,56 @@ function App() {
     }
   }, [])
 
+  // Show dock for phone-sized viewports (iPad mini+ should not use mobile layout)
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(Math.min(window.innerWidth, window.innerHeight) <= 743)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  const dockItems = useMemo(() => {
+    return [
+      {
+        icon: <Home className="dock-svg" />,
+        label: 'Home',
+        onClick: () => window.location.assign('/'),
+      },
+      {
+        icon: <List className="dock-svg" />,
+        label: 'Events',
+        onClick: () => window.location.assign('/events'),
+      },
+    ]
+  }, [])
+
   return (
     <div className="App">
       <Hero />
+
+      {isMobile && (
+        <motion.div
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          className="mobile-dock-wrapper"
+        >
+          <div className="mobile-dock-inner">
+            <Dock
+              items={dockItems}
+              className="mobile-dock"
+              baseItemSize={44}
+              magnification={56}
+              distance={150}
+              panelHeight={64}
+              dockHeight={80}
+              spring={{ mass: 0.1, stiffness: 200, damping: 15 }}
+            />
+          </div>
+        </motion.div>
+      )}
     </div>
   )
 }
