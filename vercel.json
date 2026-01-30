@@ -5,21 +5,18 @@
   "installCommand": "npm install",
   "cleanUrls": true,
   "trailingSlash": false,
-  "routes": [
+  "rewrites": [
     {
-      "handle": "filesystem"
+      "source": "/mobile",
+      "destination": "/mobile.html"
     },
     {
-      "src": "/mobile/?",
-      "dest": "/mobile.html"
+      "source": "/homepage",
+      "destination": "/homepage.html"
     },
     {
-      "src": "/homepage/?",
-      "dest": "/homepage.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
