@@ -1,7 +1,0 @@
-[submodule "sana-experience"]
-	path = sana-experience
-	url = https://github.com/Anto-Merary/yatragvprakash.git
-
-[submodule "gv page/yatragvprakash"]
-	path = gv page/yatragvprakash
-	url = https://github.com/Anto-Merary/yatragvprakash.git
