@@ -1,0 +1,9 @@
+# Ignore the Next.js subdirectory - it's pre-built
+# The built output is already in public/gv-prakash
+sana-experience
+sana-experience/
+sana-experience/**
+
+# Other directories to ignore
+node_modules
+.git
