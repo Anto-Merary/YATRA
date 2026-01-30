@@ -140,7 +140,7 @@ function Hero() {
   const scrollLineup = useCallback((dir) => {
     const el = lineupCarouselRef.current
     if (!el) return
-    const amount = Math.round(el.clientWidth * 0.78)
+    const amount = Math.round(el.clientWidth * 0.8)
     el.scrollBy({ left: dir * amount, behavior: 'smooth' })
   }, [])
 

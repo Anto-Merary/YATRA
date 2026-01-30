@@ -1371,7 +1371,7 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.5)) drop-shadow(0 8px 40px rgba(0, 0, 0, 0.3)) brightness(0.4);
+  filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.5)) drop-shadow(0 8px 40px rgba(0, 0, 0, 0.3)) brightness(0.4) blur(4px);
   z-index: 1;
   pointer-events: none;
   animation: features-clouds-float 16s ease-in-out infinite;
@@ -3439,20 +3439,25 @@
 
 .lineup-title {
   font-family: 'Gondens', sans-serif;
-  font-size: clamp(2.1rem, 10vw, 3rem);
+  font-size: 12vw;
   font-weight: normal;
   font-stretch: condensed;
   margin-bottom: 2rem;
-  line-height: 1.05;
+  line-height: 1.1;
   text-align: center;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #FFFFFF;
+  color: transparent;
+  background: linear-gradient(180deg, #ffffff 45%, #999999 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
   position: relative;
   z-index: 3;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.1em;
+  padding-bottom: 0.1em;
+  /* Prevent clipping */
 }
 
 .lineup-subtitle {
@@ -3611,10 +3616,12 @@
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  padding: 0.25rem 1rem 0.75rem;
+  /* Visual alignment: card is 75% wide.
+     To center it: (100% - 75%) / 2 = 12.5% padding per side. */
+  padding: 0.25rem 12.5% 0.75rem;
   scrollbar-width: none;
   /* Performance optimizations for smooth scrolling */
-  scroll-behavior: auto;
+  scroll-behavior: smooth;
   overscroll-behavior-x: contain;
   contain: layout style paint;
   transform: translateZ(0);
@@ -3626,7 +3633,7 @@
 }
 
 .lineup-card-slot {
-  flex: 0 0 90%;
+  flex: 0 0 75%;
   scroll-snap-align: center;
   display: grid;
   place-items: center;
