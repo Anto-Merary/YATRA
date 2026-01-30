@@ -10,8 +10,8 @@ import yearText from '../assets/optimized/2026txt-w1536.webp'
 import videoSrc from '../assets/video.mp4'
 import eventImage from '../assets/optimized/event-w1024.webp'
 import performanceImage from '../assets/optimized/performance-w1280.webp'
-import gvBackCard from '../assets/gvbackcard.webp'
-// Use the same image as desktop version for revealed card
+// Use the same images as desktop version
+const gvBackCard = '/gvbackcard (1).webp'
 const gvFrontCard = '/gvfrontcard.webp'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -221,10 +221,21 @@ function Hero() {
 
     let raf = 0
     let ticking = false
+    let isScrolling = false
+    let scrollTimeout = null
+    
+    // Cache children to avoid repeated DOM queries
+    let cachedChildren = null
+    const getChildren = () => {
+      if (!cachedChildren) {
+        cachedChildren = Array.from(el.querySelectorAll('.lineup-card-slot'))
+      }
+      return cachedChildren
+    }
     
     const update = () => {
       ticking = false
-      const children = Array.from(el.querySelectorAll('.lineup-card-slot'))
+      const children = getChildren()
       if (children.length === 0) return
 
       const r = el.getBoundingClientRect()
@@ -249,6 +260,16 @@ function Hero() {
     }
 
     const onScroll = () => {
+      isScrolling = true
+      // Clear any pending timeout
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout)
+      }
+      // Set timeout to mark scrolling as ended
+      scrollTimeout = setTimeout(() => {
+        isScrolling = false
+      }, 150)
+      
       if (!ticking) {
         ticking = true
         raf = window.requestAnimationFrame(update)
@@ -256,6 +277,8 @@ function Hero() {
     }
 
     const onResize = () => {
+      // Invalidate cache on resize
+      cachedChildren = null
       if (!ticking) {
         ticking = true
         raf = window.requestAnimationFrame(update)
@@ -266,18 +289,22 @@ function Hero() {
     let intervalId = null
     const initTimer = window.setTimeout(() => {
       el.addEventListener('scroll', onScroll, { passive: true })
-      el.addEventListener('touchmove', onScroll, { passive: true })
-      window.addEventListener('resize', onResize)
-      // Initial update + periodic check
+      window.addEventListener('resize', onResize, { passive: true })
+      // Initial update
       update()
-      intervalId = window.setInterval(update, 200)
+      // Only run periodic check when not actively scrolling to avoid jank
+      intervalId = window.setInterval(() => {
+        if (!isScrolling) {
+          update()
+        }
+      }, 300) // Increased interval to reduce overhead
     }, 100)
 
     return () => {
       window.clearTimeout(initTimer)
+      if (scrollTimeout) clearTimeout(scrollTimeout)
       if (intervalId) window.clearInterval(intervalId)
       el.removeEventListener('scroll', onScroll)
-      el.removeEventListener('touchmove', onScroll)
       window.removeEventListener('resize', onResize)
       if (raf) window.cancelAnimationFrame(raf)
     }
@@ -1574,7 +1601,7 @@ function Hero() {
             <img src={eventImage} alt="Yatra Event" className="features-event-image" />
             <div className="features-event-image-mask"></div>
             <p className="features-event-description">
-              Across tech, arts, culture & performance - Throughout the day
+              Across tech, arts, culture & performance<br />Throughout the day
             </p>
           </div>
           <span className="features-show-more-btn">
