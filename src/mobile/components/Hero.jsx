@@ -1457,7 +1457,15 @@ function Hero() {
                       <span className="lineup-flip-card-inner" aria-hidden="true">
                         <span className="lineup-flip-card-face lineup-flip-card-face--back">
                           <img className="lineup-flip-card-img" src={gvBackCard} alt="GV lineup card (back)" decoding="async" loading="lazy" />
-                          {!isGvCardFlipped && <span className="lineup-tap-to-reveal">TAP TO REVEAL</span>}
+                          {!isGvCardFlipped && (
+                            <span className="lineup-tap-to-reveal">
+                              <svg className="lineup-tap-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M9 11l3 3L22 4" />
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                              </svg>
+                              TAP TO REVEAL
+                            </span>
+                          )}
                         </span>
                         <span className="lineup-flip-card-face lineup-flip-card-face--front">
                           <img className="lineup-flip-card-img" src={gvFrontCard} alt="GV lineup card (front)" decoding="async" loading="lazy" />
@@ -1534,6 +1542,17 @@ function Hero() {
               )
             })}
           </div>
+        </div>
+
+        {/* Horizontal scroll indicator */}
+        <div className="lineup-scroll-hint" aria-hidden="true">
+          <svg className="lineup-scroll-hint-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+          <span className="lineup-scroll-hint-text">Swipe to explore more</span>
+          <svg className="lineup-scroll-hint-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
         </div>
       </div>
     </section>

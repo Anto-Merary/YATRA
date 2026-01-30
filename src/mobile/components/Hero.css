@@ -3304,6 +3304,57 @@
   }
 }
 
+/* Horizontal scroll hint */
+.lineup-scroll-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  margin-top: 1.5rem;
+  padding: 0.75rem 1rem;
+  opacity: 0.65;
+  transition: opacity 300ms ease;
+}
+
+.lineup-scroll-hint:hover {
+  opacity: 0.85;
+}
+
+.lineup-scroll-hint-icon {
+  width: 18px;
+  height: 18px;
+  color: rgba(255, 255, 255, 0.7);
+  animation: lineup-scroll-pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.lineup-scroll-hint-icon:first-child {
+  animation-delay: 0s;
+}
+
+.lineup-scroll-hint-icon:last-child {
+  animation-delay: 1s;
+}
+
+.lineup-scroll-hint-text {
+  font-family: 'Poppins', var(--hero-font-family);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+}
+
+@keyframes lineup-scroll-pulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: translateX(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(4px);
+  }
+}
+
 /* LINEUP flip card (tap to reveal) */
 .lineup-carousel-wrap {
   width: 100%;
@@ -3451,18 +3502,50 @@
 .lineup-tap-to-reveal {
   position: absolute;
   left: 50%;
-  bottom: 18px;
+  bottom: 20px;
   transform: translateX(-50%);
-  padding: 0.65rem 0.9rem;
+  padding: 0.75rem 1.25rem;
   border-radius: 999px;
   font-family: 'Akira Expanded', var(--hero-font-family);
   letter-spacing: 0.08em;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 700;
   color: #ffffff;
-  background: rgba(0, 0, 0, 0.55);
-  border: 1px solid rgba(155, 23, 153, 0.35);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   text-transform: uppercase;
+  white-space: nowrap;
+  z-index: 10;
+  cursor: pointer;
+  transition: all 250ms ease;
+  /* Flexbox for icon alignment */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.lineup-tap-to-reveal:hover,
+.lineup-tap-to-reveal:active {
+  background: rgba(0, 0, 0, 0.85);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* Minimal tap icon styling */
+.lineup-tap-icon {
+  display: inline-block;
+  vertical-align: middle;
+  opacity: 0.7;
+  transition: opacity 250ms ease;
+}
+
+.lineup-tap-to-reveal:hover .lineup-tap-icon {
+  opacity: 1;
 }
 
 /* Locked cards */
