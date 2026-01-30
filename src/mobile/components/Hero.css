@@ -3982,7 +3982,29 @@
 .mobile-footer {
   position: relative;
   z-index: 10;
-  background: #000000;
+  background: #000000 !important;
+  color: #ffffff;
+}
+
+/* Override footer internal text colors for dark mode */
+.mobile-footer .mobile-footer-title,
+.mobile-footer .mobile-footer-label,
+.mobile-footer .mobile-footer-text,
+.mobile-footer .mobile-footer-link {
+  color: #ffffff !important;
+}
+
+.mobile-footer .mobile-footer-link--underline {
+  text-decoration-color: rgba(255, 255, 255, 0.5);
+}
+
+.mobile-footer .mobile-footer-label {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.mobile-footer .mobile-footer-social-link {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .mobile-ticket-wrapper {
