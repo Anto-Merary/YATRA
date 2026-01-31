@@ -19,7 +19,7 @@
       "destination": "/homepage.html"
     },
     {
-      "source": "/(.*)",
+      "source": "/:path*",
       "destination": "/index.html"
     }
   ]
