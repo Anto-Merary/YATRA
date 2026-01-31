@@ -1809,7 +1809,9 @@
                 <div class="absolute inset-0 bg-black/40 z-10 gallery-overlay transition-colors duration-500">
                 </div>
                 <img src="/2025.JPG"
-                    class="absolute inset-0 w-full h-full object-cover filter grayscale gallery-img transition-all duration-700 scale-100">
+                    class="absolute inset-0 w-full h-full object-cover filter grayscale gallery-img transition-all duration-700 scale-100"
+                    style="object-position: right center;"
+                    decoding="async" loading="lazy">
                 <span class="gallery-year gallery-year-scroll transition-colors duration-500">2025</span>
                 <div
                     class="absolute bottom-10 sm:bottom-20 left-4 sm:left-10 z-20 max-w-xs sm:max-w-md gallery-info-scroll transition-all duration-500">
@@ -2609,7 +2611,7 @@
             // Flip card functionality for GV Prakash card
             // Lineup Animations
             // - Desktop: stagger-in on enter
-            // - Mobile: scroll-scrub parallax (reacts on every up/down scroll)
+            // - Mobile: each card reveals as you scroll down to it (scrubbed parallax entrance)
             if (!isMobileView) {
                 gsap.utils.toArray('.lineup-card-slot').forEach((card, index) => {
                     gsap.from(card, {
@@ -2628,19 +2630,20 @@
             } else {
                 const lineupCards = gsap.utils.toArray('#lineup .lineup-card-slot').slice(0, 3);
                 lineupCards.forEach((card, index) => {
-                    const depth = 22 + index * 14;
+                    const lift = 54 + index * 8;
+                    const scaleFrom = 0.985;
 
-                    gsap.fromTo(
-                        card,
-                        { y: depth, scale: 0.98 },
+                    gsap.fromTo(card,
+                        { y: lift, opacity: 0, scale: scaleFrom },
                         {
-                            y: -depth,
-                            scale: 1.02,
+                            y: 0,
+                            opacity: 1,
+                            scale: 1,
                             ease: "none",
                             scrollTrigger: {
-                                trigger: "#lineup",
-                                start: "top bottom",
-                                end: "bottom top",
+                                trigger: card,
+                                start: "top 88%",
+                                end: "top 60%",
                                 scrub: true,
                                 invalidateOnRefresh: true
                             }
@@ -2768,19 +2771,22 @@
                 },
                 pin: true,
                 animation: tween,
-                scrub: 1,
-                snap: {
-                    snapTo: (progress) => {
-                        if (numSlides <= 1) return 0;
-                        const slideProgress = 1 / (numSlides - 1);
-                        const currentSlide = Math.round(progress / slideProgress);
-                        const targetSlide = Math.max(0, Math.min(numSlides - 1, currentSlide));
-                        return targetSlide * slideProgress;
+                // Mobile perf: less smoothing + no snap (snap + per-slide effects cause jank on phones)
+                scrub: isMobileView ? 0.55 : 1,
+                snap: isMobileView
+                    ? false
+                    : {
+                        snapTo: (progress) => {
+                            if (numSlides <= 1) return 0;
+                            const slideProgress = 1 / (numSlides - 1);
+                            const currentSlide = Math.round(progress / slideProgress);
+                            const targetSlide = Math.max(0, Math.min(numSlides - 1, currentSlide));
+                            return targetSlide * slideProgress;
+                        },
+                        duration: { min: 0.3, max: 0.8 },
+                        ease: "power2.inOut",
+                        inertia: false,
                     },
-                    duration: { min: 0.3, max: 0.8 },
-                    ease: "power2.inOut",
-                    inertia: false,
-                },
                 invalidateOnRefresh: true,
                 refreshPriority: 1 // Higher priority for gallery
             });
@@ -2796,74 +2802,77 @@
             }, { passive: true });
 
             // Scroll-based B&W to Color transition for gallery images
-            const galleryScrollItems = document.querySelectorAll('.gallery-scroll-item');
-            galleryScrollItems.forEach((item) => {
-                const img = item.querySelector('.gallery-img');
-                const overlay = item.querySelector('.gallery-overlay');
-                const infoBox = item.querySelector('.gallery-info-scroll');
-                const yearText = item.querySelector('.gallery-year-scroll');
-                const targetSlide = parseInt(item.getAttribute('data-gallery-index') || '1');
-                
-                if (img) {
-                    // Create individual scroll trigger for each gallery item
-                    ScrollTrigger.create({
-                        trigger: "#gallery-pin",
-                        start: "top top",
-                        end: () => `+=${getScrollAmount() * -1}`,
-                        scrub: 0.5,
-                        onUpdate: (self) => {
-                            // Calculate which slide we're approaching
-                            const slideProgress = 1 / (numSlides - 1);
-                            const currentProgress = self.progress;
-                            const slideStart = (targetSlide - 1) * slideProgress;
-                            const slideEnd = targetSlide * slideProgress;
-                            
-                            // Calculate local progress within this slide's transition
-                            let localProgress = 0;
-                            if (currentProgress >= slideStart && currentProgress <= slideEnd) {
-                                localProgress = (currentProgress - slideStart) / (slideEnd - slideStart);
-                            } else if (currentProgress > slideEnd) {
-                                localProgress = 1;
-                            }
-                            
-                            // Apply grayscale based on scroll progress (1 = B&W, 0 = Color)
-                            const grayscaleValue = Math.max(0, 1 - localProgress);
-                            img.style.filter = `grayscale(${grayscaleValue})`;
-                            
-                            // Also transition overlay opacity
-                            if (overlay) {
-                                const overlayOpacity = 0.4 - (localProgress * 0.2);
-                                overlay.style.backgroundColor = `rgba(0, 0, 0, ${overlayOpacity})`;
-                            }
-                            
-                            // Scale effect on scroll
-                            const scaleValue = 1 + (localProgress * 0.1);
-                            img.style.transform = `scale(${scaleValue})`;
+            // Mobile perf: skip the per-slide onUpdate work (it is the biggest source of lag on phones).
+            if (!isMobileView) {
+                const galleryScrollItems = document.querySelectorAll('.gallery-scroll-item');
+                galleryScrollItems.forEach((item) => {
+                    const img = item.querySelector('.gallery-img');
+                    const overlay = item.querySelector('.gallery-overlay');
+                    const infoBox = item.querySelector('.gallery-info-scroll');
+                    const yearText = item.querySelector('.gallery-year-scroll');
+                    const targetSlide = parseInt(item.getAttribute('data-gallery-index') || '1');
 
-                            // Reveal info text and year when scrolled to this slide
-                            if (localProgress > 0.5) {
-                                if (infoBox) {
-                                    infoBox.classList.add('revealed');
-                                    infoBox.style.opacity = Math.min(1, (localProgress - 0.5) * 2);
-                                    infoBox.style.transform = `translateY(${Math.max(0, 20 - (localProgress - 0.5) * 40)}px)`;
+                    if (img) {
+                        // Create individual scroll trigger for each gallery item
+                        ScrollTrigger.create({
+                            trigger: "#gallery-pin",
+                            start: "top top",
+                            end: () => `+=${getScrollAmount() * -1}`,
+                            scrub: 0.5,
+                            onUpdate: (self) => {
+                                // Calculate which slide we're approaching
+                                const slideProgress = 1 / (numSlides - 1);
+                                const currentProgress = self.progress;
+                                const slideStart = (targetSlide - 1) * slideProgress;
+                                const slideEnd = targetSlide * slideProgress;
+
+                                // Calculate local progress within this slide's transition
+                                let localProgress = 0;
+                                if (currentProgress >= slideStart && currentProgress <= slideEnd) {
+                                    localProgress = (currentProgress - slideStart) / (slideEnd - slideStart);
+                                } else if (currentProgress > slideEnd) {
+                                    localProgress = 1;
                                 }
-                                if (yearText) {
-                                    yearText.classList.add('revealed');
+
+                                // Apply grayscale based on scroll progress (1 = B&W, 0 = Color)
+                                const grayscaleValue = Math.max(0, 1 - localProgress);
+                                img.style.filter = `grayscale(${grayscaleValue})`;
+
+                                // Also transition overlay opacity
+                                if (overlay) {
+                                    const overlayOpacity = 0.4 - (localProgress * 0.2);
+                                    overlay.style.backgroundColor = `rgba(0, 0, 0, ${overlayOpacity})`;
                                 }
-                            } else {
-                                if (infoBox) {
-                                    infoBox.classList.remove('revealed');
-                                    infoBox.style.opacity = 0;
-                                    infoBox.style.transform = 'translateY(20px)';
-                                }
-                                if (yearText) {
-                                    yearText.classList.remove('revealed');
+
+                                // Scale effect on scroll
+                                const scaleValue = 1 + (localProgress * 0.1);
+                                img.style.transform = `scale(${scaleValue})`;
+
+                                // Reveal info text and year when scrolled to this slide
+                                if (localProgress > 0.5) {
+                                    if (infoBox) {
+                                        infoBox.classList.add('revealed');
+                                        infoBox.style.opacity = Math.min(1, (localProgress - 0.5) * 2);
+                                        infoBox.style.transform = `translateY(${Math.max(0, 20 - (localProgress - 0.5) * 40)}px)`;
+                                    }
+                                    if (yearText) {
+                                        yearText.classList.add('revealed');
+                                    }
+                                } else {
+                                    if (infoBox) {
+                                        infoBox.classList.remove('revealed');
+                                        infoBox.style.opacity = 0;
+                                        infoBox.style.transform = 'translateY(20px)';
+                                    }
+                                    if (yearText) {
+                                        yearText.classList.remove('revealed');
+                                    }
                                 }
                             }
-                        }
-                    });
-                }
-            });
+                        });
+                    }
+                });
+            }
         };
 
         // Desktop Loader Sequence (HTML Split Shutter)
