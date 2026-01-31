@@ -1,45 +1,14 @@
-import { useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-
 export function HomePage() {
-  const navigate = useNavigate();
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-
-  useEffect(() => {
-    // Listen for navigation messages from the iframe
-    const handleMessage = (event: MessageEvent) => {
-      // Verify message origin for security (adjust if needed)
-      if (event.data && event.data.type === 'navigate') {
-        const path = event.data.path;
-        if (path && typeof path === 'string') {
-          navigate(path);
-        }
-      }
-    };
-
-    window.addEventListener('message', handleMessage);
-    return () => {
-      window.removeEventListener('message', handleMessage);
-    };
-  }, [navigate]);
-
+  // We now serve the static homepage directly at "/" (see `vercel.json` + `public/_redirects`).
+  // This component exists only for SPA navigations to "/" (e.g. clicking "Home" from /events).
+  // In that case, force a full navigation so the user lands on the real static homepage.
+  //
+  // Note: do NOT iframe the homepage anymore; the static page handles its own navigation.
+  //
   const baseUrl = (import.meta?.env?.BASE_URL || "/").replace(/\/+$/, "");
   const homepageSrc = `${baseUrl}/homepage.html`;
 
-  return (
-    <div style={{ width: '100%', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <iframe
-        ref={iframeRef}
-        src={homepageSrc}
-        style={{
-          width: '100%',
-          flex: '1',
-          border: 'none',
-          display: 'block',
-        }}
-        scrolling="yes"
-        title="YATRA 2026 Homepage"
-      />
-    </div>
-  );
+  // Use `replace` to avoid polluting history with an extra SPA entry.
+  window.location.replace(homepageSrc);
+  return null;
 }

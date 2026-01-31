@@ -7,6 +7,10 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/",
+      "destination": "/homepage.html"
+    },
+    {
       "source": "/mobile",
       "destination": "/mobile.html"
     },
