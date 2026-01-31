@@ -41,6 +41,9 @@ export default defineConfig({
       "@src": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    host: true, // Listen on all addresses, needed for domain spoofing like rityatra.in
+  },
   preview: {
     // Ensure preview server handles SPA routing
     port: 4173,

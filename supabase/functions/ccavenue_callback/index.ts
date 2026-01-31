@@ -9,6 +9,10 @@ const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
+// Credentials from Environment Variables
+const CCAVENUE_WORKING_KEY = Deno.env.get("CCAVENUE_WORKING_KEY")!;
+if (!CCAVENUE_WORKING_KEY) console.error("Missing CCAVENUE_WORKING_KEY");
+
 function getEnv(name: string): string {
   const v = Deno.env.get(name);
   if (!v) throw new Error(`Missing env var: ${name}`);
@@ -95,7 +99,8 @@ Deno.serve(async (req: Request) => {
 
     const supabaseUrl = getEnv("SUPABASE_URL");
     const serviceKey = getEnv("SUPABASE_SERVICE_ROLE_KEY");
-    const workingKey = getEnv("CCAVENUE_WORKING_KEY");
+    // Use hardcoded credential
+    const workingKey = CCAVENUE_WORKING_KEY;
     const siteUrl = getEnv("SITE_URL").replace(/\/+$/, "");
 
     const supabase = createClient(supabaseUrl, serviceKey);

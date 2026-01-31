@@ -10,6 +10,7 @@ import yearText from '../assets/optimized/2026txt-w1536.webp'
 import videoSrc from '../assets/video.mp4'
 import eventImage from '../assets/optimized/event-w1024.webp'
 import performanceImage from '../assets/optimized/performance-w1280.webp'
+import LineupReveal from './LineupReveal'
 // Use the same images as desktop version
 const gvBackCard = '/gvbackcard (1).webp'
 const gvFrontCard = '/gvfrontcard.webp'
@@ -605,6 +606,7 @@ function Hero() {
     // Works with native scroll; Lenis will still keep things smooth.
     el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }, [])
+
 
   const goToEvents = useCallback(() => {
     const baseUrl = (import.meta?.env?.BASE_URL || '/').replace(/\/+$/, '')
@@ -1428,155 +1430,9 @@ function Hero() {
             </div>
           </div>
 
-          {/* LINEUP Section */}
-          <section className="lineup-section" aria-label="Lineup section">
-            <div className="lineup-container">
-              <h2 className="lineup-title">LINEUP</h2>
-              <p className="lineup-subtitle">
-                Experience the biggest names live
-              </p>
-
-              <div className="lineup-carousel-wrap" aria-label="Lineup cards">
-                {/* Side arrow buttons */}
-                <button
-                  type="button"
-                  className="lineup-arrow-btn lineup-arrow-btn--left"
-                  onClick={() => scrollLineup(-1)}
-                  aria-label="Previous card"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M15 18l-6-6 6-6" />
-                  </svg>
-                </button>
-                <button
-                  type="button"
-                  className="lineup-arrow-btn lineup-arrow-btn--right"
-                  onClick={() => scrollLineup(1)}
-                  aria-label="Next card"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9 18l6-6-6-6" />
-                  </svg>
-                </button>
-
-                <div className="lineup-carousel" ref={lineupCarouselRef}>
-                  {lineupCards.map((card, idx) => {
-                    const isRevealed = card.status === 'revealed'
-                    const isActive = idx === activeLineupIndex
-                    if (isRevealed) {
-                      return (
-                        <div
-                          key={card.id}
-                          className={`lineup-card-slot lineup-card-slot--revealed ${isActive ? 'is-active' : ''}`}
-                          aria-current={isActive ? 'true' : undefined}
-                        >
-                          <button
-                            type="button"
-                            className={`lineup-flip-card ${isGvCardFlipped ? 'is-flipped' : ''}`}
-                            onClick={toggleGvCard}
-                            aria-label={isGvCardFlipped ? 'Hide GV lineup card' : 'Tap to reveal GV lineup card'}
-                          >
-                            <span className="lineup-flip-card-inner" aria-hidden="true">
-                              <span className="lineup-flip-card-face lineup-flip-card-face--back">
-                                <img className="lineup-flip-card-img" src={gvBackCard} alt="GV lineup card (back)" decoding="async" loading="lazy" />
-                                {!isGvCardFlipped && (
-                                  <span className="lineup-tap-to-reveal">
-                                    <svg className="lineup-tap-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                      <path d="M9 11l3 3L22 4" />
-                                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-                                    </svg>
-                                    TAP TO REVEAL
-                                  </span>
-                                )}
-                              </span>
-                              <span className="lineup-flip-card-face lineup-flip-card-face--front">
-                                <img className="lineup-flip-card-img" src={gvFrontCard} alt="GV lineup card (front)" decoding="async" loading="lazy" />
-                              </span>
-                            </span>
-                          </button>
-                        </div>
-                      )
-                    }
-
-                    if (card.status === 'countdown') {
-                      return (
-                        <div
-                          key={card.id}
-                          className={`lineup-card-slot lineup-card-slot--countdown ${isActive ? 'is-active' : ''}`}
-                          aria-current={isActive ? 'true' : undefined}
-                          aria-label="Lineup reveal countdown"
-                        >
-                          <div className="lineup-locked-card" aria-hidden="true">
-                            <img
-                              className="lineup-flip-card-img"
-                              src={gvBackCard}
-                              alt=""
-                              decoding="async"
-                              loading="lazy"
-                            />
-                            <div className="lineup-countdown-overlay">
-                              <div className="countdown-timer" aria-label="Countdown timer">
-                                {countdownText48hr}
-                              </div>
-                              <div className="countdown-label">Hours : Minutes : Seconds</div>
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    }
-
-                    return (
-                      <div
-                        key={card.id}
-                        className={`lineup-card-slot lineup-card-slot--locked ${isActive ? 'is-active' : ''}`}
-                        aria-label="Locked lineup card"
-                        aria-current={isActive ? 'true' : undefined}
-                      >
-                        <div className="lineup-locked-card" aria-hidden="true">
-                          <img className="lineup-flip-card-img lineup-locked-img" src={gvBackCard} alt="" decoding="async" loading="lazy" />
-                          <div className="lineup-locked-overlay">
-                            <div className="lineup-locked-icon" aria-hidden="true">
-                              <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                                <path
-                                  d="M7.5 10V7.9a4.5 4.5 0 0 1 9 0V10"
-                                  stroke="currentColor"
-                                  strokeWidth="1.8"
-                                  strokeLinecap="round"
-                                />
-                                <path
-                                  d="M7.2 10h9.6c.9 0 1.6.7 1.6 1.6v7.2c0 .9-.7 1.6-1.6 1.6H7.2c-.9 0-1.6-.7-1.6-1.6v-7.2c0-.9.7-1.6 1.6-1.6Z"
-                                  stroke="currentColor"
-                                  strokeWidth="1.8"
-                                  strokeLinejoin="round"
-                                />
-                                <path
-                                  d="M12 14.2v2.6"
-                                  stroke="currentColor"
-                                  strokeWidth="1.8"
-                                  strokeLinecap="round"
-                                />
-                              </svg>
-                            </div>
-                            <div className="lineup-locked-text">REVEAL DROPPING SOON</div>
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-
-              {/* Horizontal scroll indicator */}
-              <div className="lineup-scroll-hint" aria-hidden="true">
-                <svg className="lineup-scroll-hint-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-                <span className="lineup-scroll-hint-text">Swipe to explore more</span>
-                <svg className="lineup-scroll-hint-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </div>
-            </div>
+          {/* LINEUP Section - Replaced with New 3D Component */}
+          <section className="lineup-section" aria-label="Lineup section" style={{ padding: 0 }}>
+            <LineupReveal />
           </section>
 
           {/* FEATURES OF YATRA section (content coming next) */}
@@ -1742,50 +1598,47 @@ function Hero() {
             ref={passesRef}
           >
             <div className="mobile-passes-container">
-              <h2 className="mobile-passes-title">
-                Get <span className="mobile-passes-title-accent">Passes</span>
-              </h2>
+              <div className="relative z-10 w-full px-4 py-8">
+                <div className="mobile-passes-container">
+                  <h2 className="mobile-passes-title mb-6 text-center text-3xl font-akira uppercase text-white">
+                    Get <span className="mobile-passes-title-accent text-[#9b1799]">Passes</span>
+                  </h2>
 
-              <div className="mobile-passes-grid">
-                {/* Single YATRA PASS with Countdown Timer */}
-                <div className="mobile-pass-card mobile-pass-card--featured mobile-pass-card--countdown">
-                  <div className="mobile-pass-badge mobile-pass-badge--exclusive">EXCLUSIVE</div>
-                  <div className="mobile-pass-card-header">
-                    <h3 className="mobile-pass-card-title mobile-pass-card-title--accent">
-                      YATRA PASS
-                    </h3>
-                  </div>
+                  <div className="mobile-passes-grid">
+                    {/* Ticket Card */}
+                    <div className="mobile-pass-card mobile-pass-card--featured border-2 border-white/20 bg-white/5 p-6 backdrop-blur-md">
+                      <div className="mobile-pass-badge mobile-pass-badge--exclusive absolute -top-3 right-4 bg-[#9b1799] px-2 py-1 text-xs font-bold text-white uppercase tracking-widest">
+                        EXCLUSIVE
+                      </div>
 
-                  {/* Countdown Timer */}
-                  <div className="mobile-pass-timer-section">
-                    <div className="mobile-pass-timer-display" aria-live="polite">
-                      {ticketCountdownText}
+                      <div className="mobile-pass-card-header mb-4 border-b border-dashed border-white/20 pb-4">
+                        <h3 className="mobile-pass-card-title mobile-pass-card-title--accent text-2xl font-akira text-white">
+                          YATRA PASS
+                        </h3>
+                        <p className="text-white/60 text-sm tracking-wider uppercase mt-1">Full Access • 2 Days • Mar 13-14</p>
+                      </div>
+
+                      <ul className="mobile-pass-card-list mobile-pass-card-list--bright space-y-2 mb-6 text-white/80">
+                        <li>• Access to ALL Events</li>
+                        <li>• Proshow & DJ Night Included</li>
+                        <li>• Official Yatra Merch Access</li>
+                      </ul>
+
+                      <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
+                        <div className="text-left">
+                          <div className="text-[10px] uppercase text-white/50 tracking-widest font-bold">Price</div>
+                          <div className="text-3xl font-akira text-[#fff19d]">₹1</div>
+                        </div>
+                        <a
+                          href="/yatra-entry"
+                          className="bg-white text-black px-6 py-3 font-akira text-sm uppercase tracking-wide hover:bg-[#9b1799] hover:text-white transition-colors border-2 border-white"
+                        >
+                          BUY PASS
+                        </a>
+                      </div>
                     </div>
-                    <p className="mobile-pass-timer-label">DROPPING SOON</p>
-                  </div>
-
-                  <div className="mobile-pass-divider" aria-hidden="true" />
-
-                  <ul className="mobile-pass-card-list mobile-pass-card-list--bright">
-                    <li>• Access to 2 DAYS</li>
-                    <li>• Proshow</li>
-                    <li>• DJ Night</li>
-                  </ul>
-
-                  {/* Non-clickable button (disabled state) */}
-                  <div className="mobile-pass-cta mobile-pass-cta--accent mobile-pass-cta--disabled" aria-disabled="true">
-                    WILL BE UPDATED SOON
                   </div>
                 </div>
-
-                {/* CHECK EVENTS Button */}
-                <button
-                  type="button"
-                  onClick={goToEvents}
-                  className="mobile-check-events-btn"
-                >
-                  CHECK EVENTS
-                </button>
               </div>
             </div>
           </section>

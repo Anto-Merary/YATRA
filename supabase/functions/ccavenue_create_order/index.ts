@@ -9,10 +9,14 @@ const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-// Hardcoded Credentials as per request
-const CCAVENUE_MERCHANT_ID = "2442144";
-const CCAVENUE_ACCESS_CODE = "ATEP06NA73CI16PEIC";
-const CCAVENUE_WORKING_KEY = "C153074CE9627C9EB2387A0471AF2BCD";
+// Credentials from Environment Variables instead of hardcoding
+const CCAVENUE_MERCHANT_ID = Deno.env.get("CCAVENUE_MERCHANT_ID")!;
+const CCAVENUE_ACCESS_CODE = Deno.env.get("CCAVENUE_ACCESS_CODE")!;
+const CCAVENUE_WORKING_KEY = Deno.env.get("CCAVENUE_WORKING_KEY")!;
+
+if (!CCAVENUE_MERCHANT_ID || !CCAVENUE_ACCESS_CODE || !CCAVENUE_WORKING_KEY) {
+  console.error("Missing CCAvenue secrets");
+}
 
 type Purpose = "yatra_entry" | "event";
 
