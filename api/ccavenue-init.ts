@@ -151,6 +151,18 @@ export default async function handler(req, res) {
             params.append("billing_state", "Tamil Nadu");
             params.append("billing_zip", "600001");
             params.append("billing_country", "India");
+            params.append("billing_tel", phone);
+            params.append("billing_email", email);
+
+            // Delivery details (mirroring billing) to ensure no missing parameter errors
+            params.append("delivery_name", name);
+            params.append("delivery_address", college);
+            params.append("delivery_city", "Chennai");
+            params.append("delivery_state", "Tamil Nadu");
+            params.append("delivery_zip", "600001");
+            params.append("delivery_country", "India");
+            params.append("delivery_tel", phone);
+
             params.append("merchant_param1", "yatra_entry");
             params.append("merchant_param2", upserted.id);
             params.append("merchant_param3", siteUrl);
