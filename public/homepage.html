@@ -29,46 +29,7 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
     <link rel="manifest" href="site.webmanifest?v=2">
 
-    <!-- Early Mobile Redirect - Runs before page loads -->
-    <script>
-        (function () {
-            // Check if user wants desktop version
-            const urlParams = new URLSearchParams(window.location.search);
-            const forceDesktop = urlParams.get('desktop') === 'true' || sessionStorage.getItem('desktopVersion') === 'true';
-
-            if (forceDesktop) return;
-
-            // Mobile detection (PHONE only).
-            // Requirement: only allow a narrow set of phone-sized viewports (the supported devices + close matches).
-            const MOBILE_MIN_SHORT_SIDE = 360;
-            const MOBILE_MAX_SHORT_SIDE = 430;
-            const userAgent = (navigator.userAgent || navigator.vendor || window.opera || '').toLowerCase();
-            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-            const shortSide = Math.min(window.innerWidth, window.innerHeight);
-            const isAllowedSize = shortSide >= MOBILE_MIN_SHORT_SIDE && shortSide <= MOBILE_MAX_SHORT_SIDE;
-            const isIPhoneOrIPod = /iphone|ipod/i.test(userAgent);
-            const isAndroidPhone = /android/i.test(userAgent) && /mobile/i.test(userAgent); // avoids Android tablets
-            const isOtherPhone = /webos|blackberry|iemobile|opera mini/i.test(userAgent);
-            const isMobile = isTouchDevice && isAllowedSize && (isIPhoneOrIPod || isAndroidPhone || isOtherPhone);
-
-            if (isMobile) {
-                const currentPath = window.location.pathname;
-                // Don't redirect if already on mobile version or React app
-                if (currentPath.includes('mobile') || currentPath.includes('index.html') || currentPath === '/') {
-                    return;
-                }
-
-                // Redirect to mobile version (src/mobile)
-                // The mobile app is served via mobile.html which loads /src/mobile/main.jsx
-                const baseUrl = window.location.origin;
-                const currentSearch = window.location.search;
-                const currentHash = window.location.hash;
-
-                // Redirect relative so sub-folder deploys work too
-                window.location.replace('mobile' + currentSearch + currentHash);
-            }
-        })();
-    </script>
+    <!-- Mobile redirect removed - using responsive desktop design for all devices -->
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -176,14 +137,13 @@
         }
 
         @media (max-width: 768px) {
-
-            /* Hide HTML loader on mobile, show generic loader */
+            /* Use same desktop loader for mobile - responsive design */
             #loader {
-                display: none;
+                display: flex;
             }
 
             #mobile-loader {
-                display: flex;
+                display: none;
             }
         }
 
@@ -388,40 +348,34 @@
             .ref-ticket-container {
                 flex-direction: column;
                 height: auto;
-                max-width: 400px;
+                max-width: 340px;
                 filter: drop-shadow(0 5px 0 rgba(0, 0, 0, 1));
+                position: relative;
+            }
+
+            /* Remove semicircle cuts on mobile */
+            .ref-ticket-container::before,
+            .ref-ticket-container::after {
+                display: none;
             }
 
             .ref-ticket-left {
                 width: 100%;
                 height: 100px;
                 border-right: none;
-                border-bottom: 2px dashed rgba(255, 255, 255, 0.15);
-                border-radius: 4px 4px 0 0;
-                -webkit-mask:
-                    radial-gradient(circle at bottom left, transparent 15px, black 16px) bottom left,
-                    radial-gradient(circle at bottom right, transparent 15px, black 16px) bottom right;
-                -webkit-mask-size: 51% 100%;
-                mask:
-                    radial-gradient(circle at bottom left, transparent 15px, black 16px) bottom left,
-                    radial-gradient(circle at bottom right, transparent 15px, black 16px) bottom right;
-                mask-size: 51% 100%;
+                border-bottom: none;
+                border-radius: 12px 12px 0 0;
+                -webkit-mask: none;
+                mask: none;
             }
 
             .ref-ticket-right {
                 width: 100%;
                 padding: 1.5rem;
                 display: block;
-                /* Stack content */
-                border-radius: 0 0 4px 4px;
-                -webkit-mask:
-                    radial-gradient(circle at top left, transparent 15px, black 16px) top left,
-                    radial-gradient(circle at top right, transparent 15px, black 16px) top right;
-                -webkit-mask-size: 51% 100%;
-                mask:
-                    radial-gradient(circle at top left, transparent 15px, black 16px) top left,
-                    radial-gradient(circle at top right, transparent 15px, black 16px) top right;
-                mask-size: 51% 100%;
+                border-radius: 0 0 12px 12px;
+                -webkit-mask: none;
+                mask: none;
             }
 
             .ticket-seam {
@@ -1088,6 +1042,21 @@
             pointer-events: none;
         }
 
+        /* Gallery scroll-based reveal for info */
+        .gallery-info-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .gallery-info-scroll.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .gallery-year-scroll.revealed {
+            color: rgba(255, 255, 255, 0.1);
+        }
+
         /* Interactive Lineup Styles */
         .lineup-accordion {
             display: flex;
@@ -1131,30 +1100,59 @@
                 line-height: 1.4;
             }
 
-            /* Mobile About Section */
+            /* Mobile About Section - Larger, more readable text */
             #about {
-                padding: 2.5rem 1rem;
+                padding: 3rem 1.25rem;
             }
 
             #about .word-reveal {
-                font-size: 2rem;
-                line-height: 1.1;
-                margin-bottom: 1.5rem;
+                font-size: 2.25rem;
+                line-height: 1.15;
+                margin-bottom: 1.75rem;
             }
 
             #about .word-reveal-p {
-                font-size: 0.95rem;
-                line-height: 1.7;
-                padding: 0;
+                font-size: 1.05rem;
+                line-height: 1.8;
+                padding: 0 0.5rem;
             }
 
-            /* Mobile Gallery */
+            #about .word-reveal-p p {
+                font-size: 1.05rem;
+                line-height: 1.8;
+            }
+
+            /* Mobile About Title - ABOUT in black, YATRA in pink, stacked */
+            .about-title-word {
+                color: #000 !important;
+            }
+
+            /* Mobile About Logos - Hidden on mobile */
+            .about-logos-container {
+                display: none !important;
+            }
+
+            /* Mobile Gallery - Blast Into The Past section */
             .gallery-year {
-                font-size: 20vw;
+                font-size: 18vw;
             }
 
             .gallery-item {
-                padding: 1rem;
+                padding: 1.25rem;
+            }
+
+            /* Fix gallery intro title for mobile */
+            .gallery-intro-title {
+                font-size: 2.5rem !important;
+                line-height: 1.15 !important;
+            }
+
+            .gallery-intro-title span {
+                display: block;
+            }
+
+            #gallery-track .gallery-item:first-child h2 {
+                font-size: 2.5rem !important;
             }
 
             /* Mobile Lineup */
@@ -1169,21 +1167,7 @@
 
             /* Mobile Events */
             #events {
-                padding: 2.5rem 1rem;
-            }
-
-            #events h2 {
-                font-size: 2rem;
-                line-height: 1.1;
-                margin-bottom: 1.5rem;
-            }
-
-            #events ul {
-                gap: 1.5rem;
-            }
-
-            #events li span {
-                font-size: 1.5rem;
+                padding: 2rem 1rem;
             }
 
             /* Mobile Registration */
@@ -1208,9 +1192,28 @@
                 margin-bottom: 1.5rem;
             }
 
-            /* Mobile Marquee */
+            /* Mobile Marquee - Smaller and faster */
             .marquee-content {
-                font-size: 1.5rem;
+                font-size: 1rem;
+            }
+            
+            /* Mobile marquee speed override */
+            .marquee-mobile-fast {
+                animation-duration: 8s !important;
+            }
+            
+            /* Events section marquee separator - tight container for mobile */
+            .events-marquee-separator {
+                padding-top: 0.25rem !important;
+                padding-bottom: 0.25rem !important;
+            }
+            
+            .events-marquee-separator .marquee-container {
+                line-height: 1 !important;
+            }
+            
+            .events-marquee-separator .marquee-content {
+                line-height: 1 !important;
             }
 
             /* Mobile Buttons - Better touch targets */
@@ -1250,29 +1253,37 @@
 
         @media (max-width: 480px) {
 
-            /* Extra small devices - Refined sizes */
+            /* Extra small devices - Refined sizes with better readability */
             .hero-parallax h1 {
-                font-size: 20vw;
+                font-size: 18vw;
                 line-height: 0.9;
             }
 
             #hero-title-container p {
-                font-size: 0.6rem;
+                font-size: 0.65rem;
                 letter-spacing: 0.15em;
             }
 
+            /* About section - more readable on small screens */
             #about {
-                padding: 2rem 0.75rem;
+                padding: 2.5rem 1rem;
             }
 
             #about .word-reveal {
-                font-size: 1.75rem;
-                margin-bottom: 1.25rem;
+                font-size: 1.9rem;
+                margin-bottom: 1.5rem;
+                line-height: 1.2;
             }
 
             #about .word-reveal-p {
-                font-size: 0.875rem;
-                line-height: 1.6;
+                font-size: 0.95rem;
+                line-height: 1.75;
+            }
+
+            #about .word-reveal-p p {
+                font-size: 0.95rem;
+                line-height: 1.75;
+                margin-bottom: 1rem;
             }
 
             nav {
@@ -1299,17 +1310,34 @@
                 font-size: 1.5rem;
             }
 
-            #events h2 {
-                font-size: 1.75rem;
+            /* Events section - concert style for small screens */
+            #events {
+                padding: 1.5rem 0.75rem;
             }
 
             .marquee-content {
-                font-size: 1.25rem;
+                font-size: 0.875rem;
             }
 
             /* Better logo sizing on very small screens */
             .logo-container img {
                 height: 2rem;
+            }
+
+            /* About logos - Hidden on mobile (already hidden in 768px media query) */
+
+            /* Blast Into The Past - fit on small screens */
+            .gallery-intro-title {
+                font-size: 2rem !important;
+                line-height: 1.1 !important;
+            }
+
+            #gallery-track .gallery-item:first-child h2 {
+                font-size: 2rem !important;
+            }
+
+            .gallery-year {
+                font-size: 16vw;
             }
 
             /* Prevent horizontal scroll */
@@ -1558,9 +1586,9 @@
         <div
             class="absolute bottom-4 sm:bottom-6 md:bottom-8 lg:bottom-10 left-0 w-full z-20 rotate-[-1.5deg] sm:rotate-[-2deg] scale-[1.02] sm:scale-105 md:scale-110 overflow-hidden">
             <div
-                class="bg-[var(--color-accent)] text-black py-1 sm:py-1.5 md:py-2 marquee-container border-y-1 sm:border-y-2 md:border-y-2 border-black">
+                class="bg-[var(--color-accent)] text-black py-0.5 sm:py-1.5 md:py-2 marquee-container border-y-1 sm:border-y-2 md:border-y-2 border-black">
                 <div
-                    class="marquee-content text-base sm:text-xl md:text-2xl lg:text-3xl font-display font-black uppercase leading-tight">
+                    class="marquee-content text-xs sm:text-xl md:text-2xl lg:text-3xl font-display font-black uppercase leading-tight">
                     &nbsp;Cultural Fest • Pro Shows • FEB 13 & 14 • Yatra '26 • Join the Vibe •
                     &nbsp;Cultural Fest • Pro Shows • FEB 13 & 14 • Yatra '26 • Join the Vibe •
                 </div>
@@ -1574,9 +1602,10 @@
         <div class="flex flex-col items-center justify-center text-center">
 
             <div class="w-full max-w-full">
-                <div class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-display font-extrabold uppercase tracking-tighter leading-[1.1] sm:leading-tight mb-6 sm:mb-8 md:mb-12 lg:mb-16 xl:mb-20 word-reveal px-2"
+                <div class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-display font-extrabold uppercase tracking-tighter leading-[1.1] sm:leading-tight mb-4 sm:mb-8 md:mb-12 lg:mb-16 xl:mb-20 word-reveal px-2"
                     style="position: relative; z-index: 10; isolation: isolate;">
-                    About &nbsp; YATRA
+                    <span class="block sm:inline about-title-word">About</span>
+                    <span class="block sm:inline text-[var(--color-accent)]">YATRA</span>
                 </div>
                 <div
                     class="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl opacity-85 relative flex justify-center mb-3 sm:mb-4 md:mb-5 lg:mb-6 xl:mb-8">
@@ -1598,18 +1627,18 @@
                         </p>
                     </div>
                 </div>
-                <div class="mt-3 sm:mt-4 md:mt-5 lg:mt-6 xl:mt-8 flex justify-center items-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 xl:gap-12 flex-wrap relative px-2"
+                <div class="mt-3 sm:mt-4 md:mt-5 lg:mt-6 xl:mt-8 flex justify-center items-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 xl:gap-12 flex-wrap sm:flex-nowrap relative px-2 about-logos-container"
                     style="z-index: 100;">
                     <div class="blur-reveal logo-container flex-shrink-0">
-                        <img src="RIT WHITE LOGO.webp" alt="RIT Logo" class="w-auto transition-all duration-300"
+                        <img src="RIT WHITE LOGO.webp" alt="RIT Logo" class="about-logo w-auto transition-all duration-300"
                             style="height: 45px;">
                     </div>
                     <div class="blur-reveal logo-container flex-shrink-0">
                         <img src="RMC COLLEGE LOGO.webp" alt="RMC College Logo"
-                            class="w-auto transition-all duration-300" style="height: 250px;">
+                            class="about-logo w-auto transition-all duration-300" style="height: 250px;">
                     </div>
                     <div class="blur-reveal logo-container flex-shrink-0">
-                        <img src="RSB Logo.webp" alt="RSB Logo" class="w-auto transition-all duration-300"
+                        <img src="RSB Logo.webp" alt="RSB Logo" class="about-logo w-auto transition-all duration-300"
                             style="height: 220px;">
                     </div>
                 </div>
@@ -1626,43 +1655,46 @@
                 <div
                     class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]">
                 </div>
-                <div class="z-10 text-center mix-blend-difference px-4">
-                    <p class="uppercase tracking-[0.5em] text-[var(--color-accent)] font-bold mb-4">The Legacy</p>
-                    <h2 class="text-6xl md:text-9xl font-display font-black uppercase leading-none">
-                        Experience <br> The Past
+                <div class="z-10 text-center mix-blend-difference px-4 sm:px-6">
+                    <p class="uppercase tracking-[0.3em] sm:tracking-[0.5em] text-[var(--color-accent)] font-bold mb-3 sm:mb-4 text-xs sm:text-base">The Legacy</p>
+                    <h2 class="text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-display font-black uppercase leading-[1.1] sm:leading-none gallery-intro-title">
+                        <span class="block">Blast</span>
+                        <span class="block">Into</span>
+                        <span class="block">The</span>
+                        <span class="block">Past</span>
                     </h2>
-                    <div class="mt-8 animate-bounce text-gray-500 text-sm uppercase tracking-widest">
-                        Scroll to Explore &rarr;
+                    <div class="mt-6 sm:mt-8 animate-bounce text-gray-500 text-xs sm:text-sm uppercase tracking-widest">
+                        Scroll to Explore &darr;
                     </div>
                 </div>
             </div>
 
             <!-- Slide 2: 2024 -->
-            <div class="gallery-item group">
-                <div class="absolute inset-0 bg-black/40 z-10 group-hover:bg-black/20 transition-colors duration-500">
+            <div class="gallery-item gallery-scroll-item" data-gallery-index="1">
+                <div class="absolute inset-0 bg-black/40 z-10 gallery-overlay transition-colors duration-500">
                 </div>
                 <img src="/2024.JPG"
-                    class="absolute inset-0 w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700 scale-100 group-hover:scale-110">
-                <span class="gallery-year group-hover:text-white/10 transition-colors duration-500">2024</span>
+                    class="absolute inset-0 w-full h-full object-cover filter grayscale gallery-img transition-all duration-700 scale-100">
+                <span class="gallery-year gallery-year-scroll transition-colors duration-500">2024</span>
                 <div
-                    class="absolute bottom-20 left-10 z-20 max-w-md translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-100">
-                    <h3 class="text-3xl font-display font-bold text-[var(--color-secondary)]">Arjun Das</h3>
-                    <p class="text-white/80 mt-2">The year was packed with excitement and energy, especially with the
+                    class="absolute bottom-10 sm:bottom-20 left-4 sm:left-10 z-20 max-w-xs sm:max-w-md gallery-info-scroll transition-all duration-500">
+                    <h3 class="text-xl sm:text-3xl font-display font-bold text-[var(--color-secondary)]">Arjun Das</h3>
+                    <p class="text-white/80 mt-1 sm:mt-2 text-sm sm:text-base">The year was packed with excitement and energy, especially with the
                         presence of Arjun Dass, Sam C.V.</p>
                 </div>
             </div>
 
             <!-- Slide 3: 2025 -->
-            <div class="gallery-item group">
-                <div class="absolute inset-0 bg-black/40 z-10 group-hover:bg-black/20 transition-colors duration-500">
+            <div class="gallery-item gallery-scroll-item" data-gallery-index="2">
+                <div class="absolute inset-0 bg-black/40 z-10 gallery-overlay transition-colors duration-500">
                 </div>
                 <img src="/2025.JPG"
-                    class="absolute inset-0 w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700 scale-100 group-hover:scale-110">
-                <span class="gallery-year group-hover:text-white/10 transition-colors duration-500">2025</span>
+                    class="absolute inset-0 w-full h-full object-cover filter grayscale gallery-img transition-all duration-700 scale-100">
+                <span class="gallery-year gallery-year-scroll transition-colors duration-500">2025</span>
                 <div
-                    class="absolute bottom-20 left-10 z-20 max-w-md translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-100">
-                    <h3 class="text-3xl font-display font-bold text-white">Vijay Sethupathi</h3>
-                    <p class="text-white/80 mt-2">The year which exceeded all expectations, with the presence of Vijay
+                    class="absolute bottom-10 sm:bottom-20 left-4 sm:left-10 z-20 max-w-xs sm:max-w-md gallery-info-scroll transition-all duration-500">
+                    <h3 class="text-xl sm:text-3xl font-display font-bold text-white">Vijay Sethupathi</h3>
+                    <p class="text-white/80 mt-1 sm:mt-2 text-sm sm:text-base">The year which exceeded all expectations, with the presence of Vijay
                         Sethupathi and the energitic performance of Asal Kolaru and Paal Dabba.</p>
                 </div>
             </div>
@@ -1717,7 +1749,26 @@
                     </button>
                 </div>
 
-                <!-- Card 2 - 48 Hour Countdown Timer -->
+                <!-- Card 2 - Aoora Flip Card (Second Artist) -->
+                <div class="lineup-card-slot lineup-card-slot--revealed">
+                    <button type="button" class="lineup-flip-card" id="aoora-flip-card"
+                        aria-label="Click to reveal Aoora lineup card">
+                        <span class="lineup-flip-card-inner" aria-hidden="true">
+                            <span class="lineup-flip-card-face lineup-flip-card-face--back">
+                                <img class="lineup-flip-card-img" src="/gvbackcard (1).webp" alt="Aoora lineup card (back)"
+                                    decoding="async" loading="lazy">
+                                <span class="lineup-tap-to-reveal">CLICK TO REVEAL</span>
+                            </span>
+                            <span class="lineup-flip-card-face lineup-flip-card-face--front">
+                                <img class="lineup-flip-card-img" src="/aoorafrontcard.webp"
+                                    alt="Aoora - K-Pop Artist" decoding="async" loading="lazy">
+                            </span>
+                        </span>
+                        <a href="/gv-prakash/aoora.html" class="lineup-gv-button" id="aoora-visit-button">VIEW</a>
+                    </button>
+                </div>
+
+                <!-- Card 3 - 48 Hour Countdown Timer -->
                 <div class="lineup-card-slot">
                     <div class="lineup-locked-card">
                         <img class="lineup-flip-card-img" src="/Gallery/yatraevents.webp" alt="Countdown card"
@@ -1729,7 +1780,7 @@
                     </div>
                 </div>
 
-                <!-- Card 3 - To Be Revealed Soon (Locked) -->
+                <!-- Card 4 - To Be Revealed Soon (Locked) -->
                 <div class="lineup-card-slot lineup-card-slot--locked">
                     <div class="lineup-locked-card">
                         <img class="lineup-flip-card-img lineup-locked-img" src="/gvbackcard (1).webp" alt=""
@@ -1778,10 +1829,10 @@
     </section>
 
     <!-- Marquee Separator -->
-    <div class="py-4 sm:py-5 md:py-6 bg-[var(--color-accent)] text-black rotate-1 scale-105 z-10 relative">
+    <div class="events-marquee-separator py-1 sm:py-5 md:py-6 bg-[var(--color-accent)] text-black rotate-1 scale-105 z-10 relative">
         <div class="marquee-container">
             <div
-                class="marquee-content reverse text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-black uppercase">
+                class="marquee-content reverse text-xs sm:text-3xl md:text-4xl lg:text-5xl font-display font-black uppercase leading-none sm:leading-normal">
                 &nbsp;Dance Battle • Exciting 50+ Events • Yatra '26 •
                 &nbsp;Dance Battle • Exciting 50+ Events • Yatra '26 •
             </div>
@@ -1791,62 +1842,93 @@
     <!-- Events -->
     <section id="events" class="py-10 sm:py-14 md:py-20 lg:py-24 px-4 sm:px-6 bg-[#0f0f0f]">
         <div class="max-w-7xl mx-auto">
-            <div class="grid md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 lg:gap-16 items-start">
+            <!-- Mobile: Concert-style layout | Desktop: 2-column grid -->
+            <div class="block md:hidden">
+                <!-- Mobile Concert Style Layout -->
+                <div class="text-center mb-6">
+                    <h2 class="text-3xl font-display font-black uppercase leading-none">
+                        <span class="text-white">50+</span> <span class="text-[var(--color-accent)]">Events</span>
+                    </h2>
+                    <p class="text-gray-400 text-sm mt-2 uppercase tracking-[0.2em]">Two Days of Glory</p>
+                </div>
+                
+                <div class="relative mx-auto max-w-sm">
+                    <div class="relative rounded-2xl overflow-hidden shadow-2xl">
+                        <img src="/Gallery/yatraevents.webp" alt="Yatra Events" 
+                            class="w-full h-auto object-cover" style="aspect-ratio: 4/3;">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
+                        
+                        <div class="absolute top-3 right-3 flex gap-2">
+                            <div class="bg-[var(--color-accent)] text-black px-3 py-1 rounded-full text-xs font-bold uppercase">
+                                Cash Prize
+                            </div>
+                        </div>
+                        
+                        <div class="absolute bottom-0 left-0 right-0 p-4">
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                <span class="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-3 py-1.5 rounded-full text-[0.65rem] font-semibold uppercase tracking-wider flex items-center gap-1.5">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path></svg>
+                                    Gaming
+                                </span>
+                                <span class="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-3 py-1.5 rounded-full text-[0.65rem] font-semibold uppercase tracking-wider flex items-center gap-1.5">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+                                    Dance
+                                </span>
+                                <span class="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-3 py-1.5 rounded-full text-[0.65rem] font-semibold uppercase tracking-wider flex items-center gap-1.5">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                                    Music
+                                </span>
+                            </div>
+                            <p class="text-white/80 text-xs leading-relaxed">
+                                Compete. Create. Conquer. The biggest intercollegiate fest awaits.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-6">
+                    <a href="/events" class="magnetic-wrap inline-block">
+                        <div class="magnetic-content bg-gradient-to-r from-[var(--color-accent)] to-[#d946ef] text-white px-8 py-3 rounded-full uppercase font-bold text-sm tracking-widest">
+                            Explore All Events →
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Desktop: Original 2-column grid layout -->
+            <div class="hidden md:grid md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 lg:gap-16 items-start">
                 <!-- Sticky Image -->
                 <div class="order-2 md:order-1 relative md:sticky md:top-24 mb-6 md:mb-0">
-                    <div
-                        class="absolute -top-10 -left-10 w-full h-full border-2 border-[var(--color-secondary)] z-0 hidden md:block">
-                    </div>
-                    <div
-                        class="w-full aspect-[4/3] overflow-hidden rounded-lg md:rounded-xl lg:rounded-2xl shadow-2xl relative reveal-img">
+                    <div class="absolute -top-10 -left-10 w-full h-full border-2 border-[var(--color-secondary)] z-0 hidden md:block"></div>
+                    <div class="w-full aspect-[4/3] overflow-hidden rounded-lg md:rounded-xl lg:rounded-2xl shadow-2xl relative reveal-img">
                         <img src="/Gallery/yatraevents.webp" alt="Yatra Events"
                             class="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">
                     </div>
                 </div>
                 <div class="order-1 md:order-2">
-                    <h2
-                        class="text-2.5xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-display font-bold mb-5 sm:mb-6 md:mb-8 uppercase leading-[1.1]">
+                    <h2 class="text-2.5xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-display font-bold mb-5 sm:mb-6 md:mb-8 uppercase leading-[1.1]">
                         Event <br> <span class="text-[var(--color-accent)]">Categories</span>
                     </h2>
                     <p class="text-base sm:text-lg md:text-xl text-gray-400 mb-6 sm:mb-8 word-reveal-p leading-relaxed">
-                        Compete across 50+ epic events over two days. Win massive cash prizes. Showcase your talent on
-                        the biggest stage.
+                        Compete across 50+ epic events over two days. Win massive cash prizes. Showcase your talent on the biggest stage.
                     </p>
-                    <ul
-                        class="space-y-8 sm:space-y-10 md:space-y-12 border-l-2 border-gray-800 pl-4 sm:pl-5 md:pl-6 py-2 sm:py-3 md:py-4">
-                        <li
-                            class="flex flex-col group cursor-pointer hover:pl-2 sm:hover:pl-4 transition-all duration-300">
-                            <span
-                                class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-xs sm:text-sm mb-1">Technical</span>
-                            <span
-                                class="text-xl sm:text-2xl md:text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors leading-tight">Gaming
-                                & Digital Arts</span>
-                            <p
-                                class="text-xs sm:text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-24 transition-all duration-500 leading-relaxed">
-                                Esports tournaments, Photography, Short Film, Poster Design, Brain Teasers, Quizzes,
-                                Drone Challenge, and Product Marketing.</p>
+                    <ul class="space-y-8 sm:space-y-10 md:space-y-12 border-l-2 border-gray-800 pl-4 sm:pl-5 md:pl-6 py-2 sm:py-3 md:py-4">
+                        <li class="flex flex-col group cursor-pointer hover:pl-2 sm:hover:pl-4 transition-all duration-300">
+                            <span class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-xs sm:text-sm mb-1">Technical</span>
+                            <span class="text-xl sm:text-2xl md:text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors leading-tight">Gaming & Digital Arts</span>
+                            <p class="text-xs sm:text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-24 transition-all duration-500 leading-relaxed">
+                                Esports tournaments, Photography, Short Film, Poster Design, Brain Teasers, Quizzes, Drone Challenge, and Product Marketing.</p>
                         </li>
-                        <li
-                            class="flex flex-col group cursor-pointer hover:pl-2 sm:hover:pl-4 transition-all duration-300">
-                            <span
-                                class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-xs sm:text-sm mb-1">Cultural</span>
-                            <span
-                                class="text-xl sm:text-2xl md:text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors leading-tight">Dance,
-                                Music & Arts</span>
-                            <p
-                                class="text-xs sm:text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-24 transition-all duration-500 leading-relaxed">
-                                Dance battles, Singing competitions, Beat Box, Music challenges, Traditional arts,
-                                Oratory, Comedy, Sports, Games, and Food contests.</p>
+                        <li class="flex flex-col group cursor-pointer hover:pl-2 sm:hover:pl-4 transition-all duration-300">
+                            <span class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-xs sm:text-sm mb-1">Cultural</span>
+                            <span class="text-xl sm:text-2xl md:text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors leading-tight">Dance, Music & Arts</span>
+                            <p class="text-xs sm:text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-24 transition-all duration-500 leading-relaxed">
+                                Dance battles, Singing competitions, Beat Box, Music challenges, Traditional arts, Oratory, Comedy, Sports, Games, and Food contests.</p>
                         </li>
-                        <li
-                            class="flex flex-col group cursor-pointer hover:pl-2 sm:hover:pl-4 transition-all duration-300">
-                            <span
-                                class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-xs sm:text-sm mb-1">On-Stage</span>
-                            <span
-                                class="text-xl sm:text-2xl md:text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors leading-tight">Performance
-                                & Theatre</span>
-                            <p
-                                class="text-xs sm:text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-20 transition-all duration-500 leading-relaxed">
+                        <li class="flex flex-col group cursor-pointer hover:pl-2 sm:hover:pl-4 transition-all duration-300">
+                            <span class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-xs sm:text-sm mb-1">On-Stage</span>
+                            <span class="text-xl sm:text-2xl md:text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors leading-tight">Performance & Theatre</span>
+                            <p class="text-xs sm:text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-20 transition-all duration-500 leading-relaxed">
                                 Mime, Mono Acting, Mock Parliament, K-Cosplay, and Face Fiesta competitions.</p>
                         </li>
                     </ul>
@@ -2039,63 +2121,7 @@
     </footer>
 
     <script>
-        // Mobile Detection and Routing - Run Immediately
-        (function () {
-            function isMobileDevice() {
-                // PHONE-only detection (iPad/tablets stay on desktop).
-                const MOBILE_MIN_SHORT_SIDE = 360;
-                const MOBILE_MAX_SHORT_SIDE = 430;
-                const userAgent = (navigator.userAgent || navigator.vendor || window.opera || '').toLowerCase();
-                const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-                const shortSide = Math.min(window.innerWidth, window.innerHeight);
-                const isAllowedSize = shortSide >= MOBILE_MIN_SHORT_SIDE && shortSide <= MOBILE_MAX_SHORT_SIDE;
-                const isIPhoneOrIPod = /iphone|ipod/i.test(userAgent);
-                const isAndroidPhone = /android/i.test(userAgent) && /mobile/i.test(userAgent);
-                const isOtherPhone = /webos|blackberry|iemobile|opera mini/i.test(userAgent);
-                return isTouchDevice && isAllowedSize && (isIPhoneOrIPod || isAndroidPhone || isOtherPhone);
-            }
-
-            // Check for desktop override first
-            const urlParams = new URLSearchParams(window.location.search);
-            const forceDesktop = urlParams.get('desktop') === 'true' || sessionStorage.getItem('desktopVersion') === 'true';
-
-            // Redirect mobile users immediately - before page loads
-            if (isMobileDevice() && !forceDesktop) {
-                const currentPath = window.location.pathname;
-                const currentSearch = window.location.search;
-                const currentHash = window.location.hash;
-
-                // Don't redirect if already on mobile version or React app
-                if (currentPath.includes('mobile') || currentPath.includes('index.html') || currentPath === '/') {
-                    // Stay on this page, show loader for mobile if on homepage.html
-                    const shortSide = Math.min(window.innerWidth, window.innerHeight);
-                    if (currentPath.includes('homepage.html') && shortSide >= 360 && shortSide <= 430) {
-                        const loader = document.getElementById('loader');
-                        if (loader) loader.style.display = 'flex';
-                    }
-                    return;
-                }
-
-                // Redirect to mobile version (src/mobile)
-                // The mobile app is served via mobile.html which loads /src/mobile/main.jsx
-                // Redirect relative so sub-folder deploys work too
-                window.location.replace('mobile.html' + currentSearch + currentHash);
-                return;
-            }
-
-            // Show appropriate loader based on device
-            // Desktop loader is shown by default, mobile loader is handled in initMobileLoader
-
-            // Allow users to force desktop version
-            if (urlParams.get('desktop') === 'true') {
-                sessionStorage.setItem('desktopVersion', 'true');
-            }
-
-            // Clear desktop preference on desktop devices
-            if (!isMobileDevice()) {
-                sessionStorage.removeItem('desktopVersion');
-            }
-        })();
+        // Mobile redirect removed - using responsive desktop design for all devices
 
         // 1. Initialize Smooth Scroll (Lenis) - Optimized with GSAP ticker integration
         gsap.registerPlugin(ScrollTrigger);
@@ -2280,15 +2306,18 @@
         // 7. Master Animation Loader & ScrollTriggers
         const initAnimations = () => {
 
-            // Marquees (Velocity Controlled)
+            // Marquees (Velocity Controlled) - Faster on mobile
             const marquees = document.querySelectorAll('.marquee-content');
             const tweens = [];
+            const isMobileView = window.innerWidth <= 768;
+            const marqueeDuration = isMobileView ? 8 : 20; // Faster on mobile
+            
             marquees.forEach(marquee => {
                 const isReverse = marquee.classList.contains('reverse');
                 gsap.set(marquee, { xPercent: isReverse ? -50 : 0 });
                 const t = gsap.to(marquee, {
                     xPercent: isReverse ? 0 : -50,
-                    duration: 20, ease: "none", repeat: -1
+                    duration: marqueeDuration, ease: "none", repeat: -1
                 });
                 tweens.push(t);
             });
@@ -2505,6 +2534,41 @@
                 });
             }
 
+            // Aoora Flip Card functionality
+            const aooraFlipCard = document.getElementById('aoora-flip-card');
+            if (aooraFlipCard) {
+                const aooraRevealText = aooraFlipCard.querySelector('.lineup-tap-to-reveal');
+
+                aooraFlipCard.addEventListener('click', function (e) {
+                    // Don't flip if clicking the button
+                    if (e.target.closest('.lineup-gv-button')) {
+                        return;
+                    }
+
+                    const isFlipped = this.classList.contains('is-flipped');
+
+                    if (isFlipped) {
+                        // If already flipped, navigate to Aoora page
+                        if (window.parent && window.parent !== window) {
+                            // If in iframe, send message to parent
+                            window.parent.postMessage(
+                                { type: 'navigate', path: '/gv-prakash/aoora.html' },
+                                '*'
+                            );
+                        } else {
+                            // If not in iframe, navigate directly
+                            window.location.href = '/gv-prakash/aoora.html';
+                        }
+                    } else {
+                        // First click - flip the card
+                        this.classList.add('is-flipped');
+                        if (aooraRevealText) {
+                            aooraRevealText.style.display = 'none';
+                        }
+                    }
+                });
+            }
+
             // Handle "Visit Page" button click
             const gvVisitButton = document.getElementById('gv-visit-button');
             if (gvVisitButton) {
@@ -2519,6 +2583,24 @@
                     } else {
                         // If not in iframe, navigate directly
                         window.location.href = '/gv-prakash';
+                    }
+                });
+            }
+
+            // Handle Aoora "Visit Page" button click
+            const aooraVisitButton = document.getElementById('aoora-visit-button');
+            if (aooraVisitButton) {
+                aooraVisitButton.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    if (window.parent && window.parent !== window) {
+                        // If in iframe, send message to parent
+                        window.parent.postMessage(
+                            { type: 'navigate', path: '/gv-prakash/aoora.html' },
+                            '*'
+                        );
+                    } else {
+                        // If not in iframe, navigate directly
+                        window.location.href = '/gv-prakash/aoora.html';
                     }
                 });
             }
@@ -2580,6 +2662,76 @@
                     ScrollTrigger.refresh();
                 }, 150);
             }, { passive: true });
+
+            // Scroll-based B&W to Color transition for gallery images
+            const galleryScrollItems = document.querySelectorAll('.gallery-scroll-item');
+            galleryScrollItems.forEach((item) => {
+                const img = item.querySelector('.gallery-img');
+                const overlay = item.querySelector('.gallery-overlay');
+                const infoBox = item.querySelector('.gallery-info-scroll');
+                const yearText = item.querySelector('.gallery-year-scroll');
+                const targetSlide = parseInt(item.getAttribute('data-gallery-index') || '1');
+                
+                if (img) {
+                    // Create individual scroll trigger for each gallery item
+                    ScrollTrigger.create({
+                        trigger: "#gallery-pin",
+                        start: "top top",
+                        end: () => `+=${getScrollAmount() * -1}`,
+                        scrub: 0.5,
+                        onUpdate: (self) => {
+                            // Calculate which slide we're approaching
+                            const slideProgress = 1 / (numSlides - 1);
+                            const currentProgress = self.progress;
+                            const slideStart = (targetSlide - 1) * slideProgress;
+                            const slideEnd = targetSlide * slideProgress;
+                            
+                            // Calculate local progress within this slide's transition
+                            let localProgress = 0;
+                            if (currentProgress >= slideStart && currentProgress <= slideEnd) {
+                                localProgress = (currentProgress - slideStart) / (slideEnd - slideStart);
+                            } else if (currentProgress > slideEnd) {
+                                localProgress = 1;
+                            }
+                            
+                            // Apply grayscale based on scroll progress (1 = B&W, 0 = Color)
+                            const grayscaleValue = Math.max(0, 1 - localProgress);
+                            img.style.filter = `grayscale(${grayscaleValue})`;
+                            
+                            // Also transition overlay opacity
+                            if (overlay) {
+                                const overlayOpacity = 0.4 - (localProgress * 0.2);
+                                overlay.style.backgroundColor = `rgba(0, 0, 0, ${overlayOpacity})`;
+                            }
+                            
+                            // Scale effect on scroll
+                            const scaleValue = 1 + (localProgress * 0.1);
+                            img.style.transform = `scale(${scaleValue})`;
+
+                            // Reveal info text and year when scrolled to this slide
+                            if (localProgress > 0.5) {
+                                if (infoBox) {
+                                    infoBox.classList.add('revealed');
+                                    infoBox.style.opacity = Math.min(1, (localProgress - 0.5) * 2);
+                                    infoBox.style.transform = `translateY(${Math.max(0, 20 - (localProgress - 0.5) * 40)}px)`;
+                                }
+                                if (yearText) {
+                                    yearText.classList.add('revealed');
+                                }
+                            } else {
+                                if (infoBox) {
+                                    infoBox.classList.remove('revealed');
+                                    infoBox.style.opacity = 0;
+                                    infoBox.style.transform = 'translateY(20px)';
+                                }
+                                if (yearText) {
+                                    yearText.classList.remove('revealed');
+                                }
+                            }
+                        }
+                    });
+                }
+            });
         };
 
         // Desktop Loader Sequence (HTML Split Shutter)
@@ -2691,14 +2843,53 @@
             }, true);
         })();
 
-        // Initialize appropriate loader based on device
-        if (window.innerWidth > 768) {
-            // Desktop - Use HTML split shutter loader
-            initDesktopLoader();
-        } else {
-            // Mobile - Use generic loader
-            initMobileLoader();
-        }
+        // Initialize loader - use desktop loader for all devices since we now use responsive design
+        initDesktopLoader();
+
+        // 48-Hour Countdown Timer
+        (function initCountdownTimer() {
+            const countdownEl = document.getElementById('ticket-countdown');
+            if (!countdownEl) return;
+
+            // Get or set the countdown end time in localStorage
+            const STORAGE_KEY = 'yatra_countdown_end';
+            let endTime = localStorage.getItem(STORAGE_KEY);
+
+            if (!endTime) {
+                // Set countdown for 48 hours from now
+                endTime = Date.now() + (48 * 60 * 60 * 1000);
+                localStorage.setItem(STORAGE_KEY, endTime);
+            } else {
+                endTime = parseInt(endTime, 10);
+            }
+
+            function updateCountdown() {
+                const now = Date.now();
+                const remaining = endTime - now;
+
+                if (remaining <= 0) {
+                    countdownEl.textContent = '00:00:00';
+                    countdownEl.classList.add('text-[var(--color-accent)]');
+                    return;
+                }
+
+                const hours = Math.floor(remaining / (1000 * 60 * 60));
+                const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+
+                const formatted = [
+                    hours.toString().padStart(2, '0'),
+                    minutes.toString().padStart(2, '0'),
+                    seconds.toString().padStart(2, '0')
+                ].join(':');
+
+                countdownEl.textContent = formatted;
+            }
+
+            // Update immediately and then every second
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        })();
 
     </script>
 

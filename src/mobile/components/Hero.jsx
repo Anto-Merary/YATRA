@@ -14,6 +14,7 @@ import LineupReveal from './LineupReveal'
 // Use the same images as desktop version
 const gvBackCard = '/gvbackcard (1).webp'
 const gvFrontCard = '/gvfrontcard.webp'
+const aooraFrontCard = '/aoorafrontcard.webp'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useNetworkStatus } from '../hooks/useNetworkStatus'
@@ -133,6 +134,11 @@ function Hero() {
     setIsGvCardFlipped((v) => !v)
   }, [])
 
+  const [isAooraCardFlipped, setIsAooraCardFlipped] = useState(false)
+  const toggleAooraCard = useCallback(() => {
+    setIsAooraCardFlipped((v) => !v)
+  }, [])
+
   // LINEUP carousel (character-select style)
   const lineupCarouselRef = useRef(null)
   const [activeLineupIndex, setActiveLineupIndex] = useState(0)
@@ -148,6 +154,7 @@ function Hero() {
   const lineupCards = useMemo(
     () => [
       { id: 'gv', status: 'revealed' },
+      { id: 'aoora', status: 'revealed' },
       { id: 'countdown-48hr', status: 'countdown' },
       { id: 'locked-0', status: 'locked' },
       { id: 'locked-1', status: 'locked' },
