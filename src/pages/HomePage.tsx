@@ -6,7 +6,7 @@ export function HomePage() {
   // Note: do NOT iframe the homepage anymore; the static page handles its own navigation.
   //
   const baseUrl = (import.meta?.env?.BASE_URL || "/").replace(/\/+$/, "");
-  const homepageSrc = `${baseUrl}/homepage.html`;
+  const homepageSrc = `${baseUrl}/`;
 
   // Use `replace` to avoid polluting history with an extra SPA entry.
   window.location.replace(homepageSrc);
