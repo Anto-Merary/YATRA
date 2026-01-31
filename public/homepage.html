@@ -1035,6 +1035,18 @@
             border-right: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        /* Gallery: Vijay slide framing */
+        .gallery-img--vijay {
+            object-position: right center; /* Desktop default */
+        }
+
+        @media (max-width: 768px) {
+            /* Move the crop 5% left on mobile (show slightly more of the left side) */
+            .gallery-img--vijay {
+                object-position: 95% center;
+            }
+        }
+
         .gallery-year {
             font-size: 15vw;
             line-height: 1;
@@ -1809,8 +1821,7 @@
                 <div class="absolute inset-0 bg-black/40 z-10 gallery-overlay transition-colors duration-500">
                 </div>
                 <img src="/2025.JPG"
-                    class="absolute inset-0 w-full h-full object-cover filter grayscale gallery-img transition-all duration-700 scale-100"
-                    style="object-position: right center;"
+                    class="absolute inset-0 w-full h-full object-cover filter grayscale gallery-img gallery-img--vijay transition-all duration-700 scale-100"
                     decoding="async" loading="lazy">
                 <span class="gallery-year gallery-year-scroll transition-colors duration-500">2025</span>
                 <div
