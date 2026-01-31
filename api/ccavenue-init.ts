@@ -54,7 +54,8 @@ export default async function handler(req, res) {
         }
 
         // Callback URL points to the NEW Vercel API route
-        const callbackUrl = `${siteUrl}/api/ccavenue-handle`;
+        // Hardcoded to match the whitelist EXACTLY: https://www.rityatra.in
+        const callbackUrl = `https://www.rityatra.in/api/ccavenue-handle`;
         const orderId = `YATRA${Date.now()}${Math.floor(Math.random() * 1000000).toString().padStart(6, "0")}`;
 
         if (purpose === "yatra_entry") {
