@@ -5,11 +5,14 @@
   "installCommand": "npm install",
   "cleanUrls": false,
   "trailingSlash": false,
-  "rewrites": [
+  "redirects": [
     {
       "source": "/",
-      "destination": "/homepage.html"
-    },
+      "destination": "/homepage.html",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
     {
       "source": "/mobile",
       "destination": "/mobile.html"
