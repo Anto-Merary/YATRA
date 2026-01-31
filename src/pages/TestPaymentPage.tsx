@@ -23,11 +23,22 @@ export function TestPaymentPage() {
 
             console.log("Initiating test payment with:", payload);
 
-            const { data: responseData, error: fnError } = await supabase.functions.invoke("ccavenue_create_order", {
-                body: payload
+            console.log("Initiating test payment with:", payload);
+
+            // Using Vercel API Function instead of Supabase Edge Function
+            const res = await fetch("/api/ccavenue-init", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
             });
 
-            if (fnError) throw fnError;
+            if (!res.ok) {
+                const errData = await res.json();
+                throw new Error(errData.error || "Failed to initiate payment");
+            }
+
+            const responseData = await res.json();
+            // fnError is no longer relevant here
             if (responseData.error) throw new Error(responseData.error);
 
             if (responseData.already_paid) {

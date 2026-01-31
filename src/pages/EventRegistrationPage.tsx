@@ -95,12 +95,11 @@ export function EventRegistrationPage() {
         college: college.trim(),
       };
 
-      const res = await fetch(`${supabaseUrl}/functions/v1/ccavenue_create_order`, {
+      const res = await fetch("/api/ccavenue-init", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          Authorization: `Bearer ${anonKey || ""}`,
         },
         body: JSON.stringify({ ...payload, response_mode: "json" }),
       });
