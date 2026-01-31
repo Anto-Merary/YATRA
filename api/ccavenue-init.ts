@@ -149,7 +149,9 @@ export default async function handler(req, res) {
                 .update({ enc_request: encRequest })
                 .eq("order_id", orderId);
 
-            const action = "https://secure.ccavenue.com/transaction/transaction.do?command=initiateTransaction";
+            // Changed to TEST URL as per user request (Test Environment)
+            const action = "https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction";
+            // For Production, use: https://secure.ccavenue.com/transaction/transaction.do?command=initiateTransaction
 
             return res.status(200).json({
                 ok: true,
