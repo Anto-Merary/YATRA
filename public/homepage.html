@@ -1749,7 +1749,26 @@
                     </button>
                 </div>
 
-                <!-- Card 2 - 48 Hour Countdown Timer -->
+                <!-- Card 2 - Aoora Flip Card (Second Artist) -->
+                <div class="lineup-card-slot lineup-card-slot--revealed">
+                    <button type="button" class="lineup-flip-card" id="aoora-flip-card"
+                        aria-label="Click to reveal Aoora lineup card">
+                        <span class="lineup-flip-card-inner" aria-hidden="true">
+                            <span class="lineup-flip-card-face lineup-flip-card-face--back">
+                                <img class="lineup-flip-card-img" src="/gvbackcard (1).webp" alt="Aoora lineup card (back)"
+                                    decoding="async" loading="lazy">
+                                <span class="lineup-tap-to-reveal">CLICK TO REVEAL</span>
+                            </span>
+                            <span class="lineup-flip-card-face lineup-flip-card-face--front">
+                                <img class="lineup-flip-card-img" src="/aoorafrontcard.webp"
+                                    alt="Aoora - K-Pop Artist" decoding="async" loading="lazy">
+                            </span>
+                        </span>
+                        <a href="/gv-prakash/aoora.html" class="lineup-gv-button" id="aoora-visit-button">VIEW</a>
+                    </button>
+                </div>
+
+                <!-- Card 3 - 48 Hour Countdown Timer -->
                 <div class="lineup-card-slot">
                     <div class="lineup-locked-card">
                         <img class="lineup-flip-card-img" src="/Gallery/yatraevents.webp" alt="Countdown card"
@@ -1761,7 +1780,7 @@
                     </div>
                 </div>
 
-                <!-- Card 3 - To Be Revealed Soon (Locked) -->
+                <!-- Card 4 - To Be Revealed Soon (Locked) -->
                 <div class="lineup-card-slot lineup-card-slot--locked">
                     <div class="lineup-locked-card">
                         <img class="lineup-flip-card-img lineup-locked-img" src="/gvbackcard (1).webp" alt=""
@@ -2523,6 +2542,41 @@
                 });
             }
 
+            // Aoora Flip Card functionality
+            const aooraFlipCard = document.getElementById('aoora-flip-card');
+            if (aooraFlipCard) {
+                const aooraRevealText = aooraFlipCard.querySelector('.lineup-tap-to-reveal');
+
+                aooraFlipCard.addEventListener('click', function (e) {
+                    // Don't flip if clicking the button
+                    if (e.target.closest('.lineup-gv-button')) {
+                        return;
+                    }
+
+                    const isFlipped = this.classList.contains('is-flipped');
+
+                    if (isFlipped) {
+                        // If already flipped, navigate to Aoora page
+                        if (window.parent && window.parent !== window) {
+                            // If in iframe, send message to parent
+                            window.parent.postMessage(
+                                { type: 'navigate', path: '/gv-prakash/aoora.html' },
+                                '*'
+                            );
+                        } else {
+                            // If not in iframe, navigate directly
+                            window.location.href = '/gv-prakash/aoora.html';
+                        }
+                    } else {
+                        // First click - flip the card
+                        this.classList.add('is-flipped');
+                        if (aooraRevealText) {
+                            aooraRevealText.style.display = 'none';
+                        }
+                    }
+                });
+            }
+
             // Handle "Visit Page" button click
             const gvVisitButton = document.getElementById('gv-visit-button');
             if (gvVisitButton) {
@@ -2537,6 +2591,24 @@
                     } else {
                         // If not in iframe, navigate directly
                         window.location.href = '/gv-prakash';
+                    }
+                });
+            }
+
+            // Handle Aoora "Visit Page" button click
+            const aooraVisitButton = document.getElementById('aoora-visit-button');
+            if (aooraVisitButton) {
+                aooraVisitButton.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    if (window.parent && window.parent !== window) {
+                        // If in iframe, send message to parent
+                        window.parent.postMessage(
+                            { type: 'navigate', path: '/gv-prakash/aoora.html' },
+                            '*'
+                        );
+                    } else {
+                        // If not in iframe, navigate directly
+                        window.location.href = '/gv-prakash/aoora.html';
                     }
                 });
             }

@@ -13,6 +13,7 @@ import performanceImage from '../assets/optimized/performance-w1280.webp'
 // Use the same images as desktop version
 const gvBackCard = '/gvbackcard (1).webp'
 const gvFrontCard = '/gvfrontcard.webp'
+const aooraFrontCard = '/aoorafrontcard.webp'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useNetworkStatus } from '../hooks/useNetworkStatus'
@@ -132,6 +133,11 @@ function Hero() {
     setIsGvCardFlipped((v) => !v)
   }, [])
 
+  const [isAooraCardFlipped, setIsAooraCardFlipped] = useState(false)
+  const toggleAooraCard = useCallback(() => {
+    setIsAooraCardFlipped((v) => !v)
+  }, [])
+
   // LINEUP carousel (character-select style)
   const lineupCarouselRef = useRef(null)
   const [activeLineupIndex, setActiveLineupIndex] = useState(0)
@@ -147,6 +153,7 @@ function Hero() {
   const lineupCards = useMemo(
     () => [
       { id: 'gv', status: 'revealed' },
+      { id: 'aoora', status: 'revealed' },
       { id: 'countdown-48hr', status: 'countdown' },
       { id: 'locked-0', status: 'locked' },
       { id: 'locked-1', status: 'locked' },
@@ -1464,6 +1471,13 @@ function Hero() {
                     const isRevealed = card.status === 'revealed'
                     const isActive = idx === activeLineupIndex
                     if (isRevealed) {
+                      const isGv = card.id === 'gv'
+                      const isAoora = card.id === 'aoora'
+                      const isFlipped = isGv ? isGvCardFlipped : (isAoora ? isAooraCardFlipped : false)
+                      const toggleCard = isGv ? toggleGvCard : (isAoora ? toggleAooraCard : () => {})
+                      const frontCard = isGv ? gvFrontCard : (isAoora ? aooraFrontCard : '')
+                      const artistName = isGv ? 'GV Prakash' : (isAoora ? 'Aoora' : '')
+                      
                       return (
                         <div
                           key={card.id}
@@ -1472,14 +1486,14 @@ function Hero() {
                         >
                           <button
                             type="button"
-                            className={`lineup-flip-card ${isGvCardFlipped ? 'is-flipped' : ''}`}
-                            onClick={toggleGvCard}
-                            aria-label={isGvCardFlipped ? 'Hide GV lineup card' : 'Tap to reveal GV lineup card'}
+                            className={`lineup-flip-card ${isFlipped ? 'is-flipped' : ''}`}
+                            onClick={toggleCard}
+                            aria-label={isFlipped ? `Hide ${artistName} lineup card` : `Tap to reveal ${artistName} lineup card`}
                           >
                             <span className="lineup-flip-card-inner" aria-hidden="true">
                               <span className="lineup-flip-card-face lineup-flip-card-face--back">
-                                <img className="lineup-flip-card-img" src={gvBackCard} alt="GV lineup card (back)" decoding="async" loading="lazy" />
-                                {!isGvCardFlipped && (
+                                <img className="lineup-flip-card-img" src={gvBackCard} alt={`${artistName} lineup card (back)`} decoding="async" loading="lazy" />
+                                {!isFlipped && (
                                   <span className="lineup-tap-to-reveal">
                                     <svg className="lineup-tap-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                       <path d="M9 11l3 3L22 4" />
@@ -1490,7 +1504,7 @@ function Hero() {
                                 )}
                               </span>
                               <span className="lineup-flip-card-face lineup-flip-card-face--front">
-                                <img className="lineup-flip-card-img" src={gvFrontCard} alt="GV lineup card (front)" decoding="async" loading="lazy" />
+                                <img className="lineup-flip-card-img" src={frontCard} alt={`${artistName} lineup card (front)`} decoding="async" loading="lazy" />
                               </span>
                             </span>
                           </button>
