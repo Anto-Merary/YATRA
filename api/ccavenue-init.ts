@@ -54,7 +54,8 @@ export default async function handler(req, res) {
         }
 
         // Callback URL points to the NEW Vercel API route
-        const callbackUrl = `${siteUrl}/api/ccavenue-handle`;
+        // Hardcoded to match the whitelist EXACTLY: https://www.rityatra.in
+        const callbackUrl = `https://www.rityatra.in/api/ccavenue-handle`;
         const orderId = `YATRA${Date.now()}${Math.floor(Math.random() * 1000000).toString().padStart(6, "0")}`;
 
         if (purpose === "yatra_entry") {
@@ -132,7 +133,29 @@ export default async function handler(req, res) {
                 });
             if (orderErr) throw new Error(`Failed to create order: ${orderErr.message}`);
 
-            const merchantData = `merchant_id=${merchantId}&order_id=${orderId}&currency=INR&amount=${amountInr}&redirect_url=${callbackUrl}&cancel_url=${callbackUrl}&language=EN&billing_name=${name}&billing_email=${email}&billing_tel=${phone}&billing_address=${college}&billing_country=India&merchant_param1=yatra_entry&merchant_param2=${upserted.id}&merchant_param3=${siteUrl}`;
+            const formattedAmount = Number(amountInr).toFixed(2);
+
+            const params = new URLSearchParams();
+            params.append("merchant_id", merchantId);
+            params.append("order_id", orderId);
+            params.append("currency", "INR");
+            params.append("amount", formattedAmount);
+            params.append("redirect_url", callbackUrl);
+            params.append("cancel_url", callbackUrl);
+            params.append("language", "EN");
+            params.append("billing_name", name);
+            params.append("billing_email", email);
+            params.append("billing_tel", phone);
+            params.append("billing_address", college);
+            params.append("billing_city", "Chennai");
+            params.append("billing_state", "Tamil Nadu");
+            params.append("billing_zip", "600001");
+            params.append("billing_country", "India");
+            params.append("merchant_param1", "yatra_entry");
+            params.append("merchant_param2", upserted.id);
+            params.append("merchant_param3", siteUrl);
+
+            const merchantData = params.toString();
 
             // Encryption Logic (AES-128-CBC)
             const keyBytes = CryptoJS.MD5(workingKey);
@@ -149,7 +172,9 @@ export default async function handler(req, res) {
                 .update({ enc_request: encRequest })
                 .eq("order_id", orderId);
 
-            const action = "https://secure.ccavenue.com/transaction/transaction.do?command=initiateTransaction";
+            // Changed to TEST URL as per user request (Test Environment)
+            const action = "https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction";
+            // For Production, use: https://secure.ccavenue.com/transaction/transaction.do?command=initiateTransaction
 
             return res.status(200).json({
                 ok: true,
