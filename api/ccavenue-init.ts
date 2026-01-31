@@ -132,11 +132,13 @@ export default async function handler(req, res) {
                 });
             if (orderErr) throw new Error(`Failed to create order: ${orderErr.message}`);
 
+            const formattedAmount = Number(amountInr).toFixed(2);
+
             const params = new URLSearchParams();
             params.append("merchant_id", merchantId);
             params.append("order_id", orderId);
             params.append("currency", "INR");
-            params.append("amount", String(amountInr));
+            params.append("amount", formattedAmount);
             params.append("redirect_url", callbackUrl);
             params.append("cancel_url", callbackUrl);
             params.append("language", "EN");
@@ -144,6 +146,9 @@ export default async function handler(req, res) {
             params.append("billing_email", email);
             params.append("billing_tel", phone);
             params.append("billing_address", college);
+            params.append("billing_city", "Chennai");
+            params.append("billing_state", "Tamil Nadu");
+            params.append("billing_zip", "600001");
             params.append("billing_country", "India");
             params.append("merchant_param1", "yatra_entry");
             params.append("merchant_param2", upserted.id);
