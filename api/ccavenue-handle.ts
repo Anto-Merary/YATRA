@@ -58,8 +58,9 @@ export default async function handler(req, res) {
         // Decryption Logic (AES-128-CBC)
         const keyBytes = CryptoJS.MD5(workingKey);
         const iv = CryptoJS.lib.WordArray.create([0x00010203, 0x04050607, 0x08090a0b, 0x0c0d0e0f]);
+        const encryptedBase64 = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Hex.parse(encResp));
         const decrypted = CryptoJS.AES.decrypt(
-            { ciphertext: CryptoJS.enc.Hex.parse(encResp) },
+            encryptedBase64,
             keyBytes,
             {
                 iv: iv,
