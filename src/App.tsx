@@ -8,7 +8,8 @@ import { ProEventsPage } from "./pages/ProEventsPage";
 import { YatraEventsPage } from "./pages/YatraEventsPage";
 import { EventDetailPage } from "./pages/EventDetailPage";
 import { ProDanceBattlePage } from "./pages/ProDanceBattlePage";
-import { YatraEntryPage } from "./pages/YatraEntryPage";
+import { YatraEntryPage } from "@/pages/YatraEntryPage";
+import { TestPaymentPage } from "@/pages/TestPaymentPage";
 import { EventRegistrationPage } from "./pages/EventRegistrationPage";
 import { PaymentResultPage } from "./pages/PaymentResultPage";
 import { AdminPage } from "./pages/AdminPage";
@@ -104,7 +105,7 @@ export default function App() {
             resolve();
             return;
           }
-          
+
           const font = new FontFace(
             "Base Neue ExtBd Obl",
             `url(${fontFile})`
@@ -196,6 +197,7 @@ export default function App() {
         <Route path="/events/:eventId" element={<EventDetailPage />} />
         <Route path="/events/:eventId/register" element={<EventRegistrationPage />} />
         <Route path="/yatra-entry" element={<YatraEntryPage />} />
+        <Route path="/payment-test" element={<TestPaymentPage />} /> {/* Secret Test Page */}
         <Route path="/payment/:result" element={<PaymentResultPage />} />
         <Route path="/gv-prakash" element={<GVPrakashPage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
@@ -207,5 +209,4 @@ export default function App() {
     </Routes>
   );
 }
-
 
