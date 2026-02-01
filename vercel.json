@@ -14,6 +14,10 @@
   ],
   "rewrites": [
     {
+      "source": "/api/ccavenue-handle",
+      "destination": "https://mnboyuyajxghqbbkdqhi.supabase.co/functions/v1/ccavenue-handle"
+    },
+    {
       "source": "/mobile",
       "destination": "/mobile.html"
     },
