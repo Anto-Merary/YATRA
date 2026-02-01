@@ -3,19 +3,16 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "installCommand": "npm install",
-  "cleanUrls": false,
+  "cleanUrls": true,
   "trailingSlash": false,
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "/homepage.html",
-      "permanent": false
-    }
-  ],
   "rewrites": [
     {
       "source": "/api/ccavenue-handle",
       "destination": "https://mnboyuyajxghqbbkdqhi.supabase.co/functions/v1/ccavenue-handle"
+    },
+    {
+      "source": "/",
+      "destination": "/homepage.html"
     },
     {
       "source": "/mobile",
