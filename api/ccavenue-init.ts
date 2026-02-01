@@ -171,14 +171,14 @@ export default async function handler(req, res) {
             params.append("billing_tel", phone);
             params.append("billing_address", ccavenueCollege);
             params.append("billing_city", "Chennai");
-            params.append("billing_state", "Tamil Nadu");
+            params.append("billing_state", "TN"); // State code, not full name
             params.append("billing_zip", "600001");
             params.append("billing_country", "India");
             // Delivery details (mirroring billing) to ensure no missing parameter errors
             params.append("delivery_name", safeBillingName);
             params.append("delivery_address", ccavenueCollege);
             params.append("delivery_city", "Chennai");
-            params.append("delivery_state", "Tamil Nadu");
+            params.append("delivery_state", "TN"); // State code, not full name
             params.append("delivery_zip", "600001");
             params.append("delivery_country", "India");
             params.append("delivery_tel", phone);
@@ -216,9 +216,8 @@ export default async function handler(req, res) {
                 .update({ enc_request: encRequest })
                 .eq("order_id", orderId);
 
-            // PRODUCTION URL - credentials in .env are for production environment
-            // Using test.ccavenue.com with production credentials causes error 31002
-            const action = "https://secure.ccavenue.com/transaction/transaction.do?command=initiateTransaction";
+            // TEST URL - credentials from email are for TEST environment only
+            const action = "https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction";
 
             return res.status(200).json({
                 ok: true,
