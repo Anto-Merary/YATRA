@@ -46,8 +46,10 @@ export default async function handler(req, res) {
         const name = String(body?.name ?? "").trim();
         const email = String(body?.email ?? "").trim().toLowerCase();
         const phone = String(body?.phone ?? "").replace(/\D/g, "").trim();
-        const college = String(body?.college ?? "").trim();
-        const register_number = String(body?.register_number ?? "").trim() || null;
+        const college = typeof body?.college === "string" ? body.college.trim() : "";
+        const register_number = typeof body?.register_number === "string"
+            ? body.register_number.trim() || null
+            : null;
 
         if (!name || !email || !phone || phone.length !== 10) {
             return res.status(400).json({ error: "Missing/invalid name, email, or phone" });
@@ -56,10 +58,19 @@ export default async function handler(req, res) {
         // Callback URL points to the NEW Vercel API route
         // Hardcoded to match the whitelist EXACTLY: https://www.rityatra.in
         const callbackUrl = `https://www.rityatra.in/api/ccavenue-handle`;
-        const orderId = `YATRA${Date.now()}${Math.floor(Math.random() * 1000000).toString().padStart(6, "0")}`;
+        // Numeric-only order id to satisfy CCAvenue validation (<= 30 chars).
+        const orderId = `${Date.now()}${Math.floor(Math.random() * 100000).toString().padStart(5, "0")}`;
 
         if (purpose === "yatra_entry") {
             const institutionType = String(body?.institution_type ?? "").toLowerCase();
+            const institutionNameByType = {
+                rit: "Rajalakshmi Institute of Technology (RIT)",
+                rec: "Rajalakshmi Engineering College (REC)",
+                rsb: "Rajalakshmi School of Business (RSB)",
+                rsa: "Rajalakshmi School of Architecture (RSA)",
+                rmchri: "Rajalakshmi Medical College (RMCHRI)",
+                other: "",
+            };
             // Added rmchri
             if (!["rit", "rec", "rsb", "rsa", "rmchri", "other"].includes(institutionType)) {
                 return res.status(400).json({ error: "Invalid institution_type" });
@@ -67,6 +78,7 @@ export default async function handler(req, res) {
             if (institutionType === "other" && !college) {
                 return res.status(400).json({ error: "College name is required for Other" });
             }
+            const normalizedCollege = college || institutionNameByType[institutionType] || "";
 
             // Override price to 1 INR for all yatra entries as requested
             const amountInr = 1;
@@ -95,7 +107,7 @@ export default async function handler(req, res) {
                         name,
                         email,
                         phone,
-                        college,
+                        college: normalizedCollege,
                         institution_type: institutionType,
                         ticket_type: "Yatra Entry",
                         price: `₹${amountInr}`,
@@ -146,17 +158,14 @@ export default async function handler(req, res) {
             params.append("billing_name", name);
             params.append("billing_email", email);
             params.append("billing_tel", phone);
-            params.append("billing_address", college);
+            params.append("billing_address", normalizedCollege);
             params.append("billing_city", "Chennai");
             params.append("billing_state", "Tamil Nadu");
             params.append("billing_zip", "600001");
             params.append("billing_country", "India");
-            params.append("billing_tel", phone);
-            params.append("billing_email", email);
-
             // Delivery details (mirroring billing) to ensure no missing parameter errors
             params.append("delivery_name", name);
-            params.append("delivery_address", college);
+            params.append("delivery_address", normalizedCollege);
             params.append("delivery_city", "Chennai");
             params.append("delivery_state", "Tamil Nadu");
             params.append("delivery_zip", "600001");
