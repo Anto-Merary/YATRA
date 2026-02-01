@@ -58,8 +58,8 @@ export default async function handler(req, res) {
         // Callback URL points to the NEW Vercel API route
         // Hardcoded to match the whitelist EXACTLY: https://www.rityatra.in
         const callbackUrl = `https://www.rityatra.in/api/ccavenue-handle`;
-        // Numeric-only order id to satisfy CCAvenue validation (<= 30 chars).
-        const orderId = `${Date.now()}${Math.floor(Math.random() * 100000).toString().padStart(5, "0")}`;
+        // Numeric-only order id to satisfy CCAvenue validation (keep it short: 14 digits).
+        const orderId = `${Date.now().toString().slice(-10)}${Math.floor(Math.random() * 10000).toString().padStart(4, "0")}`;
 
         if (purpose === "yatra_entry") {
             const institutionType = String(body?.institution_type ?? "").toLowerCase();
