@@ -1793,9 +1793,7 @@
 .blast-section {
   width: 100%;
   background-color: #f58bb0;
-  background-image:
-    linear-gradient(180deg, rgba(245, 139, 176, 0.88), rgba(245, 139, 176, 0.72)),
-    url('../assets/pink.webp');
+  background-image: url('../assets/pink.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -1827,15 +1825,18 @@
   position: absolute;
   inset: 0;
   /* Black vignette mask: darker at edges, lighter in center to highlight photos */
-  background: radial-gradient(ellipse 90% 80% at 50% 40%,
-      rgba(255, 255, 255, 0.06) 0%,
-      rgba(0, 0, 0, 0.18) 55%,
-      rgba(0, 0, 0, 0.35) 100%);
+  background: radial-gradient(ellipse 90% 80% at 50% 35%,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(0, 0, 0, 0.12) 60%,
+      rgba(0, 0, 0, 0.2) 100%);
   z-index: 1;
   pointer-events: none;
 }
 
 .blast-title-prefix {
+  font-family: 'Akira Expanded', var(--hero-font-family);
+  font-size: clamp(1.9rem, 8.2vw, 2.6rem);
+  letter-spacing: 0.12em;
   color: #FFFFFF;
   text-shadow:
     0 2px 8px rgba(0, 0, 0, 0.5),
@@ -1844,6 +1845,9 @@
 }
 
 .blast-title-highlight {
+  font-family: 'Victory Striker', 'Akira Expanded', var(--hero-font-family);
+  font-size: clamp(2.2rem, 10vw, 3.1rem);
+  letter-spacing: 0.08em;
   color: #9b1799;
   text-shadow:
     0 0 15px rgba(155, 23, 153, 0.6),
