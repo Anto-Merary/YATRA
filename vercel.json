@@ -3,7 +3,7 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "installCommand": "npm install",
-  "cleanUrls": true,
+  "cleanUrls": false,
   "trailingSlash": false,
   "rewrites": [
     {
@@ -12,6 +12,14 @@
     },
     {
       "source": "/",
+      "destination": "/homepage.html"
+    },
+    {
+      "source": "/mobile",
+      "destination": "/mobile.html"
+    },
+    {
+      "source": "/homepage",
       "destination": "/homepage.html"
     },
     {
