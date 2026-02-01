@@ -1,70 +1,34 @@
 {
-  "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "installCommand": "npm install",
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "rewrites": [
+  "routes": [
     {
-      "source": "/api/ccavenue-handle",
-      "destination": "https://mnboyuyajxghqbbkdqhi.supabase.co/functions/v1/ccavenue_callback"
+      "src": "/api/ccavenue-handle",
+      "dest": "https://mnboyuyajxghqbbkdqhi.supabase.co/functions/v1/ccavenue_callback"
     },
     {
-      "source": "/",
-      "destination": "/homepage.html"
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
     },
     {
-      "source": "/mobile",
-      "destination": "/mobile.html"
+      "handle": "filesystem"
     },
     {
-      "source": "/events",
-      "destination": "/index.html"
+      "src": "^/$",
+      "dest": "/homepage.html"
     },
     {
-      "source": "/events/:path*",
-      "destination": "/index.html"
+      "src": "^/mobile$",
+      "dest": "/mobile.html"
     },
     {
-      "source": "/proevents",
-      "destination": "/index.html"
+      "src": "^/(events|proevents|yatraevents|pro-dance-battle|yatra-entry|payment-test|gv-prakash|privacy-policy|terms-conditions|admin)(/.*)?$",
+      "dest": "/index.html"
     },
     {
-      "source": "/yatraevents",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/pro-dance-battle",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/yatra-entry",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/payment-test",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/payment/:path*",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/gv-prakash",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/privacy-policy",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/terms-conditions",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/admin/:path*",
-      "destination": "/index.html"
+      "src": "^/payment/(.*)$",
+      "dest": "/index.html"
     }
   ]
 }
