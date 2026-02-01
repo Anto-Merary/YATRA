@@ -1756,7 +1756,7 @@ function Hero() {
 
               <div className="features-parallax">
                 <div className="features-image-frame" ref={featuresImageRef}>
-                  <img src={eventImage} alt="Yatra Event" className="features-image" />
+                  <img src="/Gallery/yatraevents.webp" alt="Yatra Events" className="features-image" />
                   <div className="features-image-glow" aria-hidden="true" />
                   <div className="features-layered-text">
                     <span className="features-layer features-layer--korean">오십+ 이벤트</span>
@@ -1767,7 +1767,7 @@ function Hero() {
               </div>
 
               <div className="features-summary">
-                50+ events across tech, culture, and performance. Two days of competitions, creators, and stage energy.
+                50+ events across tech, culture, and performance. Two days of nonstop energy.
               </div>
 
               <div className="features-categories">
@@ -1775,14 +1775,14 @@ function Hero() {
                   <div className="features-category-label">TECHNICAL</div>
                   <div className="features-category-title">Gaming & Digital Arts</div>
                   <p className="features-category-desc">
-                    Esports, photography, short film, poster design, quizzes, drone challenge, and product marketing.
+                    Esports, photography, short film, poster design, quizzes, drone challenge.
                   </p>
                 </div>
                 <div className="features-category">
                   <div className="features-category-label">CULTURAL</div>
                   <div className="features-category-title">Dance, Music & Arts</div>
                   <p className="features-category-desc">
-                    Dance battles, singing, beatbox, traditional arts, comedy, sports, games, and food contests.
+                    Dance battles, singing, beatbox, traditional arts, comedy, and games.
                   </p>
                 </div>
                 <div className="features-category">
@@ -1795,7 +1795,7 @@ function Hero() {
               </div>
 
               <button className="features-cta" type="button" onClick={goToEvents}>
-                Explore All Events
+                Explore Events
               </button>
             </div>
           </section>
