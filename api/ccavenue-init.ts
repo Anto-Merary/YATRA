@@ -42,10 +42,15 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: "Invalid purpose" });
         }
 
-        // Common fields
-        const name = String(body?.name ?? "").trim();
-        const email = String(body?.email ?? "").trim().toLowerCase();
-        const phone = String(body?.phone ?? "").replace(/\D/g, "").trim();
+        // Common fields - sanitize for CCAvenue (alphanumeric + basic punctuation only)
+        const rawName = String(body?.name ?? "").trim();
+        const rawEmail = String(body?.email ?? "").trim().toLowerCase();
+        const rawPhone = String(body?.phone ?? "").replace(/\D/g, "").trim();
+
+        // Sanitize name for CCAvenue: only letters, numbers, spaces, and basic punctuation
+        const name = rawName.replace(/[^a-zA-Z0-9\s.'-]/g, " ").replace(/\s+/g, " ").trim();
+        const email = rawEmail; // Email format is standardized, keep as-is
+        const phone = rawPhone;
         const college = typeof body?.college === "string" ? body.college.trim() : "";
         const register_number = typeof body?.register_number === "string"
             ? body.register_number.trim() || null
@@ -159,7 +164,9 @@ export default async function handler(req, res) {
             params.append("redirect_url", callbackUrl);
             params.append("cancel_url", callbackUrl);
             params.append("language", "EN");
-            params.append("billing_name", name);
+            // Ensure name is not empty after sanitization, use fallback
+            const safeBillingName = name || "Customer";
+            params.append("billing_name", safeBillingName);
             params.append("billing_email", email);
             params.append("billing_tel", phone);
             params.append("billing_address", ccavenueCollege);
@@ -168,7 +175,7 @@ export default async function handler(req, res) {
             params.append("billing_zip", "600001");
             params.append("billing_country", "India");
             // Delivery details (mirroring billing) to ensure no missing parameter errors
-            params.append("delivery_name", name);
+            params.append("delivery_name", safeBillingName);
             params.append("delivery_address", ccavenueCollege);
             params.append("delivery_city", "Chennai");
             params.append("delivery_state", "Tamil Nadu");
@@ -182,11 +189,22 @@ export default async function handler(req, res) {
 
             const merchantData = params.toString();
 
-            // Native Node.js Crypto Implementation (matches ccavutil.js)
+            // Debug: Log the merchant data for troubleshooting (remove in production)
+            console.log("CCAvenue Request Parameters:", {
+                merchant_id: merchantId,
+                order_id: orderId,
+                amount: formattedAmount,
+                billing_name: safeBillingName,
+                billing_email: email,
+                billing_address: ccavenueCollege,
+            });
+
+            // Native Node.js Crypto Implementation (matches ccavutil.js exactly)
             const crypto = await import("node:crypto");
             const m = crypto.createHash("md5");
             m.update(workingKey);
-            const key = m.digest(); // Buffer (binary)
+            // Use 'binary' encoding to match CCAvenue SDK exactly
+            const key = Buffer.from(m.digest('hex'), 'hex');
             const iv = Buffer.from([0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f]);
 
             const cipher = crypto.createCipheriv("aes-128-cbc", key, iv);
