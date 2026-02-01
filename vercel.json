@@ -8,14 +8,10 @@
   "rewrites": [
     {
       "source": "/api/ccavenue-handle",
-      "destination": "https://mnboyuyajxghqbbkdqhi.supabase.co/functions/v1/ccavenue_callback"
+      "destination": "https://mnboyuyajxghqbbkdqhi.supabase.co/functions/v1/ccavenue-handle"
     },
     {
       "source": "/",
-      "destination": "/homepage.html"
-    },
-    {
-      "source": "/homepage",
       "destination": "/homepage.html"
     },
     {
@@ -23,7 +19,11 @@
       "destination": "/mobile.html"
     },
     {
-      "source": "/:path((?!api/).*)",
+      "source": "/homepage",
+      "destination": "/homepage.html"
+    },
+    {
+      "source": "/:path*",
       "destination": "/index.html"
     }
   ]

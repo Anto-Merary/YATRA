@@ -168,24 +168,6 @@ export default async function handler(req, res) {
 
             const merchantData = params.toString();
 
-            // --- DEBUGGING LOG START ---
-            // Create a masked copy of params for logging to avoid leaking sensitive keys if any were added (though currently they aren't directly in params)
-            // But merchant_id is in params, so we can mask it if we want, though usually merchant_ID is public-ish.
-            // more importantly, we want to see the strict URLs.
-            console.log("--- CCAvenue Init Debug ---");
-            console.log("Redirect URL:", params.get("redirect_url"));
-            console.log("Cancel URL:", params.get("cancel_url"));
-            console.log("Currency:", params.get("currency"));
-            console.log("Amount:", params.get("amount"));
-
-            // Log full string but mask merchant_id just in case
-            const debugParams = new URLSearchParams(merchantData);
-            if (debugParams.has("merchant_id")) {
-                debugParams.set("merchant_id", "*****");
-            }
-            console.log("Full Unencrypted Params:", debugParams.toString());
-            // --- DEBUGGING LOG END ---
-
             // Native Node.js Crypto Implementation (matches ccavutil.js)
             const crypto = await import("node:crypto");
             const m = crypto.createHash("md5");
