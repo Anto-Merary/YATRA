@@ -62,7 +62,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             return res.status(400).json({ error: "Missing/invalid name, email, or phone" });
         }
 
-        // CCAvenue: form-encode values so encrypted plain text matches application/x-www-form-urlencoded
+        // Official kit encrypts raw POST body = application/x-www-form-urlencoded (space -> +, & = encoded)
         const formEncode = (v: string): string =>
             encodeURIComponent(v).replace(/%20/g, "+");
 
@@ -167,30 +167,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             if (orderErr) throw new Error(`Failed to create order: ${orderErr.message}`);
 
             const formattedAmount = Number(amountInr).toFixed(2);
-            // CCAvenue: currency must be exact 3-letter ISO code (INR). Error 31002 = "currency: Invalid Parameter".
-            const currencyCode = "INR";
-            // CCAvenue: encrypted plain text must match application/x-www-form-urlencoded (spaces as +, reserved chars encoded)
+            // Build plain text exactly like official kit: raw form body (application/x-www-form-urlencoded)
+            // Parameter order matches dataFrom.html: merchant_id, order_id, currency, amount, redirect_url, cancel_url, language, billing_*, delivery_*, merchant_param*
             const merchantParams = [
                 `merchant_id=${formEncode(merchantId)}`,
                 `order_id=${formEncode(orderId)}`,
-                `currency=${currencyCode}`,
-                `amount=${formattedAmount}`,
+                `currency=${formEncode("INR")}`,
+                `amount=${formEncode(formattedAmount)}`,
                 `redirect_url=${formEncode(callbackUrl)}`,
                 `cancel_url=${formEncode(callbackUrl)}`,
-                `language=EN`,
+                `language=${formEncode("EN")}`,
                 `billing_name=${formEncode(safeBillingName)}`,
-                `billing_email=${formEncode(email.slice(0, 70))}`,
-                `billing_tel=${formEncode(phone.slice(0, 20))}`,
                 `billing_address=${formEncode(ccavenueCollege)}`,
                 `billing_city=${formEncode(ccavenueStr("Chennai", 30))}`,
                 `billing_state=${formEncode(ccavenueStr("TN", 30))}`,
-                `billing_zip=600001`,
+                `billing_zip=${formEncode("600001")}`,
                 `billing_country=${formEncode(ccavenueStr("India", 50))}`,
+                `billing_tel=${formEncode(phone.slice(0, 20))}`,
+                `billing_email=${formEncode(email.slice(0, 70))}`,
                 `delivery_name=${formEncode(safeBillingName)}`,
                 `delivery_address=${formEncode(ccavenueCollege)}`,
                 `delivery_city=${formEncode(ccavenueStr("Chennai", 30))}`,
                 `delivery_state=${formEncode(ccavenueStr("TN", 30))}`,
-                `delivery_zip=600001`,
+                `delivery_zip=${formEncode("600001")}`,
                 `delivery_country=${formEncode(ccavenueStr("India", 50))}`,
                 `delivery_tel=${formEncode(phone.slice(0, 20))}`,
                 `merchant_param1=${formEncode("yatra_entry")}`,
@@ -200,7 +199,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
             const merchantData = merchantParams.join("&");
 
-            // CCAvenue AES-128-CBC: key = MD5(workingKey) raw 16 bytes, IV = 0x00..0x0f (per official ccavutil.js)
+            // Exact match to ccavutil.js: key = MD5(workingKey) 16 bytes, iv = \x00..\x0f, aes-128-cbc, utf8->hex
             const crypto = await import("node:crypto");
             const m = crypto.createHash("md5");
             m.update(workingKey, "utf8");
