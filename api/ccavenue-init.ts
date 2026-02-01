@@ -167,11 +167,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             if (orderErr) throw new Error(`Failed to create order: ${orderErr.message}`);
 
             const formattedAmount = Number(amountInr).toFixed(2);
+            // CCAvenue: currency must be exact 3-letter ISO code (INR). Error 31002 = "currency: Invalid Parameter".
+            const currencyCode = "INR";
             // CCAvenue: encrypted plain text must match application/x-www-form-urlencoded (spaces as +, reserved chars encoded)
             const merchantParams = [
                 `merchant_id=${formEncode(merchantId)}`,
                 `order_id=${formEncode(orderId)}`,
-                `currency=INR`,
+                `currency=${currencyCode}`,
                 `amount=${formattedAmount}`,
                 `redirect_url=${formEncode(callbackUrl)}`,
                 `cancel_url=${formEncode(callbackUrl)}`,
