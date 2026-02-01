@@ -19,7 +19,51 @@
       "destination": "/mobile.html"
     },
     {
-      "source": "/((?!api/.*).*)",
+      "source": "/events",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/events/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/proevents",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/yatraevents",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/pro-dance-battle",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/yatra-entry",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/payment-test",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/payment/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/gv-prakash",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/privacy-policy",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/terms-conditions",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/admin/:path*",
       "destination": "/index.html"
     }
   ]
