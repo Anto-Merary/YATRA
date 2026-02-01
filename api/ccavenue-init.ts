@@ -1,10 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 
 // Vercel Serverless Function Handler
-export default async function handler(req, res) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
     // CORS Headers
-    res.setHeader("Access-Control-Allow-Credentials", true);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS,PATCH,DELETE,POST,PUT");
     res.setHeader(
@@ -23,9 +24,9 @@ export default async function handler(req, res) {
     try {
         const supabaseUrl = process.env.VITE_SUPABASE_URL;
         const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY; // MUST BE SET IN VERCEL
-        const merchantId = process.env.CCAVENUE_MERCHANT_ID;
-        const accessCode = process.env.CCAVENUE_ACCESS_CODE;
-        const workingKey = process.env.CCAVENUE_WORKING_KEY;
+        const merchantId = 2442144;
+        const accessCode = "ATEP06NA73CI16PEIC";
+        const workingKey = "C153074CE9627C9EB2387A0471AF2BCD";
         const siteUrl = (process.env.SITE_URL ?? "https://rityatra.in").replace(/\/+$/, "");
 
         if (!supabaseUrl || !serviceKey || !merchantId || !accessCode || !workingKey) {
@@ -136,7 +137,7 @@ export default async function handler(req, res) {
             const formattedAmount = Number(amountInr).toFixed(2);
 
             const params = new URLSearchParams();
-            params.append("merchant_id", merchantId);
+            params.append("merchant_id", String(merchantId));
             params.append("order_id", orderId);
             params.append("currency", "INR");
             params.append("amount", formattedAmount);
@@ -207,6 +208,6 @@ export default async function handler(req, res) {
 
     } catch (error) {
         console.error("Payment Init Error:", error);
-        return res.status(500).json({ error: error.message });
+        return res.status(500).json({ error: (error as Error).message });
     }
 }
