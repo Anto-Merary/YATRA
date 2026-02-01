@@ -130,12 +130,16 @@ export function EventRegistrationPage() {
         return;
       }
       if (j?.mode === "form_post" && j?.formAction && Array.isArray(j?.formFields)) {
-        const resForm = await fetch(String(j.formAction), {
+        const formActionUrl = String(j.formAction).startsWith("http") ? String(j.formAction) : `${window.location.origin}${j.formAction}`;
+        const resForm = await fetch(formActionUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ fields: j.formFields }),
         });
-        if (!resForm.ok) throw new Error("Payment redirect failed");
+        if (!resForm.ok) {
+          const errText = await resForm.text();
+          throw new Error(`Payment redirect failed (${resForm.status})${errText ? `: ${errText.slice(0, 80)}` : ""}`);
+        }
         const html = await resForm.text();
         document.open();
         document.write(html);

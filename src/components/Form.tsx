@@ -143,13 +143,16 @@ export function RegistrationForm() {
             }
 
             if (responseData.mode === "form_post" && responseData.formAction && Array.isArray(responseData.formFields)) {
-                // Official kit flow: POST fields to /api/ccavenue-init-form; it encrypts and returns redirect HTML
-                const resForm = await fetch(responseData.formAction, {
+                const formActionUrl = responseData.formAction.startsWith("http") ? responseData.formAction : `${window.location.origin}${responseData.formAction}`;
+                const resForm = await fetch(formActionUrl, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ fields: responseData.formFields }),
                 });
-                if (!resForm.ok) throw new Error("Payment redirect failed");
+                if (!resForm.ok) {
+                    const errText = await resForm.text();
+                    throw new Error(`Payment redirect failed (${resForm.status})${errText ? `: ${errText.slice(0, 80)}` : ""}`);
+                }
                 const html = await resForm.text();
                 document.open();
                 document.write(html);
