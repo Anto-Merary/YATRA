@@ -48,7 +48,14 @@ export default defineConfig({
     },
   },
   server: {
-    host: true, // Listen on all addresses, needed for domain spoofing like rityatra.in
+    host: true, // Listen on all addresses
+    proxy: {
+      "/api": {
+        target: "https://www.rityatra.in",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
   preview: {
     // Ensure preview server handles SPA routing

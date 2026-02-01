@@ -19,7 +19,7 @@
       "destination": "/mobile.html"
     },
     {
-      "source": "/:path*",
+      "source": "/((?!api/.*).*)",
       "destination": "/index.html"
     }
   ]

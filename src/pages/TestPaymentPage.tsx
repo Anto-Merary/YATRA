@@ -33,8 +33,16 @@ export function TestPaymentPage() {
             });
 
             if (!res.ok) {
-                const errData = await res.json();
-                throw new Error(errData.error || "Failed to initiate payment");
+                const text = await res.text();
+                // Try to parse json if possible
+                try {
+                    const errData = JSON.parse(text);
+                    throw new Error(errData.error || `API Error ${res.status}`);
+                } catch (e) {
+                    // If not JSON, throw raw text (it might be an HTML 404 page)
+                    console.error("Non-JSON API response:", text);
+                    throw new Error(`API returned ${res.status} (Check console for details)`);
+                }
             }
 
             const responseData = await res.json();
