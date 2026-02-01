@@ -7,9 +7,11 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Dock from '../components/Dock'
 import { motion } from 'framer-motion'
 import { Home, List } from 'lucide-react'
+import { useDeviceCapability } from './hooks/useDeviceCapability'
 
 function App() {
   const [isMobile, setIsMobile] = useState(false)
+  const deviceCapability = useDeviceCapability()
 
   useEffect(() => {
     // Smooth scrolling (mobile) + GSAP integration
@@ -18,21 +20,43 @@ function App() {
       window.matchMedia &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    if (reduceMotion) return
+    // Skip Lenis on low-end devices or if user prefers reduced motion
+    if (reduceMotion || deviceCapability.isLowEnd) {
+      gsap.registerPlugin(ScrollTrigger)
+      // Still need to refresh ScrollTrigger for GSAP animations
+      window.setTimeout(() => ScrollTrigger.refresh(), 0)
+      return
+    }
 
     gsap.registerPlugin(ScrollTrigger)
 
+    // Adaptive Lenis settings based on device capability
     const lenis = new Lenis({
-      duration: 1.15,
+      // Shorter duration on mid-range devices for more responsive feel
+      duration: deviceCapability.isMidRange ? 0.9 : 1.15,
       easing: (t) => 1 - Math.pow(1 - t, 3),
       smoothWheel: true,
-      smoothTouch: true,
-      touchMultiplier: 1.2,
+      // Disable smooth touch on mid-range to reduce jank
+      smoothTouch: deviceCapability.isHighEnd,
+      // Lower touch multiplier for better control
+      touchMultiplier: deviceCapability.isHighEnd ? 1.2 : 0.9,
       wheelMultiplier: 1.0,
       normalizeWheel: true,
+      // Sync touch events for better performance
+      syncTouch: true,
+      syncTouchLerp: deviceCapability.isHighEnd ? 0.1 : 0.075,
     })
 
-    const onScroll = () => ScrollTrigger.update()
+    // Throttle ScrollTrigger updates on mid-range devices
+    let lastScrollTime = 0
+    const scrollThrottle = deviceCapability.isMidRange ? 16 : 0
+    
+    const onScroll = () => {
+      const now = performance.now()
+      if (scrollThrottle > 0 && now - lastScrollTime < scrollThrottle) return
+      lastScrollTime = now
+      ScrollTrigger.update()
+    }
     lenis.on('scroll', onScroll)
 
     const onTick = (time) => {
@@ -40,6 +64,7 @@ function App() {
       lenis.raf(time * 1000)
     }
     gsap.ticker.add(onTick)
+    // Disable lag smoothing for more responsive animations
     gsap.ticker.lagSmoothing(0)
 
     // Ensure ScrollTrigger uses latest measurements
@@ -50,7 +75,7 @@ function App() {
       gsap.ticker.remove(onTick)
       lenis.destroy()
     }
-  }, [])
+  }, [deviceCapability.isLowEnd, deviceCapability.isMidRange, deviceCapability.isHighEnd])
 
   // Show dock for phone-sized viewports (iPad mini+ should not use mobile layout)
   useEffect(() => {

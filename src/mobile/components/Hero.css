@@ -4668,3 +4668,156 @@
     clip: rect(36px, 9999px, 41px, 0);
   }
 }
+
+/* =========================================
+   PERFORMANCE OPTIMIZATIONS
+   ========================================= */
+
+/* Content visibility optimization for off-screen sections */
+.hero-black-section,
+.lineup-section,
+.features-section,
+.blast-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 100vh;
+}
+
+/* Layout containment for better performance */
+.lineup-carousel {
+  contain: layout style;
+}
+
+.blast-collage {
+  contain: layout;
+}
+
+/* Optimize will-change for animated elements */
+.blast-photo {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.hero-divider-track {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Pause animations when not visible (intersection observer controlled) */
+.lineup-section:not(.is-in-viewport) .hero-divider-track {
+  animation-play-state: paused;
+}
+
+/* Reduced motion preferences - comprehensive */
+@media (prefers-reduced-motion: reduce) {
+  /* Disable all animations */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Remove blur transitions (expensive) */
+  .hero-stage:not(.is-loaded) .hero-yatra-text,
+  .hero-stage:not(.is-loaded) .hero-year-text {
+    filter: none;
+  }
+
+  /* Disable lamp glow animations */
+  .hero-lamp-glow {
+    display: none;
+  }
+
+  /* Disable lightning effects */
+  .hero-stage::before,
+  .hero-stage::after {
+    display: none;
+  }
+
+  /* Simplify scrolling dividers */
+  .hero-divider-track {
+    animation: none;
+  }
+
+  /* Show images immediately */
+  .blast-photo {
+    opacity: 1 !important;
+    transform: translate(-50%, -50%) !important;
+  }
+}
+
+/* Low-end device optimizations (detected via JS class on body) */
+body.low-end-device .hero-lamp-glow {
+  display: none;
+}
+
+body.low-end-device .hero-stage::before,
+body.low-end-device .hero-stage::after {
+  display: none;
+}
+
+body.low-end-device .hero-bleed-bg,
+body.low-end-device .hero-bg-image {
+  filter: none;
+}
+
+body.low-end-device .features-section::before {
+  display: none;
+}
+
+body.low-end-device .blast-section::before {
+  display: none;
+}
+
+/* GPU acceleration hints for smooth scrolling sections */
+.hero,
+.hero-black-section,
+.lineup-section,
+.features-section,
+.blast-section {
+  transform: translateZ(0);
+}
+
+/* Optimize filter-heavy elements */
+.hero-bleed-bg,
+.hero-bg-image {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Reduce filter complexity on touch devices during scroll */
+@media (hover: none) and (pointer: coarse) {
+  /* Simplify shadows during scroll */
+  .blast-photo {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Reduce gradient complexity */
+  .features-section::before {
+    opacity: 0.2;
+  }
+
+  .blast-section::before {
+    opacity: 0.2;
+  }
+}
+
+/* Optimize image rendering */
+.blast-photo,
+.lineup-flip-card-img,
+.features-image {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Prevent layout thrashing */
+.lineup-carousel-wrap {
+  contain: layout style;
+}
+
+.lineup-card-slot {
+  contain: layout style paint;
+}

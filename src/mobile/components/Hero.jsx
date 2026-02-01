@@ -12,6 +12,7 @@ import eventImage from '../assets/optimized/event-w1024.webp'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useNetworkStatus } from '../hooks/useNetworkStatus'
+import { useDeviceCapability, getAnimationConfig } from '../hooks/useDeviceCapability'
 
 // Lineup card assets live in public/ for mobile + desktop reuse.
 const gvBackCard = '/gvbackcard (1).webp'
@@ -84,7 +85,7 @@ function GlitchText({ koreanText, englishText, className, delay = 0, shouldStart
   )
 }
 
-function DecryptText({ koreanText, englishText, className, delay = 0, shouldStart = false }) {
+function DecryptText({ koreanText, englishText, className, delay = 0, shouldStart = false, frameInterval = 32 }) {
   const [displayText, setDisplayText] = useState(koreanText || englishText || '')
 
   useEffect(() => {
@@ -103,10 +104,12 @@ function DecryptText({ koreanText, englishText, className, delay = 0, shouldStar
       const finalText = englishText || ''
       const glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
       let frame = 0
+      // Adaptive frame skip: faster interval = more frames to skip for same visual speed
+      const frameSkip = frameInterval > 40 ? 1 : 2
 
       intervalId = window.setInterval(() => {
         frame += 1
-        const revealCount = Math.min(finalText.length, Math.floor(frame / 2))
+        const revealCount = Math.min(finalText.length, Math.floor(frame / frameSkip))
         const nextText = finalText
           .split('')
           .map((char, idx) => {
@@ -122,19 +125,23 @@ function DecryptText({ koreanText, englishText, className, delay = 0, shouldStar
           window.clearInterval(intervalId)
           setDisplayText(finalText)
         }
-      }, 32)
+      }, frameInterval)
     }, delay)
 
     return () => {
       if (timeoutId) window.clearTimeout(timeoutId)
       if (intervalId) window.clearInterval(intervalId)
     }
-  }, [delay, englishText, koreanText, shouldStart])
+  }, [delay, englishText, koreanText, shouldStart, frameInterval])
 
   return <span className={className}>{displayText}</span>
 }
 
 function Hero() {
+  // Device capability detection for adaptive animations
+  const deviceCapability = useDeviceCapability()
+  const animConfig = useMemo(() => getAnimationConfig(deviceCapability.tier), [deviceCapability.tier])
+
   // Progressive loading: render immediately, then enhance as assets arrive.
   const [loaded, setLoaded] = useState(() => ({
     bleedBg: false,
@@ -172,6 +179,18 @@ function Hero() {
 
   // Network status detection
   const { shouldLoadVideo: networkShouldLoad, isSlowConnection } = useNetworkStatus()
+
+  // Set body class for CSS-based optimizations on low-end devices
+  useEffect(() => {
+    if (deviceCapability.isLowEnd) {
+      document.body.classList.add('low-end-device')
+    } else {
+      document.body.classList.remove('low-end-device')
+    }
+    return () => {
+      document.body.classList.remove('low-end-device')
+    }
+  }, [deviceCapability.isLowEnd])
 
   // Lineup teaser modal (catchy reveal-soon popup)
   const [lineupModalState, setLineupModalState] = useState('closed') // 'closed' | 'open' | 'closing'
@@ -270,6 +289,7 @@ function Hero() {
   }, [ticketCountdownNow, registrationTargetDate])
 
   // Track which lineup card is centered in the carousel (character-select style).
+  // Optimized: reduced frequency of updates and better throttling
   useEffect(() => {
     if (!isExperienceReady) return
 
@@ -280,6 +300,9 @@ function Hero() {
     let ticking = false
     let isScrolling = false
     let scrollTimeout = null
+    let lastUpdateTime = 0
+    // Throttle updates more aggressively on low-end devices
+    const updateThrottle = deviceCapability.isLowEnd ? 100 : deviceCapability.isMidRange ? 50 : 16
 
     // Cache children to avoid repeated DOM queries
     let cachedChildren = null
@@ -292,6 +315,12 @@ function Hero() {
 
     const update = () => {
       ticking = false
+      
+      // Skip if we updated too recently
+      const now = performance.now()
+      if (now - lastUpdateTime < updateThrottle) return
+      lastUpdateTime = now
+
       const children = getChildren()
       if (children.length === 0) return
 
@@ -325,6 +354,8 @@ function Hero() {
       // Set timeout to mark scrolling as ended
       scrollTimeout = setTimeout(() => {
         isScrolling = false
+        // Final update when scroll ends
+        update()
       }, 150)
 
       if (!ticking) {
@@ -349,12 +380,14 @@ function Hero() {
       window.addEventListener('resize', onResize, { passive: true })
       // Initial update
       update()
-      // Only run periodic check when not actively scrolling to avoid jank
+      // Only run periodic check when not actively scrolling
+      // Longer interval on low-end devices
+      const checkInterval = deviceCapability.isLowEnd ? 600 : 400
       intervalId = window.setInterval(() => {
         if (!isScrolling) {
           update()
         }
-      }, 300) // Increased interval to reduce overhead
+      }, checkInterval)
     }, 100)
 
     return () => {
@@ -365,7 +398,7 @@ function Hero() {
       window.removeEventListener('resize', onResize)
       if (raf) window.cancelAnimationFrame(raf)
     }
-  }, [isExperienceReady])
+  }, [isExperienceReady, deviceCapability.isLowEnd, deviceCapability.isMidRange])
 
   // Swipe gesture detection for carousel navigation
   useEffect(() => {
@@ -485,24 +518,31 @@ function Hero() {
       }
     })
 
-    // Never reuse a photo. If fewer than 6 exist, we render fewer than 6.
-    return Array.from(uniqueImages.values()).slice(0, 6)
-  }, [])
+    // Adaptive: limit number of animated images on low/mid-end devices
+    const maxImages = animConfig.maxConcurrentAnimations || 6
+    return Array.from(uniqueImages.values()).slice(0, Math.min(6, maxImages))
+  }, [animConfig.maxConcurrentAnimations])
 
   // Lantern (lamp) glow hotspots placed over the background art.
   // These are NOT visible UI elements—just an overlay to make each lamp "bloom" randomly.
+  // Optimized: reduce lamp count on low-end devices
   const lamps = useMemo(
-    () => [
-      { id: 'lamp-0', x: 4.5, y: 18.2 },
-      { id: 'lamp-1', x: 16.0, y: 20.1 },
-      { id: 'lamp-2', x: 30.2, y: 19.4 },
-      { id: 'lamp-3', x: 44.2, y: 20.0 },
-      { id: 'lamp-4', x: 58.0, y: 20.1 },
-      { id: 'lamp-5', x: 71.6, y: 20.4 },
-      { id: 'lamp-6', x: 85.0, y: 20.0 },
-      { id: 'lamp-7', x: 96.0, y: 18.6 },
-    ],
-    []
+    () => {
+      const allLamps = [
+        { id: 'lamp-0', x: 4.5, y: 18.2 },
+        { id: 'lamp-1', x: 16.0, y: 20.1 },
+        { id: 'lamp-2', x: 30.2, y: 19.4 },
+        { id: 'lamp-3', x: 44.2, y: 20.0 },
+        { id: 'lamp-4', x: 58.0, y: 20.1 },
+        { id: 'lamp-5', x: 71.6, y: 20.4 },
+        { id: 'lamp-6', x: 85.0, y: 20.0 },
+        { id: 'lamp-7', x: 96.0, y: 18.6 },
+      ]
+      // Return fewer lamps on low-end devices (or none if lamp glow is disabled)
+      if (!animConfig.enableLampGlow) return []
+      return allLamps.slice(0, animConfig.lampCount)
+    },
+    [animConfig.enableLampGlow, animConfig.lampCount]
   )
 
   // Incrementing "sequence" values let us re-trigger a one-shot CSS animation per lamp.
@@ -693,8 +733,12 @@ function Hero() {
   }, [isExperienceReady])
 
   // Features image: parallax slide-in on scroll
+  // Optimized: uses adaptive scrub and can be disabled on low-end devices
   useEffect(() => {
     if (!isExperienceReady) return
+    // Skip parallax on low-end devices
+    if (!animConfig.parallax) return
+    
     const sectionEl = featuresSectionRef.current
     const imageEl = featuresImageRef.current
     if (!sectionEl || !imageEl) return
@@ -716,7 +760,8 @@ function Hero() {
             trigger: sectionEl,
             start: 'top 80%',
             end: 'bottom 35%',
-            scrub: true,
+            scrub: animConfig.scrub,
+            fastScrollEnd: true,
           },
         }
       )
@@ -725,7 +770,7 @@ function Hero() {
     return () => {
       ctx.revert()
     }
-  }, [isExperienceReady])
+  }, [isExperienceReady, animConfig.parallax, animConfig.scrub])
 
   // BLAST INTO PAST section: trigger blur crossfade when section enters view
   useEffect(() => {
@@ -960,6 +1005,10 @@ function Hero() {
       })
       tl.pause(0)
 
+      // Adaptive animation duration and stagger based on device capability
+      const animDuration = animConfig.duration
+      const animStagger = animConfig.stagger
+
       // Slower + slightly overlapping entrances (timeline length also controls scrub pacing)
       els.forEach((el, i) => {
         const base = finalPositions[i] || { x: 0, y: 0 }
@@ -979,13 +1028,14 @@ function Hero() {
             scale: finalScale,
             opacity: 1,
             rotate: 0,
-            duration: 2.25,
+            duration: animDuration,
           },
-          i * 0.55
+          i * animStagger
         )
       })
 
       // Tie reveal to scroll so photos don't all pop in early.
+      // Adaptive scrub: higher value = smoother but less responsive (better for low-end)
       st = ScrollTrigger.create({
         id: 'blast-collage',
         trigger: sectionEl,
@@ -993,9 +1043,11 @@ function Hero() {
         // reveal stays progressive while they explore the whole block.
         start: 'top 62%',
         end: 'bottom 60%', // Finish animation earlier so it holds before next section overlaps
-        scrub: 1.35,
+        scrub: animConfig.scrub,
         animation: tl,
         invalidateOnRefresh: true,
+        // Performance: don't update on every pixel
+        fastScrollEnd: true,
       })
     }
 
@@ -1011,12 +1063,13 @@ function Hero() {
       if (st) st.kill()
       if (tl) tl.kill()
     }
-  }, [isExperienceReady, blastImages.length])
+  }, [isExperienceReady, blastImages.length, animConfig.duration, animConfig.stagger, animConfig.scrub])
 
 
   // Scroll-based settle interaction - continuous and proportional to scroll distance,
   // but visually smoothed so it feels cinematic (no jitter/snapping).
   // Progress is 0 at top of hero, 1 when hero has fully scrolled out of view.
+  // Optimized: uses throttling and adaptive smoothing based on device capability
   useEffect(() => {
     if (!hasLoaded) return
     const el = stageRef.current
@@ -1028,32 +1081,43 @@ function Hero() {
     let target = 0
     let current = 0
     let isAnimating = false
+    let lastScrollTime = 0
+    // Throttle scroll handler on low-end devices
+    const scrollThrottle = deviceCapability.isLowEnd ? 32 : 16
 
     const update = (ts = performance.now()) => {
       raf = 0
       const dt = Math.min(50, ts - (lastTs || ts))
       lastTs = ts
 
-      // Improved smoothing: faster response while maintaining smoothness
-      // Using a higher base value for more responsive animation
-      const alpha = 1 - Math.pow(0.85, dt / 16.67) // ~0.15–0.25 typical, more responsive
+      // Adaptive smoothing: lower alpha = smoother but slower response
+      // Low-end devices get smoother (less frequent updates)
+      const baseSmoothing = deviceCapability.isLowEnd ? 0.92 : deviceCapability.isMidRange ? 0.88 : 0.85
+      const alpha = 1 - Math.pow(baseSmoothing, dt / 16.67)
       current = current + (target - current) * alpha
 
-      el.style.setProperty('--settle', current.toFixed(6))
+      el.style.setProperty('--settle', current.toFixed(4))
 
       // Keep animating until we're very close to target
       const diff = Math.abs(target - current)
-      if (diff > 0.0001) {
+      // Larger threshold on low-end devices to stop animation sooner
+      const threshold = deviceCapability.isLowEnd ? 0.001 : 0.0001
+      if (diff > threshold) {
         raf = window.requestAnimationFrame(update)
         isAnimating = true
       } else {
         current = target
-        el.style.setProperty('--settle', current.toFixed(6))
+        el.style.setProperty('--settle', current.toFixed(4))
         isAnimating = false
       }
     }
 
     const onScroll = () => {
+      // Throttle scroll events on low-end devices
+      const now = performance.now()
+      if (now - lastScrollTime < scrollThrottle) return
+      lastScrollTime = now
+
       const rect = heroEl.getBoundingClientRect()
       // When rect.top = 0 => progress 0
       // When rect.top = -rect.height => progress 1 (hero fully scrolled past)
@@ -1073,29 +1137,36 @@ function Hero() {
       window.removeEventListener('scroll', onScroll)
       if (raf) window.cancelAnimationFrame(raf)
     }
-  }, [hasLoaded])
+  }, [hasLoaded, deviceCapability.isLowEnd, deviceCapability.isMidRange])
 
   // Random lamp blooms (random order / random timing).
+  // Optimized: runs less frequently on low-end devices, disabled entirely if no lamps
   useEffect(() => {
     if (!hasLoaded) return
+    // Skip if lamp glow is disabled (low-end devices)
+    if (!animConfig.enableLampGlow || lamps.length === 0) return
 
     let cancelled = false
     let timeoutId = 0
 
     const rand = (min, max) => min + Math.random() * (max - min)
 
+    // Adaptive timing: slower on mid-range, much slower on low-end (if enabled)
+    const minInterval = deviceCapability.isMidRange ? 500 : 300
+    const maxInterval = deviceCapability.isMidRange ? 1800 : 1200
+
     const schedule = () => {
       if (cancelled) return
 
-      // Next bloom in 300ms–1200ms
-      const nextIn = Math.round(rand(300, 1200))
+      // Next bloom with adaptive timing
+      const nextIn = Math.round(rand(minInterval, maxInterval))
       timeoutId = window.setTimeout(() => {
         if (cancelled) return
 
-        // Bloom 1–2 random lamps (sometimes 2 for simultaneous glow)
-        const bloomCount = Math.random() < 0.4 ? 2 : 1
+        // Bloom only 1 lamp at a time on mid-range devices
+        const bloomCount = deviceCapability.isMidRange ? 1 : (Math.random() < 0.4 ? 2 : 1)
         const picked = new Set()
-        while (picked.size < bloomCount) {
+        while (picked.size < bloomCount && picked.size < lamps.length) {
           picked.add(lamps[Math.floor(Math.random() * lamps.length)].id)
         }
 
@@ -1117,7 +1188,7 @@ function Hero() {
       cancelled = true
       if (timeoutId) window.clearTimeout(timeoutId)
     }
-  }, [hasLoaded, lamps])
+  }, [hasLoaded, lamps, animConfig.enableLampGlow, deviceCapability.isMidRange])
 
   // Random shimmer effect for BUY TICKETS button
   useEffect(() => {
@@ -1752,6 +1823,7 @@ function Hero() {
                     className="features-title-main"
                     delay={0}
                     shouldStart={isFeaturesSectionVisible}
+                    frameInterval={animConfig.decryptInterval}
                   />
                   <DecryptText
                     koreanText="오십+ 이벤트"
@@ -1759,6 +1831,7 @@ function Hero() {
                     className="features-title-sub"
                     delay={220}
                     shouldStart={isFeaturesSectionVisible}
+                    frameInterval={animConfig.decryptInterval}
                   />
                 </h2>
                 <p className="features-title-tag">CASH PRIZE • ALL-DAY HYPE</p>
@@ -1829,6 +1902,7 @@ function Hero() {
                   className="blast-title-prefix"
                   delay={0}
                   shouldStart={isBlastSectionVisible}
+                  frameInterval={animConfig.decryptInterval}
                 />
                 <DecryptText
                   koreanText="돌진하다"
@@ -1836,6 +1910,7 @@ function Hero() {
                   className="blast-title-highlight"
                   delay={220}
                   shouldStart={isBlastSectionVisible}
+                  frameInterval={animConfig.decryptInterval}
                 />
               </h2>
 
