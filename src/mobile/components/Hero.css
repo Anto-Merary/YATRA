@@ -1850,10 +1850,11 @@
   font-family: 'Victory Striker', 'Akira Expanded', var(--hero-font-family);
   font-size: clamp(2.2rem, 10vw, 3.1rem);
   letter-spacing: 0.08em;
-  color: #9b1799;
+  color: #000000;
   text-shadow:
-    0 0 15px rgba(155, 23, 153, 0.6),
-    0 0 30px rgba(155, 23, 153, 0.4);
+    0 2px 8px rgba(255, 255, 255, 0.4),
+    0 4px 16px rgba(255, 255, 255, 0.3),
+    0 6px 24px rgba(255, 255, 255, 0.2);
 }
 
 .blast-section .features-title {
@@ -1942,7 +1943,22 @@
   overflow: visible;
 }
 
-.blast-collage::before,
+.blast-collage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 70% at 50% 50%,
+      transparent 0%,
+      transparent 35%,
+      rgba(0, 0, 0, 0.2) 50%,
+      rgba(0, 0, 0, 0.4) 65%,
+      rgba(0, 0, 0, 0.7) 85%,
+      rgba(0, 0, 0, 0.9) 100%);
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 0;
+}
+
 .blast-collage::after {
   /* Remove the card-like backdrop & border */
   content: none;
@@ -3564,7 +3580,10 @@
 .lineup-section {
   width: 100%;
   min-height: auto;
-  background: #000000;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(155, 23, 153, 0.25), transparent 55%),
+    radial-gradient(circle at 80% 35%, rgba(255, 241, 157, 0.15), transparent 45%),
+    #000000;
   position: sticky;
   top: 0;
   z-index: 3;
@@ -3594,7 +3613,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: transparent;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.85));
   pointer-events: none;
   z-index: 1;
 }
@@ -3602,7 +3621,7 @@
 .lineup-container {
   position: relative;
   min-height: auto;
-  padding: 6rem 1.5rem 4rem 1.5rem;
+  padding: 5.25rem 1.5rem 4.75rem 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -3610,48 +3629,74 @@
   z-index: 2;
 }
 
+.lineup-kicker {
+  font-family: 'Space Grotesk', var(--hero-font-family);
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 0.55rem;
+}
+
 .lineup-title {
   font-family: 'Akira Expanded', var(--hero-font-family);
-  font-size: 12vw;
+  font-size: clamp(2.4rem, 12vw, 3.2rem);
   font-weight: 800;
-  margin-bottom: 2rem;
-  line-height: 1.35;
+  margin-bottom: 0.75rem;
+  line-height: 1.1;
   text-align: center;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: transparent;
-  background: linear-gradient(180deg, #ffffff 10%, #e6e6e6 55%, #111111 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
+  color: #ffffff;
   position: relative;
   z-index: 3;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding-bottom: 0.3em;
-  padding-top: 0.15em;
-  /* Prevent clipping */
-  text-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+  letter-spacing: 0.12em;
+  text-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.6),
+    0 0 24px rgba(155, 23, 153, 0.35);
+}
+
+.lineup-divider {
+  width: min(86%, 340px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.lineup-divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0));
+  opacity: 0.75;
+}
+
+.lineup-divider-text {
+  font-family: 'Noto Sans KR', 'Poppins', var(--hero-font-family);
+  font-size: 0.68rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
 }
 
 .lineup-subtitle {
-  margin: 0.35rem 0 1.75rem;
+  margin: 0.25rem 0 1.1rem;
   font-family: 'Space Grotesk', var(--hero-font-family);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   line-height: 1.35;
-  font-weight: 600;
-  color: transparent;
-  background: linear-gradient(90deg, #ffffff 0%, #f1f1f1 45%, #9b1799 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.92);
   text-align: center;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  text-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  letter-spacing: 0.2em;
+  text-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
   position: relative;
   z-index: 2;
 }
-
 @media (min-width: 640px) {
   .lineup-subtitle {
     font-size: 1rem;
@@ -3764,9 +3809,9 @@
 /* LINEUP flip card (tap to reveal) */
 .lineup-carousel-wrap {
   width: 100%;
-  max-width: 520px;
+  max-width: 540px;
   position: relative;
-  margin-top: 0.75rem;
+  margin-top: 0.25rem;
 }
 
 .lineup-carousel-wrap::before,
@@ -3792,12 +3837,12 @@
 
 .lineup-carousel {
   display: flex;
-  gap: 0;
+  gap: 0.5rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   /* Single hero card per view: 92% width -> 4% padding each side */
-  padding: 0.25rem 4% 2.8rem;
+  padding: 0.35rem 6% 3.1rem;
   /* Increased bottom padding for reflection space */
   scrollbar-width: none;
   /* Performance optimizations for smooth scrolling */

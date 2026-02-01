@@ -1515,8 +1515,14 @@ function Hero() {
           {/* LINEUP Section */}
           <section className="lineup-section" aria-label="Lineup section">
             <div className="lineup-container">
+              <div className="lineup-kicker">Headliners</div>
               <h2 className="lineup-title">LINEUP</h2>
-              <p className="lineup-subtitle">Experience the best. Big names live.</p>
+              <div className="lineup-divider" aria-hidden="true">
+                <span className="lineup-divider-line" />
+                <span className="lineup-divider-text">라인업</span>
+                <span className="lineup-divider-line" />
+              </div>
+              <p className="lineup-subtitle">Experience. Big names live.</p>
 
               <div className="lineup-carousel-wrap">
                 <button
