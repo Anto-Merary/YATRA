@@ -24,9 +24,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {
         const supabaseUrl = process.env.VITE_SUPABASE_URL;
         const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY; // MUST BE SET IN VERCEL
-        const merchantId = 2442144;
-        const accessCode = "ATEP06NA73CI16PEIC";
-        const workingKey = "C153074CE9627C9EB2387A0471AF2BCD";
+        const merchantId = process.env.CCAVENUE_MERCHANT_ID;
+        const accessCode = process.env.CCAVENUE_ACCESS_CODE;
+        const workingKey = process.env.CCAVENUE_WORKING_KEY;
         const siteUrl = (process.env.SITE_URL ?? "https://rityatra.in").replace(/\/+$/, "");
 
         if (!supabaseUrl || !serviceKey || !merchantId || !accessCode || !workingKey) {
