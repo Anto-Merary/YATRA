@@ -19,10 +19,6 @@
       "destination": "/mobile.html"
     },
     {
-      "source": "/homepage",
-      "destination": "/homepage.html"
-    },
-    {
       "source": "/:path*",
       "destination": "/index.html"
     }
