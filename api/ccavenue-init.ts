@@ -216,9 +216,9 @@ export default async function handler(req, res) {
                 .update({ enc_request: encRequest })
                 .eq("order_id", orderId);
 
-            // Changed to TEST URL as per user request (Test Environment)
-            const action = "https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction";
-            // For Production, use: https://secure.ccavenue.com/transaction/transaction.do?command=initiateTransaction
+            // PRODUCTION URL - credentials in .env are for production environment
+            // Using test.ccavenue.com with production credentials causes error 31002
+            const action = "https://secure.ccavenue.com/transaction/transaction.do?command=initiateTransaction";
 
             return res.status(200).json({
                 ok: true,
