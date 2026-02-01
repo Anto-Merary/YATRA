@@ -1943,22 +1943,7 @@
   overflow: visible;
 }
 
-.blast-collage::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 80% 70% at 50% 50%,
-      transparent 0%,
-      transparent 35%,
-      rgba(0, 0, 0, 0.2) 50%,
-      rgba(0, 0, 0, 0.4) 65%,
-      rgba(0, 0, 0, 0.7) 85%,
-      rgba(0, 0, 0, 0.9) 100%);
-  z-index: 1;
-  pointer-events: none;
-  border-radius: 0;
-}
-
+.blast-collage::before,
 .blast-collage::after {
   /* Remove the card-like backdrop & border */
   content: none;
