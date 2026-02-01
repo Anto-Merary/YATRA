@@ -62,6 +62,7 @@ export default defineConfig({
       input: {
         main: path.resolve(__dirname, "index.html"),
         mobile: path.resolve(__dirname, "mobile.html"),
+        homepage: path.resolve(__dirname, "homepage.html"),
       },
     },
   },
