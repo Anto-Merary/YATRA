@@ -1,22 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-// CCAvenue-compatible URL encoding helper
-function ccavenueEncode(key: string, value: string | number | null | undefined): string {
-    if (!value) return `${key}=`;
-    const strValue = String(value);
-
-    // Standard encode to handle &, =, and unicode
-    let encoded = encodeURIComponent(strValue);
-
-    // Custom fixes for CCAvenue legacy compatibility:
-    encoded = encoded.replace(/%20/g, "+");  // Convert '%20' (space) to '+'
-    encoded = encoded.replace(/%40/g, "@");  // Keep '@' clean for emails
-    encoded = encoded.replace(/%2E/g, ".");  // Keep dots
-    encoded = encoded.replace(/%2D/g, "-");  // Keep dashes
-
-    return `${key}=${encoded}`;
-}
 
 
 // Vercel Serverless Function Handler
@@ -78,6 +62,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             return res.status(400).json({ error: "Missing/invalid name, email, or phone" });
         }
 
+        // CCAvenue: form-encode values so encrypted plain text matches application/x-www-form-urlencoded
+        const formEncode = (v: string): string =>
+            encodeURIComponent(v).replace(/%20/g, "+");
+
+        // CCAvenue parameter limits (from official docs) - truncate and restrict
+        const ccavenueStr = (s: string, max: number, onlyAlpha = false): string => {
+            let out = onlyAlpha ? s.replace(/[^a-zA-Z\s]/g, " ") : s.replace(/[^a-zA-Z0-9\s.,'-]/g, " ");
+            out = out.replace(/\s+/g, " ").trim().slice(0, max);
+            return out || "NA";
+        };
+
         // Callback URL points to the NEW Vercel API route
         // Hardcoded to match the whitelist EXACTLY: https://www.rityatra.in
         const callbackUrl = `https://www.rityatra.in/api/ccavenue-handle`;
@@ -102,16 +97,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 return res.status(400).json({ error: "College name is required for Other" });
             }
             const normalizedCollege = college || institutionNameByType[institutionType] || "";
-            const ccavenueCollege = (normalizedCollege || "NA")
-                .replace(/[^a-zA-Z0-9\s]/g, " ")
-                .replace(/\s+/g, " ")
-                .trim();
-
-            // Sanitize name for CCAvenue billing (alphanumeric + spaces only)
-            const safeBillingName = (name || "NA")
-                .replace(/[^a-zA-Z0-9\s]/g, " ")
-                .replace(/\s+/g, " ")
-                .trim();
+            // CCAvenue limits: billing_name 60 (alphabets), billing_address 150, city 30, state 30, zip 15, country 50, tel 20, email 70
+            const safeBillingName = ccavenueStr(name || "NA", 60, true);
+            const ccavenueCollege = ccavenueStr(normalizedCollege || "NA", 150);
 
             // Override price to 1 INR for all yatra entries as requested
             const amountInr = 1;
@@ -179,54 +167,43 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             if (orderErr) throw new Error(`Failed to create order: ${orderErr.message}`);
 
             const formattedAmount = Number(amountInr).toFixed(2);
-
+            // CCAvenue: encrypted plain text must match application/x-www-form-urlencoded (spaces as +, reserved chars encoded)
             const merchantParams = [
-                ccavenueEncode("merchant_id", merchantId),
-                ccavenueEncode("order_id", orderId),
-                ccavenueEncode("currency", "INR"),
-                ccavenueEncode("amount", formattedAmount),
-                ccavenueEncode("redirect_url", callbackUrl),
-                ccavenueEncode("cancel_url", callbackUrl),
-                ccavenueEncode("language", "EN"),
-
-                // Billing Details
-                ccavenueEncode("billing_name", safeBillingName),
-                ccavenueEncode("billing_email", email),
-                ccavenueEncode("billing_tel", phone),
-                ccavenueEncode("billing_address", ccavenueCollege),
-                ccavenueEncode("billing_city", "Chennai"),
-                ccavenueEncode("billing_state", "TN"),
-                ccavenueEncode("billing_zip", "600001"),
-                ccavenueEncode("billing_country", "India"),
-
-                // Delivery Details (Mirror Billing)
-                ccavenueEncode("delivery_name", safeBillingName),
-                ccavenueEncode("delivery_address", ccavenueCollege),
-                ccavenueEncode("delivery_city", "Chennai"),
-                ccavenueEncode("delivery_state", "TN"),
-                ccavenueEncode("delivery_zip", "600001"),
-                ccavenueEncode("delivery_country", "India"),
-                ccavenueEncode("delivery_tel", phone),
-
-                // Merchant Params
-                ccavenueEncode("merchant_param1", "yatra_entry"),
-                ccavenueEncode("merchant_param2", upserted.id),
-                ccavenueEncode("merchant_param3", siteUrl)
+                `merchant_id=${formEncode(merchantId)}`,
+                `order_id=${formEncode(orderId)}`,
+                `currency=INR`,
+                `amount=${formattedAmount}`,
+                `redirect_url=${formEncode(callbackUrl)}`,
+                `cancel_url=${formEncode(callbackUrl)}`,
+                `language=EN`,
+                `billing_name=${formEncode(safeBillingName)}`,
+                `billing_email=${formEncode(email.slice(0, 70))}`,
+                `billing_tel=${formEncode(phone.slice(0, 20))}`,
+                `billing_address=${formEncode(ccavenueCollege)}`,
+                `billing_city=${formEncode(ccavenueStr("Chennai", 30))}`,
+                `billing_state=${formEncode(ccavenueStr("TN", 30))}`,
+                `billing_zip=600001`,
+                `billing_country=${formEncode(ccavenueStr("India", 50))}`,
+                `delivery_name=${formEncode(safeBillingName)}`,
+                `delivery_address=${formEncode(ccavenueCollege)}`,
+                `delivery_city=${formEncode(ccavenueStr("Chennai", 30))}`,
+                `delivery_state=${formEncode(ccavenueStr("TN", 30))}`,
+                `delivery_zip=600001`,
+                `delivery_country=${formEncode(ccavenueStr("India", 50))}`,
+                `delivery_tel=${formEncode(phone.slice(0, 20))}`,
+                `merchant_param1=${formEncode("yatra_entry")}`,
+                `merchant_param2=${formEncode(upserted.id)}`,
+                `merchant_param3=${formEncode(siteUrl)}`
             ];
 
-            // Join to create the final data string
-            const merchantData = merchantParams.join('&');
+            const merchantData = merchantParams.join("&");
 
-            // DEBUG: Log this - should look like: billing_name=Anto+Merary+S&billing_email=anto@test.com
-            console.log("Sanitized Merchant Data:", merchantData);
-
-            // Native Node.js Crypto Implementation (matches ccavutil.js exactly)
+            // CCAvenue AES-128-CBC: key = MD5(workingKey) raw 16 bytes, IV = 0x00..0x0f (per official ccavutil.js)
             const crypto = await import("node:crypto");
             const m = crypto.createHash("md5");
-            m.update(workingKey);
-            // Use raw buffer digest - EXACTLY like official CCAvenue SDK
-            const key = m.digest();  // Returns raw 16-byte Buffer, not hex string
-            const iv = Buffer.from('\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f', 'binary');
+            m.update(workingKey, "utf8");
+            const key = m.digest(); // 16-byte Buffer (same as SDK digest('binary') bytes)
+            const iv = Buffer.from([0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f]);
 
             const cipher = crypto.createCipheriv("aes-128-cbc", key, iv);
             let encRequest = cipher.update(merchantData, "utf8", "hex");

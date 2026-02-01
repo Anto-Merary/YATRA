@@ -40,7 +40,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const workingKey = process.env.CCAVENUE_WORKING_KEY;
         const siteUrl = (process.env.SITE_URL ?? "https://rityatra.in").replace(/\/+$/, "");
 
-        if (!supabaseUrl || !serviceKey || !workingKey) {
+        const wk = workingKey?.trim();
+        if (!supabaseUrl || !serviceKey || !wk) {
             console.error("Missing env vars in callback");
             const failUrl = `${siteUrl}/payment/failure?reason=${encodeURIComponent("server_config_error")}`;
             return res.status(200).send(htmlRedirect(failUrl));
@@ -48,26 +49,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         const supabase = createClient(supabaseUrl, serviceKey);
 
-        // CCavenue posts form-urlencoded data with 'encResp'
-        const encResp = req.body.encResp;
+        // CCAvenue POSTs application/x-www-form-urlencoded with 'encResp' (hex-encoded ciphertext)
+        let encResp: string | undefined;
+        if (typeof req.body === "object" && req.body !== null) {
+            encResp = (req.body as Record<string, unknown>).encResp ?? (req.body as Record<string, unknown>).enc_resp;
+            if (typeof encResp !== "string") encResp = undefined;
+        }
+        if (!encResp && typeof req.body === "string") {
+            try {
+                const params = new URLSearchParams(req.body);
+                encResp = params.get("encResp") ?? params.get("enc_resp") ?? undefined;
+            } catch {
+                encResp = undefined;
+            }
+        }
 
-        if (!encResp) {
+        if (!encResp || encResp.length < 32) {
             const failUrl = `${siteUrl}/payment/failure?reason=${encodeURIComponent("missing_encResp")}`;
             return res.status(200).send(htmlRedirect(failUrl));
         }
 
-        // Decryption Logic (AES-128-CBC)
-        const keyBytes = CryptoJS.MD5(workingKey);
+        // CCAvenue AES-128-CBC decryption (per official ccavutil.js): key = MD5(workingKey), IV = 0x00..0x0f, ciphertext hex
+        const keyBytes = CryptoJS.MD5(wk); // 16-byte WordArray
         const iv = CryptoJS.lib.WordArray.create([0x00010203, 0x04050607, 0x08090a0b, 0x0c0d0e0f]);
-        const encryptedBase64 = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Hex.parse(encResp));
+        const ciphertext = CryptoJS.enc.Hex.parse(encResp);
         const decrypted = CryptoJS.AES.decrypt(
-            encryptedBase64,
+            { ciphertext } as CryptoJS.lib.CipherParams,
             keyBytes,
-            {
-                iv: iv,
-                mode: CryptoJS.mode.CBC,
-                padding: CryptoJS.pad.Pkcs7
-            }
+            { iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
         );
         const decryptedText = decrypted.toString(CryptoJS.enc.Utf8);
 
