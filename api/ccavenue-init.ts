@@ -1,11 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
-import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 
 // Vercel Serverless Function Handler
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req, res) {
     // CORS Headers
-    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Credentials", true);
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS,PATCH,DELETE,POST,PUT");
     res.setHeader(
@@ -137,7 +136,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             const formattedAmount = Number(amountInr).toFixed(2);
 
             const params = new URLSearchParams();
-            params.append("merchant_id", String(merchantId));
+            params.append("merchant_id", merchantId);
             params.append("order_id", orderId);
             params.append("currency", "INR");
             params.append("amount", formattedAmount);
@@ -186,9 +185,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 .eq("order_id", orderId);
 
             // Changed to TEST URL as per user request (Test Environment)
-            // const action = "https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction";
+            const action = "https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction";
             // For Production, use: https://secure.ccavenue.com/transaction/transaction.do?command=initiateTransaction
-            const action = "https://secure.ccavenue.com/transaction/transaction.do?command=initiateTransaction";
 
             return res.status(200).json({
                 ok: true,
@@ -208,6 +206,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     } catch (error) {
         console.error("Payment Init Error:", error);
-        return res.status(500).json({ error: (error as Error).message });
+        return res.status(500).json({ error: error.message });
     }
 }
