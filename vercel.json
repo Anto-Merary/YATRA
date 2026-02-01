@@ -12,7 +12,7 @@
     },
     {
       "source": "/",
-      "destination": "/homepage"
+      "destination": "/homepage.html"
     },
     {
       "source": "/:path*",
