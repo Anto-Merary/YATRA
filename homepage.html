@@ -1905,7 +1905,6 @@
                                     alt="GV Prakash - Music Director & Composer" decoding="async" loading="lazy">
                             </span>
                         </span>
-                        <a href="/gv-prakash" class="lineup-gv-button" id="gv-visit-button">VIEW</a>
                     </button>
                 </div>
 
@@ -2707,33 +2706,22 @@
                 });
             }
 
-            // Hide "CLICK TO REVEAL" text when card is flipped and handle navigation
+            // GV Prakash Flip Card functionality - Toggle flip only, no navigation
             const gvFlipCard = document.getElementById('gv-flip-card');
             if (gvFlipCard) {
                 const revealText = gvFlipCard.querySelector('.lineup-tap-to-reveal');
 
                 gvFlipCard.addEventListener('click', function (e) {
-                    // Don't flip if clicking the button
-                    if (e.target.closest('.lineup-gv-button')) {
-                        return;
-                    }
-
                     const isFlipped = this.classList.contains('is-flipped');
 
                     if (isFlipped) {
-                        // If already flipped, navigate to GV Prakash page
-                        if (window.parent && window.parent !== window) {
-                            // If in iframe, send message to parent
-                            window.parent.postMessage(
-                                { type: 'navigate', path: '/gv-prakash' },
-                                '*'
-                            );
-                        } else {
-                            // If not in iframe, navigate directly
-                            window.location.href = '/gv-prakash';
+                        // If already flipped, flip back to backside
+                        this.classList.remove('is-flipped');
+                        if (revealText) {
+                            revealText.style.display = 'block';
                         }
                     } else {
-                        // First click - flip the card
+                        // First click - flip the card to show front
                         this.classList.add('is-flipped');
                         if (revealText) {
                             revealText.style.display = 'none';
@@ -2766,23 +2754,6 @@
                 });
             }
 
-            // Handle "Visit Page" button click
-            const gvVisitButton = document.getElementById('gv-visit-button');
-            if (gvVisitButton) {
-                gvVisitButton.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    if (window.parent && window.parent !== window) {
-                        // If in iframe, send message to parent
-                        window.parent.postMessage(
-                            { type: 'navigate', path: '/gv-prakash' },
-                            '*'
-                        );
-                    } else {
-                        // If not in iframe, navigate directly
-                        window.location.href = '/gv-prakash';
-                    }
-                });
-            }
 
             // Horizontal Gallery Scroll Trigger with Snap Scrolling - Optimized
             const galleryTrack = document.getElementById('gallery-track');
