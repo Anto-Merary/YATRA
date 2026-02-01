@@ -137,6 +137,7 @@
         }
 
         @media (max-width: 768px) {
+
             /* Use same desktop loader for mobile - responsive design */
             #loader {
                 display: flex;
@@ -778,6 +779,7 @@
         }
 
         @media (max-width: 768px) {
+
             /* Mobile lineup: keep only 3 cards (2 reveal + 1 timer) and stack vertically */
             #lineup .lineup-card-wrapper {
                 flex-direction: column;
@@ -1037,10 +1039,12 @@
 
         /* Gallery: Vijay slide framing */
         .gallery-img--vijay {
-            object-position: right center; /* Desktop default */
+            object-position: right center;
+            /* Desktop default */
         }
 
         @media (max-width: 768px) {
+
             /* Move the crop 5% left on mobile (show slightly more of the left side) */
             .gallery-img--vijay {
                 object-position: 95% center;
@@ -1213,22 +1217,22 @@
             .marquee-content {
                 font-size: 1rem;
             }
-            
+
             /* Mobile marquee speed override */
             .marquee-mobile-fast {
                 animation-duration: 8s !important;
             }
-            
+
             /* Events section marquee separator - tight container for mobile */
             .events-marquee-separator {
                 padding-top: 0.25rem !important;
                 padding-bottom: 0.25rem !important;
             }
-            
+
             .events-marquee-separator .marquee-container {
                 line-height: 1 !important;
             }
-            
+
             .events-marquee-separator .marquee-content {
                 line-height: 1 !important;
             }
@@ -1770,8 +1774,8 @@
                 <div class="mt-3 sm:mt-4 md:mt-5 lg:mt-6 xl:mt-8 flex justify-center items-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 xl:gap-12 flex-wrap sm:flex-nowrap relative px-2 about-logos-container"
                     style="z-index: 100;">
                     <div class="blur-reveal logo-container flex-shrink-0">
-                        <img src="RIT WHITE LOGO.webp" alt="RIT Logo" class="about-logo w-auto transition-all duration-300"
-                            style="height: 45px;">
+                        <img src="RIT WHITE LOGO.webp" alt="RIT Logo"
+                            class="about-logo w-auto transition-all duration-300" style="height: 45px;">
                     </div>
                     <div class="blur-reveal logo-container flex-shrink-0">
                         <img src="RMC COLLEGE LOGO.webp" alt="RMC College Logo"
@@ -1796,8 +1800,11 @@
                     class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]">
                 </div>
                 <div class="z-10 text-center mix-blend-difference px-4 sm:px-6">
-                    <p class="uppercase tracking-[0.3em] sm:tracking-[0.5em] text-[var(--color-accent)] font-bold mb-3 sm:mb-4 text-xs sm:text-base">The Legacy</p>
-                    <h2 class="text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-display font-black uppercase leading-[1.1] sm:leading-none gallery-intro-title">
+                    <p
+                        class="uppercase tracking-[0.3em] sm:tracking-[0.5em] text-[var(--color-accent)] font-bold mb-3 sm:mb-4 text-xs sm:text-base">
+                        The Legacy</p>
+                    <h2
+                        class="text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-display font-black uppercase leading-[1.1] sm:leading-none gallery-intro-title">
                         <span class="block">Blast</span>
                         <span class="block">Into</span>
                         <span class="block">The</span>
@@ -1819,7 +1826,8 @@
                 <div
                     class="absolute bottom-10 sm:bottom-20 left-4 sm:left-10 z-20 max-w-xs sm:max-w-md gallery-info-scroll transition-all duration-500">
                     <h3 class="text-xl sm:text-3xl font-display font-bold text-[var(--color-secondary)]">Arjun Das</h3>
-                    <p class="text-white/80 mt-1 sm:mt-2 text-sm sm:text-base">The year was packed with excitement and energy, especially with the
+                    <p class="text-white/80 mt-1 sm:mt-2 text-sm sm:text-base">The year was packed with excitement and
+                        energy, especially with the
                         presence of Arjun Dass, Sam C.V.</p>
                 </div>
             </div>
@@ -1835,7 +1843,8 @@
                 <div
                     class="absolute bottom-10 sm:bottom-20 left-4 sm:left-10 z-20 max-w-xs sm:max-w-md gallery-info-scroll transition-all duration-500">
                     <h3 class="text-xl sm:text-3xl font-display font-bold text-white">Vijay Sethupathi</h3>
-                    <p class="text-white/80 mt-1 sm:mt-2 text-sm sm:text-base">The year which exceeded all expectations, with the presence of Vijay
+                    <p class="text-white/80 mt-1 sm:mt-2 text-sm sm:text-base">The year which exceeded all expectations,
+                        with the presence of Vijay
                         Sethupathi and the energitic performance of Asal Kolaru and Paal Dabba.</p>
                 </div>
             </div>
@@ -1896,13 +1905,13 @@
                         aria-label="Click to reveal Aoora lineup card">
                         <span class="lineup-flip-card-inner" aria-hidden="true">
                             <span class="lineup-flip-card-face lineup-flip-card-face--back">
-                                <img class="lineup-flip-card-img" src="/gvbackcard (1).webp" alt="Aoora lineup card (back)"
-                                    decoding="async" loading="lazy">
+                                <img class="lineup-flip-card-img" src="/gvbackcard (1).webp"
+                                    alt="Aoora lineup card (back)" decoding="async" loading="lazy">
                                 <span class="lineup-tap-to-reveal">CLICK TO REVEAL</span>
                             </span>
                             <span class="lineup-flip-card-face lineup-flip-card-face--front">
-                                <img class="lineup-flip-card-img" src="/aoorafrontcard.webp"
-                                    alt="Aoora - K-Pop Artist" decoding="async" loading="lazy">
+                                <img class="lineup-flip-card-img" src="/aoorafrontcard.webp" alt="Aoora - K-Pop Artist"
+                                    decoding="async" loading="lazy">
                             </span>
                         </span>
                     </button>
@@ -1911,8 +1920,8 @@
                 <!-- Card 3 - 48 Hour Countdown Timer -->
                 <div class="lineup-card-slot">
                     <div class="lineup-locked-card">
-                        <img class="lineup-flip-card-img lineup-locked-img" src="/gvbackcard (1).webp" alt="Countdown card"
-                            decoding="async" loading="lazy">
+                        <img class="lineup-flip-card-img lineup-locked-img" src="/gvbackcard (1).webp"
+                            alt="Countdown card" decoding="async" loading="lazy">
                         <div class="lineup-countdown-overlay">
                             <div class="countdown-timer" id="countdown-48hr">00:00:00</div>
                             <div class="countdown-label">Hours : Minutes : Seconds</div>
@@ -1969,7 +1978,8 @@
     </section>
 
     <!-- Marquee Separator -->
-    <div class="events-marquee-separator py-1 sm:py-5 md:py-6 bg-[var(--color-accent)] text-black rotate-1 scale-105 z-10 relative">
+    <div
+        class="events-marquee-separator py-1 sm:py-5 md:py-6 bg-[var(--color-accent)] text-black rotate-1 scale-105 z-10 relative">
         <div class="marquee-container">
             <div
                 class="marquee-content reverse text-xs sm:text-3xl md:text-4xl lg:text-5xl font-display font-black uppercase leading-none sm:leading-normal">
@@ -1991,31 +2001,47 @@
                     </h2>
                     <p class="text-gray-400 text-sm mt-2 uppercase tracking-[0.2em]">Two Days of Glory</p>
                 </div>
-                
+
                 <div class="relative mx-auto max-w-sm">
                     <div class="relative rounded-2xl overflow-hidden shadow-2xl">
-                        <img src="/Gallery/yatraevents.webp" alt="Yatra Events" 
-                            class="w-full h-auto object-cover" style="aspect-ratio: 4/3;">
+                        <img src="/Gallery/yatraevents.webp" alt="Yatra Events" class="w-full h-auto object-cover"
+                            style="aspect-ratio: 4/3;">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
-                        
+
                         <div class="absolute top-3 right-3 flex gap-2">
-                            <div class="bg-[var(--color-accent)] text-black px-3 py-1 rounded-full text-xs font-bold uppercase">
+                            <div
+                                class="bg-[var(--color-accent)] text-black px-3 py-1 rounded-full text-xs font-bold uppercase">
                                 Cash Prize
                             </div>
                         </div>
-                        
+
                         <div class="absolute bottom-0 left-0 right-0 p-4">
                             <div class="flex flex-wrap gap-2 mb-3">
-                                <span class="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-3 py-1.5 rounded-full text-[0.65rem] font-semibold uppercase tracking-wider flex items-center gap-1.5">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path></svg>
+                                <span
+                                    class="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-3 py-1.5 rounded-full text-[0.65rem] font-semibold uppercase tracking-wider flex items-center gap-1.5">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z">
+                                        </path>
+                                    </svg>
                                     Gaming
                                 </span>
-                                <span class="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-3 py-1.5 rounded-full text-[0.65rem] font-semibold uppercase tracking-wider flex items-center gap-1.5">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+                                <span
+                                    class="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-3 py-1.5 rounded-full text-[0.65rem] font-semibold uppercase tracking-wider flex items-center gap-1.5">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3">
+                                        </path>
+                                    </svg>
                                     Dance
                                 </span>
-                                <span class="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-3 py-1.5 rounded-full text-[0.65rem] font-semibold uppercase tracking-wider flex items-center gap-1.5">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                                <span
+                                    class="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-3 py-1.5 rounded-full text-[0.65rem] font-semibold uppercase tracking-wider flex items-center gap-1.5">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z">
+                                        </path>
+                                    </svg>
                                     Music
                                 </span>
                             </div>
@@ -2025,50 +2051,74 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="text-center mt-6">
                     <a href="/events" class="magnetic-wrap inline-block">
-                        <div class="magnetic-content bg-gradient-to-r from-[var(--color-accent)] to-[#d946ef] text-white px-8 py-3 rounded-full uppercase font-bold text-sm tracking-widest">
+                        <div
+                            class="magnetic-content bg-gradient-to-r from-[var(--color-accent)] to-[#d946ef] text-white px-8 py-3 rounded-full uppercase font-bold text-sm tracking-widest">
                             Explore All Events →
                         </div>
                     </a>
                 </div>
             </div>
-            
+
             <!-- Desktop: Original 2-column grid layout -->
             <div class="hidden md:grid md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 lg:gap-16 items-start">
                 <!-- Sticky Image -->
                 <div class="order-2 md:order-1 relative md:sticky md:top-24 mb-6 md:mb-0">
-                    <div class="absolute -top-10 -left-10 w-full h-full border-2 border-[var(--color-secondary)] z-0 hidden md:block"></div>
-                    <div class="w-full aspect-[4/3] overflow-hidden rounded-lg md:rounded-xl lg:rounded-2xl shadow-2xl relative reveal-img">
+                    <div
+                        class="absolute -top-10 -left-10 w-full h-full border-2 border-[var(--color-secondary)] z-0 hidden md:block">
+                    </div>
+                    <div
+                        class="w-full aspect-[4/3] overflow-hidden rounded-lg md:rounded-xl lg:rounded-2xl shadow-2xl relative reveal-img">
                         <img src="/Gallery/yatraevents.webp" alt="Yatra Events"
                             class="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">
                     </div>
                 </div>
                 <div class="order-1 md:order-2">
-                    <h2 class="text-2.5xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-display font-bold mb-5 sm:mb-6 md:mb-8 uppercase leading-[1.1]">
+                    <h2
+                        class="text-2.5xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-display font-bold mb-5 sm:mb-6 md:mb-8 uppercase leading-[1.1]">
                         Event <br> <span class="text-[var(--color-accent)]">Categories</span>
                     </h2>
                     <p class="text-base sm:text-lg md:text-xl text-gray-400 mb-6 sm:mb-8 word-reveal-p leading-relaxed">
-                        Compete across 50+ epic events over two days. Win massive cash prizes. Showcase your talent on the biggest stage.
+                        Compete across 50+ epic events over two days. Win massive cash prizes. Showcase your talent on
+                        the biggest stage.
                     </p>
-                    <ul class="space-y-8 sm:space-y-10 md:space-y-12 border-l-2 border-gray-800 pl-4 sm:pl-5 md:pl-6 py-2 sm:py-3 md:py-4">
-                        <li class="flex flex-col group cursor-pointer hover:pl-2 sm:hover:pl-4 transition-all duration-300">
-                            <span class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-xs sm:text-sm mb-1">Technical</span>
-                            <span class="text-xl sm:text-2xl md:text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors leading-tight">Gaming & Digital Arts</span>
-                            <p class="text-xs sm:text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-24 transition-all duration-500 leading-relaxed">
-                                Esports tournaments, Photography, Short Film, Poster Design, Brain Teasers, Quizzes, Drone Challenge, and Product Marketing.</p>
+                    <ul
+                        class="space-y-8 sm:space-y-10 md:space-y-12 border-l-2 border-gray-800 pl-4 sm:pl-5 md:pl-6 py-2 sm:py-3 md:py-4">
+                        <li
+                            class="flex flex-col group cursor-pointer hover:pl-2 sm:hover:pl-4 transition-all duration-300">
+                            <span
+                                class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-xs sm:text-sm mb-1">Technical</span>
+                            <span
+                                class="text-xl sm:text-2xl md:text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors leading-tight">Gaming
+                                & Digital Arts</span>
+                            <p
+                                class="text-xs sm:text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-24 transition-all duration-500 leading-relaxed">
+                                Esports tournaments, Photography, Short Film, Poster Design, Brain Teasers, Quizzes,
+                                Drone Challenge, and Product Marketing.</p>
                         </li>
-                        <li class="flex flex-col group cursor-pointer hover:pl-2 sm:hover:pl-4 transition-all duration-300">
-                            <span class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-xs sm:text-sm mb-1">Cultural</span>
-                            <span class="text-xl sm:text-2xl md:text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors leading-tight">Dance, Music & Arts</span>
-                            <p class="text-xs sm:text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-24 transition-all duration-500 leading-relaxed">
-                                Dance battles, Singing competitions, Beat Box, Music challenges, Traditional arts, Oratory, Comedy, Sports, Games, and Food contests.</p>
+                        <li
+                            class="flex flex-col group cursor-pointer hover:pl-2 sm:hover:pl-4 transition-all duration-300">
+                            <span
+                                class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-xs sm:text-sm mb-1">Cultural</span>
+                            <span
+                                class="text-xl sm:text-2xl md:text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors leading-tight">Dance,
+                                Music & Arts</span>
+                            <p
+                                class="text-xs sm:text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-24 transition-all duration-500 leading-relaxed">
+                                Dance battles, Singing competitions, Beat Box, Music challenges, Traditional arts,
+                                Oratory, Comedy, Sports, Games, and Food contests.</p>
                         </li>
-                        <li class="flex flex-col group cursor-pointer hover:pl-2 sm:hover:pl-4 transition-all duration-300">
-                            <span class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-xs sm:text-sm mb-1">On-Stage</span>
-                            <span class="text-xl sm:text-2xl md:text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors leading-tight">Performance & Theatre</span>
-                            <p class="text-xs sm:text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-20 transition-all duration-500 leading-relaxed">
+                        <li
+                            class="flex flex-col group cursor-pointer hover:pl-2 sm:hover:pl-4 transition-all duration-300">
+                            <span
+                                class="text-[var(--color-accent)] font-bold uppercase tracking-wider text-xs sm:text-sm mb-1">On-Stage</span>
+                            <span
+                                class="text-xl sm:text-2xl md:text-3xl font-display font-bold group-hover:text-[var(--color-secondary)] transition-colors leading-tight">Performance
+                                & Theatre</span>
+                            <p
+                                class="text-xs sm:text-sm text-gray-500 mt-2 max-h-0 overflow-hidden group-hover:max-h-20 transition-all duration-500 leading-relaxed">
                                 Mime, Mono Acting, Mock Parliament, K-Cosplay, and Face Fiesta competitions.</p>
                         </li>
                     </ul>
@@ -2171,31 +2221,39 @@
 
             <div class="mobile-footer-section">
                 <div class="mobile-footer-label">WEBSITE</div>
-                <a class="mobile-footer-link" href="https://www.ritchennai.org" target="_blank" rel="noopener noreferrer">
+                <a class="mobile-footer-link" href="https://www.ritchennai.org" target="_blank"
+                    rel="noopener noreferrer">
                     www.ritchennai.org
                 </a>
             </div>
 
             <div class="mobile-footer-section">
                 <div class="mobile-footer-label">CONTACT</div>
-                <div class="mobile-footer-phone-numbers" style="flex-direction: column; gap: 12px; align-items: flex-start;">
+                <div class="mobile-footer-phone-numbers"
+                    style="flex-direction: column; gap: 12px; align-items: flex-start;">
                     <div>
-                        <div class="mobile-footer-text" style="font-size: 0.875rem; margin-bottom: 4px; font-weight: 500;">Derry Gabriel</div>
-                        <div class="mobile-footer-text" style="font-size: 0.75rem; margin-bottom: 4px; opacity: 0.8;">Overall Coordinator</div>
+                        <div class="mobile-footer-text"
+                            style="font-size: 0.875rem; margin-bottom: 4px; font-weight: 500;">Derry Gabriel</div>
+                        <div class="mobile-footer-text" style="font-size: 0.75rem; margin-bottom: 4px; opacity: 0.8;">
+                            Overall Coordinator</div>
                         <a class="mobile-footer-link mobile-footer-link--underline" href="tel:+919884470171">
                             +91 98844 70171
                         </a>
                     </div>
                     <div>
-                        <div class="mobile-footer-text" style="font-size: 0.875rem; margin-bottom: 4px; font-weight: 500;">Kishore Kumar S</div>
-                        <div class="mobile-footer-text" style="font-size: 0.75rem; margin-bottom: 4px; opacity: 0.8;">Event Committee Coordinator</div>
+                        <div class="mobile-footer-text"
+                            style="font-size: 0.875rem; margin-bottom: 4px; font-weight: 500;">Kishore Kumar S</div>
+                        <div class="mobile-footer-text" style="font-size: 0.75rem; margin-bottom: 4px; opacity: 0.8;">
+                            Event Committee Coordinator</div>
                         <a class="mobile-footer-link mobile-footer-link--underline" href="tel:+918825910614">
                             +91 88259 10614
                         </a>
                     </div>
                     <div>
-                        <div class="mobile-footer-text" style="font-size: 0.875rem; margin-bottom: 4px; font-weight: 500;">Muthu Kumaran</div>
-                        <div class="mobile-footer-text" style="font-size: 0.75rem; margin-bottom: 4px; opacity: 0.8;">Joint Overall Coordinator</div>
+                        <div class="mobile-footer-text"
+                            style="font-size: 0.875rem; margin-bottom: 4px; font-weight: 500;">Muthu Kumaran</div>
+                        <div class="mobile-footer-text" style="font-size: 0.75rem; margin-bottom: 4px; opacity: 0.8;">
+                            Joint Overall Coordinator</div>
                         <a class="mobile-footer-link mobile-footer-link--underline" href="tel:+919094141232">
                             +91 90941 41232
                         </a>
@@ -2204,52 +2262,38 @@
             </div>
 
             <div class="mobile-footer-social" aria-label="Social links">
-                <a
-                    class="mobile-footer-social-link"
-                    href="https://www.instagram.com/yatra_rit?igsh=MTYzdDJhbHlnOHhmNQ=="
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Instagram"
-                >
-                    <svg class="mobile-footer-social-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <a class="mobile-footer-social-link"
+                    href="https://www.instagram.com/yatra_rit?igsh=MTYzdDJhbHlnOHhmNQ==" target="_blank"
+                    rel="noopener noreferrer" aria-label="Instagram">
+                    <svg class="mobile-footer-social-icon" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        aria-hidden="true">
                         <path
                             d="M7.5 2.75h9A4.75 4.75 0 0 1 21.25 7.5v9A4.75 4.75 0 0 1 16.5 21.25h-9A4.75 4.75 0 0 1 2.75 16.5v-9A4.75 4.75 0 0 1 7.5 2.75Z"
-                            stroke="currentColor"
-                            stroke-width="1.5"
-                        />
+                            stroke="currentColor" stroke-width="1.5" />
                         <path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="1.5" />
                         <path d="M17.25 6.75h.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
                     </svg>
                 </a>
-                <a
-                    class="mobile-footer-social-link"
-                    href="https://youtube.com/@rajalakshmiinstituteoftech4448?si=E-E820dMeHNlnfBo"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="YouTube"
-                >
-                    <svg class="mobile-footer-social-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <a class="mobile-footer-social-link"
+                    href="https://youtube.com/@rajalakshmiinstituteoftech4448?si=E-E820dMeHNlnfBo" target="_blank"
+                    rel="noopener noreferrer" aria-label="YouTube">
+                    <svg class="mobile-footer-social-icon" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        aria-hidden="true">
                         <path
                             d="M21.593 7.203a2.506 2.506 0 0 0-1.762-1.766C18.265 5.007 12 5 12 5s-6.264-.007-7.831.404a2.56 2.56 0 0 0-1.766 1.778c-.413 1.566-.417 4.814-.417 4.814s-.004 3.264.406 4.814c.266.978.842 1.74 1.766 1.778 1.582.43 7.831.437 7.831.437s6.265.007 7.831-.403a2.515 2.515 0 0 0 1.767-1.776c.415-1.563.417-4.812.417-4.812s.002-3.265-.415-4.831zM9.996 15.005l-.005-6 5.207 3.005-5.202 2.995z"
-                            fill="currentColor"
-                        />
+                            fill="currentColor" />
                     </svg>
                 </a>
             </div>
 
             <div class="mobile-footer-section">
                 <div class="mobile-footer-label">LEGAL</div>
-                <div class="mobile-footer-phone-numbers" style="flex-direction: column; gap: 8px; align-items: flex-start;">
-                    <a
-                        class="mobile-footer-link mobile-footer-link--underline"
-                        href="/privacy-policy"
-                    >
+                <div class="mobile-footer-phone-numbers"
+                    style="flex-direction: column; gap: 8px; align-items: flex-start;">
+                    <a class="mobile-footer-link mobile-footer-link--underline" href="/privacy-policy">
                         Privacy Policy
                     </a>
-                    <a
-                        class="mobile-footer-link mobile-footer-link--underline"
-                        href="/terms-conditions"
-                    >
+                    <a class="mobile-footer-link mobile-footer-link--underline" href="/terms-conditions">
                         Terms & Conditions
                     </a>
                 </div>
@@ -2448,7 +2492,7 @@
             const tweens = [];
             const isMobileView = window.innerWidth <= 768;
             const marqueeDuration = isMobileView ? 8 : 20; // Faster on mobile
-            
+
             marquees.forEach(marquee => {
                 const isReverse = marquee.classList.contains('reverse');
                 gsap.set(marquee, { xPercent: isReverse ? -50 : 0 });
@@ -3005,6 +3049,24 @@
 
         // Initialize loader - use desktop loader for all devices since we now use responsive design
         initDesktopLoader();
+
+        // Safety Timeout for Loader (prevent white screen of death)
+        setTimeout(() => {
+            const loader = document.getElementById('loader');
+            const mobileLoader = document.getElementById('mobile-loader');
+            if (loader && loader.style.display !== 'none') {
+                console.warn('Loader safety timeout triggered (desktop)');
+                document.body.style.overflow = '';
+                loader.style.display = 'none';
+                gsap.to(".animate-fade-in-up", { y: 0, opacity: 1, duration: 1, ease: "power3.out" });
+            }
+            if (mobileLoader && mobileLoader.style.display !== 'none') {
+                console.warn('Loader safety timeout triggered (mobile)');
+                document.body.style.overflow = '';
+                mobileLoader.style.display = 'none';
+                gsap.to(".animate-fade-in-up", { y: 0, opacity: 1, duration: 1, ease: "power3.out" });
+            }
+        }, 5000); // 5 seconds max load time
 
         // 48-Hour Countdown Timer
         (function initCountdownTimer() {
