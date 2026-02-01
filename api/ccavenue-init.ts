@@ -167,35 +167,39 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             if (orderErr) throw new Error(`Failed to create order: ${orderErr.message}`);
 
             const formattedAmount = Number(amountInr).toFixed(2);
-            // Build plain text exactly like official kit: raw form body (application/x-www-form-urlencoded)
-            // Parameter order matches dataFrom.html: merchant_id, order_id, currency, amount, redirect_url, cancel_url, language, billing_*, delivery_*, merchant_param*
-            const merchantParams = [
+            // 31002 = currency invalid: send currency/amount as literal (no encoding). Build form body per official kit.
+            const useMinimal = body?.minimal_payload === true;
+            const merchantParams: string[] = [
                 `merchant_id=${formEncode(merchantId)}`,
                 `order_id=${formEncode(orderId)}`,
-                `currency=${formEncode("INR")}`,
-                `amount=${formEncode(formattedAmount)}`,
+                `currency=INR`,
+                `amount=${formattedAmount}`,
                 `redirect_url=${formEncode(callbackUrl)}`,
                 `cancel_url=${formEncode(callbackUrl)}`,
-                `language=${formEncode("EN")}`,
-                `billing_name=${formEncode(safeBillingName)}`,
-                `billing_address=${formEncode(ccavenueCollege)}`,
-                `billing_city=${formEncode(ccavenueStr("Chennai", 30))}`,
-                `billing_state=${formEncode(ccavenueStr("TN", 30))}`,
-                `billing_zip=${formEncode("600001")}`,
-                `billing_country=${formEncode(ccavenueStr("India", 50))}`,
-                `billing_tel=${formEncode(phone.slice(0, 20))}`,
-                `billing_email=${formEncode(email.slice(0, 70))}`,
-                `delivery_name=${formEncode(safeBillingName)}`,
-                `delivery_address=${formEncode(ccavenueCollege)}`,
-                `delivery_city=${formEncode(ccavenueStr("Chennai", 30))}`,
-                `delivery_state=${formEncode(ccavenueStr("TN", 30))}`,
-                `delivery_zip=${formEncode("600001")}`,
-                `delivery_country=${formEncode(ccavenueStr("India", 50))}`,
-                `delivery_tel=${formEncode(phone.slice(0, 20))}`,
-                `merchant_param1=${formEncode("yatra_entry")}`,
-                `merchant_param2=${formEncode(upserted.id)}`,
-                `merchant_param3=${formEncode(siteUrl)}`
+                `language=EN`
             ];
+            if (!useMinimal) {
+                merchantParams.push(
+                    `billing_name=${formEncode(safeBillingName)}`,
+                    `billing_address=${formEncode(ccavenueCollege)}`,
+                    `billing_city=${formEncode(ccavenueStr("Chennai", 30))}`,
+                    `billing_state=${formEncode(ccavenueStr("TN", 30))}`,
+                    `billing_zip=${formEncode("600001")}`,
+                    `billing_country=${formEncode(ccavenueStr("India", 50))}`,
+                    `billing_tel=${formEncode(phone.slice(0, 20))}`,
+                    `billing_email=${formEncode(email.slice(0, 70))}`,
+                    `delivery_name=${formEncode(safeBillingName)}`,
+                    `delivery_address=${formEncode(ccavenueCollege)}`,
+                    `delivery_city=${formEncode(ccavenueStr("Chennai", 30))}`,
+                    `delivery_state=${formEncode(ccavenueStr("TN", 30))}`,
+                    `delivery_zip=${formEncode("600001")}`,
+                    `delivery_country=${formEncode(ccavenueStr("India", 50))}`,
+                    `delivery_tel=${formEncode(phone.slice(0, 20))}`,
+                    `merchant_param1=${formEncode("yatra_entry")}`,
+                    `merchant_param2=${formEncode(upserted.id)}`,
+                    `merchant_param3=${formEncode(siteUrl)}`
+                );
+            }
 
             const merchantData = merchantParams.join("&");
 

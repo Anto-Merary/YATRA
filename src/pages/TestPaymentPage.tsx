@@ -6,19 +6,20 @@ import { useToast } from "@/components/ui/use-toast";
 export function TestPaymentPage() {
     const { toast } = useToast();
     const [loading, setLoading] = useState(false);
+    const [minimalPayload, setMinimalPayload] = useState(true); // Try minimal first to fix 31002
 
     const handleTestPayment = async () => {
         setLoading(true);
         try {
-            // Hardcoded dummy data for testing
             const payload = {
                 purpose: "yatra_entry",
                 name: "Test User",
-                email: `test_user_${Date.now()}@ritchennai.edu.in`, // Unique email to avoid unique constraint if testing multiple times
+                email: `test_user_${Date.now()}@ritchennai.edu.in`,
                 phone: "9999999999",
                 institution_type: "rit",
                 college: "Rajalakshmi Institute of Technology",
-                response_mode: "json"
+                response_mode: "json",
+                ...(minimalPayload && { minimal_payload: true }),
             };
 
             console.log("Initiating test payment with:", payload);
@@ -105,6 +106,16 @@ export function TestPaymentPage() {
                     <p>Phone: 9999999999</p>
                     <p>Inst: RIT</p>
                 </div>
+
+                <label className="flex items-center gap-2 mb-4 text-sm text-left cursor-pointer">
+                    <input
+                        type="checkbox"
+                        checked={minimalPayload}
+                        onChange={(e) => setMinimalPayload(e.target.checked)}
+                        className="rounded"
+                    />
+                    <span>Minimal payload (7 params only) — use to debug 31002</span>
+                </label>
 
                 <Button
                     onClick={handleTestPayment}
