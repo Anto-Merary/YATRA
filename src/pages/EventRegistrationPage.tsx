@@ -130,19 +130,16 @@ export function EventRegistrationPage() {
         return;
       }
       if (j?.mode === "form_post" && j?.formAction && Array.isArray(j?.formFields)) {
-        const form = document.createElement("form");
-        form.method = "POST";
-        form.action = String(j.formAction);
-        form.enctype = "application/x-www-form-urlencoded";
-        for (const { name, value } of j.formFields) {
-          const input = document.createElement("input");
-          input.type = "hidden";
-          input.name = name;
-          input.value = value;
-          form.appendChild(input);
-        }
-        document.body.appendChild(form);
-        form.submit();
+        const resForm = await fetch(String(j.formAction), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fields: j.formFields }),
+        });
+        if (!resForm.ok) throw new Error("Payment redirect failed");
+        const html = await resForm.text();
+        document.open();
+        document.write(html);
+        document.close();
         return;
       }
       if (j?.mode === "form" && j?.action && j?.encRequest && j?.access_code) {

@@ -143,20 +143,17 @@ export function RegistrationForm() {
             }
 
             if (responseData.mode === "form_post" && responseData.formAction && Array.isArray(responseData.formFields)) {
-                // Official kit flow: POST form to our Express endpoint; it encrypts raw body and returns redirect HTML
-                const form = document.createElement("form");
-                form.method = "POST";
-                form.action = responseData.formAction;
-                form.enctype = "application/x-www-form-urlencoded";
-                for (const { name, value } of responseData.formFields) {
-                    const input = document.createElement("input");
-                    input.type = "hidden";
-                    input.name = name;
-                    input.value = value;
-                    form.appendChild(input);
-                }
-                document.body.appendChild(form);
-                form.submit();
+                // Official kit flow: POST fields to /api/ccavenue-init-form; it encrypts and returns redirect HTML
+                const resForm = await fetch(responseData.formAction, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ fields: responseData.formFields }),
+                });
+                if (!resForm.ok) throw new Error("Payment redirect failed");
+                const html = await resForm.text();
+                document.open();
+                document.write(html);
+                document.close();
             } else if (responseData.mode === "form" && responseData.action) {
                 const form = document.createElement("form");
                 form.method = "POST";
