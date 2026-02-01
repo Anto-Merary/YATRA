@@ -759,8 +759,6 @@
             text-align: center;
             padding: 1.25rem;
             z-index: 2;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(5px);
         }
 
         .countdown-timer {
@@ -780,17 +778,24 @@
         }
 
         @media (max-width: 768px) {
-            .lineup-card-wrapper {
-                flex-direction: row;
-                overflow-x: auto;
-                scroll-snap-type: x mandatory;
-                padding: 1rem;
-                gap: 1rem;
+            /* Mobile lineup: keep only 3 cards (2 reveal + 1 timer) and stack vertically */
+            #lineup .lineup-card-wrapper {
+                flex-direction: column;
+                overflow-x: visible;
+                scroll-snap-type: none;
+                padding: 1rem 0;
+                gap: 1.25rem;
+                align-items: center;
             }
 
-            .lineup-card-slot {
-                flex: 0 0 78%;
-                scroll-snap-align: start;
+            #lineup .lineup-card-wrapper .lineup-card-slot {
+                width: min(340px, 92vw);
+                flex: 0 0 auto;
+            }
+
+            /* Hide extra lineup cards on mobile (keep first 3 only) */
+            #lineup .lineup-card-wrapper .lineup-card-slot:nth-child(n+4) {
+                display: none;
             }
         }
 
@@ -1030,6 +1035,18 @@
             border-right: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        /* Gallery: Vijay slide framing */
+        .gallery-img--vijay {
+            object-position: right center; /* Desktop default */
+        }
+
+        @media (max-width: 768px) {
+            /* Move the crop 5% left on mobile (show slightly more of the left side) */
+            .gallery-img--vijay {
+                object-position: 95% center;
+            }
+        }
+
         .gallery-year {
             font-size: 15vw;
             line-height: 1;
@@ -1238,6 +1255,14 @@
             section {
                 padding-left: 1rem;
                 padding-right: 1rem;
+            }
+
+            /* Full-bleed gallery on mobile (override the global section padding) */
+            #gallery-pin {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                width: 100vw;
+                max-width: 100vw;
             }
 
             /* Prevent horizontal scroll */
@@ -1477,6 +1502,121 @@
             transition: none !important;
             transform: none !important;
         }
+
+        /* Mobile Footer Styles */
+        .mobile-footer {
+            background: linear-gradient(180deg, #7d067a 0%, #c90dc1 55%, #a30aa0 100%);
+            color: #000000;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            padding: 2rem 1.25rem 2rem;
+        }
+
+        .mobile-footer-container {
+            max-width: 520px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .mobile-footer-title {
+            font-family: 'Akira Expanded', 'Impact', 'Arial Black', sans-serif;
+            font-size: clamp(2.4rem, 11vw, 3.2rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            line-height: 0.92;
+            color: #000000;
+        }
+
+        .mobile-footer-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .mobile-footer-label {
+            font-family: 'Akira Expanded', 'Impact', 'Arial Black', sans-serif;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-size: 0.8rem;
+            color: rgba(0, 0, 0, 0.9);
+        }
+
+        .mobile-footer-text,
+        .mobile-footer-link {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            line-height: 1.35;
+            color: rgba(0, 0, 0, 0.78);
+        }
+
+        .mobile-footer-phone-numbers {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .mobile-footer-link {
+            text-decoration: none;
+            color: rgba(0, 0, 0, 0.78);
+            word-break: break-word;
+            transition: color 180ms ease, opacity 180ms ease;
+        }
+
+        .mobile-footer-link:hover {
+            color: rgba(0, 0, 0, 0.95);
+            opacity: 1;
+        }
+
+        .mobile-footer-link--underline {
+            text-decoration: underline;
+            text-underline-offset: 6px;
+            text-decoration-thickness: 2px;
+            text-decoration-color: rgba(0, 0, 0, 0.6);
+        }
+
+        .mobile-footer-link--underline:hover {
+            text-decoration-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .mobile-footer-social {
+            display: flex;
+            gap: 1rem;
+            padding-top: 0.2rem;
+        }
+
+        .mobile-footer-social-link {
+            width: 52px;
+            height: 52px;
+            min-width: 52px;
+            min-height: 52px;
+            border: 2px solid rgba(0, 0, 0, 0.65);
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: transparent;
+            color: rgba(0, 0, 0, 0.92);
+            text-decoration: none;
+            transition: transform 180ms ease, background-color 180ms ease, color 180ms ease;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .mobile-footer-social-link:active {
+            transform: scale(0.98);
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        .mobile-footer-social-icon {
+            width: 24px;
+            height: 24px;
+            display: block;
+            color: currentColor;
+        }
     </style>
 </head>
 
@@ -1689,7 +1829,8 @@
                 <div class="absolute inset-0 bg-black/40 z-10 gallery-overlay transition-colors duration-500">
                 </div>
                 <img src="/2025.JPG"
-                    class="absolute inset-0 w-full h-full object-cover filter grayscale gallery-img transition-all duration-700 scale-100">
+                    class="absolute inset-0 w-full h-full object-cover filter grayscale gallery-img gallery-img--vijay transition-all duration-700 scale-100"
+                    decoding="async" loading="lazy">
                 <span class="gallery-year gallery-year-scroll transition-colors duration-500">2025</span>
                 <div
                     class="absolute bottom-10 sm:bottom-20 left-4 sm:left-10 z-20 max-w-xs sm:max-w-md gallery-info-scroll transition-all duration-500">
@@ -1764,14 +1905,13 @@
                                     alt="Aoora - K-Pop Artist" decoding="async" loading="lazy">
                             </span>
                         </span>
-                        <a href="/gv-prakash/aoora.html" class="lineup-gv-button" id="aoora-visit-button">VIEW</a>
                     </button>
                 </div>
 
                 <!-- Card 3 - 48 Hour Countdown Timer -->
                 <div class="lineup-card-slot">
                     <div class="lineup-locked-card">
-                        <img class="lineup-flip-card-img" src="/Gallery/yatraevents.webp" alt="Countdown card"
+                        <img class="lineup-flip-card-img lineup-locked-img" src="/gvbackcard (1).webp" alt="Countdown card"
                             decoding="async" loading="lazy">
                         <div class="lineup-countdown-overlay">
                             <div class="countdown-timer" id="countdown-48hr">00:00:00</div>
@@ -2020,101 +2160,98 @@
     </section>
 
     <!-- Footer -->
-    <footer id="footer" class="relative mt-20 border-t border-white/10 bg-black pb-24 sm:pb-0">
-        <div class="max-w-7xl mx-auto relative py-8 sm:py-10 md:py-12 lg:py-16 px-4 sm:px-6">
-            <!-- Main Title - Centered at top -->
-            <div class="flex justify-center mb-6 sm:mb-10 md:mb-12 lg:mb-16 overflow-hidden px-2">
-                <div
-                    class="w-full max-w-5xl h-28 sm:h-36 md:h-44 lg:h-56 xl:h-64 overflow-hidden py-2 sm:py-4 md:py-5 lg:py-6 flex items-center justify-center">
-                    <div class="font-akira text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold uppercase tracking-wider"
-                        style="background: linear-gradient(0deg, rgb(205, 7, 194) 0%, rgba(205, 7, 194, 0.65) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                        YATRA'26
+    <footer id="footer" class="mobile-footer" aria-label="Footer">
+        <div class="mobile-footer-container">
+            <div class="mobile-footer-title">YATRA'26</div>
+
+            <div class="mobile-footer-section">
+                <div class="mobile-footer-label">ADDRESS</div>
+                <div class="mobile-footer-text">Kuthambakkam, Chennai, Tamil Nadu 600124</div>
+            </div>
+
+            <div class="mobile-footer-section">
+                <div class="mobile-footer-label">WEBSITE</div>
+                <a class="mobile-footer-link" href="https://www.ritchennai.org" target="_blank" rel="noopener noreferrer">
+                    www.ritchennai.org
+                </a>
+            </div>
+
+            <div class="mobile-footer-section">
+                <div class="mobile-footer-label">CONTACT</div>
+                <div class="mobile-footer-phone-numbers" style="flex-direction: column; gap: 12px; align-items: flex-start;">
+                    <div>
+                        <div class="mobile-footer-text" style="font-size: 0.875rem; margin-bottom: 4px; font-weight: 500;">Derry Gabriel</div>
+                        <div class="mobile-footer-text" style="font-size: 0.75rem; margin-bottom: 4px; opacity: 0.8;">Overall Coordinator</div>
+                        <a class="mobile-footer-link mobile-footer-link--underline" href="tel:+919884470171">
+                            +91 98844 70171
+                        </a>
+                    </div>
+                    <div>
+                        <div class="mobile-footer-text" style="font-size: 0.875rem; margin-bottom: 4px; font-weight: 500;">Kishore Kumar S</div>
+                        <div class="mobile-footer-text" style="font-size: 0.75rem; margin-bottom: 4px; opacity: 0.8;">Event Committee Coordinator</div>
+                        <a class="mobile-footer-link mobile-footer-link--underline" href="tel:+918825910614">
+                            +91 88259 10614
+                        </a>
+                    </div>
+                    <div>
+                        <div class="mobile-footer-text" style="font-size: 0.875rem; margin-bottom: 4px; font-weight: 500;">Muthu Kumaran</div>
+                        <div class="mobile-footer-text" style="font-size: 0.75rem; margin-bottom: 4px; opacity: 0.8;">Joint Overall Coordinator</div>
+                        <a class="mobile-footer-link mobile-footer-link--underline" href="tel:+919094141232">
+                            +91 90941 41232
+                        </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Two Column Layout -->
-            <div class="flex flex-col md:flex-row md:justify-between gap-6 sm:gap-10 md:gap-8 mb-8 sm:mb-12">
-                <!-- Left Column - Address -->
-                <div class="flex-1">
-                    <div
-                        class="space-y-1.5 sm:space-y-2 text-sm sm:text-base md:text-lg text-white/90 leading-relaxed text-left">
-                        <div class="font-semibold text-white">Rajalakshmi Institute of Technology</div>
-                        <div class="text-white/95">Bangalore Highway Road, Kuthambakkam,</div>
-                        <div class="text-white/95">Chennai, Tamil Nadu - 600124</div>
-                    </div>
-                </div>
-
-                <!-- Right Column - Social Media & Contact -->
-                <div class="flex-1 md:text-right">
-                    <!-- Social Media Icons -->
-                    <div class="flex md:justify-end items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-                        <a href="https://www.facebook.com/ritchennai" target="_blank" rel="noreferrer"
-                            class="rounded-full border border-white/20 bg-black/50 p-2 sm:p-2.5 text-white hover:text-white hover:border-white/40 active:bg-white/10 transition-colors touch-manipulation"
-                            aria-label="Facebook"
-                            style="min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;">
-                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path
-                                    d="M14 8.5h2V5.75A18 18 0 0 0 13.6 5.6c-2.4 0-4.1 1.46-4.1 4.15V12H7v3h2.5v6h3.1v-6h2.8l.5-3h-3.3V10c0-1 .33-1.5 1.4-1.5Z"
-                                    fill="currentColor" />
-                            </svg>
-                        </a>
-                        <a href="https://instagram.com" target="_blank" rel="noreferrer"
-                            class="rounded-full border border-white/20 bg-black/50 p-2 sm:p-2.5 text-white hover:text-white hover:border-white/40 active:bg-white/10 transition-colors touch-manipulation"
-                            aria-label="Instagram"
-                            style="min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;">
-                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path
-                                    d="M7.5 2.75h9A4.75 4.75 0 0 1 21.25 7.5v9A4.75 4.75 0 0 1 16.5 21.25h-9A4.75 4.75 0 0 1 2.75 16.5v-9A4.75 4.75 0 0 1 7.5 2.75Z"
-                                    stroke="currentColor" stroke-width="1.5" />
-                                <path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor"
-                                    stroke-width="1.5" />
-                                <path d="M17.25 6.75h.01" stroke="currentColor" stroke-width="2.5"
-                                    stroke-linecap="round" />
-                            </svg>
-                        </a>
-                        <a href="https://youtube.com" target="_blank" rel="noreferrer"
-                            class="rounded-full border border-white/20 bg-black/50 p-2 sm:p-2.5 text-white hover:text-white hover:border-white/40 active:bg-white/10 transition-colors touch-manipulation"
-                            aria-label="YouTube"
-                            style="min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;">
-                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <path
-                                    d="M21.593 7.203a2.506 2.506 0 0 0-1.762-1.766C18.265 5.007 12 5 12 5s-6.264-.007-7.831.404a2.56 2.56 0 0 0-1.766 1.778c-.413 1.566-.417 4.814-.417 4.814s-.004 3.264.406 4.814c.266.978.842 1.74 1.766 1.778 1.582.43 7.831.437 7.831.437s6.265.007 7.831-.403a2.515 2.515 0 0 0 1.767-1.776c.415-1.563.417-4.812.417-4.812s.002-3.265-.415-4.831zM9.996 15.005l-.005-6 5.207 3.005-5.202 2.995z"
-                                    fill="currentColor" />
-                            </svg>
-                        </a>
-                    </div>
-
-                    <!-- Email and Phone -->
-                    <div class="space-y-1 text-xs sm:text-sm md:text-base text-white/70">
-                        <div>yatra@ritchennai.edu.in</div>
-                        <div>
-                            <a href="tel:+919843656238" class="hover:text-white transition-colors">+91 98436 56238</a>
-                        </div>
-                        <div>
-                            <a href="tel:+919080850106" class="hover:text-white transition-colors">+91 90808 50106</a>
-                        </div>
-                    </div>
-                </div>
+            <div class="mobile-footer-social" aria-label="Social links">
+                <a
+                    class="mobile-footer-social-link"
+                    href="https://www.instagram.com/yatra_rit?igsh=MTYzdDJhbHlnOHhmNQ=="
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Instagram"
+                >
+                    <svg class="mobile-footer-social-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path
+                            d="M7.5 2.75h9A4.75 4.75 0 0 1 21.25 7.5v9A4.75 4.75 0 0 1 16.5 21.25h-9A4.75 4.75 0 0 1 2.75 16.5v-9A4.75 4.75 0 0 1 7.5 2.75Z"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                        />
+                        <path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="1.5" />
+                        <path d="M17.25 6.75h.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+                    </svg>
+                </a>
+                <a
+                    class="mobile-footer-social-link"
+                    href="https://youtube.com/@rajalakshmiinstituteoftech4448?si=E-E820dMeHNlnfBo"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="YouTube"
+                >
+                    <svg class="mobile-footer-social-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path
+                            d="M21.593 7.203a2.506 2.506 0 0 0-1.762-1.766C18.265 5.007 12 5 12 5s-6.264-.007-7.831.404a2.56 2.56 0 0 0-1.766 1.778c-.413 1.566-.417 4.814-.417 4.814s-.004 3.264.406 4.814c.266.978.842 1.74 1.766 1.778 1.582.43 7.831.437 7.831.437s6.265.007 7.831-.403a2.515 2.515 0 0 0 1.767-1.776c.415-1.563.417-4.812.417-4.812s.002-3.265-.415-4.831zM9.996 15.005l-.005-6 5.207 3.005-5.202 2.995z"
+                            fill="currentColor"
+                        />
+                    </svg>
+                </a>
             </div>
 
-            <!-- Copyright and Legal Links -->
-            <div class="border-t border-white/10 pt-4 sm:pt-5 sm:pt-6">
-                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4">
-                    <div class="text-[10px] sm:text-xs text-white/40">
-                        Copyright © 2026 Rajalakshmi Institutions
-                    </div>
-                    <div class="flex flex-wrap items-center gap-4 sm:gap-6 text-[10px] sm:text-xs">
-                        <a href="/privacy-policy"
-                            class="text-white/70 hover:text-white transition-colors underline underline-offset-4 decoration-white/50 hover:decoration-white">
-                            Privacy Policy
-                        </a>
-                        <span class="text-white/30">|</span>
-                        <a href="/terms-conditions"
-                            class="text-white/70 hover:text-white transition-colors underline underline-offset-4 decoration-white/50 hover:decoration-white">
-                            Terms & Conditions
-                        </a>
-                    </div>
+            <div class="mobile-footer-section">
+                <div class="mobile-footer-label">LEGAL</div>
+                <div class="mobile-footer-phone-numbers" style="flex-direction: column; gap: 8px; align-items: flex-start;">
+                    <a
+                        class="mobile-footer-link mobile-footer-link--underline"
+                        href="/privacy-policy"
+                    >
+                        Privacy Policy
+                    </a>
+                    <a
+                        class="mobile-footer-link mobile-footer-link--underline"
+                        href="/terms-conditions"
+                    >
+                        Terms & Conditions
+                    </a>
                 </div>
             </div>
         </div>
@@ -2451,13 +2588,21 @@
                 const element = document.getElementById(elementId);
                 if (!element) return;
 
-                // Set target to 48 hours from page load time
-                const startTime = new Date().getTime();
-                const targetDate = startTime + (48 * 60 * 60 * 1000);
+                // Get or set the countdown end time in localStorage
+                const STORAGE_KEY = 'yatra_lineup_countdown_end';
+                let endTime = localStorage.getItem(STORAGE_KEY);
+
+                if (!endTime) {
+                    // Set countdown for 48 hours from now
+                    endTime = Date.now() + (48 * 60 * 60 * 1000);
+                    localStorage.setItem(STORAGE_KEY, endTime);
+                } else {
+                    endTime = parseInt(endTime, 10);
+                }
 
                 function update() {
-                    const now = new Date().getTime();
-                    const distance = targetDate - now;
+                    const now = Date.now();
+                    const distance = endTime - now;
 
                     if (distance < 0) {
                         element.textContent = "00:00:00";
@@ -2483,21 +2628,48 @@
             update48HourCountdown('countdown-48hr');
 
             // Flip card functionality for GV Prakash card
-            // Lineup Stagger Animation for Cards
-            gsap.utils.toArray('.lineup-card-slot').forEach((card, index) => {
-                gsap.from(card, {
-                    scrollTrigger: {
-                        trigger: card,
-                        start: "top 85%",
-                        toggleActions: "play none none none"
-                    },
-                    y: 50,
-                    opacity: 0,
-                    duration: 0.8,
-                    delay: index * 0.1,
-                    ease: "power3.out"
+            // Lineup Animations
+            // - Desktop: stagger-in on enter
+            // - Mobile: each card reveals as you scroll down to it (scrubbed parallax entrance)
+            if (!isMobileView) {
+                gsap.utils.toArray('.lineup-card-slot').forEach((card, index) => {
+                    gsap.from(card, {
+                        scrollTrigger: {
+                            trigger: card,
+                            start: "top 85%",
+                            toggleActions: "play none none none"
+                        },
+                        y: 50,
+                        opacity: 0,
+                        duration: 0.8,
+                        delay: index * 0.1,
+                        ease: "power3.out"
+                    });
                 });
-            });
+            } else {
+                const lineupCards = gsap.utils.toArray('#lineup .lineup-card-slot').slice(0, 3);
+                lineupCards.forEach((card, index) => {
+                    const lift = 54 + index * 8;
+                    const scaleFrom = 0.985;
+
+                    gsap.fromTo(card,
+                        { y: lift, opacity: 0, scale: scaleFrom },
+                        {
+                            y: 0,
+                            opacity: 1,
+                            scale: 1,
+                            ease: "none",
+                            scrollTrigger: {
+                                trigger: card,
+                                start: "top 88%",
+                                end: "top 60%",
+                                scrub: true,
+                                invalidateOnRefresh: true
+                            }
+                        }
+                    );
+                });
+            }
 
             // Hide "CLICK TO REVEAL" text when card is flipped and handle navigation
             const gvFlipCard = document.getElementById('gv-flip-card');
@@ -2587,24 +2759,6 @@
                 });
             }
 
-            // Handle Aoora "Visit Page" button click
-            const aooraVisitButton = document.getElementById('aoora-visit-button');
-            if (aooraVisitButton) {
-                aooraVisitButton.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    if (window.parent && window.parent !== window) {
-                        // If in iframe, send message to parent
-                        window.parent.postMessage(
-                            { type: 'navigate', path: '/gv-prakash/aoora.html' },
-                            '*'
-                        );
-                    } else {
-                        // If not in iframe, navigate directly
-                        window.location.href = '/gv-prakash/aoora.html';
-                    }
-                });
-            }
-
             // Horizontal Gallery Scroll Trigger with Snap Scrolling - Optimized
             const galleryTrack = document.getElementById('gallery-track');
             if (!galleryTrack) return;
@@ -2636,19 +2790,22 @@
                 },
                 pin: true,
                 animation: tween,
-                scrub: 1,
-                snap: {
-                    snapTo: (progress) => {
-                        if (numSlides <= 1) return 0;
-                        const slideProgress = 1 / (numSlides - 1);
-                        const currentSlide = Math.round(progress / slideProgress);
-                        const targetSlide = Math.max(0, Math.min(numSlides - 1, currentSlide));
-                        return targetSlide * slideProgress;
+                // Mobile perf: less smoothing + no snap (snap + per-slide effects cause jank on phones)
+                scrub: isMobileView ? 0.55 : 1,
+                snap: isMobileView
+                    ? false
+                    : {
+                        snapTo: (progress) => {
+                            if (numSlides <= 1) return 0;
+                            const slideProgress = 1 / (numSlides - 1);
+                            const currentSlide = Math.round(progress / slideProgress);
+                            const targetSlide = Math.max(0, Math.min(numSlides - 1, currentSlide));
+                            return targetSlide * slideProgress;
+                        },
+                        duration: { min: 0.3, max: 0.8 },
+                        ease: "power2.inOut",
+                        inertia: false,
                     },
-                    duration: { min: 0.3, max: 0.8 },
-                    ease: "power2.inOut",
-                    inertia: false,
-                },
                 invalidateOnRefresh: true,
                 refreshPriority: 1 // Higher priority for gallery
             });
@@ -2664,74 +2821,77 @@
             }, { passive: true });
 
             // Scroll-based B&W to Color transition for gallery images
-            const galleryScrollItems = document.querySelectorAll('.gallery-scroll-item');
-            galleryScrollItems.forEach((item) => {
-                const img = item.querySelector('.gallery-img');
-                const overlay = item.querySelector('.gallery-overlay');
-                const infoBox = item.querySelector('.gallery-info-scroll');
-                const yearText = item.querySelector('.gallery-year-scroll');
-                const targetSlide = parseInt(item.getAttribute('data-gallery-index') || '1');
-                
-                if (img) {
-                    // Create individual scroll trigger for each gallery item
-                    ScrollTrigger.create({
-                        trigger: "#gallery-pin",
-                        start: "top top",
-                        end: () => `+=${getScrollAmount() * -1}`,
-                        scrub: 0.5,
-                        onUpdate: (self) => {
-                            // Calculate which slide we're approaching
-                            const slideProgress = 1 / (numSlides - 1);
-                            const currentProgress = self.progress;
-                            const slideStart = (targetSlide - 1) * slideProgress;
-                            const slideEnd = targetSlide * slideProgress;
-                            
-                            // Calculate local progress within this slide's transition
-                            let localProgress = 0;
-                            if (currentProgress >= slideStart && currentProgress <= slideEnd) {
-                                localProgress = (currentProgress - slideStart) / (slideEnd - slideStart);
-                            } else if (currentProgress > slideEnd) {
-                                localProgress = 1;
-                            }
-                            
-                            // Apply grayscale based on scroll progress (1 = B&W, 0 = Color)
-                            const grayscaleValue = Math.max(0, 1 - localProgress);
-                            img.style.filter = `grayscale(${grayscaleValue})`;
-                            
-                            // Also transition overlay opacity
-                            if (overlay) {
-                                const overlayOpacity = 0.4 - (localProgress * 0.2);
-                                overlay.style.backgroundColor = `rgba(0, 0, 0, ${overlayOpacity})`;
-                            }
-                            
-                            // Scale effect on scroll
-                            const scaleValue = 1 + (localProgress * 0.1);
-                            img.style.transform = `scale(${scaleValue})`;
+            // Mobile perf: skip the per-slide onUpdate work (it is the biggest source of lag on phones).
+            if (!isMobileView) {
+                const galleryScrollItems = document.querySelectorAll('.gallery-scroll-item');
+                galleryScrollItems.forEach((item) => {
+                    const img = item.querySelector('.gallery-img');
+                    const overlay = item.querySelector('.gallery-overlay');
+                    const infoBox = item.querySelector('.gallery-info-scroll');
+                    const yearText = item.querySelector('.gallery-year-scroll');
+                    const targetSlide = parseInt(item.getAttribute('data-gallery-index') || '1');
 
-                            // Reveal info text and year when scrolled to this slide
-                            if (localProgress > 0.5) {
-                                if (infoBox) {
-                                    infoBox.classList.add('revealed');
-                                    infoBox.style.opacity = Math.min(1, (localProgress - 0.5) * 2);
-                                    infoBox.style.transform = `translateY(${Math.max(0, 20 - (localProgress - 0.5) * 40)}px)`;
+                    if (img) {
+                        // Create individual scroll trigger for each gallery item
+                        ScrollTrigger.create({
+                            trigger: "#gallery-pin",
+                            start: "top top",
+                            end: () => `+=${getScrollAmount() * -1}`,
+                            scrub: 0.5,
+                            onUpdate: (self) => {
+                                // Calculate which slide we're approaching
+                                const slideProgress = 1 / (numSlides - 1);
+                                const currentProgress = self.progress;
+                                const slideStart = (targetSlide - 1) * slideProgress;
+                                const slideEnd = targetSlide * slideProgress;
+
+                                // Calculate local progress within this slide's transition
+                                let localProgress = 0;
+                                if (currentProgress >= slideStart && currentProgress <= slideEnd) {
+                                    localProgress = (currentProgress - slideStart) / (slideEnd - slideStart);
+                                } else if (currentProgress > slideEnd) {
+                                    localProgress = 1;
                                 }
-                                if (yearText) {
-                                    yearText.classList.add('revealed');
+
+                                // Apply grayscale based on scroll progress (1 = B&W, 0 = Color)
+                                const grayscaleValue = Math.max(0, 1 - localProgress);
+                                img.style.filter = `grayscale(${grayscaleValue})`;
+
+                                // Also transition overlay opacity
+                                if (overlay) {
+                                    const overlayOpacity = 0.4 - (localProgress * 0.2);
+                                    overlay.style.backgroundColor = `rgba(0, 0, 0, ${overlayOpacity})`;
                                 }
-                            } else {
-                                if (infoBox) {
-                                    infoBox.classList.remove('revealed');
-                                    infoBox.style.opacity = 0;
-                                    infoBox.style.transform = 'translateY(20px)';
-                                }
-                                if (yearText) {
-                                    yearText.classList.remove('revealed');
+
+                                // Scale effect on scroll
+                                const scaleValue = 1 + (localProgress * 0.1);
+                                img.style.transform = `scale(${scaleValue})`;
+
+                                // Reveal info text and year when scrolled to this slide
+                                if (localProgress > 0.5) {
+                                    if (infoBox) {
+                                        infoBox.classList.add('revealed');
+                                        infoBox.style.opacity = Math.min(1, (localProgress - 0.5) * 2);
+                                        infoBox.style.transform = `translateY(${Math.max(0, 20 - (localProgress - 0.5) * 40)}px)`;
+                                    }
+                                    if (yearText) {
+                                        yearText.classList.add('revealed');
+                                    }
+                                } else {
+                                    if (infoBox) {
+                                        infoBox.classList.remove('revealed');
+                                        infoBox.style.opacity = 0;
+                                        infoBox.style.transform = 'translateY(20px)';
+                                    }
+                                    if (yearText) {
+                                        yearText.classList.remove('revealed');
+                                    }
                                 }
                             }
-                        }
-                    });
-                }
-            });
+                        });
+                    }
+                });
+            }
         };
 
         // Desktop Loader Sequence (HTML Split Shutter)

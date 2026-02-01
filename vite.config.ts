@@ -11,6 +11,12 @@ function cleanUrlsPlugin() {
       server.middlewares.use((req: { url?: string }, res: unknown, next: () => void) => {
         const url = req.url?.split("?")[0] || "";
 
+        // Dev: serve the static homepage at the root (mirrors prod rewrites)
+        if (url === "/" || url === "/index.html") {
+          req.url = "/homepage.html";
+          return next();
+        }
+
         // Skip if already has extension or is an asset
         if (url.includes(".") || url.startsWith("/@") || url.startsWith("/src") || url.startsWith("/node_modules")) {
           return next();
