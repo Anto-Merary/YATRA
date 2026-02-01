@@ -23,9 +23,9 @@ export default async function handler(req, res) {
     try {
         const supabaseUrl = process.env.VITE_SUPABASE_URL;
         const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY; // MUST BE SET IN VERCEL
-        const merchantId = process.env.CCAVENUE_MERCHANT_ID;
-        const accessCode = process.env.CCAVENUE_ACCESS_CODE;
-        const workingKey = process.env.CCAVENUE_WORKING_KEY;
+        const merchantId = process.env.CCAVENUE_MERCHANT_ID?.trim();
+        const accessCode = process.env.CCAVENUE_ACCESS_CODE?.trim();
+        const workingKey = process.env.CCAVENUE_WORKING_KEY?.trim();
         const siteUrl = (process.env.SITE_URL ?? "https://rityatra.in").replace(/\/+$/, "");
 
         if (!supabaseUrl || !serviceKey || !merchantId || !accessCode || !workingKey) {
