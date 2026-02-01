@@ -52,8 +52,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         // CCAvenue POSTs application/x-www-form-urlencoded with 'encResp' (hex-encoded ciphertext)
         let encResp: string | undefined;
         if (typeof req.body === "object" && req.body !== null) {
-            encResp = (req.body as Record<string, unknown>).encResp ?? (req.body as Record<string, unknown>).enc_resp;
-            if (typeof encResp !== "string") encResp = undefined;
+            const raw = (req.body as Record<string, unknown>).encResp ?? (req.body as Record<string, unknown>).enc_resp;
+            encResp = typeof raw === "string" ? raw : undefined;
         }
         if (!encResp && typeof req.body === "string") {
             try {
