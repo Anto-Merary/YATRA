@@ -2682,32 +2682,30 @@
             update48HourCountdown('countdown-48hr');
 
             // Flip card functionality for GV Prakash card
-            // Lineup Animations - Scroll-to-reveal parallax only (both desktop and mobile)
-            const lineupCards = isMobileView 
-                ? gsap.utils.toArray('#lineup .lineup-card-slot').slice(0, 3)
-                : gsap.utils.toArray('.lineup-card-slot');
-            
-            lineupCards.forEach((card, index) => {
-                const lift = 54 + index * 8;
-                const scaleFrom = 0.985;
-
-                gsap.fromTo(card,
-                    { y: lift, opacity: 0, scale: scaleFrom },
-                    {
+            // Lineup Animations - Mobile only: smooth scroll-to-reveal parallax
+            if (isMobileView) {
+                const lineupCards = gsap.utils.toArray('#lineup .lineup-card-slot').slice(0, 3);
+                
+                lineupCards.forEach((card, index) => {
+                    // Set initial state - cards start below and invisible
+                    gsap.set(card, { y: 80, opacity: 0 });
+                    
+                    // Create smooth scroll-triggered animation
+                    gsap.to(card, {
                         y: 0,
                         opacity: 1,
-                        scale: 1,
-                        ease: "none",
+                        duration: 0.8,
+                        ease: "power2.out",
                         scrollTrigger: {
                             trigger: card,
-                            start: "top 88%",
-                            end: "top 60%",
-                            scrub: true,
+                            start: "top 90%",  // Animation starts when card top reaches 90% of viewport
+                            end: "top 65%",    // Animation ends when card top reaches 65% of viewport
+                            scrub: 0.5,        // Smooth scrubbing with 0.5s delay
                             invalidateOnRefresh: true
                         }
-                    }
-                );
-            });
+                    });
+                });
+            }
 
             // Hide "CLICK TO REVEAL" text when card is flipped and handle navigation
             const gvFlipCard = document.getElementById('gv-flip-card');
