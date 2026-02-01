@@ -98,7 +98,6 @@ function Hero() {
   const [isScrollReady, setIsScrollReady] = useState(false)
   const stageRef = useRef(null)
   const heroRef = useRef(null)
-  const passesRef = useRef(null)
   const aboutRef = useRef(null)
   const aboutTitleRef = useRef(null)
   const aboutContentRef = useRef(null)
@@ -606,14 +605,6 @@ function Hero() {
       st.kill()
     }
   }, [isExperienceReady, runAboutReveal])
-
-  const scrollToPasses = useCallback(() => {
-    const el = passesRef.current
-    if (!el) return
-    // Works with native scroll; Lenis will still keep things smooth.
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }, [])
-
 
   const goToEvents = useCallback(() => {
     const baseUrl = (import.meta?.env?.BASE_URL || '/').replace(/\/+$/, '')
@@ -1316,11 +1307,10 @@ function Hero() {
 
             {/* Action Buttons - Below 2026 text */}
             <div className="hero-buttons">
-              <button
+              <a
                 ref={buyTicketsButtonRef}
+                href="/yatra-entry"
                 className={`hero-button buy-tickets ${shimmerTrigger > 0 ? 'shimmer-active' : ''}`}
-                onClick={scrollToPasses}
-                type="button"
                 data-shimmer-trigger={shimmerTrigger}
               >
                 <span className="hero-button-shimmer" aria-hidden="true" />
@@ -1328,7 +1318,7 @@ function Hero() {
                 <span className="star-icon" aria-hidden="true">
                   ✦
                 </span>
-              </button>
+              </a>
             </div>
 
             {/* YATRA Text - Mid Layer (behind Torii gate) */}
@@ -1557,95 +1547,6 @@ function Hero() {
                     fetchpriority={blastShouldEagerLoad && idx < 2 ? 'high' : 'auto'}
                   />
                 ))}
-              </div>
-            </div>
-          </section>
-
-          {/* PASSES Divider (between BLAST and GET PASSES) */}
-          <div className="passes-section-divider" aria-hidden="true">
-            <div className="hero-divider-scroll">
-              <div className="hero-divider-track">
-                <div className="hero-divider-content">
-                  <span className="hero-divider-text">GET PASSES</span>
-                  <span className="hero-divider-star">✦</span>
-                  <span className="hero-divider-text">GET PASSES</span>
-                  <span className="hero-divider-star">✦</span>
-                  <span className="hero-divider-text">GET PASSES</span>
-                  <span className="hero-divider-star">✦</span>
-                  <span className="hero-divider-text">GET PASSES</span>
-                  <span className="hero-divider-star">✦</span>
-                  <span className="hero-divider-text">GET PASSES</span>
-                  <span className="hero-divider-star">✦</span>
-                  <span className="hero-divider-text">GET PASSES</span>
-                  <span className="hero-divider-star">✦</span>
-                </div>
-                <div className="hero-divider-content" aria-hidden="true">
-                  <span className="hero-divider-text">GET PASSES</span>
-                  <span className="hero-divider-star">✦</span>
-                  <span className="hero-divider-text">GET PASSES</span>
-                  <span className="hero-divider-star">✦</span>
-                  <span className="hero-divider-text">GET PASSES</span>
-                  <span className="hero-divider-star">✦</span>
-                  <span className="hero-divider-text">GET PASSES</span>
-                  <span className="hero-divider-star">✦</span>
-                  <span className="hero-divider-text">GET PASSES</span>
-                  <span className="hero-divider-star">✦</span>
-                  <span className="hero-divider-text">GET PASSES</span>
-                  <span className="hero-divider-star">✦</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* BUY PASSES section (from desktop registration) */}
-          <section
-            className="mobile-passes-section"
-            aria-label="Buy Passes"
-            id="buy-passes"
-            ref={passesRef}
-          >
-            <div className="mobile-passes-container">
-              <div className="relative z-10 w-full px-4 py-8">
-                <div className="mobile-passes-container">
-                  <h2 className="mobile-passes-title mb-6 text-center text-3xl font-akira uppercase text-white">
-                    Get <span className="mobile-passes-title-accent text-[#9b1799]">Passes</span>
-                  </h2>
-
-                  <div className="mobile-passes-grid">
-                    {/* Ticket Card */}
-                    <div className="mobile-pass-card mobile-pass-card--featured border-2 border-white/20 bg-white/5 p-6 backdrop-blur-md">
-                      <div className="mobile-pass-badge mobile-pass-badge--exclusive absolute -top-3 right-4 bg-[#9b1799] px-2 py-1 text-xs font-bold text-white uppercase tracking-widest">
-                        EXCLUSIVE
-                      </div>
-
-                      <div className="mobile-pass-card-header mb-4 border-b border-dashed border-white/20 pb-4">
-                        <h3 className="mobile-pass-card-title mobile-pass-card-title--accent text-2xl font-akira text-white">
-                          YATRA PASS
-                        </h3>
-                        <p className="text-white/60 text-sm tracking-wider uppercase mt-1">Full Access • 2 Days • Mar 13-14</p>
-                      </div>
-
-                      <ul className="mobile-pass-card-list mobile-pass-card-list--bright space-y-2 mb-6 text-white/80">
-                        <li>• Access to ALL Events</li>
-                        <li>• Proshow & DJ Night Included</li>
-                        <li>• Official Yatra Merch Access</li>
-                      </ul>
-
-                      <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
-                        <div className="text-left">
-                          <div className="text-[10px] uppercase text-white/50 tracking-widest font-bold">Price</div>
-                          <div className="text-3xl font-akira text-[#fff19d]">₹1</div>
-                        </div>
-                        <a
-                          href="/yatra-entry"
-                          className="bg-white text-black px-6 py-3 font-akira text-sm uppercase tracking-wide hover:bg-[#9b1799] hover:text-white transition-colors border-2 border-white"
-                        >
-                          BUY PASS
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </section>

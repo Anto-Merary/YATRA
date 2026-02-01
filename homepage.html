@@ -1738,8 +1738,6 @@
             <a href="/events" class="hacker-text hover:text-[var(--color-accent)] transition-colors"
                 data-original="Events"
                 onclick="event.preventDefault(); if (window.parent !== window) { window.parent.postMessage({ type: 'navigate', path: '/events' }, '*'); } else { window.location.href = '/events'; }">Events</a>
-            <a href="#registration" class="hacker-text hover:text-[var(--color-accent)] transition-colors"
-                data-original="Passes">Passes</a>
         </div>
     </nav>
 
@@ -1770,10 +1768,10 @@
                 </h1>
             </div>
             <div class="mt-6 sm:mt-8 md:mt-12 animate-fade-in-up mix-blend-normal">
-                <a href="#registration" class="magnetic-wrap inline-block">
+                <a href="/yatra-entry" class="magnetic-wrap inline-block">
                     <div class="magnetic-content yellow-purple-gradient-animated text-black px-5 py-2.5 sm:px-6 sm:py-3 md:px-8 md:py-4 lg:px-12 lg:py-5 rounded-lg uppercase font-bold text-[0.75rem] sm:text-xs md:text-sm lg:text-base tracking-widest transition-all duration-300 shadow-lg"
                         style="mix-blend-mode: normal; min-height: 44px; display: flex; align-items: center; justify-content: center;">
-                        BUY PASSES
+                        BUY TICKETS
                     </div>
                 </a>
             </div>
@@ -1909,7 +1907,7 @@
                 <div class="text-center">
                     <p class="text-xl font-bold uppercase tracking-widest mb-4">And now...</p>
                     <h2 class="text-[12vw] font-display font-black leading-none mb-8">2026</h2>
-                    <a href="#registration"
+                    <a href="/yatra-entry"
                         class="inline-block border-2 border-black px-12 py-6 text-xl font-bold uppercase hover:bg-black hover:text-[var(--color-accent)] transition-colors duration-300">
                         Join the Future
                     </a>
@@ -2185,80 +2183,6 @@
                         </a>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Registration / Passes -->
-    <section id="registration" class="py-10 sm:py-14 md:py-20 lg:py-24 px-4 sm:px-6 relative overflow-hidden">
-        <div
-            class="liquid-glass-wrapper relative z-10 p-8 sm:p-12 md:p-16 max-w-5xl mx-auto rounded-3xl overflow-hidden">
-            <div class="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl z-0"></div>
-            <div class="active absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-50 z-0"></div>
-
-            <div class="relative z-10 flex flex-col items-center justify-center gap-8 md:gap-12">
-                <!-- Main Title -->
-                <h2
-                    class="text-center text-3xl sm:text-4xl md:text-5xl font-display font-black uppercase mb-4 leading-tight">
-                    Passes <span class="text-[var(--color-accent)]">Available Now</span>
-                </h2>
-
-                <!-- Reference-Style Ticket -->
-                <div class="ref-ticket-container">
-                    <!-- Left Stub (Black) -->
-                    <div class="ref-ticket-left">
-                        <div
-                            class="bg-[var(--color-accent)] w-14 h-14 flex items-center justify-center transform -rotate-12 shadow-lg">
-                            <span class="font-akira text-black text-2xl font-bold">Y</span>
-                        </div>
-                        <div
-                            class="absolute bottom-6 text-gray-500 font-mono text-[10px] tracking-[0.3em] uppercase w-full text-center">
-                            Yatra 2026</div>
-
-                        <!-- Seam -->
-                        <div class="ticket-seam" aria-hidden="true">
-                            <div class="perf-circle"></div>
-                            <div class="perf-circle"></div>
-                            <div class="perf-circle"></div>
-                            <div class="perf-circle"></div>
-                            <div class="perf-circle"></div>
-                            <div class="perf-circle"></div>
-                            <div class="perf-circle"></div>
-                        </div>
-                    </div>
-
-                    <!-- Right Content (White) -->
-                    <div class="ref-ticket-right">
-                        <div class="flex flex-col h-full w-full">
-                            <div class="flex justify-between items-start mb-4">
-                                <div>
-                                    <h3 class="ticket-main-title text-2xl md:text-4xl mb-4">YATRA PASS</h3>
-                                    <ul class="ticket-list space-y-2">
-                                        <li>Access to all 2 DAYS</li>
-                                        <li>Proshows & DJ Night Included</li>
-                                        <li>Unlimited Fun Guaranteed</li>
-                                    </ul>
-                                </div>
-
-                            </div>
-
-                            <div class="mt-auto flex flex-col md:flex-row justify-between items-end gap-4">
-                                <div class="w-full md:w-auto">
-                                    <div class="text-xs uppercase tracking-widest text-gray-500 mb-1">Pass Price</div>
-                                    <div class="font-space font-black text-3xl sm:text-5xl tabular-nums leading-none">
-                                        ₹1</div>
-                                </div>
-
-                                <a href="/yatra-entry"
-                                    class="ticket-btn mt-4 md:mt-0 w-full md:w-auto justify-center no-underline text-black hover:bg-white hover:text-black">
-                                    BUY PASS <span class="ml-2">→</span>
-                                </a>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
     </section>
