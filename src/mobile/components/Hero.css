@@ -1338,113 +1338,246 @@
 .features-section {
   width: 100%;
   min-height: 100svh;
-  background-image: url('../assets/optimized/dblue-w768.webp');
-  background-image: -webkit-image-set(url('../assets/optimized/dblue-w768.webp') 1x);
-  background-image: image-set(url('../assets/optimized/dblue-w768.webp') type('image/webp') 1x);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background:
+    radial-gradient(circle at 18% 8%, rgba(155, 23, 153, 0.35), transparent 55%),
+    radial-gradient(circle at 85% 25%, rgba(255, 241, 157, 0.22), transparent 55%),
+    linear-gradient(180deg, #050006 0%, #0a0010 100%);
   /* More breathing room + keep content clear of the bottom dock */
-  padding: 3.75rem clamp(1rem, 4vw, 1.5rem) calc(5.25rem + env(safe-area-inset-bottom, 0px));
+  padding: 3.5rem clamp(1rem, 4vw, 1.5rem) calc(7.5rem + env(safe-area-inset-bottom, 0px));
   display: flex;
   align-items: flex-start;
   justify-content: center;
   position: relative;
-}
-
-.features-section::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  z-index: 0;
-  pointer-events: none;
+  overflow: hidden;
 }
 
 .features-section::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url('../assets/optimized/clouds-w768.webp');
-  background-image: -webkit-image-set(url('../assets/optimized/clouds-w768.webp') 1x);
-  background-image: image-set(url('../assets/optimized/clouds-w768.webp') type('image/webp') 1x);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.5)) drop-shadow(0 8px 40px rgba(0, 0, 0, 0.3)) brightness(0.4) blur(4px);
-  z-index: 1;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 36px 36px;
+  opacity: 0.35;
+  z-index: 0;
   pointer-events: none;
-  animation: features-clouds-float 16s ease-in-out infinite;
-  animation-delay: 0s;
 }
 
-@keyframes features-clouds-float {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-
-  12% {
-    transform: translate3d(0, -18px, 0);
-  }
-
-  25% {
-    transform: translate3d(0, -10px, 0);
-  }
-
-  38% {
-    transform: translate3d(0, -22px, 0);
-  }
-
-  50% {
-    transform: translate3d(0, -15px, 0);
-  }
-
-  62% {
-    transform: translate3d(0, -20px, 0);
-  }
-
-  75% {
-    transform: translate3d(0, -8px, 0);
-  }
-
-  87% {
-    transform: translate3d(0, -19px, 0);
-  }
-
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
+.features-section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.65));
+  z-index: 1;
+  pointer-events: none;
 }
 
 .features-container {
   width: 100%;
   max-width: 560px;
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.features-title {
-  font-family: 'Victory Striker' !important;
-  font-size: clamp(2.1rem, 10vw, 3rem);
-  font-weight: normal;
-  margin: 0 0 1.25rem;
-  line-height: 1.4;
+.section-divider {
+  width: min(90%, 360px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+  z-index: 3;
+}
+
+.section-divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0));
+  opacity: 0.7;
+}
+
+.section-divider-text {
+  font-family: 'Noto Sans KR', 'Poppins', var(--hero-font-family);
+  font-size: 0.7rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  white-space: nowrap;
+}
+.features-heading {
   text-align: center;
-  color: #FFFFFF;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  margin-bottom: 1.5rem;
 }
 
-.features-title-features {
-  color: #FFB86B;
+.features-title {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  line-height: 1.05;
+  text-align: center;
 }
 
-.features-title-rest {
-  color: #FFFFFF;
+.features-title-main {
+  font-family: 'Akira Expanded', var(--hero-font-family);
+  font-size: clamp(2.4rem, 11vw, 3.4rem);
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  text-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+}
+
+.features-title-sub {
+  font-family: 'Space Grotesk', var(--hero-font-family);
+  font-size: clamp(1.1rem, 5vw, 1.5rem);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #fff19d;
+  text-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+
+.features-title-tag {
+  margin: 0.65rem 0 0;
+  font-family: 'Poppins', var(--hero-font-family);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.features-parallax {
+  width: 100%;
+  display: grid;
+  place-items: center;
+  margin: 1.25rem 0 1.5rem;
+}
+
+.features-image-frame {
+  width: min(92vw, 360px);
+  aspect-ratio: 1 / 1;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255, 241, 157, 0.45);
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.45),
+    0 0 30px rgba(155, 23, 153, 0.3);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.features-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(1.05);
+}
+
+.features-image-glow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.6));
+  pointer-events: none;
+}
+
+.features-layered-text {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-transform: uppercase;
+}
+
+.features-layer {
+  font-family: 'Akira Expanded', var(--hero-font-family);
+  letter-spacing: 0.12em;
+  text-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+}
+
+.features-layer--korean {
+  font-family: 'Noto Sans KR', 'Poppins', var(--hero-font-family);
+  font-size: 0.75rem;
+  color: #ffffff;
+  opacity: 0.9;
+}
+
+.features-layer--main {
+  font-size: 1.1rem;
+  color: #fff19d;
+}
+
+.features-layer--accent {
+  font-size: 0.9rem;
+  color: #ff71c6;
+}
+
+.features-summary {
+  margin: 0 0 1.25rem;
+  text-align: center;
+  font-family: 'Poppins', var(--hero-font-family);
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+}
+
+.features-categories {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.features-category {
+  padding: 1rem 1.1rem;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.features-category-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #ff71c6;
+  margin-bottom: 0.4rem;
+}
+
+.features-category-title {
+  font-family: 'Space Grotesk', var(--hero-font-family);
+  font-size: 1rem;
+  color: #fff19d;
+  margin-bottom: 0.35rem;
+}
+
+.features-category-desc {
+  margin: 0;
+  font-family: 'Poppins', var(--hero-font-family);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.features-cta {
+  margin-top: 1.6rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(90deg, #ff71c6, #fff19d);
+  color: #140015;
+  font-family: 'Akira Expanded', var(--hero-font-family);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.35);
+  position: relative;
+  z-index: 3;
 }
 
 .proshow-section {
@@ -1661,10 +1794,8 @@
 
 .blast-section {
   width: 100%;
-  background-image: url('../assets/pink2.jpeg');
-  background-image: -webkit-image-set(url('../assets/optimized/pink2-w768.webp') 1x);
-  background-image: image-set(url('../assets/optimized/pink2-w768.webp') type('image/webp') 1x,
-      url('../assets/pink2.jpeg') type('image/jpeg') 1x);
+  background-color: #f58bb0;
+  background-image: url('../assets/pink.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -1678,21 +1809,36 @@
   overflow: hidden;
 }
 
+.blast-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.22) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.22) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.3;
+  z-index: 0;
+  pointer-events: none;
+}
+
 .blast-section::after {
   content: '';
   position: absolute;
   inset: 0;
   /* Black vignette mask: darker at edges, lighter in center to highlight photos */
-  background: radial-gradient(ellipse 80% 70% at 50% 50%,
-      transparent 0%,
-      rgba(0, 0, 0, 0.3) 40%,
-      rgba(0, 0, 0, 0.6) 70%,
-      rgba(0, 0, 0, 0.85) 100%);
-  z-index: 0;
+  background: radial-gradient(ellipse 90% 80% at 50% 35%,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(0, 0, 0, 0.12) 60%,
+      rgba(0, 0, 0, 0.2) 100%);
+  z-index: 1;
   pointer-events: none;
 }
 
 .blast-title-prefix {
+  font-family: 'Akira Expanded', var(--hero-font-family);
+  font-size: clamp(1.9rem, 8.2vw, 2.6rem);
+  letter-spacing: 0.12em;
   color: #FFFFFF;
   text-shadow:
     0 2px 8px rgba(0, 0, 0, 0.5),
@@ -1701,10 +1847,14 @@
 }
 
 .blast-title-highlight {
-  color: #9b1799;
+  font-family: 'Victory Striker', 'Akira Expanded', var(--hero-font-family);
+  font-size: clamp(2.2rem, 10vw, 3.1rem);
+  letter-spacing: 0.08em;
+  color: #000000;
   text-shadow:
-    0 0 15px rgba(155, 23, 153, 0.6),
-    0 0 30px rgba(155, 23, 153, 0.4);
+    0 2px 8px rgba(255, 255, 255, 0.4),
+    0 4px 16px rgba(255, 255, 255, 0.3),
+    0 6px 24px rgba(255, 255, 255, 0.2);
 }
 
 .blast-section .features-title {
@@ -1744,6 +1894,33 @@
   justify-content: center;
   z-index: 11;
   /* above overlay */
+}
+
+.blast-divider {
+  width: min(82%, 360px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  z-index: 12;
+}
+
+.blast-divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0));
+  opacity: 0.7;
+}
+
+.blast-divider-text {
+  font-family: 'Noto Sans KR', 'Poppins', var(--hero-font-family);
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  white-space: nowrap;
 }
 
 .blast-collage {
@@ -3281,7 +3458,7 @@
   top: 0;
   z-index: 1;
   min-height: 100vh;
-  background: #000000;
+  background: url('../assets/black.jpg') center / cover no-repeat;
 }
 
 /* About content container */
@@ -3388,7 +3565,10 @@
 .lineup-section {
   width: 100%;
   min-height: auto;
-  background: #000000;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(155, 23, 153, 0.25), transparent 55%),
+    radial-gradient(circle at 80% 35%, rgba(255, 241, 157, 0.15), transparent 45%),
+    #000000;
   position: sticky;
   top: 0;
   z-index: 3;
@@ -3398,21 +3578,17 @@
 /* Features Section - stacks over about section */
 .features-section {
   width: 100%;
-  min-height: auto;
-  background: #000000;
-  position: sticky;
-  top: 0;
+  position: relative;
+  top: auto;
   z-index: 4;
   overflow: hidden;
 }
 
-/* Blast Section - stacks over about section */
+/* Blast Section - normal scroll, doesn't stack */
 .blast-section {
   width: 100%;
   min-height: auto;
-  background: #000000;
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 5;
   overflow: hidden;
 }
@@ -3421,7 +3597,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: transparent;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.85));
   pointer-events: none;
   z-index: 1;
 }
@@ -3429,7 +3605,7 @@
 .lineup-container {
   position: relative;
   min-height: auto;
-  padding: 6rem 1.5rem 4rem 1.5rem;
+  padding: 5.25rem 1.5rem 4.75rem 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -3437,44 +3613,74 @@
   z-index: 2;
 }
 
+.lineup-kicker {
+  font-family: 'Space Grotesk', var(--hero-font-family);
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 0.55rem;
+}
+
 .lineup-title {
-  font-family: 'Gondens', sans-serif;
-  font-size: 12vw;
-  font-weight: normal;
-  font-stretch: condensed;
-  margin-bottom: 2rem;
-  line-height: 1.35;
+  font-family: 'Akira Expanded', var(--hero-font-family);
+  font-size: clamp(2.4rem, 12vw, 3.2rem);
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+  line-height: 1.1;
   text-align: center;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: transparent;
-  background: linear-gradient(180deg, #ffffff 45%, #999999 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
+  color: #ffffff;
   position: relative;
   z-index: 3;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  padding-bottom: 0.3em;
-  padding-top: 0.15em;
-  /* Prevent clipping */
+  letter-spacing: 0.12em;
+  text-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.6),
+    0 0 24px rgba(155, 23, 153, 0.35);
+}
+
+.lineup-divider {
+  width: min(86%, 340px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.lineup-divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0));
+  opacity: 0.75;
+}
+
+.lineup-divider-text {
+  font-family: 'Noto Sans KR', 'Poppins', var(--hero-font-family);
+  font-size: 0.68rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
 }
 
 .lineup-subtitle {
-  margin: 0.25rem 0 1.5rem;
-  font-family: 'Akira Expanded', var(--hero-font-family);
-  font-size: 0.7rem;
-  line-height: 1.4;
-  color: rgba(255, 255, 255, 0.9);
+  margin: 0.25rem 0 1.1rem;
+  font-family: 'Space Grotesk', var(--hero-font-family);
+  font-size: 0.9rem;
+  line-height: 1.35;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.92);
   text-align: center;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.2em;
+  text-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
   position: relative;
   z-index: 2;
 }
-
 @media (min-width: 640px) {
   .lineup-subtitle {
     font-size: 1rem;
@@ -3587,9 +3793,9 @@
 /* LINEUP flip card (tap to reveal) */
 .lineup-carousel-wrap {
   width: 100%;
-  max-width: 560px;
+  max-width: 540px;
   position: relative;
-  margin-top: 0.75rem;
+  margin-top: 0.25rem;
 }
 
 .lineup-carousel-wrap::before,
@@ -3615,13 +3821,12 @@
 
 .lineup-carousel {
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  /* Visual alignment: card is 75% wide.
-     To center it: (100% - 75%) / 2 = 12.5% padding per side. */
-  padding: 0.25rem 12.5% 2.5rem;
+  /* Single hero card per view: 92% width -> 4% padding each side */
+  padding: 0.35rem 6% 3.1rem;
   /* Increased bottom padding for reflection space */
   scrollbar-width: none;
   /* Performance optimizations for smooth scrolling */
@@ -3640,11 +3845,11 @@
 }
 
 .lineup-card-slot {
-  flex: 0 0 75%;
+  flex: 0 0 92%;
   scroll-snap-align: center;
   display: grid;
   place-items: center;
-  transform: scale(0.85);
+  transform: scale(0.95);
   /* Default inactive scale */
   opacity: 0.6;
   filter: grayscale(0.6) brightness(0.7);
@@ -3663,7 +3868,7 @@
 }
 
 .lineup-card-slot.is-active {
-  transform: scale(1) translateZ(20px);
+  transform: scale(1.02) translateZ(24px);
   opacity: 1;
   filter: none;
   z-index: 5;
@@ -4462,4 +4667,157 @@
   100% {
     clip: rect(36px, 9999px, 41px, 0);
   }
+}
+
+/* =========================================
+   PERFORMANCE OPTIMIZATIONS
+   ========================================= */
+
+/* Content visibility optimization for off-screen sections */
+.hero-black-section,
+.lineup-section,
+.features-section,
+.blast-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 100vh;
+}
+
+/* Layout containment for better performance */
+.lineup-carousel {
+  contain: layout style;
+}
+
+.blast-collage {
+  contain: layout;
+}
+
+/* Optimize will-change for animated elements */
+.blast-photo {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.hero-divider-track {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Pause animations when not visible (intersection observer controlled) */
+.lineup-section:not(.is-in-viewport) .hero-divider-track {
+  animation-play-state: paused;
+}
+
+/* Reduced motion preferences - comprehensive */
+@media (prefers-reduced-motion: reduce) {
+  /* Disable all animations */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Remove blur transitions (expensive) */
+  .hero-stage:not(.is-loaded) .hero-yatra-text,
+  .hero-stage:not(.is-loaded) .hero-year-text {
+    filter: none;
+  }
+
+  /* Disable lamp glow animations */
+  .hero-lamp-glow {
+    display: none;
+  }
+
+  /* Disable lightning effects */
+  .hero-stage::before,
+  .hero-stage::after {
+    display: none;
+  }
+
+  /* Simplify scrolling dividers */
+  .hero-divider-track {
+    animation: none;
+  }
+
+  /* Show images immediately */
+  .blast-photo {
+    opacity: 1 !important;
+    transform: translate(-50%, -50%) !important;
+  }
+}
+
+/* Low-end device optimizations (detected via JS class on body) */
+body.low-end-device .hero-lamp-glow {
+  display: none;
+}
+
+body.low-end-device .hero-stage::before,
+body.low-end-device .hero-stage::after {
+  display: none;
+}
+
+body.low-end-device .hero-bleed-bg,
+body.low-end-device .hero-bg-image {
+  filter: none;
+}
+
+body.low-end-device .features-section::before {
+  display: none;
+}
+
+body.low-end-device .blast-section::before {
+  display: none;
+}
+
+/* GPU acceleration hints for smooth scrolling sections */
+.hero,
+.hero-black-section,
+.lineup-section,
+.features-section,
+.blast-section {
+  transform: translateZ(0);
+}
+
+/* Optimize filter-heavy elements */
+.hero-bleed-bg,
+.hero-bg-image {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Reduce filter complexity on touch devices during scroll */
+@media (hover: none) and (pointer: coarse) {
+  /* Simplify shadows during scroll */
+  .blast-photo {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Reduce gradient complexity */
+  .features-section::before {
+    opacity: 0.2;
+  }
+
+  .blast-section::before {
+    opacity: 0.2;
+  }
+}
+
+/* Optimize image rendering */
+.blast-photo,
+.lineup-flip-card-img,
+.features-image {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Prevent layout thrashing */
+.lineup-carousel-wrap {
+  contain: layout style;
+}
+
+.lineup-card-slot {
+  contain: layout style paint;
 }

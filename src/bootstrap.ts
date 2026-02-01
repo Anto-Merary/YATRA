@@ -1,6 +1,7 @@
 // Single entrypoint.
 //
-// The site homepage is served as the static `public/homepage.html` for ALL devices (mobile + desktop).
+// The site homepage is served as the static `homepage.html` for desktop/tablet,
+// and the phone-sized experience is served from `mobile.html`.
 // We keep the React SPA for internal routes like `/events`, `/privacy-policy`, etc.
 async function boot() {
   try {

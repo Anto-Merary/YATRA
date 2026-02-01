@@ -9,15 +9,15 @@ import torriGate from '../assets/optimized/torrigate-w1280.webp'
 import yearText from '../assets/optimized/2026txt-w1536.webp'
 import videoSrc from '../assets/video.mp4'
 import eventImage from '../assets/optimized/event-w1024.webp'
-import performanceImage from '../assets/optimized/performance-w1280.webp'
-import LineupReveal from './LineupReveal'
-// Use the same images as desktop version
-const gvBackCard = '/gvbackcard (1).webp'
-const gvFrontCard = '/gvfrontcard.webp'
-const aooraFrontCard = '/aoorafrontcard.webp'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useNetworkStatus } from '../hooks/useNetworkStatus'
+import { useDeviceCapability, getAnimationConfig } from '../hooks/useDeviceCapability'
+
+// Lineup card assets live in public/ for mobile + desktop reuse.
+const gvBackCard = '/gvbackcard (1).webp'
+const gvFrontCard = '/gvfrontcard.webp'
+const aooraFrontCard = '/aoorafrontcard.webp'
 
 function GlitchText({ koreanText, englishText, className, delay = 0, shouldStart = false, variant = 'glitch' }) {
   const [isGlitching, setIsGlitching] = useState(false)
@@ -85,7 +85,63 @@ function GlitchText({ koreanText, englishText, className, delay = 0, shouldStart
   )
 }
 
+function DecryptText({ koreanText, englishText, className, delay = 0, shouldStart = false, frameInterval = 32 }) {
+  const [displayText, setDisplayText] = useState(koreanText || englishText || '')
+
+  useEffect(() => {
+    let timeoutId = 0
+    let intervalId = 0
+
+    if (!shouldStart) {
+      setDisplayText(koreanText || '')
+      return () => {
+        if (timeoutId) window.clearTimeout(timeoutId)
+        if (intervalId) window.clearInterval(intervalId)
+      }
+    }
+
+    timeoutId = window.setTimeout(() => {
+      const finalText = englishText || ''
+      const glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+      let frame = 0
+      // Adaptive frame skip: faster interval = more frames to skip for same visual speed
+      const frameSkip = frameInterval > 40 ? 1 : 2
+
+      intervalId = window.setInterval(() => {
+        frame += 1
+        const revealCount = Math.min(finalText.length, Math.floor(frame / frameSkip))
+        const nextText = finalText
+          .split('')
+          .map((char, idx) => {
+            if (char === ' ') return ' '
+            if (idx < revealCount) return char
+            return glyphs[Math.floor(Math.random() * glyphs.length)]
+          })
+          .join('')
+
+        setDisplayText(nextText)
+
+        if (revealCount >= finalText.length) {
+          window.clearInterval(intervalId)
+          setDisplayText(finalText)
+        }
+      }, frameInterval)
+    }, delay)
+
+    return () => {
+      if (timeoutId) window.clearTimeout(timeoutId)
+      if (intervalId) window.clearInterval(intervalId)
+    }
+  }, [delay, englishText, koreanText, shouldStart, frameInterval])
+
+  return <span className={className}>{displayText}</span>
+}
+
 function Hero() {
+  // Device capability detection for adaptive animations
+  const deviceCapability = useDeviceCapability()
+  const animConfig = useMemo(() => getAnimationConfig(deviceCapability.tier), [deviceCapability.tier])
+
   // Progressive loading: render immediately, then enhance as assets arrive.
   const [loaded, setLoaded] = useState(() => ({
     bleedBg: false,
@@ -103,6 +159,7 @@ function Hero() {
   const aboutContentRef = useRef(null)
   const featuresSectionRef = useRef(null)
   const blastSectionRef = useRef(null)
+  const featuresImageRef = useRef(null)
   const blastCollageRef = useRef(null)
   const blastPhotoElsRef = useRef([])
   const hasAboutEnteredRef = useRef(false)
@@ -122,6 +179,18 @@ function Hero() {
 
   // Network status detection
   const { shouldLoadVideo: networkShouldLoad, isSlowConnection } = useNetworkStatus()
+
+  // Set body class for CSS-based optimizations on low-end devices
+  useEffect(() => {
+    if (deviceCapability.isLowEnd) {
+      document.body.classList.add('low-end-device')
+    } else {
+      document.body.classList.remove('low-end-device')
+    }
+    return () => {
+      document.body.classList.remove('low-end-device')
+    }
+  }, [deviceCapability.isLowEnd])
 
   // Lineup teaser modal (catchy reveal-soon popup)
   const [lineupModalState, setLineupModalState] = useState('closed') // 'closed' | 'open' | 'closing'
@@ -220,6 +289,7 @@ function Hero() {
   }, [ticketCountdownNow, registrationTargetDate])
 
   // Track which lineup card is centered in the carousel (character-select style).
+  // Optimized: reduced frequency of updates and better throttling
   useEffect(() => {
     if (!isExperienceReady) return
 
@@ -230,6 +300,9 @@ function Hero() {
     let ticking = false
     let isScrolling = false
     let scrollTimeout = null
+    let lastUpdateTime = 0
+    // Throttle updates more aggressively on low-end devices
+    const updateThrottle = deviceCapability.isLowEnd ? 100 : deviceCapability.isMidRange ? 50 : 16
 
     // Cache children to avoid repeated DOM queries
     let cachedChildren = null
@@ -242,6 +315,12 @@ function Hero() {
 
     const update = () => {
       ticking = false
+      
+      // Skip if we updated too recently
+      const now = performance.now()
+      if (now - lastUpdateTime < updateThrottle) return
+      lastUpdateTime = now
+
       const children = getChildren()
       if (children.length === 0) return
 
@@ -275,6 +354,8 @@ function Hero() {
       // Set timeout to mark scrolling as ended
       scrollTimeout = setTimeout(() => {
         isScrolling = false
+        // Final update when scroll ends
+        update()
       }, 150)
 
       if (!ticking) {
@@ -299,12 +380,14 @@ function Hero() {
       window.addEventListener('resize', onResize, { passive: true })
       // Initial update
       update()
-      // Only run periodic check when not actively scrolling to avoid jank
+      // Only run periodic check when not actively scrolling
+      // Longer interval on low-end devices
+      const checkInterval = deviceCapability.isLowEnd ? 600 : 400
       intervalId = window.setInterval(() => {
         if (!isScrolling) {
           update()
         }
-      }, 300) // Increased interval to reduce overhead
+      }, checkInterval)
     }, 100)
 
     return () => {
@@ -315,7 +398,7 @@ function Hero() {
       window.removeEventListener('resize', onResize)
       if (raf) window.cancelAnimationFrame(raf)
     }
-  }, [isExperienceReady])
+  }, [isExperienceReady, deviceCapability.isLowEnd, deviceCapability.isMidRange])
 
   // Swipe gesture detection for carousel navigation
   useEffect(() => {
@@ -435,24 +518,30 @@ function Hero() {
       }
     })
 
-    // Never reuse a photo. If fewer than 6 exist, we render fewer than 6.
+    // Always show all 6 images - animation complexity is handled by scrub/stagger settings
     return Array.from(uniqueImages.values()).slice(0, 6)
   }, [])
 
   // Lantern (lamp) glow hotspots placed over the background art.
   // These are NOT visible UI elements—just an overlay to make each lamp "bloom" randomly.
+  // Optimized: reduce lamp count on low-end devices
   const lamps = useMemo(
-    () => [
-      { id: 'lamp-0', x: 4.5, y: 18.2 },
-      { id: 'lamp-1', x: 16.0, y: 20.1 },
-      { id: 'lamp-2', x: 30.2, y: 19.4 },
-      { id: 'lamp-3', x: 44.2, y: 20.0 },
-      { id: 'lamp-4', x: 58.0, y: 20.1 },
-      { id: 'lamp-5', x: 71.6, y: 20.4 },
-      { id: 'lamp-6', x: 85.0, y: 20.0 },
-      { id: 'lamp-7', x: 96.0, y: 18.6 },
-    ],
-    []
+    () => {
+      const allLamps = [
+        { id: 'lamp-0', x: 4.5, y: 18.2 },
+        { id: 'lamp-1', x: 16.0, y: 20.1 },
+        { id: 'lamp-2', x: 30.2, y: 19.4 },
+        { id: 'lamp-3', x: 44.2, y: 20.0 },
+        { id: 'lamp-4', x: 58.0, y: 20.1 },
+        { id: 'lamp-5', x: 71.6, y: 20.4 },
+        { id: 'lamp-6', x: 85.0, y: 20.0 },
+        { id: 'lamp-7', x: 96.0, y: 18.6 },
+      ]
+      // Return fewer lamps on low-end devices (or none if lamp glow is disabled)
+      if (!animConfig.enableLampGlow) return []
+      return allLamps.slice(0, animConfig.lampCount)
+    },
+    [animConfig.enableLampGlow, animConfig.lampCount]
   )
 
   // Incrementing "sequence" values let us re-trigger a one-shot CSS animation per lamp.
@@ -642,6 +731,46 @@ function Hero() {
     }
   }, [isExperienceReady])
 
+  // Features image: parallax slide-in on scroll
+  // Optimized: uses adaptive scrub and can be disabled on low-end devices
+  useEffect(() => {
+    if (!isExperienceReady) return
+    // Skip parallax on low-end devices
+    if (!animConfig.parallax) return
+    
+    const sectionEl = featuresSectionRef.current
+    const imageEl = featuresImageRef.current
+    if (!sectionEl || !imageEl) return
+
+    gsap.registerPlugin(ScrollTrigger)
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        imageEl,
+        { x: 70, y: 40, rotate: -1, scale: 0.96, opacity: 0 },
+        {
+          x: 0,
+          y: 0,
+          rotate: 0,
+          scale: 1,
+          opacity: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sectionEl,
+            start: 'top 80%',
+            end: 'bottom 35%',
+            scrub: animConfig.scrub,
+            fastScrollEnd: true,
+          },
+        }
+      )
+    }, sectionEl)
+
+    return () => {
+      ctx.revert()
+    }
+  }, [isExperienceReady, animConfig.parallax, animConfig.scrub])
+
   // BLAST INTO PAST section: trigger blur crossfade when section enters view
   useEffect(() => {
     if (!isExperienceReady) return
@@ -774,8 +903,9 @@ function Hero() {
         // Small manual nudges for specific photos (requested):
         // - asal: move up a little
         // - pal: move up 8% (from 5% → 8%)
-        const isAsal = /(^|\/|\\)asal\./i.test(src)
-        const isPal = /(^|\/|\\)pal\./i.test(src)
+        // NOTE: Use [-\.] to match both dev (pal.webp) and prod (pal-hash.webp) URLs
+        const isAsal = /(^|\/|\\)asal[-\.]/i.test(src)
+        const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
         // Stronger upward nudges so they sit higher along their rotated angle.
         const nudgeAsal = -Math.min(32, spreadY * 0.11)
         const nudgePal = -Math.min(70, spreadY * 0.33) // pal moved up (was 0.25, now 0.33)
@@ -823,8 +953,9 @@ function Hero() {
       els.forEach((el, i) => {
         const start = startPositions[i] || { x: 0, y: 0 }
         const src = String(el.currentSrc || el.src || '')
-        const isPal = /(^|\/|\\)pal\./i.test(src)
-        const isSyn = /(^|\/|\\)syn\./i.test(src)
+        // NOTE: Use [-\.] to match both dev (pal.webp) and prod (pal-hash.webp) URLs
+        const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
+        const isSyn = /(^|\/|\\)syn[-\.]/i.test(src)
         // Make `pal` and `syn` larger without completely blowing up the layout.
         // pal: +5% (3.15 → 3.3075)
         // syn: +5% (1.95 → 2.0475)
@@ -850,8 +981,9 @@ function Hero() {
         els.forEach((el, i) => {
           const base = finalPositions[i] || { x: 0, y: 0 }
           const src = String(el.currentSrc || el.src || '')
-          const isPal = /(^|\/|\\)pal\./i.test(src)
-          const isSyn = /(^|\/|\\)syn\./i.test(src)
+          // NOTE: Use [-\.] to match both dev (pal.webp) and prod (pal-hash.webp) URLs
+          const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
+          const isSyn = /(^|\/|\\)syn[-\.]/i.test(src)
           // pal: +5% (1.55 → 1.6275)
           // syn: +5% (1.5 → 1.575)
           gsap.set(el, {
@@ -872,12 +1004,17 @@ function Hero() {
       })
       tl.pause(0)
 
+      // Adaptive animation duration and stagger based on device capability
+      const animDuration = animConfig.duration
+      const animStagger = animConfig.stagger
+
       // Slower + slightly overlapping entrances (timeline length also controls scrub pacing)
       els.forEach((el, i) => {
         const base = finalPositions[i] || { x: 0, y: 0 }
         const src = String(el.currentSrc || el.src || '')
-        const isPal = /(^|\/|\\)pal\./i.test(src)
-        const isSyn = /(^|\/|\\)syn\./i.test(src)
+        // NOTE: Use [-\.] to match both dev (pal.webp) and prod (pal-hash.webp) URLs
+        const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
+        const isSyn = /(^|\/|\\)syn[-\.]/i.test(src)
         // pal: +5% (1.85 → 1.9425)
         // syn: +5% (1.5 → 1.575)
         const finalScale = isPal ? 1.9425 : isSyn ? 1.575 : 1
@@ -890,13 +1027,14 @@ function Hero() {
             scale: finalScale,
             opacity: 1,
             rotate: 0,
-            duration: 2.25,
+            duration: animDuration,
           },
-          i * 0.55
+          i * animStagger
         )
       })
 
       // Tie reveal to scroll so photos don't all pop in early.
+      // Adaptive scrub: higher value = smoother but less responsive (better for low-end)
       st = ScrollTrigger.create({
         id: 'blast-collage',
         trigger: sectionEl,
@@ -904,9 +1042,11 @@ function Hero() {
         // reveal stays progressive while they explore the whole block.
         start: 'top 62%',
         end: 'bottom 60%', // Finish animation earlier so it holds before next section overlaps
-        scrub: 1.35,
+        scrub: animConfig.scrub,
         animation: tl,
         invalidateOnRefresh: true,
+        // Performance: don't update on every pixel
+        fastScrollEnd: true,
       })
     }
 
@@ -922,12 +1062,13 @@ function Hero() {
       if (st) st.kill()
       if (tl) tl.kill()
     }
-  }, [isExperienceReady, blastImages.length])
+  }, [isExperienceReady, blastImages.length, animConfig.duration, animConfig.stagger, animConfig.scrub])
 
 
   // Scroll-based settle interaction - continuous and proportional to scroll distance,
   // but visually smoothed so it feels cinematic (no jitter/snapping).
   // Progress is 0 at top of hero, 1 when hero has fully scrolled out of view.
+  // Optimized: uses throttling and adaptive smoothing based on device capability
   useEffect(() => {
     if (!hasLoaded) return
     const el = stageRef.current
@@ -939,32 +1080,43 @@ function Hero() {
     let target = 0
     let current = 0
     let isAnimating = false
+    let lastScrollTime = 0
+    // Throttle scroll handler on low-end devices
+    const scrollThrottle = deviceCapability.isLowEnd ? 32 : 16
 
     const update = (ts = performance.now()) => {
       raf = 0
       const dt = Math.min(50, ts - (lastTs || ts))
       lastTs = ts
 
-      // Improved smoothing: faster response while maintaining smoothness
-      // Using a higher base value for more responsive animation
-      const alpha = 1 - Math.pow(0.85, dt / 16.67) // ~0.15–0.25 typical, more responsive
+      // Adaptive smoothing: lower alpha = smoother but slower response
+      // Low-end devices get smoother (less frequent updates)
+      const baseSmoothing = deviceCapability.isLowEnd ? 0.92 : deviceCapability.isMidRange ? 0.88 : 0.85
+      const alpha = 1 - Math.pow(baseSmoothing, dt / 16.67)
       current = current + (target - current) * alpha
 
-      el.style.setProperty('--settle', current.toFixed(6))
+      el.style.setProperty('--settle', current.toFixed(4))
 
       // Keep animating until we're very close to target
       const diff = Math.abs(target - current)
-      if (diff > 0.0001) {
+      // Larger threshold on low-end devices to stop animation sooner
+      const threshold = deviceCapability.isLowEnd ? 0.001 : 0.0001
+      if (diff > threshold) {
         raf = window.requestAnimationFrame(update)
         isAnimating = true
       } else {
         current = target
-        el.style.setProperty('--settle', current.toFixed(6))
+        el.style.setProperty('--settle', current.toFixed(4))
         isAnimating = false
       }
     }
 
     const onScroll = () => {
+      // Throttle scroll events on low-end devices
+      const now = performance.now()
+      if (now - lastScrollTime < scrollThrottle) return
+      lastScrollTime = now
+
       const rect = heroEl.getBoundingClientRect()
       // When rect.top = 0 => progress 0
       // When rect.top = -rect.height => progress 1 (hero fully scrolled past)
@@ -984,29 +1136,36 @@ function Hero() {
       window.removeEventListener('scroll', onScroll)
       if (raf) window.cancelAnimationFrame(raf)
     }
-  }, [hasLoaded])
+  }, [hasLoaded, deviceCapability.isLowEnd, deviceCapability.isMidRange])
 
   // Random lamp blooms (random order / random timing).
+  // Optimized: runs less frequently on low-end devices, disabled entirely if no lamps
   useEffect(() => {
     if (!hasLoaded) return
+    // Skip if lamp glow is disabled (low-end devices)
+    if (!animConfig.enableLampGlow || lamps.length === 0) return
 
     let cancelled = false
     let timeoutId = 0
 
     const rand = (min, max) => min + Math.random() * (max - min)
 
+    // Adaptive timing: slower on mid-range, much slower on low-end (if enabled)
+    const minInterval = deviceCapability.isMidRange ? 500 : 300
+    const maxInterval = deviceCapability.isMidRange ? 1800 : 1200
+
     const schedule = () => {
       if (cancelled) return
 
-      // Next bloom in 300ms–1200ms
-      const nextIn = Math.round(rand(300, 1200))
+      // Next bloom with adaptive timing
+      const nextIn = Math.round(rand(minInterval, maxInterval))
       timeoutId = window.setTimeout(() => {
         if (cancelled) return
 
-        // Bloom 1–2 random lamps (sometimes 2 for simultaneous glow)
-        const bloomCount = Math.random() < 0.4 ? 2 : 1
+        // Bloom only 1 lamp at a time on mid-range devices
+        const bloomCount = deviceCapability.isMidRange ? 1 : (Math.random() < 0.4 ? 2 : 1)
         const picked = new Set()
-        while (picked.size < bloomCount) {
+        while (picked.size < bloomCount && picked.size < lamps.length) {
           picked.add(lamps[Math.floor(Math.random() * lamps.length)].id)
         }
 
@@ -1028,7 +1187,7 @@ function Hero() {
       cancelled = true
       if (timeoutId) window.clearTimeout(timeoutId)
     }
-  }, [hasLoaded, lamps])
+  }, [hasLoaded, lamps, animConfig.enableLampGlow, deviceCapability.isMidRange])
 
   // Random shimmer effect for BUY TICKETS button
   useEffect(() => {
@@ -1427,9 +1586,219 @@ function Hero() {
             </div>
           </div>
 
-          {/* LINEUP Section - Replaced with New 3D Component */}
-          <section className="lineup-section" aria-label="Lineup section" style={{ padding: 0 }}>
-            <LineupReveal />
+          {/* LINEUP Section */}
+          <section className="lineup-section" aria-label="Lineup section">
+            <div className="lineup-container">
+              <div className="lineup-kicker">Headliners</div>
+              <h2 className="lineup-title">LINEUP</h2>
+              <div className="lineup-divider" aria-hidden="true">
+                <span className="lineup-divider-line" />
+                <span className="lineup-divider-text">라인업</span>
+                <span className="lineup-divider-line" />
+              </div>
+              <p className="lineup-subtitle">Experience. Big names live.</p>
+
+              <div className="lineup-carousel-wrap">
+                <button
+                  type="button"
+                  className="lineup-arrow-btn lineup-arrow-btn--left"
+                  aria-label="Previous lineup card"
+                  onClick={() => scrollLineup(-1)}
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      d="M15 5l-7 7 7 7"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+
+                <div className="lineup-carousel" ref={lineupCarouselRef} aria-label="Lineup carousel">
+                  {lineupCards.map((card, idx) => {
+                    const isActive = idx === activeLineupIndex
+                    const isRevealed = card.status === 'revealed'
+                    const isCountdown = card.status === 'countdown'
+                    const isLocked = card.status === 'locked'
+                    const isGv = card.id === 'gv'
+                    const isAoora = card.id === 'aoora'
+                    const isFlipped = isGv ? isGvCardFlipped : isAoora ? isAooraCardFlipped : false
+                    const toggleFlip = isGv ? toggleGvCard : isAoora ? toggleAooraCard : undefined
+                    const frontImage = isGv ? gvFrontCard : isAoora ? aooraFrontCard : null
+                    const revealLabel = isGv ? 'GV Prakash' : isAoora ? 'Aoora' : 'Lineup artist'
+                    const countdownParts = countdownText48hr.split(':')
+
+                    return (
+                      <div
+                        key={card.id}
+                        className={`lineup-card-slot ${isActive ? 'is-active' : ''} ${isLocked ? 'lineup-card-slot--locked' : ''}`}
+                      >
+                        {isRevealed && frontImage ? (
+                          <button
+                            type="button"
+                            className={`lineup-flip-card ${isFlipped ? 'is-flipped' : ''}`}
+                            onClick={toggleFlip}
+                            aria-pressed={isFlipped}
+                            aria-label={`${isFlipped ? 'Hide' : 'Reveal'} ${revealLabel}`}
+                          >
+                            <div className="lineup-flip-card-inner">
+                              <div className="lineup-flip-card-face lineup-flip-card-face--back">
+                                <img
+                                  src={gvBackCard}
+                                  alt="Lineup card back"
+                                  className="lineup-flip-card-img"
+                                />
+                                {!isFlipped && (
+                                  <span className="lineup-tap-to-reveal">Tap to reveal</span>
+                                )}
+                              </div>
+                              <div className="lineup-flip-card-face lineup-flip-card-face--front">
+                                <img
+                                  src={frontImage}
+                                  alt={revealLabel}
+                                  className="lineup-flip-card-img"
+                                />
+                              </div>
+                            </div>
+                          </button>
+                        ) : isCountdown ? (
+                          <button
+                            type="button"
+                            className="lineup-flip-card"
+                            onClick={openLineupModal}
+                            aria-label="Reveal timer"
+                          >
+                            <div className="lineup-flip-card-inner">
+                              <div className="lineup-flip-card-face lineup-flip-card-face--back">
+                                <img
+                                  src={gvBackCard}
+                                  alt="Lineup card back"
+                                  className="lineup-flip-card-img"
+                                />
+                                <div className="lineup-countdown-overlay">
+                                  <div className="countdown-timer">
+                                    {countdownParts.map((part, index) => (
+                                      <span className="countdown-digit-group" key={`${card.id}-${index}`}>
+                                        <span className="countdown-digit-box">{part}</span>
+                                        {index < countdownParts.length - 1 && (
+                                          <span className="countdown-colon">:</span>
+                                        )}
+                                      </span>
+                                    ))}
+                                  </div>
+                                  <div className="countdown-label">Reveal in</div>
+                                </div>
+                              </div>
+                              <div className="lineup-flip-card-face lineup-flip-card-face--front">
+                                <img
+                                  src={gvBackCard}
+                                  alt="Lineup card back"
+                                  className="lineup-flip-card-img"
+                                />
+                              </div>
+                            </div>
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className="lineup-flip-card"
+                            onClick={openLineupModal}
+                            aria-label="Locked lineup artist"
+                          >
+                            <div className="lineup-flip-card-inner">
+                              <div className="lineup-flip-card-face lineup-flip-card-face--back">
+                                <img
+                                  src={gvBackCard}
+                                  alt="Lineup card back"
+                                  className="lineup-flip-card-img"
+                                />
+                                <div className="lineup-countdown-overlay">
+                                  <svg className="lineup-locked-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path
+                                      d="M7 11V7a5 5 0 0110 0v4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    />
+                                    <rect
+                                      x="5"
+                                      y="11"
+                                      width="14"
+                                      height="10"
+                                      rx="2"
+                                      ry="2"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                    />
+                                  </svg>
+                                  <div className="lineup-locked-text">Locked</div>
+                                  <div className="countdown-label">Stay tuned</div>
+                                </div>
+                              </div>
+                              <div className="lineup-flip-card-face lineup-flip-card-face--front">
+                                <img
+                                  src={gvBackCard}
+                                  alt="Lineup card back"
+                                  className="lineup-flip-card-img"
+                                />
+                              </div>
+                            </div>
+                          </button>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+
+                <button
+                  type="button"
+                  className="lineup-arrow-btn lineup-arrow-btn--right"
+                  aria-label="Next lineup card"
+                  onClick={() => scrollLineup(1)}
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      d="M9 5l7 7-7 7"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="lineup-scroll-hint" aria-hidden="true">
+                <svg className="lineup-scroll-hint-icon" viewBox="0 0 24 24">
+                  <path
+                    d="M15 6l-6 6 6 6"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span className="lineup-scroll-hint-text">Swipe to explore</span>
+                <svg className="lineup-scroll-hint-icon" viewBox="0 0 24 24">
+                  <path
+                    d="M9 6l6 6-6 6"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            </div>
           </section>
 
           {/* FEATURES OF YATRA section (content coming next) */}
@@ -1439,69 +1808,77 @@ function Hero() {
             ref={featuresSectionRef}
           >
             <div className="features-container">
-              <h2 className="features-title">
-                <GlitchText
-                  koreanText="야트라의 특징"
-                  englishText="FEATURES OF"
-                  className="features-title-features"
-                  delay={0}
-                  shouldStart={isFeaturesSectionVisible}
-                  variant="blur"
-                />
-                <br />
-                <GlitchText
-                  koreanText=""
-                  englishText="YATRA"
-                  className="features-title-rest"
-                  delay={500}
-                  shouldStart={isFeaturesSectionVisible}
-                  variant="blur"
-                />
-              </h2>
-              <div
-                className="features-event-media features-event-media--right"
-                aria-label="Electrifying Performances"
-              >
-                <div className="features-event-badge">
-                  ELECTRIFYING PERFORMANCES
+              <div className="section-divider" aria-hidden="true">
+                <span className="section-divider-line" />
+                <span className="section-divider-text">야트라의 특징</span>
+                <span className="section-divider-line" />
+              </div>
+
+              <div className="features-heading">
+                <h2 className="features-title">
+                  <DecryptText
+                    koreanText="상상해봐"
+                    englishText="IMAGINE"
+                    className="features-title-main"
+                    delay={0}
+                    shouldStart={isFeaturesSectionVisible}
+                    frameInterval={animConfig.decryptInterval}
+                  />
+                  <DecryptText
+                    koreanText="오십+ 이벤트"
+                    englishText="50+ EVENTS"
+                    className="features-title-sub"
+                    delay={220}
+                    shouldStart={isFeaturesSectionVisible}
+                    frameInterval={animConfig.decryptInterval}
+                  />
+                </h2>
+                <p className="features-title-tag">CASH PRIZE • ALL-DAY HYPE</p>
+              </div>
+
+              <div className="features-parallax">
+                <div className="features-image-frame" ref={featuresImageRef}>
+                  <img src="/Gallery/yatraevents.webp" alt="Yatra Events" className="features-image" />
+                  <div className="features-image-glow" aria-hidden="true" />
+                  <div className="features-layered-text">
+                    <span className="features-layer features-layer--korean">오십+ 이벤트</span>
+                    <span className="features-layer features-layer--main">50+ EVENTS</span>
+                    <span className="features-layer features-layer--accent">CASH PRIZE</span>
+                  </div>
                 </div>
-                <div className="features-event-image-wrapper">
-                  <img src={performanceImage} alt="Electrifying Performance" className="features-event-image" />
-                  <div className="features-event-image-mask"></div>
-                  <p className="features-event-description">
-                    5 Big Names. 2 Days. Electrifying Pro Shows.
-                    <br />
-                    DJ Night. Unforgettable Experience.
+              </div>
+
+              <div className="features-summary">
+                50+ events across tech, culture, and performance. Two days of nonstop energy.
+              </div>
+
+              <div className="features-categories">
+                <div className="features-category">
+                  <div className="features-category-label">TECHNICAL</div>
+                  <div className="features-category-title">Gaming & Digital Arts</div>
+                  <p className="features-category-desc">
+                    Esports, photography, short film, poster design, quizzes, drone challenge.
+                  </p>
+                </div>
+                <div className="features-category">
+                  <div className="features-category-label">CULTURAL</div>
+                  <div className="features-category-title">Dance, Music & Arts</div>
+                  <p className="features-category-desc">
+                    Dance battles, singing, beatbox, traditional arts, comedy, and games.
+                  </p>
+                </div>
+                <div className="features-category">
+                  <div className="features-category-label">ON-STAGE</div>
+                  <div className="features-category-title">Performance & Theatre</div>
+                  <p className="features-category-desc">
+                    Mime, mono acting, mock parliament, K-cosplay, and face fiesta competitions.
                   </p>
                 </div>
               </div>
-              <div
-                className="features-event-media features-event-media--left"
-                onClick={goToEvents}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    goToEvents();
-                  }
-                }}
-                aria-label="Explore 50+ Events with Cash Prize"
-              >
-                <div className="features-event-badge">
-                  50+ Events with CASH PRIZE
-                </div>
-                <div className="features-event-image-wrapper">
-                  <img src={eventImage} alt="Yatra Event" className="features-event-image" />
-                  <div className="features-event-image-mask"></div>
-                  <p className="features-event-description">
-                    Across tech, arts, culture & performance<br />Throughout the day
-                  </p>
-                </div>
-                <span className="features-show-more-btn">
-                  EXPLORE EVENTS
-                </span>
-              </div>
+
+              <button className="features-cta" type="button" onClick={goToEvents}>
+                Explore Events
+              </button>
             </div>
           </section>
 
@@ -1512,22 +1889,27 @@ function Hero() {
             ref={blastSectionRef}
           >
             <div className="blast-inner">
+              <div className="section-divider" aria-hidden="true">
+                <span className="section-divider-line" />
+                <span className="section-divider-text">감사합니다</span>
+                <span className="section-divider-line" />
+              </div>
               <h2 className="features-title">
-                <GlitchText
-                  koreanText="과거 속으로 돌진하다"
+                <DecryptText
+                  koreanText="과거 속으로"
                   englishText="BLAST INTO THE"
                   className="blast-title-prefix"
                   delay={0}
                   shouldStart={isBlastSectionVisible}
-                  variant="blur"
+                  frameInterval={animConfig.decryptInterval}
                 />
-                <GlitchText
-                  koreanText=""
+                <DecryptText
+                  koreanText="돌진하다"
                   englishText="PAST"
                   className="blast-title-highlight"
-                  delay={500}
+                  delay={220}
                   shouldStart={isBlastSectionVisible}
-                  variant="blur"
+                  frameInterval={animConfig.decryptInterval}
                 />
               </h2>
 

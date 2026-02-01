@@ -29,7 +29,36 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
     <link rel="manifest" href="site.webmanifest?v=2">
 
-    <!-- Mobile redirect removed - using responsive desktop design for all devices -->
+    <!-- Phone-only redirect to the mobile React experience -->
+    <script>
+        (function () {
+            // Allow explicit opt-in to desktop via ?desktop=true
+            const urlParams = new URLSearchParams(window.location.search);
+            const forceDesktop = urlParams.get('desktop') === 'true';
+            if (forceDesktop) return;
+
+            // Only allow the mobile experience for specific phone-sized viewports.
+            const MOBILE_MIN_SHORT_SIDE = 360;
+            const MOBILE_MAX_SHORT_SIDE = 430;
+            const userAgent = (navigator.userAgent || navigator.vendor || window.opera || '').toLowerCase();
+            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            const shortSide = Math.min(window.innerWidth, window.innerHeight);
+            const isAllowedSize = shortSide >= MOBILE_MIN_SHORT_SIDE && shortSide <= MOBILE_MAX_SHORT_SIDE;
+            const isIPhoneOrIPod = /iphone|ipod/i.test(userAgent);
+            const isAndroidPhone = /android/i.test(userAgent) && /mobile/i.test(userAgent);
+            const isOtherPhone = /webos|blackberry|iemobile|opera mini/i.test(userAgent);
+            const isPhone = isTouchDevice && isAllowedSize && (isIPhoneOrIPod || isAndroidPhone || isOtherPhone);
+
+            if (isPhone) {
+                const currentSearch = window.location.search;
+                const currentHash = window.location.hash;
+                const baseUrl = '%BASE_URL%';
+                const normalizedBase = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
+                const joiner = currentSearch ? '&' : '?';
+                window.location.replace(normalizedBase + 'mobile' + currentSearch + joiner + 'from=auto' + currentHash);
+            }
+        })();
+    </script>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
