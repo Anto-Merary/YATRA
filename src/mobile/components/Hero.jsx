@@ -518,10 +518,9 @@ function Hero() {
       }
     })
 
-    // Adaptive: limit number of animated images on low/mid-end devices
-    const maxImages = animConfig.maxConcurrentAnimations || 6
-    return Array.from(uniqueImages.values()).slice(0, Math.min(6, maxImages))
-  }, [animConfig.maxConcurrentAnimations])
+    // Always show all 6 images - animation complexity is handled by scrub/stagger settings
+    return Array.from(uniqueImages.values()).slice(0, 6)
+  }, [])
 
   // Lantern (lamp) glow hotspots placed over the background art.
   // These are NOT visible UI elements—just an overlay to make each lamp "bloom" randomly.

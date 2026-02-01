@@ -31,20 +31,19 @@ function App() {
     gsap.registerPlugin(ScrollTrigger)
 
     // Adaptive Lenis settings based on device capability
+    // Note: Keep smoothTouch false to allow native pull-to-refresh on mobile
     const lenis = new Lenis({
       // Shorter duration on mid-range devices for more responsive feel
       duration: deviceCapability.isMidRange ? 0.9 : 1.15,
       easing: (t) => 1 - Math.pow(1 - t, 3),
       smoothWheel: true,
-      // Disable smooth touch on mid-range to reduce jank
-      smoothTouch: deviceCapability.isHighEnd,
-      // Lower touch multiplier for better control
-      touchMultiplier: deviceCapability.isHighEnd ? 1.2 : 0.9,
+      // Disable smooth touch to allow native gestures like pull-to-refresh
+      smoothTouch: false,
+      touchMultiplier: 1.2,
       wheelMultiplier: 1.0,
       normalizeWheel: true,
-      // Sync touch events for better performance
-      syncTouch: true,
-      syncTouchLerp: deviceCapability.isHighEnd ? 0.1 : 0.075,
+      // gestureOrientation ensures vertical scrolling is prioritized
+      gestureOrientation: 'vertical',
     })
 
     // Throttle ScrollTrigger updates on mid-range devices
