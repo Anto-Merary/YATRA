@@ -8,7 +8,7 @@
   "rewrites": [
     {
       "source": "/api/ccavenue-handle",
-      "destination": "https://mnboyuyajxghqbbkdqhi.supabase.co/functions/v1/ccavenue-handle"
+      "destination": "https://mnboyuyajxghqbbkdqhi.supabase.co/functions/v1/ccavenue_callback"
     },
     {
       "source": "/",
