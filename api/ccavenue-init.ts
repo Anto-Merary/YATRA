@@ -1,10 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 
 // Vercel Serverless Function Handler
-export default async function handler(req, res) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
     // CORS Headers
-    res.setHeader("Access-Control-Allow-Credentials", true);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS,PATCH,DELETE,POST,PUT");
     res.setHeader(
@@ -85,6 +86,12 @@ export default async function handler(req, res) {
             }
             const normalizedCollege = college || institutionNameByType[institutionType] || "";
             const ccavenueCollege = (normalizedCollege || "NA")
+                .replace(/[^a-zA-Z0-9\s]/g, " ")
+                .replace(/\s+/g, " ")
+                .trim();
+
+            // Sanitize name for CCAvenue billing (alphanumeric + spaces only)
+            const safeBillingName = (name || "NA")
                 .replace(/[^a-zA-Z0-9\s]/g, " ")
                 .replace(/\s+/g, " ")
                 .trim();
@@ -195,9 +202,9 @@ export default async function handler(req, res) {
             const crypto = await import("node:crypto");
             const m = crypto.createHash("md5");
             m.update(workingKey);
-            // Use 'binary' encoding to match CCAvenue SDK exactly
-            const key = Buffer.from(m.digest('hex'), 'hex');
-            const iv = Buffer.from([0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f]);
+            // Use raw buffer digest - EXACTLY like official CCAvenue SDK
+            const key = m.digest();  // Returns raw 16-byte Buffer, not hex string
+            const iv = Buffer.from('\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f', 'binary');
 
             const cipher = crypto.createCipheriv("aes-128-cbc", key, iv);
             let encRequest = cipher.update(merchantData, "utf8", "hex");
@@ -229,6 +236,7 @@ export default async function handler(req, res) {
 
     } catch (error) {
         console.error("Payment Init Error:", error);
-        return res.status(500).json({ error: error.message });
+        const message = error instanceof Error ? error.message : "An unexpected error occurred";
+        return res.status(500).json({ error: message });
     }
 }

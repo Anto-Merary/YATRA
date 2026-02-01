@@ -1,10 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
 import CryptoJS from "crypto-js";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 // Vercel Serverless Function Handler
-export default async function handler(req, res) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
     // CORS Headers (though this is typically a direct POST from CCAvenue, accessed by browser)
-    res.setHeader("Access-Control-Allow-Credentials", true);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS,PATCH,DELETE,POST,PUT");
     res.setHeader(
@@ -17,7 +18,7 @@ export default async function handler(req, res) {
     }
 
     // Helper for redirect
-    const htmlRedirect = (url) => {
+    const htmlRedirect = (url: string) => {
         return `<!doctype html>
 <html>
   <head>
