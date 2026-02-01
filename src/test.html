@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CCAvenue Validation Check</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #e2e6ea;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #ced4da;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+
+        button {
+            padding: 15px 30px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .btn-iso {
+            background: #17a2b8;
+        }
+
+        .btn-real {
+            background: #28a745;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>CCAvenue Validation Bruteforce</h2>
+    <p>Since the URL isn't the issue (Test 6 failed), the issue is likely <strong>Data Format</strong>.</p>
+
+    <!-- TEST 8 -->
+    <div class="card">
+        <h3>Test 8: ISO Codes (IND / TN)</h3>
+        <p>Uses <code>billing_country=IND</code> and <code>billing_state=TN</code> instead of full names.</p>
+        <p>Also uses a cleaner mobile number.</p>
+        <form method="post" action="https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction">
+            <input type="hidden" name="encRequest"
+                value="a5a35ad9c81d16c8ff85ffa2e9a835352eb2186ac12ebdf05719dc3126c79c798e63a67a5e730153bb24190e63557fb64ae9656f22fb0ba9a962068fb600de40e62b00ed9aeb13d54a4260682df73b3114ae89c20a5e2fc5435b2d604a7136ccad5b8bd409969133eba8e5bcde9fbf050571f8462afcb1f38d09d7a28750c91d34ca81f37a47ed2746196f0db29db68a1825532b1ff2a41abf4c8eff32542741c73faee375c8e7c495a0e9637f75687c740b82c9bd5393a4f462dc7c50bd9ad3207318e03b6aa941d0a21d8a076d04bd5229b8e96eec51b0cc32cff5c9efd71cca267364823b9ca41736ad1b9395992ac99052fc7755e512297b441c73cc5b106b7e44ea1128d0c91fd8afdd330a50c17d80ddf9eb34b89a0d0773722c3a58f66fdde3d25a17f702dd2650a80b83243a1037fef299c6fea33db0989b6b6f8e73d50ef695b22a579f0a33ba9465cf3c8678af740009141dfc00df375a24875dcd">
+            <input type="hidden" name="access_code" value="ATEP06NA73CI16PEIC">
+            <button type="submit" class="btn-iso">Pay Now (Test 8)</button>
+        </form>
+    </div>
+
+    <!-- TEST 9 -->
+    <div class="card">
+        <h3>Test 9: Real Data Simulation</h3>
+        <p>Uses realistic phone/email/address data to bypass spam filters.</p>
+        <form method="post" action="https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction">
+            <input type="hidden" name="encRequest"
+                value="a5a35ad9c81d16c8ff85ffa2e9a835352eb2186ac12ebdf05719dc3126c79c79356350891850336f25083f28c666b20399e37af32468da39714fa57e25bd64c927f1fca3316a9ca9c226f3fce93cee80959142c9b2b259422bfede922f206a6660649027bceb0f0c6d6c2dcb7bcb3027183aad1820393c27eede15e0e54ca7d242897c7e10de1f3e4f2d9130395ba7a9d0138d258a481358bd5a9bc4ba49442fd2744c099161e708af633d0b9e4c3e6b4849ed24ccd884938fc0a4438694a88c6a3fa03a8c91f574dbc8c18bea05d4ce7f1be0b62399d85bbd9ac6a972d9a8e9f76f91c9e39c6695656d92d1f51cd0146f3b9669a15f7ca982f1f9fa2d2c7924c1a508340b67206439d7311db10327d545556c3f383d126abfff19be72f80b746eaa18ed7d9a4c29fae2fe7345b3c0691f53cd06fbed0e7eac7b073d34d2b06af3f31b8cacbd76433770e913de19ceb52a91c95b8bddc093769c0bc0bac8fbc928f5994af3ce63f3bc6c691793ba6044">
+            <input type="hidden" name="access_code" value="ATEP06NA73CI16PEIC">
+            <button type="submit" class="btn-real">Pay Now (Test 9)</button>
+        </form>
+    </div>
+
+</body>
+
+</html>

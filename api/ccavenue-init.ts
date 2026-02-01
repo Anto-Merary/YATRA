@@ -156,48 +156,40 @@ export default async function handler(req, res) {
 
             const formattedAmount = Number(amountInr).toFixed(2);
 
-            const params = new URLSearchParams();
-            params.append("merchant_id", merchantId);
-            params.append("order_id", orderId);
-            params.append("currency", "INR");
-            params.append("amount", formattedAmount);
-            params.append("redirect_url", callbackUrl);
-            params.append("cancel_url", callbackUrl);
-            params.append("language", "EN");
-            // Ensure name is not empty after sanitization, use fallback
-            const safeBillingName = name || "Customer";
-            params.append("billing_name", safeBillingName);
-            params.append("billing_email", email);
-            params.append("billing_tel", phone);
-            params.append("billing_address", ccavenueCollege);
-            params.append("billing_city", "Chennai");
-            params.append("billing_state", "TN"); // State code, not full name
-            params.append("billing_zip", "600001");
-            params.append("billing_country", "India");
-            // Delivery details (mirroring billing) to ensure no missing parameter errors
-            params.append("delivery_name", safeBillingName);
-            params.append("delivery_address", ccavenueCollege);
-            params.append("delivery_city", "Chennai");
-            params.append("delivery_state", "TN"); // State code, not full name
-            params.append("delivery_zip", "600001");
-            params.append("delivery_country", "India");
-            params.append("delivery_tel", phone);
+            const merchantParams = [
+                `merchant_id=${merchantId}`,
+                `order_id=${orderId}`,
+                `currency=INR`,
+                `amount=${formattedAmount}`,
+                `redirect_url=${callbackUrl}`,
+                `cancel_url=${callbackUrl}`,
+                `language=EN`,
+                `billing_name=${safeBillingName}`,
+                `billing_email=${email}`,
+                `billing_tel=${phone}`,
+                `billing_address=${ccavenueCollege}`,
+                `billing_city=Chennai`,
+                `billing_state=TN`,
+                `billing_zip=600001`,
+                `billing_country=India`,
+                `delivery_name=${safeBillingName}`,
+                `delivery_address=${ccavenueCollege}`,
+                `delivery_city=Chennai`,
+                `delivery_state=TN`,
+                `delivery_zip=600001`,
+                `delivery_country=India`,
+                `delivery_tel=${phone}`,
+                `merchant_param1=yatra_entry`,
+                `merchant_param2=${upserted.id}`,
+                `merchant_param3=${siteUrl}`
+            ];
 
-            params.append("merchant_param1", "yatra_entry");
-            params.append("merchant_param2", upserted.id);
-            params.append("merchant_param3", siteUrl);
+            // Join with '&' directly. 
+            // No extra encoding for @ or spaces (unless you explicitly add it).
+            const merchantData = merchantParams.join('&');
 
-            const merchantData = params.toString();
-
-            // Debug: Log the merchant data for troubleshooting (remove in production)
-            console.log("CCAvenue Request Parameters:", {
-                merchant_id: merchantId,
-                order_id: orderId,
-                amount: formattedAmount,
-                billing_name: safeBillingName,
-                billing_email: email,
-                billing_address: ccavenueCollege,
-            });
+            // DEBUG: Log this to see exactly what is being encrypted
+            console.log("Raw Merchant Data:", merchantData);
 
             // Native Node.js Crypto Implementation (matches ccavutil.js exactly)
             const crypto = await import("node:crypto");
