@@ -79,6 +79,10 @@ export default async function handler(req, res) {
                 return res.status(400).json({ error: "College name is required for Other" });
             }
             const normalizedCollege = college || institutionNameByType[institutionType] || "";
+            const ccavenueCollege = (normalizedCollege || "NA")
+                .replace(/[^a-zA-Z0-9\s]/g, " ")
+                .replace(/\s+/g, " ")
+                .trim();
 
             // Override price to 1 INR for all yatra entries as requested
             const amountInr = 1;
@@ -158,14 +162,14 @@ export default async function handler(req, res) {
             params.append("billing_name", name);
             params.append("billing_email", email);
             params.append("billing_tel", phone);
-            params.append("billing_address", normalizedCollege);
+            params.append("billing_address", ccavenueCollege);
             params.append("billing_city", "Chennai");
             params.append("billing_state", "Tamil Nadu");
             params.append("billing_zip", "600001");
             params.append("billing_country", "India");
             // Delivery details (mirroring billing) to ensure no missing parameter errors
             params.append("delivery_name", name);
-            params.append("delivery_address", normalizedCollege);
+            params.append("delivery_address", ccavenueCollege);
             params.append("delivery_city", "Chennai");
             params.append("delivery_state", "Tamil Nadu");
             params.append("delivery_zip", "600001");

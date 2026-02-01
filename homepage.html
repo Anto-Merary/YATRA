@@ -987,6 +987,17 @@
             mix-blend-mode: normal;
         }
 
+        /* About logos: keep aligned and consistent sizing */
+        .about-logos-container {
+            align-items: center;
+        }
+
+        .about-logo {
+            height: clamp(40px, 6vw, 80px);
+            max-width: 220px;
+            object-fit: contain;
+        }
+
         .logo-container img {
             position: relative;
             z-index: 101;
@@ -1781,15 +1792,14 @@
                     style="z-index: 100;">
                     <div class="blur-reveal logo-container flex-shrink-0">
                         <img src="RIT WHITE LOGO.webp" alt="RIT Logo"
-                            class="about-logo w-auto transition-all duration-300" style="height: 45px;">
+                            class="about-logo w-auto transition-all duration-300">
                     </div>
                     <div class="blur-reveal logo-container flex-shrink-0">
                         <img src="RMC COLLEGE LOGO.webp" alt="RMC College Logo"
-                            class="about-logo w-auto transition-all duration-300" style="height: 250px;">
+                            class="about-logo w-auto transition-all duration-300">
                     </div>
                     <div class="blur-reveal logo-container flex-shrink-0">
-                        <img src="RSB Logo.webp" alt="RSB Logo" class="about-logo w-auto transition-all duration-300"
-                            style="height: 220px;">
+                        <img src="RSB Logo.webp" alt="RSB Logo" class="about-logo w-auto transition-all duration-300">
                     </div>
                 </div>
             </div>
