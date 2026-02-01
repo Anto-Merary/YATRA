@@ -1,6 +1,23 @@
 import { createClient } from "@supabase/supabase-js";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
+// CCAvenue-compatible URL encoding helper
+function ccavenueEncode(key: string, value: string | number | null | undefined): string {
+    if (!value) return `${key}=`;
+    const strValue = String(value);
+
+    // Standard encode to handle &, =, and unicode
+    let encoded = encodeURIComponent(strValue);
+
+    // Custom fixes for CCAvenue legacy compatibility:
+    encoded = encoded.replace(/%20/g, "+");  // Convert '%20' (space) to '+'
+    encoded = encoded.replace(/%40/g, "@");  // Keep '@' clean for emails
+    encoded = encoded.replace(/%2E/g, ".");  // Keep dots
+    encoded = encoded.replace(/%2D/g, "-");  // Keep dashes
+
+    return `${key}=${encoded}`;
+}
+
 
 // Vercel Serverless Function Handler
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -164,39 +181,44 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             const formattedAmount = Number(amountInr).toFixed(2);
 
             const merchantParams = [
-                `merchant_id=${merchantId}`,
-                `order_id=${orderId}`,
-                `currency=INR`,
-                `amount=${formattedAmount}`,
-                `redirect_url=${callbackUrl}`,
-                `cancel_url=${callbackUrl}`,
-                `language=EN`,
-                `billing_name=${safeBillingName}`,
-                `billing_email=${email}`,
-                `billing_tel=${phone}`,
-                `billing_address=${ccavenueCollege}`,
-                `billing_city=Chennai`,
-                `billing_state=TN`,
-                `billing_zip=600001`,
-                `billing_country=India`,
-                `delivery_name=${safeBillingName}`,
-                `delivery_address=${ccavenueCollege}`,
-                `delivery_city=Chennai`,
-                `delivery_state=TN`,
-                `delivery_zip=600001`,
-                `delivery_country=India`,
-                `delivery_tel=${phone}`,
-                `merchant_param1=yatra_entry`,
-                `merchant_param2=${upserted.id}`,
-                `merchant_param3=${siteUrl}`
+                ccavenueEncode("merchant_id", merchantId),
+                ccavenueEncode("order_id", orderId),
+                ccavenueEncode("currency", "INR"),
+                ccavenueEncode("amount", formattedAmount),
+                ccavenueEncode("redirect_url", callbackUrl),
+                ccavenueEncode("cancel_url", callbackUrl),
+                ccavenueEncode("language", "EN"),
+
+                // Billing Details
+                ccavenueEncode("billing_name", safeBillingName),
+                ccavenueEncode("billing_email", email),
+                ccavenueEncode("billing_tel", phone),
+                ccavenueEncode("billing_address", ccavenueCollege),
+                ccavenueEncode("billing_city", "Chennai"),
+                ccavenueEncode("billing_state", "TN"),
+                ccavenueEncode("billing_zip", "600001"),
+                ccavenueEncode("billing_country", "India"),
+
+                // Delivery Details (Mirror Billing)
+                ccavenueEncode("delivery_name", safeBillingName),
+                ccavenueEncode("delivery_address", ccavenueCollege),
+                ccavenueEncode("delivery_city", "Chennai"),
+                ccavenueEncode("delivery_state", "TN"),
+                ccavenueEncode("delivery_zip", "600001"),
+                ccavenueEncode("delivery_country", "India"),
+                ccavenueEncode("delivery_tel", phone),
+
+                // Merchant Params
+                ccavenueEncode("merchant_param1", "yatra_entry"),
+                ccavenueEncode("merchant_param2", upserted.id),
+                ccavenueEncode("merchant_param3", siteUrl)
             ];
 
-            // Join with '&' directly. 
-            // No extra encoding for @ or spaces (unless you explicitly add it).
+            // Join to create the final data string
             const merchantData = merchantParams.join('&');
 
-            // DEBUG: Log this to see exactly what is being encrypted
-            console.log("Raw Merchant Data:", merchantData);
+            // DEBUG: Log this - should look like: billing_name=Anto+Merary+S&billing_email=anto@test.com
+            console.log("Sanitized Merchant Data:", merchantData);
 
             // Native Node.js Crypto Implementation (matches ccavutil.js exactly)
             const crypto = await import("node:crypto");
