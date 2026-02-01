@@ -1168,8 +1168,14 @@
                 line-height: 1.15 !important;
             }
 
-            .gallery-intro-title span {
-                display: block;
+            /* Hide desktop version on mobile */
+            .gallery-intro-title span.hidden {
+                display: none !important;
+            }
+            
+            /* Show mobile version on mobile - only spans that should be visible */
+            .gallery-intro-title span:not(.hidden) {
+                display: block !important;
             }
 
             #gallery-track .gallery-item:first-child h2 {
@@ -1805,10 +1811,14 @@
                         The Legacy</p>
                     <h2
                         class="text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-display font-black uppercase leading-[1.1] sm:leading-none gallery-intro-title">
-                        <span class="block">Blast</span>
-                        <span class="block">Into</span>
-                        <span class="block">The</span>
-                        <span class="block">Past</span>
+                        <!-- Mobile version: Blast Into The Past -->
+                        <span class="block md:hidden">Blast</span>
+                        <span class="block md:hidden">Into</span>
+                        <span class="block md:hidden">The</span>
+                        <span class="block md:hidden">Past</span>
+                        <!-- Desktop version: Experience The Past -->
+                        <span class="hidden md:block">Experience</span>
+                        <span class="hidden md:inline-block">The Past</span>
                     </h2>
                     <div class="mt-6 sm:mt-8 animate-bounce text-gray-500 text-xs sm:text-sm uppercase tracking-widest">
                         Scroll to Explore &darr;
@@ -2672,48 +2682,32 @@
             update48HourCountdown('countdown-48hr');
 
             // Flip card functionality for GV Prakash card
-            // Lineup Animations
-            // - Desktop: stagger-in on enter
-            // - Mobile: each card reveals as you scroll down to it (scrubbed parallax entrance)
-            if (!isMobileView) {
-                gsap.utils.toArray('.lineup-card-slot').forEach((card, index) => {
-                    gsap.from(card, {
+            // Lineup Animations - Scroll-to-reveal parallax only (both desktop and mobile)
+            const lineupCards = isMobileView 
+                ? gsap.utils.toArray('#lineup .lineup-card-slot').slice(0, 3)
+                : gsap.utils.toArray('.lineup-card-slot');
+            
+            lineupCards.forEach((card, index) => {
+                const lift = 54 + index * 8;
+                const scaleFrom = 0.985;
+
+                gsap.fromTo(card,
+                    { y: lift, opacity: 0, scale: scaleFrom },
+                    {
+                        y: 0,
+                        opacity: 1,
+                        scale: 1,
+                        ease: "none",
                         scrollTrigger: {
                             trigger: card,
-                            start: "top 85%",
-                            toggleActions: "play none none none"
-                        },
-                        y: 50,
-                        opacity: 0,
-                        duration: 0.8,
-                        delay: index * 0.1,
-                        ease: "power3.out"
-                    });
-                });
-            } else {
-                const lineupCards = gsap.utils.toArray('#lineup .lineup-card-slot').slice(0, 3);
-                lineupCards.forEach((card, index) => {
-                    const lift = 54 + index * 8;
-                    const scaleFrom = 0.985;
-
-                    gsap.fromTo(card,
-                        { y: lift, opacity: 0, scale: scaleFrom },
-                        {
-                            y: 0,
-                            opacity: 1,
-                            scale: 1,
-                            ease: "none",
-                            scrollTrigger: {
-                                trigger: card,
-                                start: "top 88%",
-                                end: "top 60%",
-                                scrub: true,
-                                invalidateOnRefresh: true
-                            }
+                            start: "top 88%",
+                            end: "top 60%",
+                            scrub: true,
+                            invalidateOnRefresh: true
                         }
-                    );
-                });
-            }
+                    }
+                );
+            });
 
             // Hide "CLICK TO REVEAL" text when card is flipped and handle navigation
             const gvFlipCard = document.getElementById('gv-flip-card');
