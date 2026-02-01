@@ -9,11 +9,12 @@ import { createHash, createCipheriv } from "node:crypto";
 const formEncode = (v: string): string =>
     encodeURIComponent(String(v)).replace(/%20/g, "+");
 
+// Match official ccavutil.js exactly: key/iv as strings (digest('binary') = latin1)
 function encrypt(plainText: string, workingKey: string): string {
     const m = createHash("md5");
     m.update(workingKey, "utf8");
-    const key = m.digest();
-    const iv = Buffer.from([0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f]);
+    const key = m.digest().toString("latin1");
+    const iv = "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f";
     const cipher = createCipheriv("aes-128-cbc", key, iv);
     let encoded = cipher.update(plainText, "utf8", "hex");
     encoded += cipher.final("hex");
