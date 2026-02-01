@@ -101,7 +101,7 @@ export function EventRegistrationPage() {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify({ ...payload, response_mode: "json" }),
+        body: JSON.stringify({ ...payload, response_mode: "json", use_express_flow: true }),
       });
 
       const contentType = res.headers.get("content-type") || "";
@@ -127,6 +127,22 @@ export function EventRegistrationPage() {
       const j = JSON.parse(text);
       if (j?.redirect) {
         window.location.href = String(j.redirect);
+        return;
+      }
+      if (j?.mode === "form_post" && j?.formAction && Array.isArray(j?.formFields)) {
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = String(j.formAction);
+        form.enctype = "application/x-www-form-urlencoded";
+        for (const { name, value } of j.formFields) {
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = name;
+          input.value = value;
+          form.appendChild(input);
+        }
+        document.body.appendChild(form);
+        form.submit();
         return;
       }
       if (j?.mode === "form" && j?.action && j?.encRequest && j?.access_code) {

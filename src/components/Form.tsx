@@ -112,7 +112,8 @@ export function RegistrationForm() {
                 institution_type: formData.institution.toLowerCase(),
                 college: formData.institution === 'OTHER' ? formData.otherCollege : undefined,
                 register_number: formData.institution !== 'OTHER' ? formData.regNumber : undefined,
-                response_mode: "json"
+                response_mode: "json",
+                use_express_flow: true,
             };
 
             const res = await fetch("/api/ccavenue-init", {
@@ -141,7 +142,22 @@ export function RegistrationForm() {
                 return;
             }
 
-            if (responseData.mode === "form" && responseData.action) {
+            if (responseData.mode === "form_post" && responseData.formAction && Array.isArray(responseData.formFields)) {
+                // Official kit flow: POST form to our Express endpoint; it encrypts raw body and returns redirect HTML
+                const form = document.createElement("form");
+                form.method = "POST";
+                form.action = responseData.formAction;
+                form.enctype = "application/x-www-form-urlencoded";
+                for (const { name, value } of responseData.formFields) {
+                    const input = document.createElement("input");
+                    input.type = "hidden";
+                    input.name = name;
+                    input.value = value;
+                    form.appendChild(input);
+                }
+                document.body.appendChild(form);
+                form.submit();
+            } else if (responseData.mode === "form" && responseData.action) {
                 const form = document.createElement("form");
                 form.method = "POST";
                 form.action = responseData.action;

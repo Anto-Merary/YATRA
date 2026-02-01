@@ -19,6 +19,7 @@ export function TestPaymentPage() {
                 institution_type: "rit",
                 college: "Rajalakshmi Institute of Technology",
                 response_mode: "json",
+                use_express_flow: true,
                 ...(minimalPayload && { minimal_payload: true }),
             };
 
@@ -51,12 +52,25 @@ export function TestPaymentPage() {
                 return;
             }
 
-            if (responseData.mode === "form" && responseData.action) {
-                // Auto-submit form
+            if (responseData.mode === "form_post" && responseData.formAction && Array.isArray(responseData.formFields)) {
+                const form = document.createElement("form");
+                form.method = "POST";
+                form.action = responseData.formAction;
+                form.enctype = "application/x-www-form-urlencoded";
+                for (const { name, value } of responseData.formFields) {
+                    const input = document.createElement("input");
+                    input.type = "hidden";
+                    input.name = name;
+                    input.value = value;
+                    form.appendChild(input);
+                }
+                document.body.appendChild(form);
+                toast({ title: "Redirecting...", description: "Sending to CCAvenue (Express flow)..." });
+                form.submit();
+            } else if (responseData.mode === "form" && responseData.action) {
                 const form = document.createElement("form");
                 form.method = "POST";
                 form.action = responseData.action;
-
                 const addField = (name: string, value: string) => {
                     const input = document.createElement("input");
                     input.type = "hidden";
@@ -64,17 +78,10 @@ export function TestPaymentPage() {
                     input.value = value;
                     form.appendChild(input);
                 };
-
                 addField("encRequest", responseData.encRequest);
                 addField("access_code", responseData.access_code);
-
                 document.body.appendChild(form);
-
-                toast({
-                    title: "Redirecting...",
-                    description: "Sending request to CCAvenue...",
-                });
-
+                toast({ title: "Redirecting...", description: "Sending request to CCAvenue..." });
                 form.submit();
             } else {
                 throw new Error("Invalid response from server");

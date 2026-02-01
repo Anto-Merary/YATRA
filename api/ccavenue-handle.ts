@@ -1,5 +1,4 @@
 import { createClient } from "@supabase/supabase-js";
-import CryptoJS from "crypto-js";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 // Vercel Serverless Function Handler
@@ -69,16 +68,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             return res.status(200).send(htmlRedirect(failUrl));
         }
 
-        // CCAvenue AES-128-CBC decryption (per official ccavutil.js): key = MD5(workingKey), IV = 0x00..0x0f, ciphertext hex
-        const keyBytes = CryptoJS.MD5(wk); // 16-byte WordArray
-        const iv = CryptoJS.lib.WordArray.create([0x00010203, 0x04050607, 0x08090a0b, 0x0c0d0e0f]);
-        const ciphertext = CryptoJS.enc.Hex.parse(encResp);
-        const decrypted = CryptoJS.AES.decrypt(
-            { ciphertext } as CryptoJS.lib.CipherParams,
-            keyBytes,
-            { iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
-        );
-        const decryptedText = decrypted.toString(CryptoJS.enc.Utf8);
+        // Official CCAvenue kit: use ccavutil.js decrypt (no CryptoJS)
+        const ccav = require("./lib/ccavutil.js");
+        const decryptedText = ccav.decrypt(encResp, wk);
 
         // Parse the decrypted string (key=value&...)
         const respParams = new URLSearchParams(decryptedText);

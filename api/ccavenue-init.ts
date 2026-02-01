@@ -201,18 +201,56 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 );
             }
 
+            const useExpressFlow = body?.use_express_flow === true;
+
+            if (useExpressFlow) {
+                // Official kit flow: return form fields so React can POST a form; Express encrypts raw body and returns redirect HTML
+                const formFields: { name: string; value: string }[] = [
+                    { name: "merchant_id", value: merchantId },
+                    { name: "order_id", value: orderId },
+                    { name: "currency", value: "INR" },
+                    { name: "amount", value: formattedAmount },
+                    { name: "redirect_url", value: callbackUrl },
+                    { name: "cancel_url", value: callbackUrl },
+                    { name: "language", value: "EN" },
+                ];
+                if (!useMinimal) {
+                    formFields.push(
+                        { name: "billing_name", value: safeBillingName },
+                        { name: "billing_address", value: ccavenueCollege },
+                        { name: "billing_city", value: ccavenueStr("Chennai", 30) },
+                        { name: "billing_state", value: ccavenueStr("TN", 30) },
+                        { name: "billing_zip", value: "600001" },
+                        { name: "billing_country", value: ccavenueStr("India", 50) },
+                        { name: "billing_tel", value: phone.slice(0, 20) },
+                        { name: "billing_email", value: email.slice(0, 70) },
+                        { name: "delivery_name", value: safeBillingName },
+                        { name: "delivery_address", value: ccavenueCollege },
+                        { name: "delivery_city", value: ccavenueStr("Chennai", 30) },
+                        { name: "delivery_state", value: ccavenueStr("TN", 30) },
+                        { name: "delivery_zip", value: "600001" },
+                        { name: "delivery_country", value: ccavenueStr("India", 50) },
+                        { name: "delivery_tel", value: phone.slice(0, 20) },
+                        { name: "merchant_param1", value: "yatra_entry" },
+                        { name: "merchant_param2", value: upserted.id },
+                        { name: "merchant_param3", value: siteUrl }
+                    );
+                }
+                return res.status(200).json({
+                    ok: true,
+                    mode: "form_post",
+                    purpose,
+                    order_id: orderId,
+                    formAction: "/api/ccavenue-init-form",
+                    formFields,
+                });
+            }
+
             const merchantData = merchantParams.join("&");
 
-            // Exact match to ccavutil.js: key = MD5(workingKey) 16 bytes, iv = \x00..\x0f, aes-128-cbc, utf8->hex
-            const crypto = await import("node:crypto");
-            const m = crypto.createHash("md5");
-            m.update(workingKey, "utf8");
-            const key = m.digest(); // 16-byte Buffer (same as SDK digest('binary') bytes)
-            const iv = Buffer.from([0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f]);
-
-            const cipher = crypto.createCipheriv("aes-128-cbc", key, iv);
-            let encRequest = cipher.update(merchantData, "utf8", "hex");
-            encRequest += cipher.final("hex");
+            // Official CCAvenue kit: use ccavutil.js encrypt (no custom crypto)
+            const ccav = require("./lib/ccavutil.js");
+            const encRequest = ccav.encrypt(merchantData, workingKey);
 
             await supabase
                 .from("ccavenue_orders")
