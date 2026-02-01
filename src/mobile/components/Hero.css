@@ -3584,12 +3584,11 @@
   overflow: hidden;
 }
 
-/* Blast Section - stacks over about section */
+/* Blast Section - normal scroll, doesn't stack */
 .blast-section {
   width: 100%;
   min-height: auto;
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 5;
   overflow: hidden;
 }

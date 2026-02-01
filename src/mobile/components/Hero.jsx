@@ -859,8 +859,9 @@ function Hero() {
         // Small manual nudges for specific photos (requested):
         // - asal: move up a little
         // - pal: move up 8% (from 5% → 8%)
-        const isAsal = /(^|\/|\\)asal\./i.test(src)
-        const isPal = /(^|\/|\\)pal\./i.test(src)
+        // NOTE: Use [-\.] to match both dev (pal.webp) and prod (pal-hash.webp) URLs
+        const isAsal = /(^|\/|\\)asal[-\.]/i.test(src)
+        const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
         // Stronger upward nudges so they sit higher along their rotated angle.
         const nudgeAsal = -Math.min(32, spreadY * 0.11)
         const nudgePal = -Math.min(70, spreadY * 0.33) // pal moved up (was 0.25, now 0.33)
@@ -908,8 +909,9 @@ function Hero() {
       els.forEach((el, i) => {
         const start = startPositions[i] || { x: 0, y: 0 }
         const src = String(el.currentSrc || el.src || '')
-        const isPal = /(^|\/|\\)pal\./i.test(src)
-        const isSyn = /(^|\/|\\)syn\./i.test(src)
+        // NOTE: Use [-\.] to match both dev (pal.webp) and prod (pal-hash.webp) URLs
+        const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
+        const isSyn = /(^|\/|\\)syn[-\.]/i.test(src)
         // Make `pal` and `syn` larger without completely blowing up the layout.
         // pal: +5% (3.15 → 3.3075)
         // syn: +5% (1.95 → 2.0475)
@@ -935,8 +937,9 @@ function Hero() {
         els.forEach((el, i) => {
           const base = finalPositions[i] || { x: 0, y: 0 }
           const src = String(el.currentSrc || el.src || '')
-          const isPal = /(^|\/|\\)pal\./i.test(src)
-          const isSyn = /(^|\/|\\)syn\./i.test(src)
+          // NOTE: Use [-\.] to match both dev (pal.webp) and prod (pal-hash.webp) URLs
+          const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
+          const isSyn = /(^|\/|\\)syn[-\.]/i.test(src)
           // pal: +5% (1.55 → 1.6275)
           // syn: +5% (1.5 → 1.575)
           gsap.set(el, {
@@ -961,8 +964,9 @@ function Hero() {
       els.forEach((el, i) => {
         const base = finalPositions[i] || { x: 0, y: 0 }
         const src = String(el.currentSrc || el.src || '')
-        const isPal = /(^|\/|\\)pal\./i.test(src)
-        const isSyn = /(^|\/|\\)syn\./i.test(src)
+        // NOTE: Use [-\.] to match both dev (pal.webp) and prod (pal-hash.webp) URLs
+        const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
+        const isSyn = /(^|\/|\\)syn[-\.]/i.test(src)
         // pal: +5% (1.85 → 1.9425)
         // syn: +5% (1.5 → 1.575)
         const finalScale = isPal ? 1.9425 : isSyn ? 1.575 : 1
