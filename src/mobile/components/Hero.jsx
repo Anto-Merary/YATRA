@@ -9,15 +9,14 @@ import torriGate from '../assets/optimized/torrigate-w1280.webp'
 import yearText from '../assets/optimized/2026txt-w1536.webp'
 import videoSrc from '../assets/video.mp4'
 import eventImage from '../assets/optimized/event-w1024.webp'
-import performanceImage from '../assets/optimized/performance-w1280.webp'
-import LineupReveal from './LineupReveal'
-// Use the same images as desktop version
-const gvBackCard = '/gvbackcard (1).webp'
-const gvFrontCard = '/gvfrontcard.webp'
-const aooraFrontCard = '/aoorafrontcard.webp'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useNetworkStatus } from '../hooks/useNetworkStatus'
+
+// Lineup card assets live in public/ for mobile + desktop reuse.
+const gvBackCard = '/gvbackcard (1).webp'
+const gvFrontCard = '/gvfrontcard.webp'
+const aooraFrontCard = '/aoorafrontcard.webp'
 
 function GlitchText({ koreanText, englishText, className, delay = 0, shouldStart = false, variant = 'glitch' }) {
   const [isGlitching, setIsGlitching] = useState(false)
@@ -85,6 +84,56 @@ function GlitchText({ koreanText, englishText, className, delay = 0, shouldStart
   )
 }
 
+function DecryptText({ koreanText, englishText, className, delay = 0, shouldStart = false }) {
+  const [displayText, setDisplayText] = useState(koreanText || englishText || '')
+
+  useEffect(() => {
+    let timeoutId = 0
+    let intervalId = 0
+
+    if (!shouldStart) {
+      setDisplayText(koreanText || '')
+      return () => {
+        if (timeoutId) window.clearTimeout(timeoutId)
+        if (intervalId) window.clearInterval(intervalId)
+      }
+    }
+
+    timeoutId = window.setTimeout(() => {
+      const finalText = englishText || ''
+      const glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+      let frame = 0
+
+      intervalId = window.setInterval(() => {
+        frame += 1
+        const revealCount = Math.min(finalText.length, Math.floor(frame / 2))
+        const nextText = finalText
+          .split('')
+          .map((char, idx) => {
+            if (char === ' ') return ' '
+            if (idx < revealCount) return char
+            return glyphs[Math.floor(Math.random() * glyphs.length)]
+          })
+          .join('')
+
+        setDisplayText(nextText)
+
+        if (revealCount >= finalText.length) {
+          window.clearInterval(intervalId)
+          setDisplayText(finalText)
+        }
+      }, 32)
+    }, delay)
+
+    return () => {
+      if (timeoutId) window.clearTimeout(timeoutId)
+      if (intervalId) window.clearInterval(intervalId)
+    }
+  }, [delay, englishText, koreanText, shouldStart])
+
+  return <span className={className}>{displayText}</span>
+}
+
 function Hero() {
   // Progressive loading: render immediately, then enhance as assets arrive.
   const [loaded, setLoaded] = useState(() => ({
@@ -103,6 +152,7 @@ function Hero() {
   const aboutContentRef = useRef(null)
   const featuresSectionRef = useRef(null)
   const blastSectionRef = useRef(null)
+  const featuresImageRef = useRef(null)
   const blastCollageRef = useRef(null)
   const blastPhotoElsRef = useRef([])
   const hasAboutEnteredRef = useRef(false)
@@ -639,6 +689,41 @@ function Hero() {
     observer.observe(sectionEl)
     return () => {
       observer.disconnect()
+    }
+  }, [isExperienceReady])
+
+  // Features image: parallax slide-in on scroll
+  useEffect(() => {
+    if (!isExperienceReady) return
+    const sectionEl = featuresSectionRef.current
+    const imageEl = featuresImageRef.current
+    if (!sectionEl || !imageEl) return
+
+    gsap.registerPlugin(ScrollTrigger)
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        imageEl,
+        { x: 70, y: 40, rotate: -1, scale: 0.96, opacity: 0 },
+        {
+          x: 0,
+          y: 0,
+          rotate: 0,
+          scale: 1,
+          opacity: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sectionEl,
+            start: 'top 80%',
+            end: 'bottom 35%',
+            scrub: true,
+          },
+        }
+      )
+    }, sectionEl)
+
+    return () => {
+      ctx.revert()
     }
   }, [isExperienceReady])
 
@@ -1427,9 +1512,213 @@ function Hero() {
             </div>
           </div>
 
-          {/* LINEUP Section - Replaced with New 3D Component */}
-          <section className="lineup-section" aria-label="Lineup section" style={{ padding: 0 }}>
-            <LineupReveal />
+          {/* LINEUP Section */}
+          <section className="lineup-section" aria-label="Lineup section">
+            <div className="lineup-container">
+              <h2 className="lineup-title">LINEUP</h2>
+              <p className="lineup-subtitle">Experience the best. Big names live.</p>
+
+              <div className="lineup-carousel-wrap">
+                <button
+                  type="button"
+                  className="lineup-arrow-btn lineup-arrow-btn--left"
+                  aria-label="Previous lineup card"
+                  onClick={() => scrollLineup(-1)}
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      d="M15 5l-7 7 7 7"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+
+                <div className="lineup-carousel" ref={lineupCarouselRef} aria-label="Lineup carousel">
+                  {lineupCards.map((card, idx) => {
+                    const isActive = idx === activeLineupIndex
+                    const isRevealed = card.status === 'revealed'
+                    const isCountdown = card.status === 'countdown'
+                    const isLocked = card.status === 'locked'
+                    const isGv = card.id === 'gv'
+                    const isAoora = card.id === 'aoora'
+                    const isFlipped = isGv ? isGvCardFlipped : isAoora ? isAooraCardFlipped : false
+                    const toggleFlip = isGv ? toggleGvCard : isAoora ? toggleAooraCard : undefined
+                    const frontImage = isGv ? gvFrontCard : isAoora ? aooraFrontCard : null
+                    const revealLabel = isGv ? 'GV Prakash' : isAoora ? 'Aoora' : 'Lineup artist'
+                    const countdownParts = countdownText48hr.split(':')
+
+                    return (
+                      <div
+                        key={card.id}
+                        className={`lineup-card-slot ${isActive ? 'is-active' : ''} ${isLocked ? 'lineup-card-slot--locked' : ''}`}
+                      >
+                        {isRevealed && frontImage ? (
+                          <button
+                            type="button"
+                            className={`lineup-flip-card ${isFlipped ? 'is-flipped' : ''}`}
+                            onClick={toggleFlip}
+                            aria-pressed={isFlipped}
+                            aria-label={`${isFlipped ? 'Hide' : 'Reveal'} ${revealLabel}`}
+                          >
+                            <div className="lineup-flip-card-inner">
+                              <div className="lineup-flip-card-face lineup-flip-card-face--back">
+                                <img
+                                  src={gvBackCard}
+                                  alt="Lineup card back"
+                                  className="lineup-flip-card-img"
+                                />
+                                {!isFlipped && (
+                                  <span className="lineup-tap-to-reveal">Tap to reveal</span>
+                                )}
+                              </div>
+                              <div className="lineup-flip-card-face lineup-flip-card-face--front">
+                                <img
+                                  src={frontImage}
+                                  alt={revealLabel}
+                                  className="lineup-flip-card-img"
+                                />
+                              </div>
+                            </div>
+                          </button>
+                        ) : isCountdown ? (
+                          <button
+                            type="button"
+                            className="lineup-flip-card"
+                            onClick={openLineupModal}
+                            aria-label="Reveal timer"
+                          >
+                            <div className="lineup-flip-card-inner">
+                              <div className="lineup-flip-card-face lineup-flip-card-face--back">
+                                <img
+                                  src={gvBackCard}
+                                  alt="Lineup card back"
+                                  className="lineup-flip-card-img"
+                                />
+                                <div className="lineup-countdown-overlay">
+                                  <div className="countdown-timer">
+                                    {countdownParts.map((part, index) => (
+                                      <span className="countdown-digit-group" key={`${card.id}-${index}`}>
+                                        <span className="countdown-digit-box">{part}</span>
+                                        {index < countdownParts.length - 1 && (
+                                          <span className="countdown-colon">:</span>
+                                        )}
+                                      </span>
+                                    ))}
+                                  </div>
+                                  <div className="countdown-label">Reveal in</div>
+                                </div>
+                              </div>
+                              <div className="lineup-flip-card-face lineup-flip-card-face--front">
+                                <img
+                                  src={gvBackCard}
+                                  alt="Lineup card back"
+                                  className="lineup-flip-card-img"
+                                />
+                              </div>
+                            </div>
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className="lineup-flip-card"
+                            onClick={openLineupModal}
+                            aria-label="Locked lineup artist"
+                          >
+                            <div className="lineup-flip-card-inner">
+                              <div className="lineup-flip-card-face lineup-flip-card-face--back">
+                                <img
+                                  src={gvBackCard}
+                                  alt="Lineup card back"
+                                  className="lineup-flip-card-img"
+                                />
+                                <div className="lineup-countdown-overlay">
+                                  <svg className="lineup-locked-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path
+                                      d="M7 11V7a5 5 0 0110 0v4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    />
+                                    <rect
+                                      x="5"
+                                      y="11"
+                                      width="14"
+                                      height="10"
+                                      rx="2"
+                                      ry="2"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                    />
+                                  </svg>
+                                  <div className="lineup-locked-text">Locked</div>
+                                  <div className="countdown-label">Stay tuned</div>
+                                </div>
+                              </div>
+                              <div className="lineup-flip-card-face lineup-flip-card-face--front">
+                                <img
+                                  src={gvBackCard}
+                                  alt="Lineup card back"
+                                  className="lineup-flip-card-img"
+                                />
+                              </div>
+                            </div>
+                          </button>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+
+                <button
+                  type="button"
+                  className="lineup-arrow-btn lineup-arrow-btn--right"
+                  aria-label="Next lineup card"
+                  onClick={() => scrollLineup(1)}
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      d="M9 5l7 7-7 7"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="lineup-scroll-hint" aria-hidden="true">
+                <svg className="lineup-scroll-hint-icon" viewBox="0 0 24 24">
+                  <path
+                    d="M15 6l-6 6 6 6"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span className="lineup-scroll-hint-text">Swipe to explore</span>
+                <svg className="lineup-scroll-hint-icon" viewBox="0 0 24 24">
+                  <path
+                    d="M9 6l6 6-6 6"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            </div>
           </section>
 
           {/* FEATURES OF YATRA section (content coming next) */}
@@ -1439,69 +1728,75 @@ function Hero() {
             ref={featuresSectionRef}
           >
             <div className="features-container">
-              <h2 className="features-title">
-                <GlitchText
-                  koreanText="야트라의 특징"
-                  englishText="FEATURES OF"
-                  className="features-title-features"
-                  delay={0}
-                  shouldStart={isFeaturesSectionVisible}
-                  variant="blur"
-                />
-                <br />
-                <GlitchText
-                  koreanText=""
-                  englishText="YATRA"
-                  className="features-title-rest"
-                  delay={500}
-                  shouldStart={isFeaturesSectionVisible}
-                  variant="blur"
-                />
-              </h2>
-              <div
-                className="features-event-media features-event-media--right"
-                aria-label="Electrifying Performances"
-              >
-                <div className="features-event-badge">
-                  ELECTRIFYING PERFORMANCES
+              <div className="section-divider" aria-hidden="true">
+                <span className="section-divider-line" />
+                <span className="section-divider-text">야트라의 특징</span>
+                <span className="section-divider-line" />
+              </div>
+
+              <div className="features-heading">
+                <h2 className="features-title">
+                  <DecryptText
+                    koreanText="상상해봐"
+                    englishText="IMAGINE"
+                    className="features-title-main"
+                    delay={0}
+                    shouldStart={isFeaturesSectionVisible}
+                  />
+                  <DecryptText
+                    koreanText="오십+ 이벤트"
+                    englishText="50+ EVENTS"
+                    className="features-title-sub"
+                    delay={220}
+                    shouldStart={isFeaturesSectionVisible}
+                  />
+                </h2>
+                <p className="features-title-tag">CASH PRIZE • ALL-DAY HYPE</p>
+              </div>
+
+              <div className="features-parallax">
+                <div className="features-image-frame" ref={featuresImageRef}>
+                  <img src={eventImage} alt="Yatra Event" className="features-image" />
+                  <div className="features-image-glow" aria-hidden="true" />
+                  <div className="features-layered-text">
+                    <span className="features-layer features-layer--korean">오십+ 이벤트</span>
+                    <span className="features-layer features-layer--main">50+ EVENTS</span>
+                    <span className="features-layer features-layer--accent">CASH PRIZE</span>
+                  </div>
                 </div>
-                <div className="features-event-image-wrapper">
-                  <img src={performanceImage} alt="Electrifying Performance" className="features-event-image" />
-                  <div className="features-event-image-mask"></div>
-                  <p className="features-event-description">
-                    5 Big Names. 2 Days. Electrifying Pro Shows.
-                    <br />
-                    DJ Night. Unforgettable Experience.
+              </div>
+
+              <div className="features-summary">
+                50+ events across tech, culture, and performance. Two days of competitions, creators, and stage energy.
+              </div>
+
+              <div className="features-categories">
+                <div className="features-category">
+                  <div className="features-category-label">TECHNICAL</div>
+                  <div className="features-category-title">Gaming & Digital Arts</div>
+                  <p className="features-category-desc">
+                    Esports, photography, short film, poster design, quizzes, drone challenge, and product marketing.
+                  </p>
+                </div>
+                <div className="features-category">
+                  <div className="features-category-label">CULTURAL</div>
+                  <div className="features-category-title">Dance, Music & Arts</div>
+                  <p className="features-category-desc">
+                    Dance battles, singing, beatbox, traditional arts, comedy, sports, games, and food contests.
+                  </p>
+                </div>
+                <div className="features-category">
+                  <div className="features-category-label">ON-STAGE</div>
+                  <div className="features-category-title">Performance & Theatre</div>
+                  <p className="features-category-desc">
+                    Mime, mono acting, mock parliament, K-cosplay, and face fiesta competitions.
                   </p>
                 </div>
               </div>
-              <div
-                className="features-event-media features-event-media--left"
-                onClick={goToEvents}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    goToEvents();
-                  }
-                }}
-                aria-label="Explore 50+ Events with Cash Prize"
-              >
-                <div className="features-event-badge">
-                  50+ Events with CASH PRIZE
-                </div>
-                <div className="features-event-image-wrapper">
-                  <img src={eventImage} alt="Yatra Event" className="features-event-image" />
-                  <div className="features-event-image-mask"></div>
-                  <p className="features-event-description">
-                    Across tech, arts, culture & performance<br />Throughout the day
-                  </p>
-                </div>
-                <span className="features-show-more-btn">
-                  EXPLORE EVENTS
-                </span>
-              </div>
+
+              <button className="features-cta" type="button" onClick={goToEvents}>
+                Explore All Events
+              </button>
             </div>
           </section>
 
@@ -1512,22 +1807,25 @@ function Hero() {
             ref={blastSectionRef}
           >
             <div className="blast-inner">
+              <div className="section-divider" aria-hidden="true">
+                <span className="section-divider-line" />
+                <span className="section-divider-text">감사합니다</span>
+                <span className="section-divider-line" />
+              </div>
               <h2 className="features-title">
-                <GlitchText
-                  koreanText="과거 속으로 돌진하다"
+                <DecryptText
+                  koreanText="과거 속으로"
                   englishText="BLAST INTO THE"
                   className="blast-title-prefix"
                   delay={0}
                   shouldStart={isBlastSectionVisible}
-                  variant="blur"
                 />
-                <GlitchText
-                  koreanText=""
+                <DecryptText
+                  koreanText="돌진하다"
                   englishText="PAST"
                   className="blast-title-highlight"
-                  delay={500}
+                  delay={220}
                   shouldStart={isBlastSectionVisible}
-                  variant="blur"
                 />
               </h2>
 
