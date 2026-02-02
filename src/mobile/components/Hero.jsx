@@ -223,6 +223,7 @@ function Hero() {
   const aboutContentRef = useRef(null)
   const featuresSectionRef = useRef(null)
   const blastSectionRef = useRef(null)
+  const passesSectionRef = useRef(null)
   const featuresImageRef = useRef(null)
   const blastCollageRef = useRef(null)
   const blastPhotoElsRef = useRef([])
@@ -762,6 +763,18 @@ function Hero() {
   const goToEvents = useCallback(() => {
     const baseUrl = (import.meta?.env?.BASE_URL || '/').replace(/\/+$/, '')
     window.location.assign(`${baseUrl}/events`)
+  }, [])
+
+  const goToPasses = useCallback((e) => {
+    if (e?.preventDefault) e.preventDefault()
+    const el = passesSectionRef.current || document.getElementById('buy-passes')
+    if (!el) return
+    try {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    } catch {
+      // Safari fallback
+      el.scrollIntoView()
+    }
   }, [])
 
   // Features section: trigger glitch animation when section enters view
@@ -1532,12 +1545,13 @@ function Hero() {
             <div className="hero-buttons">
               <a
                 ref={buyTicketsButtonRef}
-                href="/yatra-entry"
+                href="#buy-passes"
+                onClick={goToPasses}
                 className={`hero-button buy-tickets ${shimmerTrigger > 0 ? 'shimmer-active' : ''}`}
                 data-shimmer-trigger={shimmerTrigger}
               >
                 <span className="hero-button-shimmer" aria-hidden="true" />
-                <span className="hero-button-text">BUY TICKETS</span>
+                <span className="hero-button-text">BUY NOW</span>
                 <span className="star-icon" aria-hidden="true">
                   ✦
                 </span>
@@ -1997,6 +2011,78 @@ function Hero() {
                     fetchpriority={blastShouldEagerLoad && idx < 2 ? 'high' : 'auto'}
                   />
                 ))}
+              </div>
+            </div>
+          </section>
+
+          {/* PASSES Divider (between BLAST and BUY PASSES) */}
+          <div className="passes-section-divider" aria-hidden="true">
+            <div className="hero-divider-scroll">
+              <div className="hero-divider-track" aria-label="Buy passes">
+                <div className="hero-divider-content">
+                  <span className="hero-divider-text">BUY PASSES</span>
+                  <span className="hero-divider-star">✦</span>
+                  <span className="hero-divider-text">BUY PASSES</span>
+                  <span className="hero-divider-star">✦</span>
+                  <span className="hero-divider-text">BUY PASSES</span>
+                  <span className="hero-divider-star">✦</span>
+                  <span className="hero-divider-text">BUY PASSES</span>
+                  <span className="hero-divider-star">✦</span>
+                </div>
+                <div className="hero-divider-content" aria-hidden="true">
+                  <span className="hero-divider-text">BUY PASSES</span>
+                  <span className="hero-divider-star">✦</span>
+                  <span className="hero-divider-text">BUY PASSES</span>
+                  <span className="hero-divider-star">✦</span>
+                  <span className="hero-divider-text">BUY PASSES</span>
+                  <span className="hero-divider-star">✦</span>
+                  <span className="hero-divider-text">BUY PASSES</span>
+                  <span className="hero-divider-star">✦</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* BUY PASSES (ticket purchase) - normal scroll section */}
+          <section
+            id="buy-passes"
+            ref={passesSectionRef}
+            className="mobile-passes-section"
+            aria-label="Buy passes"
+          >
+            <div className="mobile-passes-container">
+              <h2 className="mobile-passes-title">
+                GET YOUR <span className="mobile-passes-title-accent">PASSES</span>
+              </h2>
+
+              <div className="mobile-passes-grid">
+                <div className="mobile-pass-card mobile-pass-card--featured">
+                  <div className="mobile-pass-badge mobile-pass-badge--exclusive">OFFICIAL</div>
+
+                  <div className="mobile-pass-card-header">
+                    <h3 className="mobile-pass-card-title">
+                      YATRA <span className="mobile-pass-card-title--accent">PASS</span>
+                    </h3>
+                    <p className="mobile-pass-description">
+                      Secure your entry for YATRA&apos;26. Fast checkout via CCAvenue.
+                    </p>
+                  </div>
+
+                  <div className="mobile-pass-divider" aria-hidden="true" />
+
+                  <ul className="mobile-pass-card-list mobile-pass-card-list--bright">
+                    <li>Access to all 2 DAYS</li>
+                    <li>Proshows & DJ Night included</li>
+                    <li>Unlimited fun guaranteed</li>
+                  </ul>
+
+                  <a
+                    className="mobile-pass-cta mobile-pass-cta--accent"
+                    href="https://formbuilder.ccavenue.com/live/icici-bank/rajalakshmi-institue-of-technology-2/yatra-2026-reg-fees-link"
+                  >
+                    BUY NOW
+                  </a>
+                </div>
               </div>
             </div>
           </section>
