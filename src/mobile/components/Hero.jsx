@@ -1021,9 +1021,8 @@ function Hero() {
         const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
         const isSyn = /(^|\/|\\)syn[-\.]/i.test(src)
         // Make `pal` and `syn` larger without completely blowing up the layout.
-        // pal: +5% (3.15 → 3.3075)
-        // syn: +5% (1.95 → 2.0475)
-        const baseScale = isPal ? 3.3075 : isSyn ? 2.0475 : 1.35
+        // Reduced by 5%: pal: 3.142125, syn: 1.945125
+        const baseScale = isPal ? 3.142125 : isSyn ? 1.945125 : 1.35
 
         gsap.set(el, {
           // Center using GSAP-managed percent transforms so CSS centering isn't lost
@@ -1048,14 +1047,13 @@ function Hero() {
           // NOTE: Use [-\.] to match both dev (pal.webp) and prod (pal-hash.webp) URLs
           const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
           const isSyn = /(^|\/|\\)syn[-\.]/i.test(src)
-          // pal: +5% (1.55 → 1.6275)
-          // syn: +5% (1.5 → 1.575)
+          // Reduced by 5%: pal: 1.546125, syn: 1.49625
           gsap.set(el, {
             xPercent: -50,
             yPercent: -50,
             x: base.x,
             y: base.y,
-            scale: isPal ? 1.6275 : isSyn ? 1.575 : 1,
+            scale: isPal ? 1.546125 : isSyn ? 1.49625 : 1,
             opacity: 1,
             rotate: 0,
           })
@@ -1079,9 +1077,8 @@ function Hero() {
         // NOTE: Use [-\.] to match both dev (pal.webp) and prod (pal-hash.webp) URLs
         const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
         const isSyn = /(^|\/|\\)syn[-\.]/i.test(src)
-        // pal: +5% (1.85 → 1.9425)
-        // syn: +5% (1.5 → 1.575)
-        const finalScale = isPal ? 1.9425 : isSyn ? 1.575 : 1
+        // Reduced by 5%: pal: 1.845375, syn: 1.49625
+        const finalScale = isPal ? 1.845375 : isSyn ? 1.49625 : 1
 
         tl.to(
           el,
