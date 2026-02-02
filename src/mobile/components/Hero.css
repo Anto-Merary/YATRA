@@ -73,6 +73,9 @@
   display: grid;
   place-items: center;
   background: #160018;
+  /* Keep bleed + stage background color grading in sync */
+  --hero-bg-filter: saturate(0.88) contrast(1.02) brightness(1);
+  --hero-bg-filter-loaded: saturate(0.88) contrast(1.02) brightness(0.85);
   padding-bottom: 0;
 }
 
@@ -106,8 +109,8 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
-  /* Reduced saturation by 15-20% (from 1.08 to 0.88-0.92) */
-  filter: saturate(0.88) contrast(1.02);
+  /* Match the stage background color grading */
+  filter: var(--hero-bg-filter);
   transform: none;
   opacity: 0;
   z-index: 1;
@@ -116,7 +119,7 @@
 
 /* Fade in bleed background when stage is loaded */
 .hero.is-loaded .hero-bleed-bg {
-  filter: saturate(0.88) contrast(1.02) brightness(0.85);
+  filter: var(--hero-bg-filter-loaded);
   animation: hero-fade-in 500ms ease-in-out forwards;
   animation-delay: 260ms;
 }
@@ -492,16 +495,15 @@
   object-position: center;
   opacity: 0;
   transition: opacity 500ms ease-in-out, filter 800ms ease-in-out;
-  /* Reduced saturation by 15-20% (from default 1.0 to 0.82-0.85) */
-  filter: brightness(1) saturate(0.82);
+  /* Match the bleed background grading */
+  filter: var(--hero-bg-filter);
 }
 
 /* Fade in background image after loading and darken slightly */
 .hero-stage.is-loaded .hero-bg-image {
   animation: hero-fade-in 500ms ease-in-out forwards;
   animation-delay: 260ms;
-  /* Reduced saturation by 15-20% + brightness adjustment */
-  filter: brightness(0.85) saturate(0.82);
+  filter: var(--hero-bg-filter-loaded);
 }
 
 /* 2. Video Container (Center Focus) - Horizontal, smaller, behind Torii gate */
@@ -871,6 +873,7 @@
   justify-content: center;
   overflow: hidden;
   white-space: nowrap;
+  text-decoration: none;
 }
 
 /* Animated glowing border effect */
@@ -1000,6 +1003,7 @@
   white-space: nowrap;
   position: relative;
   z-index: 3;
+  text-decoration: none;
 }
 
 .star-icon {
@@ -1980,7 +1984,11 @@
 /* BUY PASSES (desktop registration port) */
 .mobile-passes-section {
   width: 100%;
-  background: #000000;
+  background-color: #000000;
+  background-image: url('../assets/black.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   /* Fully black to cover previous sections */
   position: relative;
   overflow: hidden;
@@ -1989,15 +1997,7 @@
 }
 
 .mobile-passes-section::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 20% 10%, rgba(155, 23, 153, 0.25), transparent 45%),
-    radial-gradient(circle at 80% 80%, rgba(255, 241, 157, 0.12), transparent 55%),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.7));
-  pointer-events: none;
-  z-index: 0;
+  content: none;
 }
 
 .mobile-passes-container {
@@ -4268,31 +4268,80 @@
 /* Left Side (Dark) */
 .mobile-ticket-left {
   width: 32%;
-  background: #111;
+  background: linear-gradient(160deg, #f2c15a 0%, #c98a2b 55%, #9f6a1b 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  border-right: 2px dashed rgba(255, 255, 255, 0.2);
+  border-right: 2px dashed rgba(0, 0, 0, 0.25);
+  padding: 1rem 0.75rem;
 }
 
-.mobile-ticket-logo {
+.mobile-ticket-logo-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.mobile-ticket-logo-square {
+  width: 58px;
+  height: 58px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #5b0f63, #8f1a98);
+  display: grid;
+  place-items: center;
+  box-shadow:
+    0 10px 20px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.mobile-ticket-logo-letter {
   font-family: 'Akira Expanded', sans-serif;
-  font-size: 2rem;
-  color: #333;
-  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.1);
-  transform: rotate(-90deg);
+  font-size: 1.8rem;
+  color: #ffffff;
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.55);
+}
+
+.mobile-ticket-year {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.mobile-ticket-brand {
+  width: 78px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.4));
 }
 
 /* Right Side (Light) */
 .mobile-ticket-right {
   flex: 1;
-  background: #eaeaea;
-  padding: 1.25rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(245, 245, 245, 0.98)),
+    radial-gradient(circle at 85% 20%, rgba(255, 184, 107, 0.15), transparent 55%),
+    radial-gradient(circle at 15% 80%, rgba(155, 23, 153, 0.12), transparent 55%);
+  padding: 1.1rem 1.25rem 1.2rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
+}
+
+.mobile-ticket-right::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.04) 0, rgba(0, 0, 0, 0.04) 1px, transparent 1px, transparent 6px),
+    radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.5) 0%, transparent 55%);
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 /* Notches */
@@ -4301,7 +4350,7 @@
   left: 32%;
   width: 24px;
   height: 24px;
-  background: #160018;
+  background: #000000;
   /* Matches page background */
   border-radius: 50%;
   transform: translateX(-50%);
@@ -4322,11 +4371,13 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  position: relative;
+  z-index: 1;
 }
 
 .mobile-ticket-title {
   font-family: 'Akira Expanded', sans-serif;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   line-height: 1.1;
   color: #000;
   margin-bottom: 0.25rem;
@@ -4334,41 +4385,114 @@
 
 .mobile-ticket-subtitle {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #666;
   font-weight: 600;
 }
 
-.mobile-ticket-timer-label {
+.mobile-ticket-seal {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 0.65rem;
-  color: #888;
-  letter-spacing: 0.1em;
-  margin-bottom: 2px;
-}
-
-.mobile-ticket-timer {
-  font-family: 'Victory Striker', sans-serif;
-  font-size: 2rem;
-  line-height: 1;
-  color: #d10000;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.05em;
-}
-
-.mobile-ticket-message {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.85rem;
-  font-weight: 700;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #000;
-  padding: 6px 12px;
-  border: 2px solid #000;
-  border-radius: 8px;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.5);
+  color: #9b1799;
+  border: 1px solid rgba(155, 23, 153, 0.45);
+  padding: 0.2rem 0.4rem;
+  border-radius: 999px;
+}
+
+.mobile-ticket-list {
+  list-style: none;
+  margin: 0.6rem 0 0.85rem;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+  position: relative;
+  z-index: 1;
+}
+
+.mobile-ticket-list li {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  position: relative;
+  padding-left: 1rem;
+}
+
+.mobile-ticket-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.5rem;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #9b1799;
+  box-shadow: 0 0 0 2px rgba(155, 23, 153, 0.2);
+  transform: translateY(-50%);
+}
+
+.mobile-ticket-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  border: 2px solid #111;
+  color: #111;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 0.55rem 0.9rem;
+  font-family: 'Akira Expanded', var(--hero-font-family);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: transform 180ms ease, background-color 180ms ease, color 180ms ease;
+  position: relative;
+  z-index: 1;
+}
+
+.mobile-ticket-cta:hover {
+  background: #111;
+  color: #ffffff;
+}
+
+.mobile-ticket-seam {
+  position: absolute;
+  right: -2px;
+  top: 16%;
+  bottom: 16%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-ticket-perf {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.35);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.55);
+}
+
+@media (max-width: 420px) {
+  .mobile-ticket-wrapper {
+    max-width: 340px;
+  }
+
+  .mobile-ticket-logo-square {
+    width: 52px;
+    height: 52px;
+  }
+
+  .mobile-ticket-title {
+    font-size: 0.98rem;
+  }
 }
 
 /* =========================================

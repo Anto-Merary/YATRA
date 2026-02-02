@@ -5,6 +5,7 @@ import heroBg from '../assets/optimized/herobg-w1280.webp'
 import heroBgLq from '../assets/optimized/herobg-lq.webp'
 import heroBgPoster from '../assets/optimized/herobg-w640.webp'
 import yatraText from '../assets/optimized/yatratxt-w1536.webp'
+import yatraTicketLogo from '../../assets/LOGO .webp'
 import torriGate from '../assets/optimized/torrigate-w1280.webp'
 import yearText from '../assets/optimized/2026txt-w1536.webp'
 import videoSrc from '../assets/video.mp4'
@@ -2055,33 +2056,55 @@ function Hero() {
                 GET YOUR <span className="mobile-passes-title-accent">PASSES</span>
               </h2>
 
-              <div className="mobile-passes-grid">
-                <div className="mobile-pass-card mobile-pass-card--featured">
-                  <div className="mobile-pass-badge mobile-pass-badge--exclusive">OFFICIAL</div>
-
-                  <div className="mobile-pass-card-header">
-                    <h3 className="mobile-pass-card-title">
-                      YATRA <span className="mobile-pass-card-title--accent">PASS</span>
-                    </h3>
-                    <p className="mobile-pass-description">
-                      Secure your entry for YATRA&apos;26. Fast checkout via CCAvenue.
-                    </p>
+              <div className="mobile-ticket-wrapper">
+                <div className="mobile-neo-ticket">
+                  <div className="mobile-ticket-left">
+                    <div className="mobile-ticket-logo-stack">
+                    <img
+                      className="mobile-ticket-brand"
+                      src={yatraTicketLogo}
+                      alt="Yatra"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    </div>
+                    <div className="mobile-ticket-seam" aria-hidden="true">
+                      <span className="mobile-ticket-perf" />
+                      <span className="mobile-ticket-perf" />
+                      <span className="mobile-ticket-perf" />
+                      <span className="mobile-ticket-perf" />
+                      <span className="mobile-ticket-perf" />
+                      <span className="mobile-ticket-perf" />
+                    </div>
                   </div>
 
-                  <div className="mobile-pass-divider" aria-hidden="true" />
+                  <div className="mobile-ticket-right">
+                    <div className="mobile-ticket-header">
+                      <div>
+                        <div className="mobile-ticket-title">YATRA PASS</div>
+                        <div className="mobile-ticket-subtitle">OFFICIAL ENTRY</div>
+                      </div>
+                      <div className="mobile-ticket-seal" aria-hidden="true">
+                        승인
+                      </div>
+                    </div>
 
-                  <ul className="mobile-pass-card-list mobile-pass-card-list--bright">
-                    <li>Access to all 2 DAYS</li>
-                    <li>Proshows & DJ Night included</li>
-                    <li>Unlimited fun guaranteed</li>
-                  </ul>
+                    <ul className="mobile-ticket-list">
+                      <li>Access to all 2 DAYS</li>
+                      <li>Proshows & DJ Night Included</li>
+                      <li>Unlimited Fun Guaranteed</li>
+                    </ul>
 
-                  <a
-                    className="mobile-pass-cta mobile-pass-cta--accent"
-                    href="https://formbuilder.ccavenue.com/live/icici-bank/rajalakshmi-institue-of-technology-2/yatra-2026-reg-fees-link"
-                  >
-                    BUY NOW
-                  </a>
+                    <a
+                      className="mobile-ticket-cta"
+                      href="https://formbuilder.ccavenue.com/live/icici-bank/rajalakshmi-institue-of-technology-2/yatra-2026-reg-fees-link"
+                    >
+                      BUY NOW
+                    </a>
+                  </div>
+
+                  <span className="mobile-ticket-notch top" aria-hidden="true" />
+                  <span className="mobile-ticket-notch bottom" aria-hidden="true" />
                 </div>
               </div>
             </div>
