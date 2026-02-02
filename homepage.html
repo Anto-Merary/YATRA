@@ -211,11 +211,20 @@
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
         }
 
+        .ticket-section-container {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
         .ref-ticket-container {
             display: flex;
             width: 100%;
             max-width: 850px;
-            height: 350px;
+            min-height: 350px;
             filter: drop-shadow(0 10px 0 rgba(0, 0, 0, 1));
             transition: transform 0.3s ease, filter 0.3s ease;
         }
@@ -227,11 +236,13 @@
 
         .ref-ticket-left {
             width: 30%;
-            background-color: #0c0c0c;
+            background-color: #000000;
             position: relative;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 2rem 1.5rem;
             /* Use mask for notches and rounded corners left */
             border-radius: 4px 0 0 4px;
             -webkit-mask:
@@ -247,6 +258,44 @@
             border-right: 2px dashed rgba(255, 255, 255, 0.15);
         }
 
+        .ticket-logo-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            width: 100%;
+        }
+
+        .ticket-logo-square {
+            width: 80px;
+            height: 80px;
+            background-color: var(--color-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(-15deg);
+            box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+        }
+
+        .ticket-logo-letter {
+            color: white;
+            font-family: 'Akira Expanded', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            transform: rotate(15deg);
+        }
+
+        .ticket-year-text {
+            color: white;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-align: left;
+            width: 100%;
+            margin-top: auto;
+            padding-bottom: 0.5rem;
+        }
+
         .ref-ticket-right {
             width: 70%;
             background: #e8e8e8;
@@ -255,7 +304,7 @@
             padding: 2.5rem;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-start;
             border-radius: 0 4px 4px 0;
             -webkit-mask:
                 radial-gradient(circle at left top, transparent 20px, black 21px) top left,
@@ -267,6 +316,79 @@
                 radial-gradient(circle at left bottom, transparent 20px, black 21px) bottom left;
             mask-size: 100% 51%;
             mask-repeat: no-repeat;
+        }
+
+        .ticket-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .ticket-main-title-new {
+            font-family: 'Akira Expanded', sans-serif;
+            font-size: clamp(1.75rem, 3vw, 2.5rem);
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            line-height: 1;
+            color: black;
+            margin-bottom: 0.5rem;
+        }
+
+        .ticket-list-new {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .ticket-list-new li {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            line-height: 1.4;
+            color: black;
+            position: relative;
+            padding-left: 0;
+        }
+
+        .ticket-register-section {
+            margin-top: 1.5rem;
+        }
+
+        .ticket-register-btn {
+            display: inline-flex;
+            align-items: center;
+            border: 2px solid black;
+            padding: 0.75rem 1.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: black;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .ticket-register-btn:hover {
+            background: black;
+            color: white;
+        }
+
+        .ticket-ready-icon {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            stroke-width: 2;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 768px) {
+            .ticket-section-container {
+                padding: 2rem 1.5rem;
+                border-radius: 12px;
+            }
         }
 
         /* Perforation Holes - visual only */
@@ -348,16 +470,6 @@
             line-height: 1;
         }
 
-        .ticket-qr-area {
-            position: absolute;
-            bottom: 2rem;
-            right: 2rem;
-            border: 2px solid black;
-            padding: 4px;
-            background: white;
-            width: 80px;
-            height: 80px;
-        }
 
         .ticket-btn {
             border: 2px solid black;
@@ -391,12 +503,22 @@
 
             .ref-ticket-left {
                 width: 100%;
-                height: 100px;
+                min-height: 150px;
                 border-right: none;
-                border-bottom: none;
+                border-bottom: 2px dashed rgba(255, 255, 255, 0.15);
                 border-radius: 12px 12px 0 0;
                 -webkit-mask: none;
                 mask: none;
+                padding: 1.5rem;
+            }
+
+            .ticket-logo-square {
+                width: 60px;
+                height: 60px;
+            }
+
+            .ticket-logo-letter {
+                font-size: 2rem;
             }
 
             .ref-ticket-right {
@@ -412,14 +534,9 @@
                 display: none;
             }
 
-            .ticket-price-corner {
-                position: static;
-                text-align: left;
-                margin-bottom: 1rem;
-            }
-
-            .ticket-qr-area {
-                display: none;
+            .ticket-register-btn {
+                width: 100%;
+                justify-content: center;
             }
         }
 
@@ -1019,12 +1136,24 @@
         /* About logos: keep aligned and consistent sizing */
         .about-logos-container {
             align-items: center;
+            justify-content: center;
         }
 
         .about-logo {
-            height: clamp(40px, 6vw, 80px);
-            max-width: 220px;
+            height: clamp(60px, 8vw, 120px);
+            width: auto;
+            max-width: 280px;
+            min-width: 180px;
             object-fit: contain;
+            display: block;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: clamp(60px, 8vw, 120px);
+            min-height: clamp(60px, 8vw, 120px);
         }
 
         .logo-container img {
@@ -1055,6 +1184,8 @@
             height: 100vh;
             overflow: hidden;
             position: relative;
+            /* Prevent horizontal scroll */
+            max-width: 100vw;
         }
 
         #gallery-track {
@@ -1063,10 +1194,13 @@
             width: max-content;
             /* Important for horizontal calculation */
             will-change: transform;
+            /* Ensure proper width calculation */
+            min-width: 100%;
         }
 
         .gallery-item {
             width: 100vw;
+            min-width: 100vw;
             height: 100%;
             position: relative;
             flex-shrink: 0;
@@ -1075,6 +1209,8 @@
             justify-content: center;
             overflow: hidden;
             border-right: 1px solid rgba(255, 255, 255, 0.1);
+            /* Ensure no content overflow */
+            box-sizing: border-box;
         }
 
         /* Gallery: Vijay slide framing */
@@ -1178,6 +1314,17 @@
                 padding: 0 0.5rem;
             }
 
+            /* Mobile logo consistency */
+            .about-logo {
+                height: clamp(50px, 12vw, 80px) !important;
+                min-width: 140px !important;
+            }
+
+            .logo-container {
+                height: clamp(50px, 12vw, 80px) !important;
+                min-height: clamp(50px, 12vw, 80px) !important;
+            }
+
             #about .word-reveal-p p {
                 font-size: 1.05rem;
                 line-height: 1.8;
@@ -1212,7 +1359,7 @@
             .gallery-intro-title span.hidden {
                 display: none !important;
             }
-            
+
             /* Show mobile version on mobile - only spans that should be visible */
             .gallery-intro-title span:not(.hidden) {
                 display: block !important;
@@ -1767,6 +1914,8 @@
             <a href="/events" class="hacker-text hover:text-[var(--color-accent)] transition-colors"
                 data-original="Events"
                 onclick="event.preventDefault(); if (window.parent !== window) { window.parent.postMessage({ type: 'navigate', path: '/events' }, '*'); } else { window.location.href = '/events'; }">Events</a>
+            <a href="#passes" class="hacker-text hover:text-[var(--color-accent)] transition-colors"
+                data-original="Passes">Passes</a>
         </div>
     </nav>
 
@@ -1797,10 +1946,10 @@
                 </h1>
             </div>
             <div class="mt-6 sm:mt-8 md:mt-12 animate-fade-in-up mix-blend-normal">
-                <a href="/yatra-entry" class="magnetic-wrap inline-block">
+                <a href="#passes" class="magnetic-wrap inline-block">
                     <div class="magnetic-content yellow-purple-gradient-animated text-black px-5 py-2.5 sm:px-6 sm:py-3 md:px-8 md:py-4 lg:px-12 lg:py-5 rounded-lg uppercase font-bold text-[0.75rem] sm:text-xs md:text-sm lg:text-base tracking-widest transition-all duration-300 shadow-lg"
                         style="mix-blend-mode: normal; min-height: 44px; display: flex; align-items: center; justify-content: center;">
-                        BUY TICKETS
+                        BUY PASSES
                     </div>
                 </a>
             </div>
@@ -1820,20 +1969,20 @@
     </header>
 
     <!-- Intro / About -->
-    <section id="about" class="py-10 sm:py-14 md:py-20 lg:py-40 px-4 sm:px-6 max-w-8xl xl:max-w-9xl mx-auto relative"
+    <section id="about" class="py-12 sm:py-16 md:py-24 lg:py-32 xl:py-40 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 w-full relative"
         data-theme="light">
-        <div class="flex flex-col items-center justify-center text-center">
+        <div class="flex flex-col items-center justify-center text-center w-full">
 
-            <div class="w-full max-w-full">
-                <div class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-display font-extrabold uppercase tracking-tighter leading-[1.1] sm:leading-tight mb-4 sm:mb-8 md:mb-12 lg:mb-16 xl:mb-20 word-reveal px-2"
+            <div class="w-full">
+                <div class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-display font-extrabold uppercase tracking-tighter leading-[1.1] sm:leading-tight mb-6 sm:mb-8 md:mb-12 lg:mb-16 xl:mb-20 word-reveal"
                     style="position: relative; z-index: 10; isolation: isolate;">
                     <span class="block sm:inline about-title-word">About</span>
                     <span class="block sm:inline text-[var(--color-accent)]">YATRA</span>
                 </div>
                 <div
-                    class="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl opacity-85 relative flex justify-center mb-3 sm:mb-4 md:mb-5 lg:mb-6 xl:mb-8">
+                    class="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl opacity-85 relative flex justify-center mb-6 sm:mb-8 md:mb-10 lg:mb-12 xl:mb-16">
 
-                    <div class="word-reveal-p pl-0 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto leading-[1.7] sm:leading-relaxed px-2 sm:px-4 md:px-6"
+                    <div class="word-reveal-p w-full max-w-6xl xl:max-w-7xl 2xl:max-w-8xl mx-auto leading-[1.7] sm:leading-relaxed px-4 sm:px-6 md:px-8 lg:px-10"
                         style="text-align: justify;">
                         <p class="mb-4 sm:mb-6">
                             YATRA 2026 is a grand intercollegiate cultural fest of Rajalakshmi Institutions, organized
@@ -1850,18 +1999,18 @@
                         </p>
                     </div>
                 </div>
-                <div class="mt-3 sm:mt-4 md:mt-5 lg:mt-6 xl:mt-8 flex justify-center items-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 xl:gap-12 flex-wrap sm:flex-nowrap relative px-2 about-logos-container"
+                <div class="mt-6 sm:mt-8 md:mt-10 lg:mt-12 xl:mt-16 flex justify-center items-center gap-6 sm:gap-8 md:gap-10 lg:gap-12 xl:gap-16 flex-wrap sm:flex-nowrap relative w-full about-logos-container"
                     style="z-index: 100;">
                     <div class="blur-reveal logo-container flex-shrink-0">
                         <img src="RIT WHITE LOGO.webp" alt="RIT Logo"
-                            class="about-logo w-auto transition-all duration-300">
+                            class="about-logo transition-all duration-300">
                     </div>
                     <div class="blur-reveal logo-container flex-shrink-0">
                         <img src="RMC COLLEGE LOGO.webp" alt="RMC College Logo"
-                            class="about-logo w-auto transition-all duration-300">
+                            class="about-logo transition-all duration-300">
                     </div>
                     <div class="blur-reveal logo-container flex-shrink-0">
-                        <img src="RSB Logo.webp" alt="RSB Logo" class="about-logo w-auto transition-all duration-300">
+                        <img src="RSB Logo.webp" alt="RSB Logo" class="about-logo transition-all duration-300">
                     </div>
                 </div>
             </div>
@@ -2213,6 +2362,65 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Passes Section -->
+    <section id="passes" class="py-16 sm:py-20 md:py-28 lg:py-32 px-4 sm:px-6 bg-black text-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-10 sm:mb-14 md:mb-16">
+                <h2
+                    class="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black uppercase mb-4 text-white word-reveal" style="letter-spacing: 0.05em; word-spacing: 0.2em;">
+                    GET YOUR <span class="text-[var(--color-accent)]">PASS</span>
+                </h2>
+            </div>
+
+            <!-- Ticket Component -->
+            <div class="flex justify-center items-center">
+                <div class="ticket-section-container">
+                    <a href="https://formbuilder.ccavenue.com/live/icici-bank/rajalakshmi-institue-of-technology-2/yatra-2026-reg-fees-link"
+                        target="_blank" rel="noopener noreferrer" class="block w-full max-w-[850px] no-underline">
+                        <div class="ref-ticket-container mx-auto cursor-pointer">
+                        <!-- Left Section (Dark with Logo) -->
+                        <div class="ref-ticket-left">
+                            <div class="ticket-logo-wrapper">
+                                <div class="ticket-logo-square">
+                                    <span class="ticket-logo-letter">Y</span>
+                                </div>
+                            </div>
+                            <div class="ticket-year-text">YATRA 2026</div>
+                            <div class="ticket-seam" aria-hidden="true">
+                                <div class="perf-circle"></div>
+                                <div class="perf-circle"></div>
+                                <div class="perf-circle"></div>
+                                <div class="perf-circle"></div>
+                                <div class="perf-circle"></div>
+                                <div class="perf-circle"></div>
+                                <div class="perf-circle"></div>
+                            </div>
+                        </div>
+
+                        <!-- Right Section (Light with Content) -->
+                        <div class="ref-ticket-right">
+                            <div class="ticket-content-wrapper">
+                                <div class="ticket-main-title-new">YATRA PASS</div>
+                                <ul class="ticket-list-new">
+                                    <li>Access to all 2 DAYS</li>
+                                    <li>Proshows & DJ Night Included</li>
+                                    <li>Unlimited Fun Guaranteed</li>
+                                </ul>
+                                <div class="ticket-register-section">
+                                    <div class="ticket-register-btn">
+                                        <span>REGISTER NOW</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </a>
+                </div>
+            </div>
+
         </div>
     </section>
 
@@ -2682,11 +2890,11 @@
             // Lineup Animations - Mobile only: smooth scroll-to-reveal parallax
             if (isMobileView) {
                 const lineupCards = gsap.utils.toArray('#lineup .lineup-card-slot').slice(0, 3);
-                
+
                 lineupCards.forEach((card, index) => {
                     // Set initial state - cards start below and invisible
                     gsap.set(card, { y: 80, opacity: 0 });
-                    
+
                     // Create smooth scroll-triggered animation
                     gsap.to(card, {
                         y: 0,
@@ -2764,7 +2972,13 @@
             let cachedScrollAmount = null;
             let getScrollAmount = () => {
                 if (cachedScrollAmount === null) {
-                    cachedScrollAmount = -(galleryTrack.scrollWidth - window.innerWidth);
+                    // Force a reflow to ensure accurate measurements
+                    galleryTrack.style.width = 'auto';
+                    const trackWidth = galleryTrack.scrollWidth || galleryTrack.offsetWidth;
+                    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+                    // Calculate the total scroll distance needed (negative for left movement)
+                    const scrollDistance = trackWidth - viewportWidth;
+                    cachedScrollAmount = scrollDistance > 0 ? -scrollDistance : 0;
                 }
                 return cachedScrollAmount;
             };
@@ -2780,7 +2994,9 @@
                 start: "top top",
                 end: () => {
                     cachedScrollAmount = null; // Reset cache on recalculation
-                    return `+=${getScrollAmount() * -1}`;
+                    const scrollAmount = getScrollAmount();
+                    // Ensure we have a valid scroll amount
+                    return scrollAmount !== null && scrollAmount !== 0 ? `+=${scrollAmount * -1}` : "+=100%";
                 },
                 pin: true,
                 animation: tween,
@@ -2801,7 +3017,8 @@
                         inertia: false,
                     },
                 invalidateOnRefresh: true,
-                refreshPriority: 1 // Higher priority for gallery
+                refreshPriority: 1, // Higher priority for gallery
+                anticipatePin: 1 // Improve pinning performance
             });
 
             // Reset cache on resize
@@ -2810,9 +3027,19 @@
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(() => {
                     cachedScrollAmount = null;
-                    ScrollTrigger.refresh();
+                    // Force recalculation of scroll amount
+                    galleryTrack.style.width = 'auto';
+                    requestAnimationFrame(() => {
+                        ScrollTrigger.refresh();
+                    });
                 }, 150);
             }, { passive: true });
+            
+            // Ensure proper initialization after DOM is ready
+            requestAnimationFrame(() => {
+                cachedScrollAmount = null;
+                ScrollTrigger.refresh();
+            });
 
             // Scroll-based B&W to Color transition for gallery images
             // Mobile perf: skip the per-slide onUpdate work (it is the biggest source of lag on phones).
@@ -2830,7 +3057,10 @@
                         ScrollTrigger.create({
                             trigger: "#gallery-pin",
                             start: "top top",
-                            end: () => `+=${getScrollAmount() * -1}`,
+                            end: () => {
+                                const scrollAmount = getScrollAmount();
+                                return scrollAmount !== null && scrollAmount !== 0 ? `+=${scrollAmount * -1}` : "+=100%";
+                            },
                             scrub: 0.5,
                             onUpdate: (self) => {
                                 // Calculate which slide we're approaching
