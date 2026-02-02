@@ -1409,6 +1409,7 @@
   text-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
   white-space: nowrap;
 }
+
 .features-heading {
   text-align: center;
   margin-bottom: 1.5rem;
@@ -3681,6 +3682,7 @@
   position: relative;
   z-index: 2;
 }
+
 @media (min-width: 640px) {
   .lineup-subtitle {
     font-size: 1rem;
@@ -4710,6 +4712,7 @@
 
 /* Reduced motion preferences - comprehensive */
 @media (prefers-reduced-motion: reduce) {
+
   /* Disable all animations */
   *,
   *::before,
@@ -4790,6 +4793,7 @@ body.low-end-device .blast-section::before {
 
 /* Reduce filter complexity on touch devices during scroll */
 @media (hover: none) and (pointer: coarse) {
+
   /* Simplify shadows during scroll */
   .blast-photo {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
@@ -4820,4 +4824,58 @@ body.low-end-device .blast-section::before {
 
 .lineup-card-slot {
   contain: layout style paint;
+}
+
+/* DecryptText performance optimizations */
+.features-title-main,
+.features-title-sub,
+.blast-title-prefix,
+.blast-title-highlight {
+  /* Hint to browser that text content will change */
+  will-change: contents;
+  /* Isolate layout recalculations */
+  contain: layout style;
+  /* Prevent repaints affecting siblings */
+  display: inline-block;
+}
+
+/* Features heading container optimization */
+.features-heading {
+  contain: layout style;
+}
+
+/* Additional low-end device optimizations for DecryptText */
+body.low-end-device .features-title-main,
+body.low-end-device .features-title-sub,
+body.low-end-device .blast-title-prefix,
+body.low-end-device .blast-title-highlight {
+  /* Skip will-change on low-end to reduce memory pressure */
+  will-change: auto;
+  /* Simple fade-in instead of scramble animation effect */
+  transition: opacity 0.3s ease;
+}
+
+/* Disable complex pseudo-element animations on low-end devices */
+body.low-end-device .hero-year-text::before {
+  animation: none !important;
+}
+
+/* Simplify transitions for smoother scrolling on low-end */
+body.low-end-device .about-title,
+body.low-end-device .about-content {
+  transition-duration: 0.2s;
+}
+
+/* Reduce paint complexity in features section */
+body.low-end-device .features-image-glow {
+  display: none;
+}
+
+/* Optimize features section container */
+.features-container {
+  contain: layout style;
+}
+
+.blast-inner {
+  contain: layout style;
 }

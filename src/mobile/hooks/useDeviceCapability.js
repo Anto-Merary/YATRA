@@ -145,6 +145,7 @@ export function getAnimationConfig(tier) {
       scrub: 1.35,
       lampCount: 8,
       decryptInterval: 32,
+      skipDecryptAnimation: false, // Full animation
       enableLightning: true,
       enableLampGlow: true,
       maxConcurrentAnimations: 6,
@@ -156,7 +157,8 @@ export function getAnimationConfig(tier) {
       duration: 1.8,
       scrub: 2.0,
       lampCount: 4,
-      decryptInterval: 48,
+      decryptInterval: 64, // Slower interval for mid-range (was 48)
+      skipDecryptAnimation: false, // Still animate but slower
       enableLightning: true,
       enableLampGlow: true,
       maxConcurrentAnimations: 5, // Show 5 of 6 images
@@ -168,7 +170,8 @@ export function getAnimationConfig(tier) {
       duration: 1.2,
       scrub: 3.0,
       lampCount: 0,
-      decryptInterval: 64,
+      decryptInterval: 80,
+      skipDecryptAnimation: true, // Skip animation, show final text immediately
       enableLightning: false,
       enableLampGlow: false,
       maxConcurrentAnimations: 4, // Show 4 of 6 images

@@ -85,56 +85,120 @@ function GlitchText({ koreanText, englishText, className, delay = 0, shouldStart
   )
 }
 
-function DecryptText({ koreanText, englishText, className, delay = 0, shouldStart = false, frameInterval = 32 }) {
-  const [displayText, setDisplayText] = useState(koreanText || englishText || '')
+/**
+ * Optimized DecryptText component - uses DOM refs instead of React state
+ * to avoid triggering React re-renders during the scramble animation.
+ * 
+ * Performance optimizations:
+ * 1. Direct DOM manipulation via ref (no React reconciliation)
+ * 2. requestAnimationFrame for smoother frame scheduling
+ * 3. Skip animation entirely on low-end devices (skipAnimation prop)
+ * 4. Cleanup on unmount/visibility change
+ */
+function DecryptText({
+  koreanText,
+  englishText,
+  className,
+  delay = 0,
+  shouldStart = false,
+  frameInterval = 32,
+  skipAnimation = false
+}) {
+  const textRef = useRef(null)
+  const animationRef = useRef({ timeoutId: 0, rafId: 0, isRunning: false })
+
+  // Initial text (shown before animation starts)
+  const initialText = koreanText || englishText || ''
+  const finalText = englishText || ''
 
   useEffect(() => {
-    let timeoutId = 0
-    let intervalId = 0
+    const anim = animationRef.current
+    const el = textRef.current
 
-    if (!shouldStart) {
-      setDisplayText(koreanText || '')
-      return () => {
-        if (timeoutId) window.clearTimeout(timeoutId)
-        if (intervalId) window.clearInterval(intervalId)
-      }
+    // Cleanup function
+    const cleanup = () => {
+      if (anim.timeoutId) window.clearTimeout(anim.timeoutId)
+      if (anim.rafId) window.cancelAnimationFrame(anim.rafId)
+      anim.isRunning = false
     }
 
-    timeoutId = window.setTimeout(() => {
-      const finalText = englishText || ''
+    // Reset to initial text when animation stops
+    if (!shouldStart) {
+      if (el) el.textContent = koreanText || ''
+      cleanup()
+      return cleanup
+    }
+
+    // Skip animation on low-end devices - show final text immediately with no scramble
+    if (skipAnimation) {
+      anim.timeoutId = window.setTimeout(() => {
+        if (el) el.textContent = finalText
+      }, delay)
+      return cleanup
+    }
+
+    // Start the decrypt animation after delay
+    anim.timeoutId = window.setTimeout(() => {
+      if (!el) return
+
       const glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+      const glyphsLength = glyphs.length
       let frame = 0
       // Adaptive frame skip: faster interval = more frames to skip for same visual speed
       const frameSkip = frameInterval > 40 ? 1 : 2
+      const textLength = finalText.length
 
-      intervalId = window.setInterval(() => {
-        frame += 1
-        const revealCount = Math.min(finalText.length, Math.floor(frame / frameSkip))
-        const nextText = finalText
-          .split('')
-          .map((char, idx) => {
-            if (char === ' ') return ' '
-            if (idx < revealCount) return char
-            return glyphs[Math.floor(Math.random() * glyphs.length)]
-          })
-          .join('')
+      anim.isRunning = true
+      let lastTime = performance.now()
 
-        setDisplayText(nextText)
+      // Use requestAnimationFrame with timing control for smoother animation
+      const tick = (currentTime) => {
+        if (!anim.isRunning || !el) return
 
-        if (revealCount >= finalText.length) {
-          window.clearInterval(intervalId)
-          setDisplayText(finalText)
+        // Throttle based on frameInterval
+        const elapsed = currentTime - lastTime
+        if (elapsed < frameInterval) {
+          anim.rafId = window.requestAnimationFrame(tick)
+          return
         }
-      }, frameInterval)
+        lastTime = currentTime
+
+        frame += 1
+        const revealCount = Math.min(textLength, Math.floor(frame / frameSkip))
+
+        // Build scrambled text - optimized string building
+        let result = ''
+        for (let i = 0; i < textLength; i++) {
+          const char = finalText[i]
+          if (char === ' ') {
+            result += ' '
+          } else if (i < revealCount) {
+            result += char
+          } else {
+            result += glyphs[(Math.random() * glyphsLength) | 0]
+          }
+        }
+
+        // Direct DOM update - no React re-render
+        el.textContent = result
+
+        // Check if animation is complete
+        if (revealCount >= textLength) {
+          el.textContent = finalText
+          anim.isRunning = false
+          return
+        }
+
+        anim.rafId = window.requestAnimationFrame(tick)
+      }
+
+      anim.rafId = window.requestAnimationFrame(tick)
     }, delay)
 
-    return () => {
-      if (timeoutId) window.clearTimeout(timeoutId)
-      if (intervalId) window.clearInterval(intervalId)
-    }
-  }, [delay, englishText, koreanText, shouldStart, frameInterval])
+    return cleanup
+  }, [delay, finalText, koreanText, shouldStart, frameInterval, skipAnimation])
 
-  return <span className={className}>{displayText}</span>
+  return <span ref={textRef} className={className}>{initialText}</span>
 }
 
 function Hero() {
@@ -315,7 +379,7 @@ function Hero() {
 
     const update = () => {
       ticking = false
-      
+
       // Skip if we updated too recently
       const now = performance.now()
       if (now - lastUpdateTime < updateThrottle) return
@@ -737,7 +801,7 @@ function Hero() {
     if (!isExperienceReady) return
     // Skip parallax on low-end devices
     if (!animConfig.parallax) return
-    
+
     const sectionEl = featuresSectionRef.current
     const imageEl = featuresImageRef.current
     if (!sectionEl || !imageEl) return
@@ -1823,6 +1887,7 @@ function Hero() {
                     delay={0}
                     shouldStart={isFeaturesSectionVisible}
                     frameInterval={animConfig.decryptInterval}
+                    skipAnimation={animConfig.skipDecryptAnimation}
                   />
                   <DecryptText
                     koreanText="오십+ 이벤트"
@@ -1831,6 +1896,7 @@ function Hero() {
                     delay={220}
                     shouldStart={isFeaturesSectionVisible}
                     frameInterval={animConfig.decryptInterval}
+                    skipAnimation={animConfig.skipDecryptAnimation}
                   />
                 </h2>
                 <p className="features-title-tag">CASH PRIZE • ALL-DAY HYPE</p>
@@ -1902,6 +1968,7 @@ function Hero() {
                   delay={0}
                   shouldStart={isBlastSectionVisible}
                   frameInterval={animConfig.decryptInterval}
+                  skipAnimation={animConfig.skipDecryptAnimation}
                 />
                 <DecryptText
                   koreanText="돌진하다"
@@ -1910,6 +1977,7 @@ function Hero() {
                   delay={220}
                   shouldStart={isBlastSectionVisible}
                   frameInterval={animConfig.decryptInterval}
+                  skipAnimation={animConfig.skipDecryptAnimation}
                 />
               </h2>
 
