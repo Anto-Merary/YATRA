@@ -296,7 +296,7 @@ function Hero() {
     []
   )
 
-  // 48-hour countdown card (same vibe as desktop): counts down from first mount.
+  // 24-hour countdown card (same vibe as desktop): counts down from first mount.
   const countdownStartRef = useRef(0)
   const [countdownNow, setCountdownNow] = useState(() => Date.now())
 
@@ -309,7 +309,7 @@ function Hero() {
 
   const countdownText48hr = useMemo(() => {
     const start = countdownStartRef.current || Date.now()
-    const target = start + 48 * 60 * 60 * 1000
+    const target = start + 24 * 60 * 60 * 1000 // Changed from 48 hours to 24 hours
     const distance = Math.max(0, target - countdownNow)
     const totalHours = Math.floor(distance / (1000 * 60 * 60))
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
@@ -1552,7 +1552,7 @@ function Hero() {
                 data-shimmer-trigger={shimmerTrigger}
               >
                 <span className="hero-button-shimmer" aria-hidden="true" />
-                <span className="hero-button-text">BUY NOW</span>
+                <span className="hero-button-text">BUY TICKETS</span>
                 <span className="star-icon" aria-hidden="true">
                   ✦
                 </span>
