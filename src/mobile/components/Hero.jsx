@@ -594,10 +594,7 @@ function Hero() {
     return Array.from(uniqueImages.values())
   }, [])
 
-  const blastImages = useMemo(() => {
-    const maxImages = animConfig.maxConcurrentAnimations || allBlastImages.length
-    return allBlastImages.slice(0, Math.min(allBlastImages.length, maxImages))
-  }, [allBlastImages, animConfig.maxConcurrentAnimations])
+  const blastImages = useMemo(() => allBlastImages, [allBlastImages])
 
   useEffect(() => {
     blastPhotoElsRef.current = []
@@ -1939,24 +1936,12 @@ function Hero() {
 
               <div className="features-heading">
                 <h2 className="features-title">
-                  <DecryptText
-                    koreanText="상상해봐"
-                    englishText="IMAGINE"
-                    className="features-title-main"
-                    delay={0}
-                    shouldStart={isFeaturesSectionVisible}
-                    frameInterval={animConfig.decryptInterval}
-                    skipAnimation={animConfig.skipDecryptAnimation}
-                  />
-                  <DecryptText
-                    koreanText="오십+ 이벤트"
-                    englishText="50+ EVENTS"
-                    className="features-title-sub"
-                    delay={220}
-                    shouldStart={isFeaturesSectionVisible}
-                    frameInterval={animConfig.decryptInterval}
-                    skipAnimation={animConfig.skipDecryptAnimation}
-                  />
+                  <span className={`features-title-main text-reveal ${isFeaturesSectionVisible ? 'is-visible' : ''}`}>
+                    IMAGINE
+                  </span>
+                  <span className={`features-title-sub text-reveal text-reveal--delay ${isFeaturesSectionVisible ? 'is-visible' : ''}`}>
+                    50+ EVENTS
+                  </span>
                 </h2>
                 <p className="features-title-tag">CASH PRIZE • ALL-DAY HYPE</p>
               </div>
@@ -2020,24 +2005,12 @@ function Hero() {
                 <span className="section-divider-line" />
               </div>
               <h2 className="features-title">
-                <DecryptText
-                  koreanText="과거 속으로"
-                  englishText="BLAST INTO THE"
-                  className="blast-title-prefix"
-                  delay={0}
-                  shouldStart={isBlastSectionVisible}
-                  frameInterval={animConfig.decryptInterval}
-                  skipAnimation={animConfig.skipDecryptAnimation}
-                />
-                <DecryptText
-                  koreanText="돌진하다"
-                  englishText="PAST"
-                  className="blast-title-highlight"
-                  delay={220}
-                  shouldStart={isBlastSectionVisible}
-                  frameInterval={animConfig.decryptInterval}
-                  skipAnimation={animConfig.skipDecryptAnimation}
-                />
+                <span className={`blast-title-prefix text-reveal ${isBlastSectionVisible ? 'is-visible' : ''}`}>
+                  BLAST INTO THE
+                </span>
+                <span className={`blast-title-highlight text-reveal text-reveal--delay ${isBlastSectionVisible ? 'is-visible' : ''}`}>
+                  PAST
+                </span>
               </h2>
 
               <div className="blast-collage" ref={blastCollageRef} aria-hidden="true">
