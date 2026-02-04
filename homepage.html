@@ -2147,7 +2147,25 @@
                     </button>
                 </div>
 
-                <!-- Card 3 - 48 Hour Countdown Timer -->
+                <!-- Card 3 - Pradeep Kumar Flip Card (Third Artist) -->
+                <div class="lineup-card-slot lineup-card-slot--revealed">
+                    <button type="button" class="lineup-flip-card" id="pradeep-flip-card"
+                        aria-label="Click to reveal Pradeep Kumar lineup card">
+                        <span class="lineup-flip-card-inner" aria-hidden="true">
+                            <span class="lineup-flip-card-face lineup-flip-card-face--back">
+                                <img class="lineup-flip-card-img" src="/gvbackcard (1).webp"
+                                    alt="Pradeep Kumar lineup card (back)" decoding="async" loading="lazy">
+                                <span class="lineup-tap-to-reveal">CLICK TO REVEAL</span>
+                            </span>
+                            <span class="lineup-flip-card-face lineup-flip-card-face--front">
+                                <img class="lineup-flip-card-img" src="/pradeepkumarfrontcard.webp" alt="Pradeep Kumar - Artist"
+                                    decoding="async" loading="lazy">
+                            </span>
+                        </span>
+                    </button>
+                </div>
+
+                <!-- Card 4 - 48 Hour Countdown Timer -->
                 <div class="lineup-card-slot">
                     <div class="lineup-locked-card">
                         <img class="lineup-flip-card-img lineup-locked-img" src="/gvbackcard (1).webp"
@@ -2955,6 +2973,30 @@
                         this.classList.add('is-flipped');
                         if (aooraRevealText) {
                             aooraRevealText.style.display = 'none';
+                        }
+                    }
+                });
+            }
+
+            // Pradeep Kumar Flip Card functionality - Toggle flip only, no navigation
+            const pradeepFlipCard = document.getElementById('pradeep-flip-card');
+            if (pradeepFlipCard) {
+                const pradeepRevealText = pradeepFlipCard.querySelector('.lineup-tap-to-reveal');
+
+                pradeepFlipCard.addEventListener('click', function (e) {
+                    const isFlipped = this.classList.contains('is-flipped');
+
+                    if (isFlipped) {
+                        // If already flipped, flip back to backside
+                        this.classList.remove('is-flipped');
+                        if (pradeepRevealText) {
+                            pradeepRevealText.style.display = 'block';
+                        }
+                    } else {
+                        // First click - flip the card to show front
+                        this.classList.add('is-flipped');
+                        if (pradeepRevealText) {
+                            pradeepRevealText.style.display = 'none';
                         }
                     }
                 });

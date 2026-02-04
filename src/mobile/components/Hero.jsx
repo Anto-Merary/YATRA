@@ -19,6 +19,7 @@ import { useDeviceCapability, getAnimationConfig } from '../hooks/useDeviceCapab
 const gvBackCard = '/gvbackcard (1).webp'
 const gvFrontCard = '/gvfrontcard.webp'
 const aooraFrontCard = '/aoorafrontcard.webp'
+const pradeepFrontCard = '/pradeepkumarfrontcard.webp'
 
 function GlitchText({ koreanText, englishText, className, delay = 0, shouldStart = false, variant = 'glitch' }) {
   const [isGlitching, setIsGlitching] = useState(false)
@@ -273,6 +274,11 @@ function Hero() {
     setIsAooraCardFlipped((v) => !v)
   }, [])
 
+  const [isPradeepCardFlipped, setIsPradeepCardFlipped] = useState(false)
+  const togglePradeepCard = useCallback(() => {
+    setIsPradeepCardFlipped((v) => !v)
+  }, [])
+
   // LINEUP carousel (character-select style)
   const lineupCarouselRef = useRef(null)
   const [activeLineupIndex, setActiveLineupIndex] = useState(0)
@@ -289,6 +295,7 @@ function Hero() {
     () => [
       { id: 'gv', status: 'revealed' },
       { id: 'aoora', status: 'revealed' },
+      { id: 'pradeep', status: 'revealed' },
       { id: 'countdown-48hr', status: 'countdown' },
       { id: 'locked-0', status: 'locked' },
       { id: 'locked-1', status: 'locked' },
@@ -309,7 +316,7 @@ function Hero() {
 
   const countdownText48hr = useMemo(() => {
     const start = countdownStartRef.current || Date.now()
-    const target = start + 24 * 60 * 60 * 1000 // Changed from 48 hours to 24 hours
+    const target = start + 48 * 60 * 60 * 1000 // 48 hours countdown
     const distance = Math.max(0, target - countdownNow)
     const totalHours = Math.floor(distance / (1000 * 60 * 60))
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
@@ -1704,10 +1711,11 @@ function Hero() {
                     const isLocked = card.status === 'locked'
                     const isGv = card.id === 'gv'
                     const isAoora = card.id === 'aoora'
-                    const isFlipped = isGv ? isGvCardFlipped : isAoora ? isAooraCardFlipped : false
-                    const toggleFlip = isGv ? toggleGvCard : isAoora ? toggleAooraCard : undefined
-                    const frontImage = isGv ? gvFrontCard : isAoora ? aooraFrontCard : null
-                    const revealLabel = isGv ? 'GV Prakash' : isAoora ? 'Aoora' : 'Lineup artist'
+                    const isPradeep = card.id === 'pradeep'
+                    const isFlipped = isGv ? isGvCardFlipped : isAoora ? isAooraCardFlipped : isPradeep ? isPradeepCardFlipped : false
+                    const toggleFlip = isGv ? toggleGvCard : isAoora ? toggleAooraCard : isPradeep ? togglePradeepCard : undefined
+                    const frontImage = isGv ? gvFrontCard : isAoora ? aooraFrontCard : isPradeep ? pradeepFrontCard : null
+                    const revealLabel = isGv ? 'GV Prakash' : isAoora ? 'Aoora' : isPradeep ? 'Pradeep Kumar' : 'Lineup artist'
                     const countdownParts = countdownText48hr.split(':')
 
                     return (
