@@ -230,6 +230,8 @@ function Hero() {
   const blastCollageRef = useRef(null)
   const blastPhotoElsRef = useRef([])
   const hasAboutEnteredRef = useRef(false)
+  const hasFeaturesEnteredRef = useRef(false)
+  const hasBlastEnteredRef = useRef(false)
   const [isFeaturesSectionVisible, setIsFeaturesSectionVisible] = useState(false)
   const [isBlastSectionVisible, setIsBlastSectionVisible] = useState(false)
   const [blastShouldEagerLoad, setBlastShouldEagerLoad] = useState(false)
@@ -297,8 +299,6 @@ function Hero() {
       { id: 'aoora', status: 'revealed' },
       { id: 'pradeep', status: 'revealed' },
       { id: 'countdown-48hr', status: 'countdown' },
-      { id: 'locked-0', status: 'locked' },
-      { id: 'locked-1', status: 'locked' },
     ],
     []
   )
@@ -567,7 +567,7 @@ function Hero() {
     }))
   }, [])
 
-  const blastImages = useMemo(() => {
+  const allBlastImages = useMemo(() => {
     // Use only webp images for better performance and consistency
     const modules = import.meta.glob('../assets/gal/*.{webp,WEBP}', {
       eager: true,
@@ -591,9 +591,17 @@ function Hero() {
       }
     })
 
-    // Always show all 6 images - animation complexity is handled by scrub/stagger settings
-    return Array.from(uniqueImages.values()).slice(0, 6)
+    return Array.from(uniqueImages.values())
   }, [])
+
+  const blastImages = useMemo(() => {
+    const maxImages = animConfig.maxConcurrentAnimations || allBlastImages.length
+    return allBlastImages.slice(0, Math.min(allBlastImages.length, maxImages))
+  }, [allBlastImages, animConfig.maxConcurrentAnimations])
+
+  useEffect(() => {
+    blastPhotoElsRef.current = []
+  }, [blastImages.length])
 
   // Lantern (lamp) glow hotspots placed over the background art.
   // These are NOT visible UI elements—just an overlay to make each lamp "bloom" randomly.
@@ -785,7 +793,7 @@ function Hero() {
     }
   }, [])
 
-  // Features section: trigger glitch animation when section enters view
+  // Features section: trigger glitch animation once when section enters view
   useEffect(() => {
     if (!isExperienceReady) return
     const sectionEl = featuresSectionRef.current
@@ -796,16 +804,13 @@ function Hero() {
         const entry = entries[0]
         if (!entry) return
 
-        // Hysteresis prevents flicker + avoids awkward mid-section resets:
-        // - Enter once ~20% visible
-        // - Reset only when almost gone (~5% visible)
         const ratio = entry.intersectionRatio || 0
-
-        setIsFeaturesSectionVisible((prev) => {
-          if (!prev && ratio >= 0.2) return true
-          if (prev && ratio <= 0.05) return false
-          return prev
-        })
+        if (hasFeaturesEnteredRef.current) return
+        if (ratio >= 0.2) {
+          hasFeaturesEnteredRef.current = true
+          setIsFeaturesSectionVisible(true)
+          observer.disconnect()
+        }
       },
       { threshold: [0, 0.05, 0.2], rootMargin: '0px 0px -10% 0px' }
     )
@@ -856,7 +861,7 @@ function Hero() {
     }
   }, [isExperienceReady, animConfig.parallax, animConfig.scrub])
 
-  // BLAST INTO PAST section: trigger blur crossfade when section enters view
+  // BLAST INTO PAST section: trigger blur crossfade once when section enters view
   useEffect(() => {
     if (!isExperienceReady) return
     const sectionEl = blastSectionRef.current
@@ -868,11 +873,12 @@ function Hero() {
         if (!entry) return
 
         const ratio = entry.intersectionRatio || 0
-        setIsBlastSectionVisible((prev) => {
-          if (!prev && ratio >= 0.2) return true
-          if (prev && ratio <= 0.05) return false
-          return prev
-        })
+        if (hasBlastEnteredRef.current) return
+        if (ratio >= 0.2) {
+          hasBlastEnteredRef.current = true
+          setIsBlastSectionVisible(true)
+          observer.disconnect()
+        }
       },
       { threshold: [0, 0.05, 0.2], rootMargin: '0px 0px -10% 0px' }
     )
@@ -928,8 +934,7 @@ function Hero() {
       typeof window !== 'undefined' &&
       window.matchMedia &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-    gsap.registerPlugin(ScrollTrigger)
+    const shouldSimplifyBlast = reduceMotion || !deviceCapability.isHighEnd
 
     const els = blastPhotoElsRef.current.filter(Boolean)
     if (els.length === 0) return
@@ -1033,18 +1038,27 @@ function Hero() {
       st = null
 
       const { finalPositions, startPositions, rotations } = computePositions()
+      const getSrc = (el) => String(el?.currentSrc || el?.src || '')
+      const getBaseScale = (src) => {
+        const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
+        const isSyn = /(^|\/|\\)syn[-\.]/i.test(src)
+        return isPal ? 3.3075 : isSyn ? 2.0475 : 1.35
+      }
+      const getReducedScale = (src) => {
+        const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
+        const isSyn = /(^|\/|\\)syn[-\.]/i.test(src)
+        return isPal ? 1.6275 : isSyn ? 1.575 : 1
+      }
+      const getFinalScale = (src) => {
+        const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
+        const isSyn = /(^|\/|\\)syn[-\.]/i.test(src)
+        return isPal ? 1.9425 : isSyn ? 1.575 : 1
+      }
 
       // Base state
       els.forEach((el, i) => {
         const start = startPositions[i] || { x: 0, y: 0 }
-        const src = String(el.currentSrc || el.src || '')
-        // NOTE: Use [-\.] to match both dev (pal.webp) and prod (pal-hash.webp) URLs
-        const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
-        const isSyn = /(^|\/|\\)syn[-\.]/i.test(src)
-        // Make `pal` and `syn` larger without completely blowing up the layout.
-        // pal: +5% (3.15 → 3.3075)
-        // syn: +5% (1.95 → 2.0475)
-        const baseScale = isPal ? 3.3075 : isSyn ? 2.0475 : 1.35
+        const src = getSrc(el)
 
         gsap.set(el, {
           // Center using GSAP-managed percent transforms so CSS centering isn't lost
@@ -1053,7 +1067,7 @@ function Hero() {
           yPercent: -50,
           x: start.x,
           y: start.y,
-          scale: baseScale,
+          scale: getBaseScale(src),
           opacity: 0,
           rotate: rotations[i] ?? 0,
           transformOrigin: '50% 50%',
@@ -1065,18 +1079,13 @@ function Hero() {
       if (reduceMotion) {
         els.forEach((el, i) => {
           const base = finalPositions[i] || { x: 0, y: 0 }
-          const src = String(el.currentSrc || el.src || '')
-          // NOTE: Use [-\.] to match both dev (pal.webp) and prod (pal-hash.webp) URLs
-          const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
-          const isSyn = /(^|\/|\\)syn[-\.]/i.test(src)
-          // pal: +5% (1.55 → 1.6275)
-          // syn: +5% (1.5 → 1.575)
+          const src = getSrc(el)
           gsap.set(el, {
             xPercent: -50,
             yPercent: -50,
             x: base.x,
             y: base.y,
-            scale: isPal ? 1.6275 : isSyn ? 1.575 : 1,
+            scale: getReducedScale(src),
             opacity: 1,
             rotate: 0,
           })
@@ -1084,6 +1093,24 @@ function Hero() {
         return
       }
 
+      if (shouldSimplifyBlast) {
+        if (!isBlastSectionVisible) return
+        gsap.killTweensOf(els)
+        gsap.to(els, {
+          x: (i) => (finalPositions[i]?.x ?? 0),
+          y: (i) => (finalPositions[i]?.y ?? 0),
+          scale: (i) => getFinalScale(getSrc(els[i])),
+          opacity: 1,
+          rotate: 0,
+          duration: Math.max(0.6, animConfig.duration * 0.6),
+          ease: 'power3.out',
+          stagger: Math.min(0.2, animConfig.stagger * 0.6),
+          overwrite: 'auto',
+        })
+        return
+      }
+
+      gsap.registerPlugin(ScrollTrigger)
       tl = gsap.timeline({
         defaults: { ease: 'power3.out' },
       })
@@ -1096,20 +1123,14 @@ function Hero() {
       // Slower + slightly overlapping entrances (timeline length also controls scrub pacing)
       els.forEach((el, i) => {
         const base = finalPositions[i] || { x: 0, y: 0 }
-        const src = String(el.currentSrc || el.src || '')
-        // NOTE: Use [-\.] to match both dev (pal.webp) and prod (pal-hash.webp) URLs
-        const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
-        const isSyn = /(^|\/|\\)syn[-\.]/i.test(src)
-        // pal: +5% (1.85 → 1.9425)
-        // syn: +5% (1.5 → 1.575)
-        const finalScale = isPal ? 1.9425 : isSyn ? 1.575 : 1
+        const src = getSrc(el)
 
         tl.to(
           el,
           {
             x: base.x,
             y: base.y,
-            scale: finalScale,
+            scale: getFinalScale(src),
             opacity: 1,
             rotate: 0,
             duration: animDuration,
@@ -1138,16 +1159,31 @@ function Hero() {
     // Build once, then rebuild on refresh/resize (keeps layout crisp).
     build()
 
-    const onRefresh = () => build()
-    ScrollTrigger.addEventListener('refreshInit', onRefresh)
-    ScrollTrigger.refresh()
+    if (!shouldSimplifyBlast) {
+      const onRefresh = () => build()
+      ScrollTrigger.addEventListener('refreshInit', onRefresh)
+      ScrollTrigger.refresh()
+
+      return () => {
+        ScrollTrigger.removeEventListener('refreshInit', onRefresh)
+        if (st) st.kill()
+        if (tl) tl.kill()
+      }
+    }
 
     return () => {
-      ScrollTrigger.removeEventListener('refreshInit', onRefresh)
       if (st) st.kill()
       if (tl) tl.kill()
     }
-  }, [isExperienceReady, blastImages.length, animConfig.duration, animConfig.stagger, animConfig.scrub])
+  }, [
+    isExperienceReady,
+    isBlastSectionVisible,
+    blastImages.length,
+    animConfig.duration,
+    animConfig.stagger,
+    animConfig.scrub,
+    deviceCapability.isHighEnd,
+  ])
 
 
   // Scroll-based settle interaction - continuous and proportional to scroll distance,
