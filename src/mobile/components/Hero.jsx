@@ -931,7 +931,6 @@ function Hero() {
       typeof window !== 'undefined' &&
       window.matchMedia &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const shouldSimplifyBlast = reduceMotion || !deviceCapability.isHighEnd
 
     const els = blastPhotoElsRef.current.filter(Boolean)
     if (els.length === 0) return
@@ -1052,7 +1051,7 @@ function Hero() {
         return isPal ? 1.9425 : isSyn ? 1.575 : 1
       }
 
-      // Base state
+      // Base state (bigger + offscreen, then ease into final positions on scroll)
       els.forEach((el, i) => {
         const start = startPositions[i] || { x: 0, y: 0 }
         const src = getSrc(el)
@@ -1090,23 +1089,6 @@ function Hero() {
         return
       }
 
-      if (shouldSimplifyBlast) {
-        if (!isBlastSectionVisible) return
-        gsap.killTweensOf(els)
-        gsap.to(els, {
-          x: (i) => (finalPositions[i]?.x ?? 0),
-          y: (i) => (finalPositions[i]?.y ?? 0),
-          scale: (i) => getFinalScale(getSrc(els[i])),
-          opacity: 1,
-          rotate: 0,
-          duration: Math.max(0.6, animConfig.duration * 0.6),
-          ease: 'power3.out',
-          stagger: Math.min(0.2, animConfig.stagger * 0.6),
-          overwrite: 'auto',
-        })
-        return
-      }
-
       gsap.registerPlugin(ScrollTrigger)
       tl = gsap.timeline({
         defaults: { ease: 'power3.out' },
@@ -1114,8 +1096,9 @@ function Hero() {
       tl.pause(0)
 
       // Adaptive animation duration and stagger based on device capability
-      const animDuration = animConfig.duration
-      const animStagger = animConfig.stagger
+      const slowFactor = deviceCapability.isLowEnd ? 1.15 : deviceCapability.isMidRange ? 1.3 : 1.45
+      const animDuration = animConfig.duration * slowFactor
+      const animStagger = animConfig.stagger * slowFactor
 
       // Slower + slightly overlapping entrances (timeline length also controls scrub pacing)
       els.forEach((el, i) => {
@@ -1138,14 +1121,15 @@ function Hero() {
 
       // Tie reveal to scroll so photos don't all pop in early.
       // Adaptive scrub: higher value = smoother but less responsive (better for low-end)
+      const blastScrub = animConfig.scrub * (deviceCapability.isLowEnd ? 1.2 : 1.5)
       st = ScrollTrigger.create({
         id: 'blast-collage',
         trigger: sectionEl,
         // Start later (user is actually in the section), and stretch the end so the
         // reveal stays progressive while they explore the whole block.
-        start: 'top 62%',
-        end: 'bottom 60%', // Finish animation earlier so it holds before next section overlaps
-        scrub: animConfig.scrub,
+        start: 'top 70%',
+        end: 'bottom 40%',
+        scrub: blastScrub,
         animation: tl,
         invalidateOnRefresh: true,
         // Performance: don't update on every pixel
@@ -1156,30 +1140,23 @@ function Hero() {
     // Build once, then rebuild on refresh/resize (keeps layout crisp).
     build()
 
-    if (!shouldSimplifyBlast) {
-      const onRefresh = () => build()
-      ScrollTrigger.addEventListener('refreshInit', onRefresh)
-      ScrollTrigger.refresh()
-
-      return () => {
-        ScrollTrigger.removeEventListener('refreshInit', onRefresh)
-        if (st) st.kill()
-        if (tl) tl.kill()
-      }
-    }
+    const onRefresh = () => build()
+    ScrollTrigger.addEventListener('refreshInit', onRefresh)
+    ScrollTrigger.refresh()
 
     return () => {
+      ScrollTrigger.removeEventListener('refreshInit', onRefresh)
       if (st) st.kill()
       if (tl) tl.kill()
     }
   }, [
     isExperienceReady,
-    isBlastSectionVisible,
     blastImages.length,
     animConfig.duration,
     animConfig.stagger,
     animConfig.scrub,
-    deviceCapability.isHighEnd,
+    deviceCapability.isLowEnd,
+    deviceCapability.isMidRange,
   ])
 
 
