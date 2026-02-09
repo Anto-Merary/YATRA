@@ -2095,7 +2095,7 @@ function Hero() {
                 {/* Ticket 2: General Public Registration */}
                 <div className="mobile-neo-ticket" style={{ marginTop: '20px' }}>
                   <div className="mobile-ticket-left" style={{
-                    backgroundImage: 'url(/ticket1.jpeg)',
+                    backgroundImage: 'url(/ticket2.jpeg)',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     minHeight: '180px'
@@ -2134,7 +2134,7 @@ function Hero() {
                 {/* Ticket 3: Schools Registration */}
                 <div className="mobile-neo-ticket" style={{ marginTop: '20px' }}>
                   <div className="mobile-ticket-left" style={{
-                    backgroundImage: 'url(/ticket1.jpeg)',
+                    backgroundImage: 'url(/ticket3.jpeg)',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     minHeight: '180px'
