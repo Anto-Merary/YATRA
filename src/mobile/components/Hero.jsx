@@ -2053,76 +2053,8 @@ function Hero() {
               </h2>
 
               <div className="mobile-ticket-wrapper">
-                {/* Ticket 1: Schools Registration */}
+                {/* Ticket 1: Rajalakshmi Institutions */}
                 <div className="mobile-neo-ticket">
-                  <div className="mobile-ticket-left">
-                    <div className="mobile-ticket-logo-stack">
-                      <div
-                        style={{
-                          width: '40px',
-                          height: '40px',
-                          backgroundColor: '#fff19d',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          transform: 'rotate(-15deg)',
-                          boxShadow: '0 4px 12px rgba(233, 30, 99, 0.3)',
-                        }}
-                      >
-                        <span
-                          style={{
-                            color: 'black',
-                            fontFamily: 'Akira Expanded',
-                            fontSize: '1.5rem',
-                            fontWeight: 900,
-                            transform: 'rotate(15deg)',
-                          }}
-                        >
-                          S
-                        </span>
-                      </div>
-                    </div>
-                    <div className="mobile-ticket-seam" aria-hidden="true">
-                      <span className="mobile-ticket-perf" />
-                      <span className="mobile-ticket-perf" />
-                      <span className="mobile-ticket-perf" />
-                      <span className="mobile-ticket-perf" />
-                      <span className="mobile-ticket-perf" />
-                      <span className="mobile-ticket-perf" />
-                    </div>
-                  </div>
-
-                  <div className="mobile-ticket-right">
-                    <div className="mobile-ticket-header">
-                      <div>
-                        <div className="mobile-ticket-title" style={{ fontSize: '1.1rem' }}>SCHOOLS PASSES</div>
-                        <div className="mobile-ticket-subtitle">OFFICIAL ENTRY</div>
-                      </div>
-                      <div className="mobile-ticket-seal" aria-hidden="true">
-                        학교
-                      </div>
-                    </div>
-
-                    <ul className="mobile-ticket-list">
-                      <li>School Students & Orgs</li>
-                      <li>Bring Your Students</li>
-                      <li>Experience Yatra '26</li>
-                    </ul>
-
-                    <a
-                      className="mobile-ticket-cta"
-                      href="https://forms.easebuzz.in/sign-up/RAJALAKSHMIbw5w4/Yatra26_Schools_Registeration/?inst_name=RAJALAKSHMIbw5w4&form_name=Yatra26_Schools_Registeration&jsonData=1A"
-                    >
-                      REGISTER
-                    </a>
-                  </div>
-
-                  <span className="mobile-ticket-notch top" aria-hidden="true" />
-                  <span className="mobile-ticket-notch bottom" aria-hidden="true" />
-                </div>
-
-                {/* Ticket 2: Rajalakshmi Institutions (Formerly Yatra Pass) */}
-                <div className="mobile-neo-ticket" style={{ marginTop: '20px' }}>
                   <div className="mobile-ticket-left">
                     <div className="mobile-ticket-logo-stack">
                       <div
@@ -2189,7 +2121,7 @@ function Hero() {
                   <span className="mobile-ticket-notch bottom" aria-hidden="true" />
                 </div>
 
-                {/* Ticket 3: General Public Registration */}
+                {/* Ticket 2: General Public Registration */}
                 <div className="mobile-neo-ticket" style={{ marginTop: '20px' }}>
                   <div className="mobile-ticket-left">
                     <div className="mobile-ticket-logo-stack">
@@ -2240,14 +2172,82 @@ function Hero() {
                     </div>
 
                     <ul className="mobile-ticket-list">
-                      <li>Open to Everyone</li>
-                      <li>Experience the Vibe</li>
-                      <li>Concerts & Events</li>
+                      <li><strong>DAY 1:</strong> ₹500 — Guest: AOORA</li>
+                      <li><strong>DAY 2:</strong> ₹500 — GV Prakash & Pradeep Kumar</li>
+                      <li style={{ color: '#9b1799', fontWeight: 700 }}>🔥 COMBO: ₹850 (DAY 1 & 2) — BEST OFFER!</li>
                     </ul>
 
                     <a
                       className="mobile-ticket-cta"
                       href="https://forms.easebuzz.in/sign-up/RAJALAKSHMIbw5w4/General_Public_Reg_Yatra26/?inst_name=RAJALAKSHMIbw5w4&form_name=General_Public_Reg_Yatra26&jsonData=1"
+                    >
+                      REGISTER
+                    </a>
+                  </div>
+
+                  <span className="mobile-ticket-notch top" aria-hidden="true" />
+                  <span className="mobile-ticket-notch bottom" aria-hidden="true" />
+                </div>
+
+                {/* Ticket 3: Schools Registration */}
+                <div className="mobile-neo-ticket" style={{ marginTop: '20px' }}>
+                  <div className="mobile-ticket-left">
+                    <div className="mobile-ticket-logo-stack">
+                      <div
+                        style={{
+                          width: '40px',
+                          height: '40px',
+                          backgroundColor: '#fff19d',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transform: 'rotate(-15deg)',
+                          boxShadow: '0 4px 12px rgba(233, 30, 99, 0.3)',
+                        }}
+                      >
+                        <span
+                          style={{
+                            color: 'black',
+                            fontFamily: 'Akira Expanded',
+                            fontSize: '1.5rem',
+                            fontWeight: 900,
+                            transform: 'rotate(15deg)',
+                          }}
+                        >
+                          S
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mobile-ticket-seam" aria-hidden="true">
+                      <span className="mobile-ticket-perf" />
+                      <span className="mobile-ticket-perf" />
+                      <span className="mobile-ticket-perf" />
+                      <span className="mobile-ticket-perf" />
+                      <span className="mobile-ticket-perf" />
+                      <span className="mobile-ticket-perf" />
+                    </div>
+                  </div>
+
+                  <div className="mobile-ticket-right">
+                    <div className="mobile-ticket-header">
+                      <div>
+                        <div className="mobile-ticket-title" style={{ fontSize: '1.1rem' }}>SCHOOLS PASSES</div>
+                        <div className="mobile-ticket-subtitle">OFFICIAL ENTRY</div>
+                      </div>
+                      <div className="mobile-ticket-seal" aria-hidden="true">
+                        학교
+                      </div>
+                    </div>
+
+                    <ul className="mobile-ticket-list">
+                      <li>School Students & Orgs</li>
+                      <li>Bring Your Students</li>
+                      <li>Experience Yatra '26</li>
+                    </ul>
+
+                    <a
+                      className="mobile-ticket-cta"
+                      href="https://forms.easebuzz.in/sign-up/RAJALAKSHMIbw5w4/Yatra26_Schools_Registeration/?inst_name=RAJALAKSHMIbw5w4&form_name=Yatra26_Schools_Registeration&jsonData=1A"
                     >
                       REGISTER
                     </a>

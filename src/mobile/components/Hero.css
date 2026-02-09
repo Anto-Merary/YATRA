@@ -4259,45 +4259,56 @@
 }
 
 .mobile-ticket-wrapper {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
   width: 100%;
-  max-width: 380px;
-  filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.6));
-  animation: mobileTicketFloat 6s ease-in-out infinite;
+  max-width: 340px;
+  margin: 0 auto;
 }
 
-@keyframes mobileTicketFloat {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
+/* Reference-Style Ticket - Adapted from homepage.html mobile version */
 .mobile-neo-ticket {
-  position: relative;
   display: flex;
+  flex-direction: column;
   width: 100%;
-  aspect-ratio: 1.8 / 1;
-  border-radius: 16px;
-  overflow: hidden;
-  background: transparent;
+  filter: drop-shadow(0 5px 0 rgba(0, 0, 0, 1));
+  position: relative;
+  transition: transform 0.3s ease, filter 0.3s ease;
 }
 
-/* Left Side (Dark) */
+/* Left Side (Dark) - Stacks on top in mobile */
 .mobile-ticket-left {
-  width: 32%;
-  background: linear-gradient(160deg, #f2c15a 0%, #c98a2b 55%, #9f6a1b 100%);
+  width: 100%;
+  min-height: 120px;
+  background-color: #000000;
+  position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  position: relative;
-  border-right: 2px dashed rgba(0, 0, 0, 0.25);
-  padding: 1rem 0.75rem;
+  padding: 1.5rem;
+  border-radius: 12px 12px 0 0;
+  border-bottom: none;
+  /* Semicircle notches at the bottom (junction with white section) */
+  -webkit-mask:
+    radial-gradient(circle at 0% 100%, transparent 12px, black 13px),
+    radial-gradient(circle at 100% 100%, transparent 12px, black 13px);
+  -webkit-mask-composite: source-in;
+  mask:
+    radial-gradient(circle at 0% 100%, transparent 12px, black 13px),
+    radial-gradient(circle at 100% 100%, transparent 12px, black 13px);
+  mask-composite: intersect;
+}
+
+/* Hide the yellow perforation dots on the sides */
+.mobile-ticket-seam {
+  display: none;
+}
+
+.mobile-ticket-perf {
+  display: none;
 }
 
 .mobile-ticket-logo-stack {
@@ -4342,51 +4353,61 @@
   filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.4));
 }
 
-/* Right Side (Light) */
+/* Right Side (Light) - Stacks on bottom in mobile with paper texture */
 .mobile-ticket-right {
-  flex: 1;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(245, 245, 245, 0.98)),
-    radial-gradient(circle at 85% 20%, rgba(255, 184, 107, 0.15), transparent 55%),
-    radial-gradient(circle at 15% 80%, rgba(155, 23, 153, 0.12), transparent 55%);
-  padding: 1.1rem 1.25rem 1.2rem;
+  width: 100%;
+  background: #e8e8e8;
+  position: relative;
+  color: black;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  position: relative;
+  justify-content: flex-start;
+  border-radius: 0 0 12px 12px;
+  /* Semicircle notches at the top (junction with black section) */
+  -webkit-mask:
+    radial-gradient(circle at 0% 0%, transparent 12px, black 13px),
+    radial-gradient(circle at 100% 0%, transparent 12px, black 13px);
+  -webkit-mask-composite: source-in;
+  mask:
+    radial-gradient(circle at 0% 0%, transparent 12px, black 13px),
+    radial-gradient(circle at 100% 0%, transparent 12px, black 13px);
+  mask-composite: intersect;
 }
 
+/* Paper texture overlay */
 .mobile-ticket-right::before {
   content: '';
   position: absolute;
   inset: 0;
   background:
-    repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.04) 0, rgba(0, 0, 0, 0.04) 1px, transparent 1px, transparent 6px),
-    radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.5) 0%, transparent 55%);
-  opacity: 0.5;
+    repeating-linear-gradient(45deg,
+      rgba(0, 0, 0, 0.03) 0,
+      rgba(0, 0, 0, 0.03) 1px,
+      transparent 1px,
+      transparent 4px),
+    repeating-linear-gradient(-45deg,
+      rgba(0, 0, 0, 0.02) 0,
+      rgba(0, 0, 0, 0.02) 1px,
+      transparent 1px,
+      transparent 4px),
+    radial-gradient(ellipse at 30% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(0, 0, 0, 0.03) 0%, transparent 50%);
   pointer-events: none;
+  border-radius: 0 0 12px 12px;
 }
 
-/* Notches */
+/* Notches - Hidden in vertical stacked layout */
 .mobile-ticket-notch {
-  position: absolute;
-  left: 32%;
-  width: 24px;
-  height: 24px;
-  background: #000000;
-  /* Matches page background */
-  border-radius: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8);
+  display: none;
 }
 
 .mobile-ticket-notch.top {
-  top: -14px;
+  display: none;
 }
 
 .mobile-ticket-notch.bottom {
-  bottom: -14px;
+  display: none;
 }
 
 /* Content Typography */
