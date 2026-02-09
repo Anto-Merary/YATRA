@@ -37,7 +37,7 @@ async function sendEmailViaSMTP(to: string, subject: string, html: string, text:
 
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
-  
+
   // Connect to Gmail SMTP with TLS
   const conn = await Deno.connectTls({
     hostname: "smtp.gmail.com",
@@ -57,7 +57,7 @@ async function sendEmailViaSMTP(to: string, subject: string, html: string, text:
       data: "",
       messageAccepted: "",
     };
-    
+
     // Read server greeting
     let n = await conn.read(buffer);
     if (n === null) throw new Error("Connection closed");
@@ -254,16 +254,16 @@ Deno.serve(async (req: Request) => {
       // Check if ticket already exists for this registration
       const { data: existingTicket } = await supabase
         .from('tickets')
-        .select('id, six_digit_code, qr_payload')
+        .select('id, code_6_digit, qr_payload')
         .eq('registration_id', registration.id)
         .maybeSingle();
 
       if (existingTicket) {
         // Ticket already exists, use existing code
-        ticketCode = existingTicket.six_digit_code;
+        ticketCode = existingTicket.code_6_digit;
         ticketUuid = existingTicket.id;
         ticketId = existingTicket.id;
-        
+
         // Regenerate QR code URL
         qrDataUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(existingTicket.qr_payload)}`;
         ticketGenerated = true;
@@ -275,14 +275,14 @@ Deno.serve(async (req: Request) => {
 
         while (!isUnique && attempts < 10) {
           ticketCode = Math.floor(100000 + Math.random() * 900000).toString();
-          
+
           // Check uniqueness
           const { data: existing } = await supabase
             .from('tickets')
             .select('id')
-            .eq('six_digit_code', ticketCode)
+            .eq('code_6_digit', ticketCode)
             .maybeSingle();
-            
+
           if (!existing) isUnique = true;
           attempts++;
         }
@@ -312,7 +312,7 @@ Deno.serve(async (req: Request) => {
             email: registration.email,
             name: registration.name,
             college: registration.college,
-            six_digit_code: ticketCode,
+            code_6_digit: ticketCode,
             qr_payload: qrPayload,
             ticket_status: 'valid'
           });
@@ -332,142 +332,155 @@ Deno.serve(async (req: Request) => {
       console.error('Error details:', JSON.stringify(ticketError, null, 2));
       // Store error for debug response
       // @ts-ignore
-      globalThis.ticketDebugError = ticketError; 
+      globalThis.ticketDebugError = ticketError;
       // Continue with email send even if ticket generation fails
       // The email will be sent without QR code
     }
-    
+
     console.log(`Ticket generation status: ${ticketGenerated ? 'SUCCESS' : 'FAILED'}`);
     console.log(`QR Data URL length: ${qrDataUrl ? qrDataUrl.length : 0}`);
 
     // Capture error for debug response if failed
-    const debugError = !ticketGenerated ? 
+    const debugError = !ticketGenerated ?
       // @ts-ignore
-      (globalThis.ticketDebugError ? (globalThis.ticketDebugError.message || JSON.stringify(globalThis.ticketDebugError)) : "Unknown error") 
+      (globalThis.ticketDebugError ? (globalThis.ticketDebugError.message || JSON.stringify(globalThis.ticketDebugError)) : "Unknown error")
       : null;
 
-    // Prepare email content
+    // Prepare email content - BRUTALIST DESIGN
     const emailHtml = `
       <!DOCTYPE html>
       <html>
         <head>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>YATRA 2026 Registration Confirmation</title>
+          <title>YATRA 2026 // ENTRY PASS</title>
         </head>
-        <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
-          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center; border-radius: 10px 10px 0 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <h1 style="color: white; margin: 0; font-size: 36px; font-weight: 700; letter-spacing: 2px;">YATRA 2026</h1>
-            <p style="color: rgba(255,255,255,0.95); margin: 15px 0 0 0; font-size: 18px; font-weight: 300;">Registration Confirmation</p>
+        <body style="font-family: 'Courier New', Courier, monospace; line-height: 1.4; color: #000000; max-width: 600px; margin: 0 auto; padding: 0; background-color: #ffffff;">
+          
+          <!-- HEADER - STARK BLACK -->
+          <div style="background: #000000; padding: 40px 30px; text-align: left; border-bottom: 8px solid #9b1799;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 48px; font-weight: 900; letter-spacing: -2px; text-transform: uppercase;">YATRA</h1>
+            <div style="color: #9b1799; margin: 5px 0 0 0; font-size: 24px; font-weight: 900; letter-spacing: 8px;">2026</div>
+            <div style="color: #666666; margin: 15px 0 0 0; font-size: 11px; letter-spacing: 3px; text-transform: uppercase;">CULTURAL FEST // RIT CHENNAI</div>
           </div>
           
-          <div style="background: #ffffff; padding: 40px 30px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <h2 style="color: #667eea; margin-top: 0; font-size: 24px; font-weight: 600;">Hello ${registration.name}!</h2>
+          <!-- CONFIRMATION BANNER -->
+          <div style="background: #00ff00; padding: 15px 30px; border-bottom: 4px solid #000000;">
+            <span style="font-size: 14px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: #000000;">✓ REGISTRATION CONFIRMED</span>
+          </div>
+          
+          <!-- MAIN CONTENT -->
+          <div style="background: #ffffff; padding: 30px; border: 4px solid #000000; border-top: none;">
             
-            <p style="font-size: 16px; color: #555; margin-bottom: 25px;">Thank you for registering for <strong style="color: #667eea;">YATRA 2026</strong> - Rajalakshmi Institute of Technology's Cultural Festival!</p>
+            <!-- ATTENDEE INFO -->
+            <div style="margin-bottom: 30px;">
+              <div style="font-size: 11px; letter-spacing: 2px; color: #666666; text-transform: uppercase; margin-bottom: 8px;">ATTENDEE</div>
+              <div style="font-size: 28px; font-weight: 900; color: #000000; text-transform: uppercase; letter-spacing: -1px;">${registration.name}</div>
+            </div>
             
-            <div style="background: #f9fafb; padding: 25px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #667eea; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-              <h3 style="margin-top: 0; color: #333; font-size: 20px; font-weight: 600; margin-bottom: 20px;">Registration Details:</h3>
+            <!-- DETAILS GRID -->
+            <div style="border: 3px solid #000000; margin-bottom: 25px;">
               <table style="width: 100%; border-collapse: collapse;">
-                <tr>
-                  <td style="padding: 10px 0; color: #666; font-weight: 500; width: 40%;">Name:</td>
-                  <td style="padding: 10px 0; color: #333; font-weight: 600;">${registration.name}</td>
+                <tr style="border-bottom: 2px solid #000000;">
+                  <td style="padding: 12px 15px; font-size: 10px; letter-spacing: 2px; color: #666666; text-transform: uppercase; width: 35%; border-right: 2px solid #000000;">EMAIL</td>
+                  <td style="padding: 12px 15px; font-size: 13px; font-weight: 700; color: #000000;">${registration.email}</td>
+                </tr>
+                <tr style="border-bottom: 2px solid #000000;">
+                  <td style="padding: 12px 15px; font-size: 10px; letter-spacing: 2px; color: #666666; text-transform: uppercase; border-right: 2px solid #000000;">PHONE</td>
+                  <td style="padding: 12px 15px; font-size: 13px; font-weight: 700; color: #000000;">${registration.phone}</td>
+                </tr>
+                <tr style="border-bottom: 2px solid #000000;">
+                  <td style="padding: 12px 15px; font-size: 10px; letter-spacing: 2px; color: #666666; text-transform: uppercase; border-right: 2px solid #000000;">COLLEGE</td>
+                  <td style="padding: 12px 15px; font-size: 13px; font-weight: 700; color: #000000;">${registration.college}</td>
+                </tr>
+                <tr style="border-bottom: 2px solid #000000;">
+                  <td style="padding: 12px 15px; font-size: 10px; letter-spacing: 2px; color: #666666; text-transform: uppercase; border-right: 2px solid #000000;">PASS TYPE</td>
+                  <td style="padding: 12px 15px; font-size: 13px; font-weight: 900; color: #000000; text-transform: uppercase;">${registration.ticket_type || "GENERAL"}</td>
                 </tr>
                 <tr>
-                  <td style="padding: 10px 0; color: #666; font-weight: 500;">Email:</td>
-                  <td style="padding: 10px 0; color: #333;">${registration.email}</td>
+                  <td style="padding: 12px 15px; font-size: 10px; letter-spacing: 2px; color: #666666; text-transform: uppercase; border-right: 2px solid #000000;">AMOUNT</td>
+                  <td style="padding: 12px 15px; font-size: 22px; font-weight: 900; color: #000000;">${registration.price || "—"}</td>
                 </tr>
-                <tr>
-                  <td style="padding: 10px 0; color: #666; font-weight: 500;">Phone:</td>
-                  <td style="padding: 10px 0; color: #333;">${registration.phone}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 10px 0; color: #666; font-weight: 500;">College:</td>
-                  <td style="padding: 10px 0; color: #333;">${registration.college}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 10px 0; color: #666; font-weight: 500;">Ticket Type:</td>
-                  <td style="padding: 10px 0; color: #333;">${registration.ticket_type || "N/A"}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 10px 0; color: #666; font-weight: 500;">Price:</td>
-                  <td style="padding: 10px 0; font-size: 20px; color: #667eea; font-weight: 700;">${registration.price || "N/A"}</td>
-                </tr>
-                ${registration.is_rit_student ? '<tr><td style="padding: 10px 0; color: #666; font-weight: 500;">Student Status:</td><td style="padding: 10px 0; color: #10b981; font-weight: 600;">✓ RIT Student Discount Applied</td></tr>' : ''}
               </table>
             </div>
             
+            ${registration.is_rit_student ? `
+            <div style="background: #000000; color: #00ff00; padding: 10px 15px; margin-bottom: 25px; font-size: 12px; font-weight: 700; letter-spacing: 1px;">
+              ▸ RIT STUDENT DISCOUNT APPLIED
+            </div>
+            ` : ''}
+            
             ${ticketGenerated ? `
-            <div style="background: #f0f9ff; padding: 30px; border-radius: 8px; margin: 30px 0; border: 2px solid #3b82f6; text-align: center;">
-              <h3 style="margin-top: 0; color: #1e40af; font-size: 22px; font-weight: 600; margin-bottom: 15px;">🎫 Your Entry Ticket</h3>
+            <!-- TICKET SECTION -->
+            <div style="background: #000000; padding: 25px; margin: 25px 0;">
+              <div style="text-align: center; margin-bottom: 20px;">
+                <div style="font-size: 11px; letter-spacing: 3px; color: #666666; text-transform: uppercase; margin-bottom: 8px;">ENTRY CODE</div>
+                <div style="font-size: 48px; font-weight: 900; letter-spacing: 12px; color: #ffffff; font-family: 'Courier New', monospace;">${ticketCode}</div>
+              </div>
               
-              <div style="background: #ffffff; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #dbeafe;">
-                <p style="margin: 0 0 12px; color: #64748b; font-size: 14px; font-weight: 500;">ENTRY CODE</p>
-                <div style="font-size: 36px; font-weight: bold; letter-spacing: 6px; color: #1e40af; margin: 10px 0;">${ticketCode}</div>
+              <div style="text-align: center; padding: 20px; background: #ffffff; border: 4px solid #9b1799;">
+                <img src="${qrDataUrl}" alt="QR" style="width: 200px; height: 200px; display: block; margin: 0 auto;" />
               </div>
-
-              <div style="text-align: center; margin: 20px 0;">
-                <img src="${qrDataUrl}" alt="Ticket QR Code" style="width: 220px; height: 220px; border: 2px solid #3b82f6; border-radius: 8px; padding: 10px; background: white;" />
-                <p style="color: #64748b; font-size: 13px; margin-top: 12px; font-weight: 500;">📱 Scan this QR code at the entrance</p>
+              
+              <div style="text-align: center; margin-top: 15px;">
+                <span style="font-size: 11px; letter-spacing: 2px; color: #888888; text-transform: uppercase;">SCAN AT ENTRANCE</span>
               </div>
-
-              <div style="background: #fef3c7; padding: 15px; border-radius: 6px; margin-top: 20px; border-left: 4px solid #f59e0b;">
-                <p style="margin: 0; color: #92400e; font-size: 14px; font-weight: 500;">
-                  ⚠️ Important: Please carry a valid ID card along with this ticket for entry verification.
-                </p>
+            </div>
+            
+            <!-- WARNING -->
+            <div style="border: 4px solid #9b1799; background: #ffff00; padding: 15px; text-align: center;">
+              <div style="font-size: 12px; font-weight: 900; letter-spacing: 1px; color: #000000; text-transform: uppercase;">
+                ⚠ VALID ID REQUIRED FOR ENTRY
               </div>
             </div>
             ` : ''}
             
-            <p style="margin-top: 30px; font-size: 16px; color: #555;">We're excited to have you join us for this amazing cultural celebration!</p>
-            
-            <p style="font-size: 16px; color: #555; margin-bottom: 30px;">If you have any questions or need assistance, please don't hesitate to contact us.</p>
-            
-            <div style="margin-top: 40px; padding-top: 25px; border-top: 2px solid #e5e7eb; text-align: center; color: #666; font-size: 14px;">
-              <p style="margin: 8px 0; font-weight: 600; color: #333;">Rajalakshmi Institute of Technology</p>
-              <p style="margin: 8px 0;">YATRA 2026 Organizing Committee</p>
-              <p style="margin: 8px 0; color: #999; font-size: 12px;">This is an automated confirmation email. Please do not reply.</p>
-            </div>
           </div>
+          
+          <!-- FOOTER -->
+          <div style="background: #000000; padding: 20px 30px; border-top: 8px solid #9b1799;">
+            <div style="font-size: 10px; letter-spacing: 2px; color: #666666; text-transform: uppercase; margin-bottom: 5px;">VENUE</div>
+            <div style="font-size: 14px; font-weight: 700; color: #ffffff; margin-bottom: 15px;">RAJALAKSHMI INSTITUTE OF TECHNOLOGY</div>
+            <div style="font-size: 10px; color: #444444; letter-spacing: 1px;">YATRA 2026 // AUTOMATED NOTIFICATION</div>
+          </div>
+          
         </body>
       </html>
     `;
 
     const emailText = `
-YATRA 2026 - Registration Confirmation
+═══════════════════════════════════════════════════
+YATRA 2026 // ENTRY PASS
+═══════════════════════════════════════════════════
 
-Hello ${registration.name}!
+✓ REGISTRATION CONFIRMED
 
-Thank you for registering for YATRA 2026 - Rajalakshmi Institute of Technology's Cultural Festival!
+ATTENDEE: ${registration.name.toUpperCase()}
 
-Registration Details:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Name: ${registration.name}
-Email: ${registration.email}
-Phone: ${registration.phone}
-College: ${registration.college}
-Ticket Type: ${registration.ticket_type || "N/A"}
-Price: ${registration.price || "N/A"}
-${registration.is_rit_student ? "Student Status: ✓ RIT Student Discount Applied\n" : ""}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+───────────────────────────────────────────────────
+DETAILS
+───────────────────────────────────────────────────
+EMAIL     : ${registration.email}
+PHONE     : ${registration.phone}
+COLLEGE   : ${registration.college}
+PASS TYPE : ${registration.ticket_type || "GENERAL"}
+AMOUNT    : ${registration.price || "—"}
+${registration.is_rit_student ? "STATUS    : ▸ RIT STUDENT DISCOUNT APPLIED\n" : ""}
 ${ticketGenerated ? `
-🎫 YOUR ENTRY TICKET
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ENTRY CODE: ${ticketCode}
+═══════════════════════════════════════════════════
+ENTRY CODE
+═══════════════════════════════════════════════════
 
-Please scan the QR code at the entrance or present this code for entry.
-Important: Please carry a valid ID card along with this ticket for verification.
+>>> ${ticketCode} <<<
 
+SCAN QR CODE AT ENTRANCE
+
+⚠ VALID ID REQUIRED FOR ENTRY
 ` : ''}
-We're excited to have you join us for this amazing cultural celebration!
-
-If you have any questions or need assistance, please don't hesitate to contact us.
-
----
-Rajalakshmi Institute of Technology
-YATRA 2026 Organizing Committee
-
-This is an automated confirmation email. Please do not reply.
+───────────────────────────────────────────────────
+VENUE: RAJALAKSHMI INSTITUTE OF TECHNOLOGY
+───────────────────────────────────────────────────
+YATRA 2026 // AUTOMATED NOTIFICATION
     `.trim();
 
     // Send email using native Deno TLS

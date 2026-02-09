@@ -188,6 +188,8 @@ export default function App() {
 
   return (
     <Routes>
+      {/* Admin route FIRST - separate from SiteLayout, no navigation links */}
+      <Route path="/admin/*" element={<AdminPage />} />
       <Route element={<SiteLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/events" element={<EventsPage />} />
@@ -204,8 +206,6 @@ export default function App() {
         <Route path="/terms-conditions" element={<TermsConditionsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
-      {/* Admin route - separate from SiteLayout, no navigation links */}
-      <Route path="/admin/*" element={<AdminPage />} />
     </Routes>
   );
 }
