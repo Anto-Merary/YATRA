@@ -229,8 +229,7 @@ export function EventDetailPage() {
                   </div>
                   <Button
                     onClick={() => {
-                      // navigate(`/events/${event.id}/register`)
-                      alert("Will be updated soon");
+                      window.open("https://formbuilder.ccavenue.com/live/icici-bank/rajalakshmi-institue-of-technology-2/yatra-event-reg-fees-link", "_blank");
                     }}
                     className={`w-full h-10 rounded-xl text-sm font-semibold text-white ${accents.cta}`}
                   >
