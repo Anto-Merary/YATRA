@@ -2064,7 +2064,13 @@ function Hero() {
                     <div className="ticket-paper-texture"></div>
                   </div>
 
-                  <div className="mobile-ticket-right">
+                  <div className="mobile-ticket-right" style={{
+                    backgroundImage: 'linear-gradient(to bottom, rgba(232, 232, 232, 1) 40%, rgba(232, 232, 232, 0.4) 100%), url(/ticketb1.jpeg)',
+                    backgroundPosition: 'center, bottom center',
+                    backgroundSize: '100% 100%, 100% auto',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundBlendMode: 'normal'
+                  }}>
                     <div className="mobile-ticket-header">
                       <div>
                         <div className="mobile-ticket-title" style={{ fontSize: '0.9rem', lineHeight: '1.1' }}>RAJALAKSHMI INSTITUTIONS</div>
@@ -2104,7 +2110,13 @@ function Hero() {
                     <div className="ticket-paper-texture"></div>
                   </div>
 
-                  <div className="mobile-ticket-right">
+                  <div className="mobile-ticket-right" style={{
+                    backgroundImage: 'linear-gradient(to bottom, rgba(232, 232, 232, 1) 40%, rgba(232, 232, 232, 0.4) 100%), url(/ticketb2.jpeg)',
+                    backgroundPosition: 'center, bottom center',
+                    backgroundSize: '100% 100%, 100% auto',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundBlendMode: 'normal'
+                  }}>
                     <div className="mobile-ticket-header">
                       <div>
                         <div className="mobile-ticket-title" style={{ fontSize: '1.1rem' }}>GENERAL PASSES</div>
@@ -2144,7 +2156,13 @@ function Hero() {
                     <div className="ticket-paper-texture"></div>
                   </div>
 
-                  <div className="mobile-ticket-right">
+                  <div className="mobile-ticket-right" style={{
+                    backgroundImage: 'linear-gradient(to bottom, rgba(232, 232, 232, 1) 40%, rgba(232, 232, 232, 0.4) 100%), url(/ticketb3.jpeg)',
+                    backgroundPosition: 'center, bottom center',
+                    backgroundSize: '100% 100%, 100% auto',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundBlendMode: 'normal'
+                  }}>
                     <div className="mobile-ticket-header">
                       <div>
                         <div className="mobile-ticket-title" style={{ fontSize: '1.1rem' }}>SCHOOLS PASSES</div>
