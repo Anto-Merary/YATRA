@@ -19,6 +19,7 @@ import { useDeviceCapability, getAnimationConfig } from '../hooks/useDeviceCapab
 const gvBackCard = '/gvbackcard (1).webp'
 const gvFrontCard = '/gvfrontcard.webp'
 const aooraFrontCard = '/aoorafrontcard.webp'
+const pradeepFrontCard = '/pradeepkumarfrontcard.webp'
 
 function GlitchText({ koreanText, englishText, className, delay = 0, shouldStart = false, variant = 'glitch' }) {
   const [isGlitching, setIsGlitching] = useState(false)
@@ -229,6 +230,8 @@ function Hero() {
   const blastCollageRef = useRef(null)
   const blastPhotoElsRef = useRef([])
   const hasAboutEnteredRef = useRef(false)
+  const hasFeaturesEnteredRef = useRef(false)
+  const hasBlastEnteredRef = useRef(false)
   const [isFeaturesSectionVisible, setIsFeaturesSectionVisible] = useState(false)
   const [isBlastSectionVisible, setIsBlastSectionVisible] = useState(false)
   const [blastShouldEagerLoad, setBlastShouldEagerLoad] = useState(false)
@@ -273,6 +276,11 @@ function Hero() {
     setIsAooraCardFlipped((v) => !v)
   }, [])
 
+  const [isPradeepCardFlipped, setIsPradeepCardFlipped] = useState(false)
+  const togglePradeepCard = useCallback(() => {
+    setIsPradeepCardFlipped((v) => !v)
+  }, [])
+
   // LINEUP carousel (character-select style)
   const lineupCarouselRef = useRef(null)
   const [activeLineupIndex, setActiveLineupIndex] = useState(0)
@@ -289,9 +297,8 @@ function Hero() {
     () => [
       { id: 'gv', status: 'revealed' },
       { id: 'aoora', status: 'revealed' },
+      { id: 'pradeep', status: 'revealed' },
       { id: 'countdown-48hr', status: 'countdown' },
-      { id: 'locked-0', status: 'locked' },
-      { id: 'locked-1', status: 'locked' },
     ],
     []
   )
@@ -309,7 +316,7 @@ function Hero() {
 
   const countdownText48hr = useMemo(() => {
     const start = countdownStartRef.current || Date.now()
-    const target = start + 24 * 60 * 60 * 1000 // Changed from 48 hours to 24 hours
+    const target = start + 48 * 60 * 60 * 1000 // 48 hours countdown
     const distance = Math.max(0, target - countdownNow)
     const totalHours = Math.floor(distance / (1000 * 60 * 60))
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
@@ -560,7 +567,7 @@ function Hero() {
     }))
   }, [])
 
-  const blastImages = useMemo(() => {
+  const allBlastImages = useMemo(() => {
     // Use only webp images for better performance and consistency
     const modules = import.meta.glob('../assets/gal/*.{webp,WEBP}', {
       eager: true,
@@ -584,9 +591,14 @@ function Hero() {
       }
     })
 
-    // Always show all 6 images - animation complexity is handled by scrub/stagger settings
-    return Array.from(uniqueImages.values()).slice(0, 6)
+    return Array.from(uniqueImages.values())
   }, [])
+
+  const blastImages = useMemo(() => allBlastImages, [allBlastImages])
+
+  useEffect(() => {
+    blastPhotoElsRef.current = []
+  }, [blastImages.length])
 
   // Lantern (lamp) glow hotspots placed over the background art.
   // These are NOT visible UI elements—just an overlay to make each lamp "bloom" randomly.
@@ -778,7 +790,7 @@ function Hero() {
     }
   }, [])
 
-  // Features section: trigger glitch animation when section enters view
+  // Features section: trigger glitch animation once when section enters view
   useEffect(() => {
     if (!isExperienceReady) return
     const sectionEl = featuresSectionRef.current
@@ -789,16 +801,13 @@ function Hero() {
         const entry = entries[0]
         if (!entry) return
 
-        // Hysteresis prevents flicker + avoids awkward mid-section resets:
-        // - Enter once ~20% visible
-        // - Reset only when almost gone (~5% visible)
         const ratio = entry.intersectionRatio || 0
-
-        setIsFeaturesSectionVisible((prev) => {
-          if (!prev && ratio >= 0.2) return true
-          if (prev && ratio <= 0.05) return false
-          return prev
-        })
+        if (hasFeaturesEnteredRef.current) return
+        if (ratio >= 0.2) {
+          hasFeaturesEnteredRef.current = true
+          setIsFeaturesSectionVisible(true)
+          observer.disconnect()
+        }
       },
       { threshold: [0, 0.05, 0.2], rootMargin: '0px 0px -10% 0px' }
     )
@@ -849,7 +858,7 @@ function Hero() {
     }
   }, [isExperienceReady, animConfig.parallax, animConfig.scrub])
 
-  // BLAST INTO PAST section: trigger blur crossfade when section enters view
+  // BLAST INTO PAST section: trigger blur crossfade once when section enters view
   useEffect(() => {
     if (!isExperienceReady) return
     const sectionEl = blastSectionRef.current
@@ -861,11 +870,12 @@ function Hero() {
         if (!entry) return
 
         const ratio = entry.intersectionRatio || 0
-        setIsBlastSectionVisible((prev) => {
-          if (!prev && ratio >= 0.2) return true
-          if (prev && ratio <= 0.05) return false
-          return prev
-        })
+        if (hasBlastEnteredRef.current) return
+        if (ratio >= 0.2) {
+          hasBlastEnteredRef.current = true
+          setIsBlastSectionVisible(true)
+          observer.disconnect()
+        }
       },
       { threshold: [0, 0.05, 0.2], rootMargin: '0px 0px -10% 0px' }
     )
@@ -921,8 +931,6 @@ function Hero() {
       typeof window !== 'undefined' &&
       window.matchMedia &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-    gsap.registerPlugin(ScrollTrigger)
 
     const els = blastPhotoElsRef.current.filter(Boolean)
     if (els.length === 0) return
@@ -1026,18 +1034,27 @@ function Hero() {
       st = null
 
       const { finalPositions, startPositions, rotations } = computePositions()
-
-      // Base state
-      els.forEach((el, i) => {
-        const start = startPositions[i] || { x: 0, y: 0 }
-        const src = String(el.currentSrc || el.src || '')
-        // NOTE: Use [-\.] to match both dev (pal.webp) and prod (pal-hash.webp) URLs
+      const getSrc = (el) => String(el?.currentSrc || el?.src || '')
+      const getBaseScale = (src) => {
         const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
         const isSyn = /(^|\/|\\)syn[-\.]/i.test(src)
-        // Make `pal` and `syn` larger without completely blowing up the layout.
-        // pal: +5% (3.15 → 3.3075)
-        // syn: +5% (1.95 → 2.0475)
-        const baseScale = isPal ? 3.3075 : isSyn ? 2.0475 : 1.35
+        return isPal ? 3.3075 : isSyn ? 2.0475 : 1.35
+      }
+      const getReducedScale = (src) => {
+        const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
+        const isSyn = /(^|\/|\\)syn[-\.]/i.test(src)
+        return isPal ? 1.6275 : isSyn ? 1.575 : 1
+      }
+      const getFinalScale = (src) => {
+        const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
+        const isSyn = /(^|\/|\\)syn[-\.]/i.test(src)
+        return isPal ? 1.9425 : isSyn ? 1.575 : 1
+      }
+
+      // Base state (bigger + offscreen, then ease into final positions on scroll)
+      els.forEach((el, i) => {
+        const start = startPositions[i] || { x: 0, y: 0 }
+        const src = getSrc(el)
 
         gsap.set(el, {
           // Center using GSAP-managed percent transforms so CSS centering isn't lost
@@ -1046,7 +1063,7 @@ function Hero() {
           yPercent: -50,
           x: start.x,
           y: start.y,
-          scale: baseScale,
+          scale: getBaseScale(src),
           opacity: 0,
           rotate: rotations[i] ?? 0,
           transformOrigin: '50% 50%',
@@ -1058,18 +1075,13 @@ function Hero() {
       if (reduceMotion) {
         els.forEach((el, i) => {
           const base = finalPositions[i] || { x: 0, y: 0 }
-          const src = String(el.currentSrc || el.src || '')
-          // NOTE: Use [-\.] to match both dev (pal.webp) and prod (pal-hash.webp) URLs
-          const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
-          const isSyn = /(^|\/|\\)syn[-\.]/i.test(src)
-          // pal: +5% (1.55 → 1.6275)
-          // syn: +5% (1.5 → 1.575)
+          const src = getSrc(el)
           gsap.set(el, {
             xPercent: -50,
             yPercent: -50,
             x: base.x,
             y: base.y,
-            scale: isPal ? 1.6275 : isSyn ? 1.575 : 1,
+            scale: getReducedScale(src),
             opacity: 1,
             rotate: 0,
           })
@@ -1077,32 +1089,28 @@ function Hero() {
         return
       }
 
+      gsap.registerPlugin(ScrollTrigger)
       tl = gsap.timeline({
         defaults: { ease: 'power3.out' },
       })
       tl.pause(0)
 
       // Adaptive animation duration and stagger based on device capability
-      const animDuration = animConfig.duration
-      const animStagger = animConfig.stagger
+      const slowFactor = deviceCapability.isLowEnd ? 1.15 : deviceCapability.isMidRange ? 1.3 : 1.45
+      const animDuration = animConfig.duration * slowFactor
+      const animStagger = animConfig.stagger * slowFactor
 
       // Slower + slightly overlapping entrances (timeline length also controls scrub pacing)
       els.forEach((el, i) => {
         const base = finalPositions[i] || { x: 0, y: 0 }
-        const src = String(el.currentSrc || el.src || '')
-        // NOTE: Use [-\.] to match both dev (pal.webp) and prod (pal-hash.webp) URLs
-        const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
-        const isSyn = /(^|\/|\\)syn[-\.]/i.test(src)
-        // pal: +5% (1.85 → 1.9425)
-        // syn: +5% (1.5 → 1.575)
-        const finalScale = isPal ? 1.9425 : isSyn ? 1.575 : 1
+        const src = getSrc(el)
 
         tl.to(
           el,
           {
             x: base.x,
             y: base.y,
-            scale: finalScale,
+            scale: getFinalScale(src),
             opacity: 1,
             rotate: 0,
             duration: animDuration,
@@ -1113,14 +1121,15 @@ function Hero() {
 
       // Tie reveal to scroll so photos don't all pop in early.
       // Adaptive scrub: higher value = smoother but less responsive (better for low-end)
+      const blastScrub = animConfig.scrub * (deviceCapability.isLowEnd ? 1.2 : 1.5)
       st = ScrollTrigger.create({
         id: 'blast-collage',
         trigger: sectionEl,
         // Start later (user is actually in the section), and stretch the end so the
         // reveal stays progressive while they explore the whole block.
-        start: 'top 62%',
-        end: 'bottom 60%', // Finish animation earlier so it holds before next section overlaps
-        scrub: animConfig.scrub,
+        start: 'top 70%',
+        end: 'bottom 40%',
+        scrub: blastScrub,
         animation: tl,
         invalidateOnRefresh: true,
         // Performance: don't update on every pixel
@@ -1140,7 +1149,15 @@ function Hero() {
       if (st) st.kill()
       if (tl) tl.kill()
     }
-  }, [isExperienceReady, blastImages.length, animConfig.duration, animConfig.stagger, animConfig.scrub])
+  }, [
+    isExperienceReady,
+    blastImages.length,
+    animConfig.duration,
+    animConfig.stagger,
+    animConfig.scrub,
+    deviceCapability.isLowEnd,
+    deviceCapability.isMidRange,
+  ])
 
 
   // Scroll-based settle interaction - continuous and proportional to scroll distance,
@@ -1704,10 +1721,11 @@ function Hero() {
                     const isLocked = card.status === 'locked'
                     const isGv = card.id === 'gv'
                     const isAoora = card.id === 'aoora'
-                    const isFlipped = isGv ? isGvCardFlipped : isAoora ? isAooraCardFlipped : false
-                    const toggleFlip = isGv ? toggleGvCard : isAoora ? toggleAooraCard : undefined
-                    const frontImage = isGv ? gvFrontCard : isAoora ? aooraFrontCard : null
-                    const revealLabel = isGv ? 'GV Prakash' : isAoora ? 'Aoora' : 'Lineup artist'
+                    const isPradeep = card.id === 'pradeep'
+                    const isFlipped = isGv ? isGvCardFlipped : isAoora ? isAooraCardFlipped : isPradeep ? isPradeepCardFlipped : false
+                    const toggleFlip = isGv ? toggleGvCard : isAoora ? toggleAooraCard : isPradeep ? togglePradeepCard : undefined
+                    const frontImage = isGv ? gvFrontCard : isAoora ? aooraFrontCard : isPradeep ? pradeepFrontCard : null
+                    const revealLabel = isGv ? 'GV Prakash' : isAoora ? 'Aoora' : isPradeep ? 'Pradeep Kumar' : 'Lineup artist'
                     const countdownParts = countdownText48hr.split(':')
 
                     return (
@@ -1895,24 +1913,12 @@ function Hero() {
 
               <div className="features-heading">
                 <h2 className="features-title">
-                  <DecryptText
-                    koreanText="상상해봐"
-                    englishText="IMAGINE"
-                    className="features-title-main"
-                    delay={0}
-                    shouldStart={isFeaturesSectionVisible}
-                    frameInterval={animConfig.decryptInterval}
-                    skipAnimation={animConfig.skipDecryptAnimation}
-                  />
-                  <DecryptText
-                    koreanText="오십+ 이벤트"
-                    englishText="50+ EVENTS"
-                    className="features-title-sub"
-                    delay={220}
-                    shouldStart={isFeaturesSectionVisible}
-                    frameInterval={animConfig.decryptInterval}
-                    skipAnimation={animConfig.skipDecryptAnimation}
-                  />
+                  <span className={`features-title-main text-reveal ${isFeaturesSectionVisible ? 'is-visible' : ''}`}>
+                    IMAGINE
+                  </span>
+                  <span className={`features-title-sub text-reveal text-reveal--delay ${isFeaturesSectionVisible ? 'is-visible' : ''}`}>
+                    50+ EVENTS
+                  </span>
                 </h2>
                 <p className="features-title-tag">CASH PRIZE • ALL-DAY HYPE</p>
               </div>
@@ -1976,24 +1982,12 @@ function Hero() {
                 <span className="section-divider-line" />
               </div>
               <h2 className="features-title">
-                <DecryptText
-                  koreanText="과거 속으로"
-                  englishText="BLAST INTO THE"
-                  className="blast-title-prefix"
-                  delay={0}
-                  shouldStart={isBlastSectionVisible}
-                  frameInterval={animConfig.decryptInterval}
-                  skipAnimation={animConfig.skipDecryptAnimation}
-                />
-                <DecryptText
-                  koreanText="돌진하다"
-                  englishText="PAST"
-                  className="blast-title-highlight"
-                  delay={220}
-                  shouldStart={isBlastSectionVisible}
-                  frameInterval={animConfig.decryptInterval}
-                  skipAnimation={animConfig.skipDecryptAnimation}
-                />
+                <span className={`blast-title-prefix text-reveal ${isBlastSectionVisible ? 'is-visible' : ''}`}>
+                  BLAST INTO THE
+                </span>
+                <span className={`blast-title-highlight text-reveal text-reveal--delay ${isBlastSectionVisible ? 'is-visible' : ''}`}>
+                  PAST
+                </span>
               </h2>
 
               <div className="blast-collage" ref={blastCollageRef} aria-hidden="true">

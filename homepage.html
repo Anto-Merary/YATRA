@@ -2147,7 +2147,25 @@
                     </button>
                 </div>
 
-                <!-- Card 3 - 48 Hour Countdown Timer -->
+                <!-- Card 3 - Pradeep Kumar Flip Card (Third Artist) -->
+                <div class="lineup-card-slot lineup-card-slot--revealed">
+                    <button type="button" class="lineup-flip-card" id="pradeep-flip-card"
+                        aria-label="Click to reveal Pradeep Kumar lineup card">
+                        <span class="lineup-flip-card-inner" aria-hidden="true">
+                            <span class="lineup-flip-card-face lineup-flip-card-face--back">
+                                <img class="lineup-flip-card-img" src="/gvbackcard (1).webp"
+                                    alt="Pradeep Kumar lineup card (back)" decoding="async" loading="lazy">
+                                <span class="lineup-tap-to-reveal">CLICK TO REVEAL</span>
+                            </span>
+                            <span class="lineup-flip-card-face lineup-flip-card-face--front">
+                                <img class="lineup-flip-card-img" src="/pradeepkumarfrontcard.webp" alt="Pradeep Kumar - Artist"
+                                    decoding="async" loading="lazy">
+                            </span>
+                        </span>
+                    </button>
+                </div>
+
+                <!-- Card 4 - 48 Hour Countdown Timer -->
                 <div class="lineup-card-slot">
                     <div class="lineup-locked-card">
                         <img class="lineup-flip-card-img lineup-locked-img" src="/gvbackcard (1).webp"
@@ -2155,50 +2173,6 @@
                         <div class="lineup-countdown-overlay">
                             <div class="countdown-timer" id="countdown-48hr">00:00:00</div>
                             <div class="countdown-label">Hours : Minutes : Seconds</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 4 - To Be Revealed Soon (Locked) -->
-                <div class="lineup-card-slot lineup-card-slot--locked">
-                    <div class="lineup-locked-card">
-                        <img class="lineup-flip-card-img lineup-locked-img" src="/gvbackcard (1).webp" alt=""
-                            decoding="async" loading="lazy">
-                        <div class="lineup-locked-overlay">
-                            <div class="lineup-locked-icon" aria-hidden="true">
-                                <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                                    <path d="M7.5 10V7.9a4.5 4.5 0 0 1 9 0V10" stroke="currentColor" stroke-width="1.8"
-                                        stroke-linecap="round" />
-                                    <path
-                                        d="M7.2 10h9.6c.9 0 1.6.7 1.6 1.6v7.2c0 .9-.7 1.6-1.6 1.6H7.2c-.9 0-1.6-.7-1.6-1.6v-7.2c0-.9.7-1.6 1.6-1.6Z"
-                                        stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
-                                    <path d="M12 14.2v2.6" stroke="currentColor" stroke-width="1.8"
-                                        stroke-linecap="round" />
-                                </svg>
-                            </div>
-                            <div class="lineup-locked-text">REVEAL DROPPING SOON</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 4 - To Be Revealed Soon (Locked) -->
-                <div class="lineup-card-slot lineup-card-slot--locked">
-                    <div class="lineup-locked-card">
-                        <img class="lineup-flip-card-img lineup-locked-img" src="/gvbackcard (1).webp" alt=""
-                            decoding="async" loading="lazy">
-                        <div class="lineup-locked-overlay">
-                            <div class="lineup-locked-icon" aria-hidden="true">
-                                <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                                    <path d="M7.5 10V7.9a4.5 4.5 0 0 1 9 0V10" stroke="currentColor" stroke-width="1.8"
-                                        stroke-linecap="round" />
-                                    <path
-                                        d="M7.2 10h9.6c.9 0 1.6.7 1.6 1.6v7.2c0 .9-.7 1.6-1.6 1.6H7.2c-.9 0-1.6-.7-1.6-1.6v-7.2c0-.9.7-1.6 1.6-1.6Z"
-                                        stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
-                                    <path d="M12 14.2v2.6" stroke="currentColor" stroke-width="1.8"
-                                        stroke-linecap="round" />
-                                </svg>
-                            </div>
-                            <div class="lineup-locked-text">REVEAL DROPPING SOON</div>
                         </div>
                     </div>
                 </div>
@@ -2955,6 +2929,30 @@
                         this.classList.add('is-flipped');
                         if (aooraRevealText) {
                             aooraRevealText.style.display = 'none';
+                        }
+                    }
+                });
+            }
+
+            // Pradeep Kumar Flip Card functionality - Toggle flip only, no navigation
+            const pradeepFlipCard = document.getElementById('pradeep-flip-card');
+            if (pradeepFlipCard) {
+                const pradeepRevealText = pradeepFlipCard.querySelector('.lineup-tap-to-reveal');
+
+                pradeepFlipCard.addEventListener('click', function (e) {
+                    const isFlipped = this.classList.contains('is-flipped');
+
+                    if (isFlipped) {
+                        // If already flipped, flip back to backside
+                        this.classList.remove('is-flipped');
+                        if (pradeepRevealText) {
+                            pradeepRevealText.style.display = 'block';
+                        }
+                    } else {
+                        // First click - flip the card to show front
+                        this.classList.add('is-flipped');
+                        if (pradeepRevealText) {
+                            pradeepRevealText.style.display = 'none';
                         }
                     }
                 });

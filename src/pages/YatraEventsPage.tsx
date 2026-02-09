@@ -232,7 +232,8 @@ export function YatraEventsPage() {
                     ].join(","),
               backgroundSize: "18px 18px, 18px 18px, 100% 100%, 100% 100%",
               backgroundPosition: "0 0, 0 0, center, center",
-              animation: isTransitioning ? undefined : "events-bg-pan 18s linear infinite",
+              animation:
+                isTransitioning || isMobile ? undefined : "events-bg-pan 18s linear infinite",
             }}
           />
           <style>{`
@@ -602,7 +603,7 @@ export function YatraEventsPage() {
                   : "grid gap-2.5 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
               }
             >
-              {filtered.map((e) => (
+              {filtered.map((e, idx) => (
                 <SpotlightCard
                   key={e.id}
                   className={[
@@ -612,6 +613,14 @@ export function YatraEventsPage() {
                     !isMobile ? "backdrop-blur-sm hover:backdrop-blur-none" : "",
                   ].join(" ")}
                   spotlightColor={ui.spotlightColor}
+                  style={
+                    isMobile
+                      ? {
+                          contentVisibility: "auto",
+                          containIntrinsicSize: "260px 320px",
+                        }
+                      : undefined
+                  }
                 >
                   {/* Glow overlay on hover */}
                   <div
@@ -623,7 +632,7 @@ export function YatraEventsPage() {
 
                   {/* Thumbnail - shown on both mobile and desktop */}
                   {e.posterUrl && (
-                    <div className={`relative z-10 overflow-hidden rounded-lg xs:rounded-xl border border-white/10 flex-shrink-0 ${
+                    <div className={`relative z-10 overflow-hidden rounded-none border border-white/10 flex-shrink-0 ${
                       isMobile ? "mb-1" : "mb-2 xs:mb-2.5 sm:mb-3"
                     }`} style={isMobile ? { flexBasis: '60%', maxHeight: '60%' } : {}}>
                       <div className="relative aspect-square w-full">
@@ -632,6 +641,9 @@ export function YatraEventsPage() {
                           alt=""
                           className="absolute inset-0 h-full w-full object-cover object-center"
                           draggable={false}
+                          loading={idx < (isMobile ? 4 : 8) ? "eager" : "lazy"}
+                          decoding="async"
+                          fetchPriority={idx < (isMobile ? 2 : 4) ? "high" : "auto"}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-black/35" />
                       </div>
