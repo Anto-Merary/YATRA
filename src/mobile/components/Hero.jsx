@@ -928,9 +928,11 @@ function Hero() {
     if (!sectionEl || !collageEl) return
 
     const reduceMotion =
-      typeof window !== 'undefined' &&
       window.matchMedia &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    // Treat low-end devices as "reduced motion" to show final layout immediately
+    const shouldReduce = reduceMotion || deviceCapability.isLowEnd
 
     const els = blastPhotoElsRef.current.filter(Boolean)
     if (els.length === 0) return
@@ -1043,7 +1045,7 @@ function Hero() {
       const getReducedScale = (src) => {
         const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
         const isSyn = /(^|\/|\\)syn[-\.]/i.test(src)
-        return isPal ? 1.6275 : isSyn ? 1.575 : 1
+        return isPal ? 1.9425 : isSyn ? 1.575 : 1
       }
       const getFinalScale = (src) => {
         const isPal = /(^|\/|\\)pal[-\.]/i.test(src)
@@ -1072,7 +1074,7 @@ function Hero() {
         })
       })
 
-      if (reduceMotion) {
+      if (shouldReduce) {
         els.forEach((el, i) => {
           const base = finalPositions[i] || { x: 0, y: 0 }
           const src = getSrc(el)
@@ -2051,16 +2053,34 @@ function Hero() {
               </h2>
 
               <div className="mobile-ticket-wrapper">
+                {/* Ticket 1: Schools Registration */}
                 <div className="mobile-neo-ticket">
                   <div className="mobile-ticket-left">
                     <div className="mobile-ticket-logo-stack">
-                    <img
-                      className="mobile-ticket-brand"
-                      src={yatraTicketLogo}
-                      alt="Yatra"
-                      loading="lazy"
-                      decoding="async"
-                    />
+                      <div
+                        style={{
+                          width: '40px',
+                          height: '40px',
+                          backgroundColor: '#fff19d',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transform: 'rotate(-15deg)',
+                          boxShadow: '0 4px 12px rgba(233, 30, 99, 0.3)',
+                        }}
+                      >
+                        <span
+                          style={{
+                            color: 'black',
+                            fontFamily: 'Akira Expanded',
+                            fontSize: '1.5rem',
+                            fontWeight: 900,
+                            transform: 'rotate(15deg)',
+                          }}
+                        >
+                          S
+                        </span>
+                      </div>
                     </div>
                     <div className="mobile-ticket-seam" aria-hidden="true">
                       <span className="mobile-ticket-perf" />
@@ -2075,8 +2095,76 @@ function Hero() {
                   <div className="mobile-ticket-right">
                     <div className="mobile-ticket-header">
                       <div>
-                        <div className="mobile-ticket-title">YATRA PASS</div>
+                        <div className="mobile-ticket-title" style={{ fontSize: '1.1rem' }}>SCHOOLS REG</div>
                         <div className="mobile-ticket-subtitle">OFFICIAL ENTRY</div>
+                      </div>
+                      <div className="mobile-ticket-seal" aria-hidden="true">
+                        학교
+                      </div>
+                    </div>
+
+                    <ul className="mobile-ticket-list">
+                      <li>School Students & Orgs</li>
+                      <li>Bring Your Students</li>
+                      <li>Experience Yatra '26</li>
+                    </ul>
+
+                    <a
+                      className="mobile-ticket-cta"
+                      href="https://forms.easebuzz.in/sign-up/RAJALAKSHMIbw5w4/Yatra26_Schools_Registeration/?inst_name=RAJALAKSHMIbw5w4&form_name=Yatra26_Schools_Registeration&jsonData=1A"
+                    >
+                      REGISTER
+                    </a>
+                  </div>
+
+                  <span className="mobile-ticket-notch top" aria-hidden="true" />
+                  <span className="mobile-ticket-notch bottom" aria-hidden="true" />
+                </div>
+
+                {/* Ticket 2: Rajalakshmi Institutions (Formerly Yatra Pass) */}
+                <div className="mobile-neo-ticket" style={{ marginTop: '20px' }}>
+                  <div className="mobile-ticket-left">
+                    <div className="mobile-ticket-logo-stack">
+                      <div
+                        style={{
+                          width: '40px',
+                          height: '40px',
+                          backgroundColor: '#9b1799',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transform: 'rotate(-15deg)',
+                          boxShadow: '0 4px 12px rgba(233, 30, 99, 0.3)',
+                        }}
+                      >
+                        <span
+                          style={{
+                            color: 'white',
+                            fontFamily: 'Akira Expanded',
+                            fontSize: '1.5rem',
+                            fontWeight: 900,
+                            transform: 'rotate(15deg)',
+                          }}
+                        >
+                          R
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mobile-ticket-seam" aria-hidden="true">
+                      <span className="mobile-ticket-perf" />
+                      <span className="mobile-ticket-perf" />
+                      <span className="mobile-ticket-perf" />
+                      <span className="mobile-ticket-perf" />
+                      <span className="mobile-ticket-perf" />
+                      <span className="mobile-ticket-perf" />
+                    </div>
+                  </div>
+
+                  <div className="mobile-ticket-right">
+                    <div className="mobile-ticket-header">
+                      <div>
+                        <div className="mobile-ticket-title" style={{ fontSize: '0.9rem', lineHeight: '1.1' }}>RAJALAKSHMI INSTITUTIONS</div>
+                        <div className="mobile-ticket-subtitle">For Rajalakshmi Students</div>
                       </div>
                       <div className="mobile-ticket-seal" aria-hidden="true">
                         승인
@@ -2084,7 +2172,7 @@ function Hero() {
                     </div>
 
                     <ul className="mobile-ticket-list">
-                      <li>Access to all 2 DAYS</li>
+                      <li>For Rajalakshmi Students</li>
                       <li>Proshows & DJ Night Included</li>
                       <li>Unlimited Fun Guaranteed</li>
                     </ul>
@@ -2093,7 +2181,75 @@ function Hero() {
                       className="mobile-ticket-cta"
                       href="https://formbuilder.ccavenue.com/live/icici-bank/rajalakshmi-institue-of-technology-2/yatra-2026-reg-fees-link"
                     >
-                      BUY NOW
+                      REGISTER
+                    </a>
+                  </div>
+
+                  <span className="mobile-ticket-notch top" aria-hidden="true" />
+                  <span className="mobile-ticket-notch bottom" aria-hidden="true" />
+                </div>
+
+                {/* Ticket 3: General Public Registration */}
+                <div className="mobile-neo-ticket" style={{ marginTop: '20px' }}>
+                  <div className="mobile-ticket-left">
+                    <div className="mobile-ticket-logo-stack">
+                      <div
+                        style={{
+                          width: '40px',
+                          height: '40px',
+                          backgroundColor: '#FFB86B',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transform: 'rotate(-15deg)',
+                          boxShadow: '0 4px 12px rgba(233, 30, 99, 0.3)',
+                        }}
+                      >
+                        <span
+                          style={{
+                            color: 'black',
+                            fontFamily: 'Akira Expanded',
+                            fontSize: '1.5rem',
+                            fontWeight: 900,
+                            transform: 'rotate(15deg)',
+                          }}
+                        >
+                          G
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mobile-ticket-seam" aria-hidden="true">
+                      <span className="mobile-ticket-perf" />
+                      <span className="mobile-ticket-perf" />
+                      <span className="mobile-ticket-perf" />
+                      <span className="mobile-ticket-perf" />
+                      <span className="mobile-ticket-perf" />
+                      <span className="mobile-ticket-perf" />
+                    </div>
+                  </div>
+
+                  <div className="mobile-ticket-right">
+                    <div className="mobile-ticket-header">
+                      <div>
+                        <div className="mobile-ticket-title" style={{ fontSize: '1.1rem' }}>GENERAL REG</div>
+                        <div className="mobile-ticket-subtitle">OFFICIAL ENTRY</div>
+                      </div>
+                      <div className="mobile-ticket-seal" aria-hidden="true">
+                        공공
+                      </div>
+                    </div>
+
+                    <ul className="mobile-ticket-list">
+                      <li>Open to Everyone</li>
+                      <li>Experience the Vibe</li>
+                      <li>Concerts & Events</li>
+                    </ul>
+
+                    <a
+                      className="mobile-ticket-cta"
+                      href="https://forms.easebuzz.in/sign-up/RAJALAKSHMIbw5w4/General_Public_Reg_Yatra26/?inst_name=RAJALAKSHMIbw5w4&form_name=General_Public_Reg_Yatra26&jsonData=1"
+                    >
+                      REGISTER
                     </a>
                   </div>
 
