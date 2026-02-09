@@ -2095,7 +2095,7 @@ function Hero() {
                   <div className="mobile-ticket-right">
                     <div className="mobile-ticket-header">
                       <div>
-                        <div className="mobile-ticket-title" style={{ fontSize: '1.1rem' }}>SCHOOLS REG</div>
+                        <div className="mobile-ticket-title" style={{ fontSize: '1.1rem' }}>SCHOOLS PASSES</div>
                         <div className="mobile-ticket-subtitle">OFFICIAL ENTRY</div>
                       </div>
                       <div className="mobile-ticket-seal" aria-hidden="true">
@@ -2231,7 +2231,7 @@ function Hero() {
                   <div className="mobile-ticket-right">
                     <div className="mobile-ticket-header">
                       <div>
-                        <div className="mobile-ticket-title" style={{ fontSize: '1.1rem' }}>GENERAL REG</div>
+                        <div className="mobile-ticket-title" style={{ fontSize: '1.1rem' }}>GENERAL PASSES</div>
                         <div className="mobile-ticket-subtitle">OFFICIAL ENTRY</div>
                       </div>
                       <div className="mobile-ticket-seal" aria-hidden="true">
