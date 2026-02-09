@@ -2058,7 +2058,7 @@ function Hero() {
                   <div className="mobile-ticket-left" style={{
                     backgroundImage: 'url(/ticket1.jpeg)',
                     backgroundSize: 'cover',
-                    backgroundPosition: 'center',
+                    backgroundPosition: 'center 10%',
                     minHeight: '180px'
                   }}>
                   </div>
@@ -2097,7 +2097,7 @@ function Hero() {
                   <div className="mobile-ticket-left" style={{
                     backgroundImage: 'url(/ticket2.jpeg)',
                     backgroundSize: 'cover',
-                    backgroundPosition: 'center',
+                    backgroundPosition: 'center 10%',
                     minHeight: '180px'
                   }}>
                   </div>
@@ -2136,7 +2136,7 @@ function Hero() {
                   <div className="mobile-ticket-left" style={{
                     backgroundImage: 'url(/ticket3.jpeg)',
                     backgroundSize: 'cover',
-                    backgroundPosition: 'center',
+                    backgroundPosition: 'center 10%',
                     minHeight: '180px'
                   }}>
                   </div>
