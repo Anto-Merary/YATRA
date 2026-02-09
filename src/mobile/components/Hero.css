@@ -4290,16 +4290,7 @@
   justify-content: center;
   padding: 1.5rem;
   border-radius: 12px 12px 0 0;
-  border-bottom: none;
-  /* Semicircle notches at the bottom (junction with white section) */
-  -webkit-mask:
-    radial-gradient(circle at 0% 100%, transparent 12px, black 13px),
-    radial-gradient(circle at 100% 100%, transparent 12px, black 13px);
-  -webkit-mask-composite: source-in;
-  mask:
-    radial-gradient(circle at 0% 100%, transparent 12px, black 13px),
-    radial-gradient(circle at 100% 100%, transparent 12px, black 13px);
-  mask-composite: intersect;
+  border-bottom: 2px dashed rgba(0, 0, 0, 0.3);
 }
 
 /* Hide the yellow perforation dots on the sides */
@@ -4360,19 +4351,42 @@
   position: relative;
   color: black;
   padding: 1.5rem;
+  padding-top: 1.8rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   border-radius: 0 0 12px 12px;
-  /* Semicircle notches at the top (junction with black section) */
-  -webkit-mask:
-    radial-gradient(circle at 0% 0%, transparent 12px, black 13px),
-    radial-gradient(circle at 100% 0%, transparent 12px, black 13px);
-  -webkit-mask-composite: source-in;
-  mask:
-    radial-gradient(circle at 0% 0%, transparent 12px, black 13px),
-    radial-gradient(circle at 100% 0%, transparent 12px, black 13px);
-  mask-composite: intersect;
+}
+
+/* Ticket perforation notches - positioned at junction between top (colored) and bottom (white) sections */
+/* Left notch at junction */
+.mobile-neo-ticket::before {
+  content: '';
+  position: absolute;
+  top: 180px;
+  /* Matches min-height of mobile-ticket-left with image */
+  left: -14px;
+  width: 28px;
+  height: 28px;
+  background: #070008;
+  border-radius: 50%;
+  z-index: 20;
+  transform: translateY(-50%);
+}
+
+/* Right notch at junction */
+.mobile-neo-ticket::after {
+  content: '';
+  position: absolute;
+  top: 180px;
+  /* Matches min-height of mobile-ticket-left with image */
+  right: -14px;
+  width: 28px;
+  height: 28px;
+  background: #070008;
+  border-radius: 50%;
+  z-index: 20;
+  transform: translateY(-50%);
 }
 
 /* Paper texture overlay */

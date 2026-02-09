@@ -2055,41 +2055,12 @@ function Hero() {
               <div className="mobile-ticket-wrapper">
                 {/* Ticket 1: Rajalakshmi Institutions */}
                 <div className="mobile-neo-ticket">
-                  <div className="mobile-ticket-left">
-                    <div className="mobile-ticket-logo-stack">
-                      <div
-                        style={{
-                          width: '40px',
-                          height: '40px',
-                          backgroundColor: '#9b1799',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          transform: 'rotate(-15deg)',
-                          boxShadow: '0 4px 12px rgba(233, 30, 99, 0.3)',
-                        }}
-                      >
-                        <span
-                          style={{
-                            color: 'white',
-                            fontFamily: 'Akira Expanded',
-                            fontSize: '1.5rem',
-                            fontWeight: 900,
-                            transform: 'rotate(15deg)',
-                          }}
-                        >
-                          R
-                        </span>
-                      </div>
-                    </div>
-                    <div className="mobile-ticket-seam" aria-hidden="true">
-                      <span className="mobile-ticket-perf" />
-                      <span className="mobile-ticket-perf" />
-                      <span className="mobile-ticket-perf" />
-                      <span className="mobile-ticket-perf" />
-                      <span className="mobile-ticket-perf" />
-                      <span className="mobile-ticket-perf" />
-                    </div>
+                  <div className="mobile-ticket-left" style={{
+                    backgroundImage: 'url(/ticket1.jpeg)',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    minHeight: '180px'
+                  }}>
                   </div>
 
                   <div className="mobile-ticket-right">
@@ -2123,41 +2094,12 @@ function Hero() {
 
                 {/* Ticket 2: General Public Registration */}
                 <div className="mobile-neo-ticket" style={{ marginTop: '20px' }}>
-                  <div className="mobile-ticket-left">
-                    <div className="mobile-ticket-logo-stack">
-                      <div
-                        style={{
-                          width: '40px',
-                          height: '40px',
-                          backgroundColor: '#FFB86B',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          transform: 'rotate(-15deg)',
-                          boxShadow: '0 4px 12px rgba(233, 30, 99, 0.3)',
-                        }}
-                      >
-                        <span
-                          style={{
-                            color: 'black',
-                            fontFamily: 'Akira Expanded',
-                            fontSize: '1.5rem',
-                            fontWeight: 900,
-                            transform: 'rotate(15deg)',
-                          }}
-                        >
-                          G
-                        </span>
-                      </div>
-                    </div>
-                    <div className="mobile-ticket-seam" aria-hidden="true">
-                      <span className="mobile-ticket-perf" />
-                      <span className="mobile-ticket-perf" />
-                      <span className="mobile-ticket-perf" />
-                      <span className="mobile-ticket-perf" />
-                      <span className="mobile-ticket-perf" />
-                      <span className="mobile-ticket-perf" />
-                    </div>
+                  <div className="mobile-ticket-left" style={{
+                    backgroundImage: 'url(/ticket1.jpeg)',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    minHeight: '180px'
+                  }}>
                   </div>
 
                   <div className="mobile-ticket-right">
@@ -2191,41 +2133,12 @@ function Hero() {
 
                 {/* Ticket 3: Schools Registration */}
                 <div className="mobile-neo-ticket" style={{ marginTop: '20px' }}>
-                  <div className="mobile-ticket-left">
-                    <div className="mobile-ticket-logo-stack">
-                      <div
-                        style={{
-                          width: '40px',
-                          height: '40px',
-                          backgroundColor: '#fff19d',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          transform: 'rotate(-15deg)',
-                          boxShadow: '0 4px 12px rgba(233, 30, 99, 0.3)',
-                        }}
-                      >
-                        <span
-                          style={{
-                            color: 'black',
-                            fontFamily: 'Akira Expanded',
-                            fontSize: '1.5rem',
-                            fontWeight: 900,
-                            transform: 'rotate(15deg)',
-                          }}
-                        >
-                          S
-                        </span>
-                      </div>
-                    </div>
-                    <div className="mobile-ticket-seam" aria-hidden="true">
-                      <span className="mobile-ticket-perf" />
-                      <span className="mobile-ticket-perf" />
-                      <span className="mobile-ticket-perf" />
-                      <span className="mobile-ticket-perf" />
-                      <span className="mobile-ticket-perf" />
-                      <span className="mobile-ticket-perf" />
-                    </div>
+                  <div className="mobile-ticket-left" style={{
+                    backgroundImage: 'url(/ticket1.jpeg)',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    minHeight: '180px'
+                  }}>
                   </div>
 
                   <div className="mobile-ticket-right">
@@ -2366,71 +2279,74 @@ function Hero() {
                 </div>
               </div>
             </div>
-          </footer>
+          </footer >
 
           {/* Lineup Teaser Modal */}
-          {lineupModalState !== 'closed' && (
-            <div
-              className={`lineup-modal-overlay ${lineupModalState === 'open' ? 'is-open' : 'is-closing'}`}
-              onMouseDown={closeLineupModal}
-              role="presentation"
-            >
-              <div className="lineup-modal" role="dialog" aria-modal="true" aria-labelledby="lineup-modal-title" onMouseDown={(e) => e.stopPropagation()}>
-                <button className="lineup-modal-close" type="button" onClick={closeLineupModal} aria-label="Close popup">
-                  ×
-                </button>
-
-                <div className="lineup-modal-top" aria-hidden="true">
-                  <span className="lineup-modal-chip">LINEUP</span>
-                  <span className="lineup-modal-chip lineup-modal-chip--accent">COMING SOON</span>
-                </div>
-
-                <div className="lineup-modal-sparks" aria-hidden="true">
-                  {lineupSparks.map((p) => (
-                    <span
-                      key={p.id}
-                      className="lineup-spark"
-                      style={{
-                        '--x': `${p.x}%`,
-                        '--y': `${p.y}%`,
-                        '--d': `${p.d}s`,
-                        '--t': `${p.t}s`,
-                        '--s': `${p.s}px`,
-                      }}
-                    />
-                  ))}
-                </div>
-
-                <h3 id="lineup-modal-title" className="lineup-modal-title">
-                  <GlitchText
-                    koreanText="곧 공개됩니다"
-                    englishText="WILL BE REVEALED SOON"
-                    className="lineup-modal-title-text"
-                    delay={0}
-                    shouldStart={lineupModalState === 'open'}
-                    variant="glitch"
-                  />
-                </h3>
-
-                <p className="lineup-modal-subtitle">
-                  The stage is getting set. The reveal drop is going to be wild — keep your eyes on YATRA.
-                </p>
-
-                <div className="lineup-modal-stamp" aria-hidden="true">
-                  <span className="lineup-modal-stamp-ring" />
-                  <span className="lineup-modal-stamp-text">REVEAL</span>
-                </div>
-
-                <div className="lineup-modal-actions">
-                  <button className="lineup-modal-cta" type="button" onClick={closeLineupModal}>
-                    OK, I’LL WAIT
+          {
+            lineupModalState !== 'closed' && (
+              <div
+                className={`lineup-modal-overlay ${lineupModalState === 'open' ? 'is-open' : 'is-closing'}`}
+                onMouseDown={closeLineupModal}
+                role="presentation"
+              >
+                <div className="lineup-modal" role="dialog" aria-modal="true" aria-labelledby="lineup-modal-title" onMouseDown={(e) => e.stopPropagation()}>
+                  <button className="lineup-modal-close" type="button" onClick={closeLineupModal} aria-label="Close popup">
+                    ×
                   </button>
+
+                  <div className="lineup-modal-top" aria-hidden="true">
+                    <span className="lineup-modal-chip">LINEUP</span>
+                    <span className="lineup-modal-chip lineup-modal-chip--accent">COMING SOON</span>
+                  </div>
+
+                  <div className="lineup-modal-sparks" aria-hidden="true">
+                    {lineupSparks.map((p) => (
+                      <span
+                        key={p.id}
+                        className="lineup-spark"
+                        style={{
+                          '--x': `${p.x}%`,
+                          '--y': `${p.y}%`,
+                          '--d': `${p.d}s`,
+                          '--t': `${p.t}s`,
+                          '--s': `${p.s}px`,
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  <h3 id="lineup-modal-title" className="lineup-modal-title">
+                    <GlitchText
+                      koreanText="곧 공개됩니다"
+                      englishText="WILL BE REVEALED SOON"
+                      className="lineup-modal-title-text"
+                      delay={0}
+                      shouldStart={lineupModalState === 'open'}
+                      variant="glitch"
+                    />
+                  </h3>
+
+                  <p className="lineup-modal-subtitle">
+                    The stage is getting set. The reveal drop is going to be wild — keep your eyes on YATRA.
+                  </p>
+
+                  <div className="lineup-modal-stamp" aria-hidden="true">
+                    <span className="lineup-modal-stamp-ring" />
+                    <span className="lineup-modal-stamp-text">REVEAL</span>
+                  </div>
+
+                  <div className="lineup-modal-actions">
+                    <button className="lineup-modal-cta" type="button" onClick={closeLineupModal}>
+                      OK, I’LL WAIT
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )
+          }
         </>
-      )}
+      )
+      }
     </>
   )
 }
