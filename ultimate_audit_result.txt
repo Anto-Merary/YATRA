@@ -1,0 +1,6 @@
+ULTIMATE AUDIT RESULT
+Total Paid/Valid Registrations (Main Table): 4519
+Total Sent (Main Table): 4519
+------------------------------
+Total Unique Pending Emails: 0
+------------------------------

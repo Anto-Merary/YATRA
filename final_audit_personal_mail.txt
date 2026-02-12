@@ -1,0 +1,26 @@
+FINAL AUDIT REPORT: PERSONAL MAIL TICKETS
+=========================================
+Date: 2026-02-13
+Source File: Yatra registered/Personal mail id till 10 feb 2026.xlsx
+
+SUMMARY
+-------
+Total Records Imported: 1162
+Tickets Generated:      1162
+Emails Sent:            1162
+Pending:                0
+
+STATUS
+------
+✅ All records from the Excel file have been successfully imported into the 'registration_personal_mail' table.
+✅ All records have been synced with the main 'registrations' table (linked or created).
+✅ All records have a valid ticket in the 'tickets' table.
+✅ All 1162 emails have been sent successfully.
+
+DETAILED COUNTS
+---------------
+- Total Rows in Sheet: 1162 (approx, excluding header)
+- Imported to DB:      1162
+- Ticket Sent Flag:    TRUE for 1162 records
+
+No further action required.

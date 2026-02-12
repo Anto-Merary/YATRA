@@ -1,0 +1,10 @@
+DISCREPANCY REPORT: REGISTRATIONS WITHOUT TICKETS
+==================================================
+COUNT: 4
+==================================================
+EMAIL                                    | STATUS          | NAME
+--------------------------------------------------------------------------------
+mohamedafsal240047@mech.ritchennai.edu.in | unpaid          | Derry Derry
+monishchandra45@gmail.comgury            | unpaid          | Naresh
+janane.s.2023.aids@ritchennai.edu.in     | unpaid          | Janane
+230701061@rajalakshmi.edu.in             | unpaid          | DARSHAN M 61

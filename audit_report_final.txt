@@ -1,0 +1,9 @@
+AUDIT REPORT: UNSENT TICKETS
+============================
+
+Total Registrations: 3096
+Total Tickets: 3092
+PENDING (Paid but No Ticket): 0
+
+PENDING USERS LIST:
+-------------------

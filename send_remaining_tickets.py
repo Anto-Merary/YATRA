@@ -1,11 +1,12 @@
 """
-YATRA 2026 - Send Remaining Tickets
-===================================
-Sends tickets to all registered users who have PAID but do NOT have a ticket generated yet.
-Based on database state, not Excel file.
+YATRA 2026 - Send Remaining Tickets (Updated for Resend)
+========================================================
+Sends tickets to all registered users who have PAID but do NOT have a ticket sent yet.
+Handles both:
+1. Users who have a ticket but email failed (Resend).
+2. Users who don't have a ticket yet (Create & Send).
 
-Target: ~1228 users
-Batching: 500 emails per batch, 5 minute pause
+Batching: 50 emails per batch (safer), 2 minute pause
 """
 
 import os
@@ -29,11 +30,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Configuration
+# UPDATED CREDENTIALS
+EMAIL_USER = "tickets3.yatra@ritchennai.edu.in"
+EMAIL_PASS = "qgxw gzgj tild fcyx"
+FROM_EMAIL = EMAIL_USER
 SMTP_HOST = "smtp.gmail.com"
 SMTP_PORT = 465
-EMAIL_USER = os.getenv("EMAIL_USER")
-EMAIL_PASS = os.getenv("EMAIL_PASS")
-FROM_EMAIL = os.getenv("FROM_EMAIL") or EMAIL_USER
+
 SUPABASE_URL = os.getenv("VITE_SUPABASE_URL") or os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_KEY") or os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 QR_SECRET = os.getenv("QR_SIGNING_SECRET")
@@ -41,8 +44,9 @@ QR_SECRET = os.getenv("QR_SIGNING_SECRET")
 EVENT_DATES = "FEB 13 AND 14"
 EVENT_VENUE = "Rajalakshmi Institute of Technology"
 
-BATCH_SIZE = 500
-PAUSE_SEQUENCE = 5 * 60  # 5 minutes in seconds
+# Lower batch size to be safer for final run
+BATCH_SIZE = 50
+PAUSE_SEQUENCE = 2 * 60  # 2 minutes
 
 def get_supabase_headers():
     return {
@@ -224,8 +228,8 @@ def generate_unique_ticket_code(headers):
     return ''.join(random.choices(string.digits, k=6)) # Fallback
 
 def main():
-    print("YATRA 2026 - SEND REMAINING TICKETS")
-    print("====================================")
+    print("YATRA 2026 - SEND REMAINING TICKETS (RESEND MODE)")
+    print("=================================================")
     
     headers = get_supabase_headers()
     
@@ -234,7 +238,7 @@ def main():
     all_regs = []
     offset = 0
     while True:
-        r = requests.get(f"{SUPABASE_URL}/rest/v1/registrations?select=id,email,name,college,phone,price,payment_status&offset={offset}&limit=1000", headers=headers)
+        r = requests.get(f"{SUPABASE_URL}/rest/v1/registrations?select=id,email,name,college,phone,price,payment_status,ticket_email_sent&offset={offset}&limit=1000", headers=headers)
         if r.status_code != 200: sys.exit(f"Error: {r.text}")
         data = r.json()
         if not data: break
@@ -248,7 +252,7 @@ def main():
     all_tickets = []
     offset = 0
     while True:
-        r = requests.get(f"{SUPABASE_URL}/rest/v1/tickets?select=registration_id&offset={offset}&limit=1000", headers=headers)
+        r = requests.get(f"{SUPABASE_URL}/rest/v1/tickets?select=id,registration_id,code_6_digit,qr_token&offset={offset}&limit=1000", headers=headers)
         if r.status_code != 200: sys.exit(f"Error: {r.text}")
         data = r.json()
         if not data: break
@@ -257,26 +261,35 @@ def main():
         offset += 1000
         print(f"  Fetched {len(all_tickets)} tickets...")
 
+    # Create Ticket Map (Reg ID -> Ticket Data)
+    ticket_map = {t['registration_id']: t for t in all_tickets}
+
     # 3. Filter Targets
-    ticket_reg_ids = set(t['registration_id'] for t in all_tickets)
-    
     targets = []
     for reg in all_regs:
         if reg.get('payment_status') != 'paid': continue
-        if reg['id'] in ticket_reg_ids: continue
+        
+        # KEY CHANGE: Target if email NOT sent
+        if reg.get('ticket_email_sent') is True: continue
+        
+        # If no email, skip
         if not reg.get('email'): continue
+        
         targets.append(reg)
         
-    print(f"\nFound {len(targets)} pending users (Paid but NO ticket).")
+    print(f"\nFound {len(targets)} pending users (Paid but Email Not Sent).")
     
     if len(targets) == 0:
         print("No pending tickets found. Exiting.")
         sys.exit(0)
         
-    confirm = input(f"Type 'SEND {len(targets)}' to start sending: ").strip()
-    if confirm != f"SEND {len(targets)}":
-        print("Aborted.")
-        sys.exit(0)
+    if "--auto" in sys.argv:
+        print(f"Auto-confirming batch of {len(targets)}...")
+    else:
+        confirm = input(f"Type 'SEND {len(targets)}' to start sending: ").strip()
+        if confirm != f"SEND {len(targets)}":
+            print("Aborted.")
+            sys.exit(0)
 
     # 4. Process
     success_count = 0
@@ -297,34 +310,51 @@ def main():
                      time.sleep(60)
                 print("\nResuming...")
             
-            # Generate Ticket Data
-            ticket_id = str(uuid.uuid4())
-            qr_token = sign_token(ticket_id, QR_SECRET)
-            code_6_digit = generate_unique_ticket_code(headers)
+            # Check for existing ticket
+            existing_ticket = ticket_map.get(reg_id)
             
-            # Create Ticket in DB
-            new_ticket = {
-                "id": ticket_id,
-                "registration_id": reg_id,
-                "email": email,
-                "name": reg.get('name'),
-                "college": reg.get('college'),
-                "phone": reg.get('phone'),
-                "code_6_digit": code_6_digit,
-                "qr_token": qr_token,
-                "qr_payload": qr_token,
-                "ticket_status": "valid",
-                "status": "active",
-                "ticket_type": "Student Pass",
-                "price": reg.get('price'),
-                "is_rit_student": "rit" in str(reg.get('college','')).lower()
-            }
-            
-            r = requests.post(f"{SUPABASE_URL}/rest/v1/tickets", headers=headers, json=new_ticket)
-            if r.status_code != 201:
-                print(f"[{idx+1}] ❌ Failed to create ticket for {email}: {r.text}")
-                fail_count += 1
-                continue
+            if existing_ticket:
+                # USE EXISTING TICKET
+                print(f"[{idx+1}] Found existing ticket for {email}. Resending...")
+                ticket_id = existing_ticket['id']
+                qr_token = existing_ticket['qr_token']
+                code_6_digit = existing_ticket['code_6_digit']
+                
+                # If qr_token is missing, regenerate?
+                if not qr_token:
+                    print(f"  ⚠️ Missing QR Token for existing ticket. Regenerating...")
+                    qr_token = sign_token(ticket_id, QR_SECRET)
+                    # Update DB
+                    requests.patch(f"{SUPABASE_URL}/rest/v1/tickets?id=eq.{ticket_id}", headers=headers, json={"qr_token": qr_token})
+            else:
+                # CREATE NEW TICKET
+                print(f"[{idx+1}] Creating NEW ticket for {email}...")
+                ticket_id = str(uuid.uuid4())
+                qr_token = sign_token(ticket_id, QR_SECRET)
+                code_6_digit = generate_unique_ticket_code(headers)
+                
+                new_ticket = {
+                    "id": ticket_id,
+                    "registration_id": reg_id,
+                    "email": email,
+                    "name": reg.get('name'),
+                    "college": reg.get('college'),
+                    "phone": reg.get('phone'),
+                    "code_6_digit": code_6_digit,
+                    "qr_token": qr_token,
+                    "qr_payload": qr_token,
+                    "ticket_status": "valid",
+                    "status": "active",
+                    "ticket_type": "Student Pass",
+                    "price": reg.get('price'),
+                    "is_rit_student": "rit" in str(reg.get('college','')).lower()
+                }
+                
+                r = requests.post(f"{SUPABASE_URL}/rest/v1/tickets", headers=headers, json=new_ticket)
+                if r.status_code != 201:
+                    print(f"  ❌ Failed to create ticket: {r.text}")
+                    fail_count += 1
+                    continue
                 
             # Generate Email
             qr_bytes = generate_qr_bytes(qr_token)
@@ -334,7 +364,7 @@ def main():
             ok, err = send_email_with_qr(email, f"YATRA 2026 // ENTRY PASS [{code_6_digit}]", html, text, qr_bytes)
             
             if ok:
-                print(f"[{idx+1}] ✅ SENT to {email}")
+                print(f"  ✅ SENT to {email}")
                 success_count += 1
                 
                 # Mark Sent
@@ -346,14 +376,14 @@ def main():
                 
                 # Log Event
                 requests.post(f"{SUPABASE_URL}/rest/v1/ticket_email_events", headers=headers, json={
-                    "registration_id": reg_id, "ticket_id": ticket_id, "to_email": email, "status": "sent"
+                    "registration_id": reg_id, "ticket_id": ticket_id, "to_email": email, "status": "sent", "source": "resend_script"
                 })
             else:
-                print(f"[{idx+1}] ❌ SMTP Create but FAILED to send to {email}: {err}")
+                print(f"  ❌ SMTP FAILED to {email}: {err}")
                 fail_count += 1
                 # Log Event
                 requests.post(f"{SUPABASE_URL}/rest/v1/ticket_email_events", headers=headers, json={
-                    "registration_id": reg_id, "ticket_id": ticket_id, "to_email": email, "status": "failed", "error_text": str(err)
+                    "registration_id": reg_id, "ticket_id": ticket_id, "to_email": email, "status": "failed", "error_text": str(err), "source": "resend_script"
                 })
                 
             time.sleep(0.5)
