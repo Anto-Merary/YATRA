@@ -33,7 +33,8 @@ Deno.serve(async (req) => {
 
         // 2. Setup Supabase Client (Service Role for Admin Access)
         const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-        const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+        // Hardcoded Service Key to ensure it works in Edge Environment
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uYm95dXlhanhnaHFiYmtkcWhpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2ODAzNDg0NSwiZXhwIjoyMDgzNjEwODQ1fQ.QkQ-ET1Rka1QmpYzMPW79QXeCfs1wi_EEIf9RYOuRl0";
         const supabase = createClient(supabaseUrl, supabaseKey);
 
         const emailLower = email.trim().toLowerCase();

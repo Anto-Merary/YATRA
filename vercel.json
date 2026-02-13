@@ -23,6 +23,10 @@
       "dest": "/mobile.html"
     },
     {
+      "src": "^/on-spot$",
+      "dest": "/mobile_tool/index.html"
+    },
+    {
       "src": "^/(events|proevents|yatraevents|pro-dance-battle|yatra-entry|payment-test|gv-prakash|privacy-policy|terms-conditions|admin)(/.*)?$",
       "dest": "/index.html"
     },
