@@ -2,9 +2,12 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 import QRCode from "https://esm.sh/qrcode@1.5.1";
 // Get email credentials from environment variables (Supabase secrets)
-const EMAIL_USER = Deno.env.get("EMAIL_USER");
-const EMAIL_PASS = Deno.env.get("EMAIL_PASS");
-const FROM_EMAIL = Deno.env.get("FROM_EMAIL") || EMAIL_USER || "noreply@yatra2026.com";
+// Get email credentials from environment variables (Supabase secrets)
+// OVERRIDE: User requested tickets3 account matching Python tool
+const EMAIL_USER = "tickets3.yatra@ritchennai.edu.in";
+const EMAIL_PASS = "qgxw gzgj tild fcyx";
+const FROM_EMAIL = EMAIL_USER;
+const QR_SECRET = "yatra-2026-production-secret-key-do-not-share"; // From local .env match
 
 interface RegistrationData {
   id: string;
@@ -31,6 +34,27 @@ type SmtpSendResult = {
   messageAccepted: string;
 };
 
+// HMAC-SHA256 Signing Logic matching Python's hmac.new(key, msg, digestmod=hashlib.sha256).hexdigest()
+async function signToken(ticketId: string, secret: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const keyData = encoder.encode(secret);
+  const msgData = encoder.encode(ticketId);
+
+  const key = await crypto.subtle.importKey(
+    "raw",
+    keyData,
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+
+  const signature = await crypto.subtle.sign("HMAC", key, msgData);
+  const hashArray = Array.from(new Uint8Array(signature));
+  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+
+  return `${ticketId}.${hashHex}`;
+}
+
 function extractBase64FromPngDataUrl(dataUrl: string): string {
   const prefix = "data:image/png;base64,";
   if (!dataUrl.startsWith(prefix)) {
@@ -42,6 +66,7 @@ function extractBase64FromPngDataUrl(dataUrl: string): string {
 function wrapBase64(base64: string): string {
   return base64.match(/.{1,76}/g)?.join("\r\n") ?? base64;
 }
+
 
 async function sendEmailViaSMTP(to: string, subject: string, html: string, text: string, qrDataUrl?: string): Promise<SmtpSendResult> {
   if (!EMAIL_USER || !EMAIL_PASS) {
@@ -285,12 +310,13 @@ Deno.serve(async (req: Request) => {
     let qrPayloadForRender = '';
     let ticketGenerated = false;
     let ticketUuid: string | null = null;
+    let qrToken = '';
 
     try {
       // Check if ticket already exists for this registration
       const { data: existingTicket } = await supabase
         .from('tickets')
-        .select('id, code_6_digit, qr_payload')
+        .select('id, code_6_digit, qr_payload, qr_token')
         .eq('registration_id', registration.id)
         .maybeSingle();
 
@@ -299,12 +325,20 @@ Deno.serve(async (req: Request) => {
         ticketCode = existingTicket.code_6_digit;
         ticketUuid = existingTicket.id;
         ticketId = existingTicket.id;
+        qrToken = existingTicket.qr_token || await signToken(ticketId, QR_SECRET);
 
         // Regenerate QR code URL
-        qrPayloadForRender = existingTicket.qr_payload || existingTicket.id;
+        // Match Python: qr.add_data(qr_token)
+        qrPayloadForRender = qrToken;
         qrDataUrl = await QRCode.toDataURL(qrPayloadForRender, { width: 250, margin: 1 });
         ticketGenerated = true;
         console.log(`Using existing ticket code ${ticketCode} for registration ${registration.id}`);
+
+        // Update if token was missing
+        if (!existingTicket.qr_token) {
+          await supabase.from('tickets').update({ qr_token: qrToken }).eq('id', ticketId);
+        }
+
       } else {
         // Generate unique 6-digit code
         let isUnique = false;
@@ -331,14 +365,11 @@ Deno.serve(async (req: Request) => {
         // Generate Ticket UUID
         ticketId = crypto.randomUUID();
 
-        // Create QR payload
-        const qrPayload = JSON.stringify({
-          id: ticketId,       // ticket_uuid
-          code: ticketCode     // six_digit_code
-        });
+        // SIGN TOKEN matching Python logic
+        qrToken = await signToken(ticketId, QR_SECRET);
 
-        // Generate QR code URL using public API (more reliable for emails than base64)
-        qrPayloadForRender = qrPayload;
+        // Create QR payload - Python uses the token itself as payload
+        qrPayloadForRender = qrToken;
         qrDataUrl = await QRCode.toDataURL(qrPayloadForRender, { width: 250, margin: 1 });
 
         // Insert ticket into database
@@ -351,8 +382,13 @@ Deno.serve(async (req: Request) => {
             name: registration.name,
             college: registration.college,
             code_6_digit: ticketCode,
-            qr_payload: qrPayload,
-            ticket_status: 'valid'
+            qr_payload: qrToken, // Python tool sets payload = token
+            qr_token: qrToken,
+            ticket_status: 'valid',
+            ticket_type: registration.ticket_type || 'On Spot',
+            pass_category: (parseFloat(registration.price || "0") >= 850) ? "Combo Pass" : "Single Day Pass",
+            price: registration.price,
+            is_rit_student: registration.is_rit_student || false
           });
 
         if (insertError) {
@@ -384,173 +420,31 @@ Deno.serve(async (req: Request) => {
       (globalThis.ticketDebugError ? (globalThis.ticketDebugError.message || JSON.stringify(globalThis.ticketDebugError)) : "Unknown error")
       : null;
 
-    // Prepare email content:
-    // 1) Plain acknowledgement as normal email text
-    // 2) Ticket card below, in a clean brutalist block
-    const emailHtml = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>YATRA 2026 // ENTRY PASS</title>
-        </head>
-        <body style="margin:0;padding:0;background:#f5f5f5;font-family:'Courier New',Courier,monospace;color:#000000;">
-          
-          <!-- OUTSIDE NORMAL EMAIL MESSAGE -->
-          <div style="max-width:600px;margin:0 auto;padding:24px 16px 8px 16px;background:#f5f5f5;">
-            <p style="margin:0 0 8px 0;font-size:14px;color:#111;">Hey ${registration.name || ""},</p>
-            <p style="margin:0 0 8px 0;font-size:14px;color:#333;">
-              Your registration for <strong>YATRA 2026</strong> is confirmed.
-            </p>
-            <p style="margin:0 0 8px 0;font-size:14px;color:#333;">
-              Below is your official entry pass with QR code and unique ID.
-            </p>
-          </div>
+    // Prepare email content matching Python on_spot_tool.py
+    const emailHtml = `<!DOCTYPE html>
+<html>
+<head><title>YATRA 2026</title></head>
+<body style="margin:0;padding:20px;background:#000;font-family:monospace;color:#fff;">
+  <div style="max-width:600px;margin:0 auto;background:#111;border:1px solid #333;">
+    <div style="padding:40px 20px;text-align:center;border-bottom:2px solid #ff00ff;">
+      <h1 style="color:#fff;margin:0;">YATRA 2026</h1>
+      <p style="color:#ff00ff;margin:10px 0 0;">OFFICIAL ENTRY PASS</p>
+    </div>
+    <div style="padding:30px;">
+      <h2>Hey ${registration.name} 👋</h2>
+      <p>Your spot is locked. Payment Received (On-Spot).</p>
+      <div style="background:#fff;color:#000;padding:20px;margin:20px 0;text-align:center;">
+        <p style="margin:0;font-size:12px;color:#666;">UNIQUE ID</p>
+        <div style="font-size:32px;font-weight:900;letter-spacing:6px;margin:10px 0;">${ticketCode}</div>
+        <img src="cid:qrcode" style="width:200px;height:200px;display:block;margin:0 auto;">
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
 
-          <!-- TICKET CARD -->
-          <div style="max-width:600px;margin:8px auto 24px auto;padding:0 16px 24px 16px;background:#f5f5f5;">
-            <div style="background:#000000;border-radius:4px 4px 0 0;padding:32px 24px 28px 24px;text-align:left;border-bottom:4px solid #9b1799;">
-              <h1 style="color:#ffffff;margin:0;font-size:32px;font-weight:900;letter-spacing:3px;text-transform:uppercase;">YATRA 2026</h1>
-              <div style="color:#9b1799;margin:6px 0 0 0;font-size:17px;font-weight:900;letter-spacing:6px;text-transform:uppercase;">ENTRY PASS</div>
-              <div style="color:#777777;margin:14px 0 0 0;font-size:11px;letter-spacing:2px;text-transform:uppercase;">RIT CHENNAI // CULTURAL FEST</div>
-            </div>
+    const emailText = `YATRA 2026 PASS\nName: ${registration.name}\nCode: ${ticketCode}\nVenue: Rajalakshmi Institute of Technology`;
 
-            <div style="background:#ffffff;border:1px solid #000000;border-top:none;border-radius:0 0 4px 4px;padding:24px 20px 20px 20px;">
-              <!-- SMALL CONFIRM STRIP -->
-              <div style="background:#00ff00;padding:8px 12px;margin:0 0 18px 0;border:1px solid #000000;text-align:center;">
-                <span style="font-size:11px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:#000;">✓ Registration Confirmed</span>
-              </div>
-
-              <!-- ATTENDEE INFO -->
-              <div style="margin-bottom:18px;">
-                <div style="font-size:10px;letter-spacing:2px;color:#666;text-transform:uppercase;margin-bottom:4px;">Attendee</div>
-                <div style="font-size:20px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:0.5px;word-break:break-word;">
-                  ${registration.name}
-                </div>
-              </div>
-
-              <!-- GRID -->
-              <div style="border:2px solid #000;margin-bottom:20px;">
-                <table style="width:100%;border-collapse:collapse;">
-                  <tr style="border-bottom:2px solid #000;">
-                    <td style="padding:10px 12px;font-size:10px;letter-spacing:2px;color:#666;text-transform:uppercase;width:32%;border-right:2px solid #000;">Email</td>
-                    <td style="padding:10px 12px;font-size:13px;font-weight:700;color:#000;word-break:break-all;">${registration.email}</td>
-                  </tr>
-                  <tr style="border-bottom:2px solid #000;">
-                    <td style="padding:10px 12px;font-size:10px;letter-spacing:2px;color:#666;text-transform:uppercase;border-right:2px solid #000;">Phone</td>
-                    <td style="padding:10px 12px;font-size:13px;font-weight:700;color:#000;">${registration.phone}</td>
-                  </tr>
-                  <tr style="border-bottom:2px solid #000;">
-                    <td style="padding:10px 12px;font-size:10px;letter-spacing:2px;color:#666;text-transform:uppercase;border-right:2px solid #000;">College</td>
-                    <td style="padding:10px 12px;font-size:13px;font-weight:700;color:#000;">${registration.college}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:10px 12px;font-size:10px;letter-spacing:2px;color:#666;text-transform:uppercase;border-right:2px solid #000;">Pass / Amount</td>
-                    <td style="padding:10px 12px;font-size:13px;font-weight:900;color:#000;text-transform:uppercase;">
-                      ${(registration.ticket_type || "GENERAL")} &nbsp;•&nbsp; ${registration.price || "—"}
-                    </td>
-                  </tr>
-                </table>
-              </div>
-
-              ${registration.is_rit_student ? `
-              <div style="background:#000;color:#00ff00;padding:8px 10px;margin-bottom:18px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-align:center;">
-                ▸ RIT Student – Internal Pass Configuration Applied
-              </div>
-              ` : ''}
-
-              ${ticketGenerated ? `
-              <!-- TICKET STRIP -->
-              <div style="background:#000;padding:18px 14px;margin:0 0 16px 0;">
-                <div style="font-size:10px;letter-spacing:3px;color:#777;text-transform:uppercase;text-align:center;margin-bottom:6px;">Unique 6 Digit ID</div>
-                <div style="font-size:40px;font-weight:900;letter-spacing:10px;color:#fff;font-family:'Courier New',monospace;text-align:center;">
-                  ${ticketCode}
-                </div>
-              </div>
-
-              <!-- QR BLOCK -->
-              <div style="background:#fff;border:2px solid #9b1799;padding:14px 10px;text-align:center;margin-bottom:8px;">
-                <img src="cid:qrcode" alt="QR" style="width:200px;height:200px;display:block;margin:0 auto;" />
-              </div>
-              <div style="text-align:center;margin-bottom:18px;">
-                <span style="font-size:10px;letter-spacing:2px;color:#777;text-transform:uppercase;">Show this QR at the gate</span>
-              </div>
-              ` : ''}
-
-              <!-- EVENT INFO -->
-              <div style="display:flex;justify-content:space-between;border-top:2px dashed #000;padding-top:12px;margin-top:8px;">
-                <div>
-                  <p style="margin:0;font-size:10px;font-weight:700;color:#666;text-transform:uppercase;">Dates</p>
-                  <p style="margin:4px 0 0 0;font-size:13px;font-weight:900;">FEB 13 &amp; 14</p>
-                </div>
-                <div style="text-align:right;">
-                  <p style="margin:0;font-size:10px;font-weight:700;color:#666;text-transform:uppercase;">Venue</p>
-                  <p style="margin:4px 0 0 0;font-size:13px;font-weight:700;">Rajalakshmi Institute<br/>of Technology</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- RULES -->
-            <div style="background:#111;color:#ccc;font-size:12px;padding:18px 18px 16px 18px;border-radius:4px;margin-top:10px;">
-              <h4 style="margin:0 0 10px 0;color:#fff;text-transform:uppercase;border-bottom:1px solid #333;padding-bottom:6px;font-size:11px;letter-spacing:1px;">
-                Rules &amp; Regulations
-              </h4>
-              <ol style="margin:0;padding-left:18px;line-height:1.6;">
-                <li>College ID is a must.</li>
-                <li>No outside food or beverages allowed.</li>
-                <li>No ordering of food allowed inside campus.</li>
-                <li>Do not delete this email.</li>
-                <li>Maintain discipline inside the campus.</li>
-                <li>Bags are not allowed (including slim bags).</li>
-                <li>Entries not allowed after 5:00 PM.</li>
-              </ol>
-            </div>
-
-            <!-- FOOTER -->
-            <div style="text-align:center;margin-top:12px;font-size:10px;color:#666;">
-              YATRA 2026 • Automated Ticket System • RIT Chennai
-            </div>
-          </div>
-
-        </body>
-      </html>
-    `;
-
-    const emailText = `
-═══════════════════════════════════════════════════
-YATRA 2026 // ENTRY PASS
-═══════════════════════════════════════════════════
-
-✓ REGISTRATION CONFIRMED
-
-ATTENDEE: ${registration.name.toUpperCase()}
-
-───────────────────────────────────────────────────
-DETAILS
-───────────────────────────────────────────────────
-EMAIL     : ${registration.email}
-PHONE     : ${registration.phone}
-COLLEGE   : ${registration.college}
-PASS TYPE : ${registration.ticket_type || "GENERAL"}
-AMOUNT    : ${registration.price || "—"}
-${registration.is_rit_student ? "STATUS    : ▸ RIT STUDENT DISCOUNT APPLIED\n" : ""}
-${ticketGenerated ? `
-═══════════════════════════════════════════════════
-ENTRY CODE
-═══════════════════════════════════════════════════
-
->>> ${ticketCode} <<<
-
-SCAN QR CODE AT ENTRANCE
-
-⚠ VALID ID REQUIRED FOR ENTRY
-` : ''}
-───────────────────────────────────────────────────
-VENUE: RAJALAKSHMI INSTITUTE OF TECHNOLOGY
-───────────────────────────────────────────────────
-YATRA 2026 // AUTOMATED NOTIFICATION
-    `.trim();
 
     // Send email using native Deno TLS
     console.log(`Attempting to send email from: ${FROM_EMAIL} to: ${registration.email}`);
